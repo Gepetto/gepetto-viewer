@@ -21,13 +21,13 @@ namespace Graphics {
         beam_ptr_ = new ::osg::Geometry();
         
         /* Define points of the beam */
-        ::osg::Vec3ArrayRefPtr points_ptr = new ::osg::Vec3Array;
+        points_ptr_ = new ::osg::Vec3Array(2);
         
         /* Define the color */
-        ::osg::Vec4ArrayRefPtr color_ptr = new ::osg::Vec4Array;
+        color_ptr_ = new ::osg::Vec4Array(1);
         
-        beam_ptr_->setVertexArray(points_ptr.get());
-        beam_ptr_->setColorArray(color_ptr.get());
+        beam_ptr_->setVertexArray(points_ptr_.get());
+        beam_ptr_->setColorArray(color_ptr_.get());
         beam_ptr_->setColorBinding(::osg::Geometry::BIND_PER_PRIMITIVE_SET);
         beam_ptr_->addPrimitiveSet(new osg::DrawArrays(GL_LINES,0,2));
         
@@ -49,7 +49,6 @@ namespace Graphics {
         osg::LineWidth* linewidth = new osg::LineWidth();
         linewidth->setWidth(1.0f);
         beam_ptr_->getOrCreateStateSet()->setAttributeAndModes(linewidth, osg::StateAttribute::ON);
-        
     }
     
     LeafNodeLine::LeafNodeLine (const std::string& name, const osgVector3& start_point, const osgVector3& end_point) :
@@ -133,30 +132,22 @@ namespace Graphics {
     
     void LeafNodeLine::setStartPoint (const osgVector3& start_point)
     {
-        osg::Vec3ArrayRefPtr points_ptr = dynamic_cast<osg::Vec3Array*>(beam_ptr_->getVertexArray());
-        ASSERT(points_ptr, "Problem of dynamic casting from VecArray to Vec3Array");
-        points_ptr->at(0) = start_point;
+        points_ptr_->at(0) = start_point;
     }
     
     osgVector3 LeafNodeLine::getStartPoint() const
     {
-        osg::Vec3ArrayRefPtr points_ptr = dynamic_cast<osg::Vec3Array*>(beam_ptr_->getVertexArray());
-        ASSERT(points_ptr, "Problem of dynamic casting from VecArray to Vec3Array");
-        return points_ptr->at(0);
+        return points_ptr_->at(0);
     }
 
     void LeafNodeLine::setEndPoint (const osgVector3& end_point)
     {
-        osg::Vec3ArrayRefPtr points_ptr = dynamic_cast<osg::Vec3Array*>(beam_ptr_->getVertexArray());
-        ASSERT(points_ptr, "Problem of dynamic casting from VecArray to Vec3Array");
-        points_ptr->at(1) = end_point;
+        points_ptr_->at(1) = end_point;
     }
     
     osgVector3 LeafNodeLine::getEndPoint() const
     {
-        osg::Vec3ArrayRefPtr points_ptr = dynamic_cast<osg::Vec3Array*>(beam_ptr_->getVertexArray());
-        ASSERT(points_ptr, "Problem of dynamic casting from VecArray to Vec3Array");
-        return points_ptr->at(1);
+        return points_ptr_->at(1);
     }
 
     void LeafNodeLine::setPoints (const osgVector3& start_point, const osgVector3& end_point)
@@ -167,10 +158,7 @@ namespace Graphics {
     
     void LeafNodeLine::setColor (osgVector4 color)
     {      
-        ::osg::Vec4ArrayRefPtr color_array_ptr = dynamic_cast<osg::Vec4Array*>(beam_ptr_->getColorArray());
-        ASSERT(color_array_ptr, "Problem of dynamic casting from VecArray to Vec4Array");
-        
-        color_array_ptr->at(0) = color;
+        color_ptr_->at(0) = color;
     }
     
     LeafNodeLine::~LeafNodeLine()

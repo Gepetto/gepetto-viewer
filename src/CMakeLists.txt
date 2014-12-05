@@ -27,7 +27,7 @@ ADD_LIBRARY(${LIBRARY_NAME} SHARED
   LeafNodeBox.cpp
   LeafNodeCylinder.cpp
   LeafNodeCone.cpp
-  #LeafNodeFace.cpp
+  LeafNodeFace.cpp
   LeafNodeSphere.cpp
   LeafNodeCapsule.cpp
   LeafNodeGround.cpp
