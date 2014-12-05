@@ -1,0 +1,76 @@
+\documentclass {article}
+
+\newcommand\reals{\mathbf{R}}
+\begin{document}
+\paragraph {Projection on the kernel of a matrix $J$}
+$$
+J\in \reals^{m\times n}
+$$
+SVD decomposition
+\begin{eqnarray*}
+J &=& U S V^T \ \ \ U\in O(m)\ \ \ V\in O(n)\\
+J^{+} &=& V S^{+} U^T \\
+J^{+} J &=& V S^{+} S V^T \\
+&=& V \left(\begin{array} {cc}
+I_m & O_{m\times n-m} \\
+O_{n-m\times m} & O_{n-m\times n-m}
+\end{array}\right) V^T
+\end{eqnarray*}
+where $m$ is the (full) rank of $J$.
+\begin{eqnarray*}
+I_{n} - J^{+} J &=& V \left(\begin{array} {cc}
+O_m & O_{m\times n-m} \\
+O_{n-m\times m} & I_{n-m}
+\end{array}\right) V^T \\
+&=& \left(\begin{array}{cc}
+V_{11} & V_{12} \\
+V_{21} & V_{22} \end{array}\right)
+\left(\begin{array} {cc}
+O_m & O_{m\times n-m} \\
+O_{n-m\times m} & I_{n-m}
+\end{array}\right)
+\left(\begin{array}{cc}
+V^T_{11} & V^T_{21} \\
+V^T_{12} & V^T_{22} \end{array}\right)\\
+&=&
+\left(\begin{array} {cc}
+O_m & V_{12} \\
+O_{n-m\times m} & V_{22}
+\end{array}\right)
+\left(\begin{array}{cc}
+V^T_{11} & V^T_{21} \\
+V^T_{12} & V^T_{22} \end{array}\right)\\
+&=&
+\left(\begin{array}{cc}
+V_{12}V^T_{12} & V_{12}V^T_{22} \\
+V_{22}V^T_{12} & V_{22}V^T_{22} \end{array}\right)
+\end{eqnarray*}
+
+\paragraph {Projection on the kernel of a matrix $J$}
+$$
+J\in \reals^{m\times n}
+$$
+\begin{eqnarray*}
+J^T P &=& QR
+\end{eqnarray*}
+where $P\in O(m)$ is a permutation matrix, $Q\in O(n)$ and $R\in\reals^{n\times m}$ is an upper triangular matrix.
+\begin{eqnarray*}
+J &=& PLQ^T
+\end{eqnarray*}
+where $L = R^T$.
+\begin{eqnarray*}
+L &=& \left(\begin{array}{cc} L_1 & 0 \end{array}\right)\\
+L^+ &=& \left(\begin{array}{c} L_1^-1 \\ 0 \end{array}\right)\\
+L^+ L &=& \left(\begin{array}{cc}
+I_r & 0 \\
+0 & 0 \end{array}\right)
+\end{eqnarray*}
+where $r$ is the rank of $L$.
+\begin{eqnarray*}
+J^+ J &=& \left(\begin{array}{cc} Q_1 & Q_0\end{array}\right)
+\left(\begin{array}{cc} I_r & 0 \\ 0 & 0\end{array}\right)
+\left(\begin{array}{cc} Q_1 & Q_0\end{array}\right)^T \\
+&=& Q_1 Q_1^T\\
+I_n - J^+ J &=& Q_0 Q_0^T
+\end{eqnarray*}
+\end{document}

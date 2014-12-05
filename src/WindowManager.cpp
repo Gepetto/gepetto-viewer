@@ -1,0 +1,211 @@
+//
+//  WindowManager.cpp
+//  SceneViewer
+//
+//  Created by Justin Carpentier, Mathieu Geisert in November 2014.
+//  Copyright (c) 2014 LAAS-CNRS. All rights reserved.
+//
+
+#include <Graphics/WindowManager.h>
+
+#include <osg/Camera>
+#include <osgGA/TrackballManipulator>
+
+namespace Graphics {
+
+    /* Declaration of private function members */
+    void WindowManager::init(const unsigned int& x,
+                                  const unsigned int& y,
+                                  const unsigned int& width,
+                                  const unsigned int& height)
+    {
+        std::string name = "root";
+        scene_ptr_ = ::Graphics::GroupNode::create(name);
+
+        viewer_ptr_ = new ::osgViewer::Viewer();
+        viewer_ptr_->setSceneData ( scene_ptr_->asGroup() );
+
+        viewer_ptr_->setCameraManipulator( new ::osgGA::TrackballManipulator );
+
+        /* init main camera */
+        main_camera_ = new ::osg::Camera;
+
+        traits_ptr_ = new ::osg::GraphicsContext::Traits;
+
+        traits_ptr_->x = x;
+        traits_ptr_->y = y;
+        traits_ptr_->width = width;
+        traits_ptr_->height = height;
+        traits_ptr_->windowDecoration = true;
+        traits_ptr_->doubleBuffer = true;
+        traits_ptr_->sharedContext = 0;
+        traits_ptr_->sampleBuffers = 1;
+        traits_ptr_->samples = 1;
+
+        osg::ref_ptr<osg::GraphicsContext> gc = osg::GraphicsContext::createGraphicsContext( traits_ptr_ );
+
+        main_camera_->setGraphicsContext(gc.get());
+        main_camera_->setViewport(new osg::Viewport(0,0, traits_ptr_->width, traits_ptr_->height));
+        GLenum buffer = traits_ptr_->doubleBuffer ? GL_BACK : GL_FRONT;
+        main_camera_->setDrawBuffer(buffer);
+        main_camera_->setReadBuffer(buffer);
+
+        /* add camera to the viewer */
+        viewer_ptr_->addSlave ( main_camera_ );
+
+    }
+
+    WindowManager::WindowManager ()
+    {
+        init (0, 0, DEF_WIDTH_WINDOW, DEF_HEIGHT_WINDOW);
+    }
+
+    WindowManager::WindowManager (const unsigned int& x,
+                                            const unsigned int& y,
+                                            const unsigned int& width,
+                                            const unsigned int& height)
+    {
+        init (x, y, width, height);
+    }
+
+    WindowManager::WindowManager (const WindowManager& other)
+    {
+        init (other.getWindowPosition().x(),
+              other.getWindowPosition().y(),
+              other.getWindowDimension().x(),
+              other.getWindowDimension().y() );
+    }
+
+    void WindowManager::initWeakPtr (WindowManagerWeakPtr other_weak_ptr)
+    {
+        weak_ptr_ = other_weak_ptr;
+    }
+
+    /* End declaration of private function members */
+
+    /* Declaration of protected function members */
+
+    WindowManagerPtr_t WindowManager::create ()
+    {
+        WindowManagerPtr_t shared_ptr(new WindowManager());
+
+        // Add reference to itself
+        shared_ptr->initWeakPtr(shared_ptr);
+
+        return shared_ptr;
+    }
+
+    WindowManagerPtr_t WindowManager::create (const unsigned int& x,
+                                                            const unsigned int& y,
+                                                            const unsigned int& width,
+                                                            const unsigned int& height)
+    {
+        WindowManagerPtr_t shared_ptr(new WindowManager(x, y, width, height));
+
+        // Add reference to itself
+        shared_ptr->initWeakPtr(shared_ptr);
+
+        return shared_ptr;
+    }
+
+    WindowManagerPtr_t WindowManager::createCopy (WindowManagerPtr_t other)
+    {
+        WindowManagerPtr_t shared_ptr(new WindowManager(*other));
+
+        // Add reference to itself
+        shared_ptr->initWeakPtr(shared_ptr);
+
+        return shared_ptr;
+    }
+
+    /* End declaration of protected function members */
+
+    /* Declaration of public function members */
+
+    WindowManagerPtr_t WindowManager::clone (void) const
+    {
+        return WindowManager::createCopy(weak_ptr_.lock());
+    }
+
+    WindowManagerPtr_t WindowManager::self (void) const
+    {
+        return weak_ptr_.lock();
+    }
+
+    bool WindowManager::addNode(NodePtr_t graphical_object_ptr)
+    {
+        bool result = scene_ptr_->addChild (graphical_object_ptr);
+        viewer_ptr_->home(); // Partie du code à revoir pour inclure juste un nouveau focus
+
+        return result;
+    }
+
+    bool WindowManager::done ()
+    {
+        return  viewer_ptr_->done();
+    }
+
+    bool WindowManager::frame ()
+    {
+        viewer_ptr_->frame();
+        return true;
+    }
+
+    bool WindowManager::run ()
+    {
+        return viewer_ptr_->run();
+    }
+
+    void WindowManager::setWindowDimension (const unsigned int& width,
+                                                 const unsigned int& height)
+    {
+         /* Define new trait dimension of the main camera */
+        traits_ptr_->width = width;
+        traits_ptr_->height = height;
+
+        main_camera_->setViewport (traits_ptr_->x, traits_ptr_->y, width, height);
+    }
+
+    osgVector2 WindowManager::getWindowDimension() const
+    {
+        osgVector2 dimention;
+        dimention.x() = width_window_dimension_;
+        dimention.y() = height_window_dimension_;
+        return dimention;
+    }
+
+    void WindowManager::setWindowPosition (const unsigned int& x_position,
+                                                const unsigned int& y_position)
+    {
+        /* Define new trait dimension of the main camera */
+        traits_ptr_->x = x_position;
+        traits_ptr_->y = y_position;
+
+        //main_camera_->setViewport (traits_ptr_->x, traits_ptr_->y, width, height);
+    }
+
+    osgVector2 WindowManager::getWindowPosition() const
+    {
+        osgVector2 position;
+        position.x() = x_window_position_;
+        position.y() = y_window_position_;
+        return position;
+    }
+
+
+    void WindowManager::setWindowDecoration (bool window_decoration_status)
+    {
+        traits_ptr_->windowDecoration = window_decoration_status;
+    }
+
+    WindowManager::~WindowManager()
+    {
+
+        scene_ptr_.reset();
+        viewer_ptr_ = NULL;
+
+    }
+
+    /* End declaration of public function members */
+
+} /* namespace Graphics */
