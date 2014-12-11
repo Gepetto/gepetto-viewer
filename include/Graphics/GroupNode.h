@@ -103,7 +103,7 @@ namespace Graphics {
         /** Replace the old transparency value with alpha
          *  Note : alpha must be in [0,1]
          */
-        virtual void setAlpha (const float alpha);
+        //virtual void setAlpha (const float alpha);
         
         /** Apply the scale value of all children
          * note : scale value must be positive

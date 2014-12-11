@@ -127,7 +127,7 @@ namespace Graphics {
         }
     }
     
-    void GroupNode::setAlpha (const float alpha)
+    /*void GroupNode::setAlpha (const float alpha)
     {
         Node::setAlpha (alpha);
         ::std::list<NodePtr_t>::iterator iter_list_of_objects;
@@ -137,7 +137,7 @@ namespace Graphics {
         {
             (*iter_list_of_objects)->setAlpha ( alpha );
         }
-    }
+    }*/
     
     void GroupNode::setScale (const float scale)
     {
