@@ -42,7 +42,7 @@ namespace Graphics {
 
       mesh_shared_ptr = ::boost::static_pointer_cast< ::urdf::Mesh > ( links[i]->visual->geometry );
       link_name = links[i]->name;
-      std::cout << link_name << std::endl;
+      std::cout << "Mesh" << std::endl;
       if ( mesh_shared_ptr != 0 ) 
         {
           mesh_path =  mesh_shared_ptr->filename.substr(10, mesh_shared_ptr->filename.size());
@@ -66,7 +66,7 @@ namespace Graphics {
 
       cylinder_shared_ptr = ::boost::static_pointer_cast< ::urdf::Cylinder > ( links[i]->visual->geometry );
       link_name = links[i]->name;
-      std::cout << link_name << std::endl;
+      std::cout << "Cylinder" << std::endl;
       if ( cylinder_shared_ptr != 0 ) 
         {
           LeafNodeCylinderPtr_t link = LeafNodeCylinder::create( robotName + "/" + link_name, 
@@ -91,7 +91,7 @@ namespace Graphics {
 
       box_shared_ptr = ::boost::static_pointer_cast< ::urdf::Box > ( links[i]->visual->geometry );
       link_name = links[i]->name;
-      std::cout << link_name << std::endl;
+      std::cout << "Box" << std::endl;
       if ( box_shared_ptr != 0 ) 
         {
           LeafNodeBoxPtr_t link = LeafNodeBox::create( robotName + "/" + link_name, 
@@ -117,7 +117,7 @@ namespace Graphics {
 
       sphere_shared_ptr = ::boost::static_pointer_cast< ::urdf::Sphere > ( links[i]->visual->geometry );
       link_name = links[i]->name;
-      std::cout << link_name << std::endl;
+      std::cout << "Sphere" << std::endl;
       if ( sphere_shared_ptr != 0 ) 
         {
           LeafNodeSpherePtr_t link = LeafNodeSphere::create( robotName + "/" + link_name, 
