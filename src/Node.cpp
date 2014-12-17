@@ -145,6 +145,50 @@ namespace Graphics {
                 break;
         }
     }
+
+    void Node::addLandmark(const float& size)
+    {
+        ::osg::GeometryRefPtr geom_ptr = new ::osg::Geometry();
+
+                /* Define points of the beam */
+                ::osg::Vec3ArrayRefPtr points_ptr = new ::osg::Vec3Array(6);
+                points_ptr->at(0) = osgVector3(0.,0.,0.);
+                points_ptr->at(1) = osgVector3(size,0.,0.);
+                points_ptr->at(2) = osgVector3(0.,0.,0.);
+                points_ptr->at(3) = osgVector3(0.,size,0.);
+                points_ptr->at(4) = osgVector3(0.,0.,0.);
+                points_ptr->at(5) = osgVector3(0.,0.,size);
+
+
+                /* Define the color */
+                ::osg::Vec4ArrayRefPtr color_ptr = new ::osg::Vec4Array(3);
+                color_ptr->at(0) = osgVector4(0.,0.,1.,1.);
+                color_ptr->at(1) = osgVector4(0.,1.,0.,1.);
+                color_ptr->at(2) = osgVector4(1.,0.,0.,1.);
+
+                geom_ptr->setVertexArray(points_ptr.get());
+                geom_ptr->setColorArray(color_ptr   .get());
+                geom_ptr->setColorBinding(::osg::Geometry::BIND_PER_PRIMITIVE_SET);
+                geom_ptr->addPrimitiveSet(new osg::DrawArrays(GL_LINES,0,2));
+                geom_ptr->addPrimitiveSet(new osg::DrawArrays(GL_LINES,2,2));
+                geom_ptr->addPrimitiveSet(new osg::DrawArrays(GL_LINES,4,2));
+
+                landmark_geode_ptr_ = new osg::Geode();
+                landmark_geode_ptr_->addDrawable(geom_ptr);
+                static_auto_transform_ptr_->addChild(landmark_geode_ptr_);
+
+                //set Landmark as ALWAYS ON TOP
+                landmark_geode_ptr_->setNodeMask(0xffffffff);
+                landmark_geode_ptr_->getOrCreateStateSet()->setRenderBinDetails(INT_MAX, "DepthSortedBin");
+                landmark_geode_ptr_->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, ::osg::StateAttribute::OFF | ::osg::StateAttribute::PROTECTED);
+                landmark_geode_ptr_->getOrCreateStateSet()->setMode(GL_CULL_FACE, ::osg::StateAttribute::ON | ::osg::StateAttribute::PROTECTED );
+                landmark_geode_ptr_->getOrCreateStateSet()->setMode(GL_LIGHTING, ::osg::StateAttribute::OFF | ::osg::StateAttribute::PROTECTED);
+    }
+
+    void Node::deleteLandmark()
+    {
+        static_auto_transform_ptr_->removeChild(landmark_geode_ptr_);
+    }
     
     Node::~Node ()
     {
