@@ -148,7 +148,6 @@ void Node::setWireFrameMode (const WireFrameMode& mode)
 
 void Node::addLandmark(const float& size)
 {
-    if (!landmark_geode_ptr_) {
         ::osg::GeometryRefPtr geom_ptr = new ::osg::Geometry();
 
         /* Define points of the beam */
@@ -183,13 +182,13 @@ void Node::addLandmark(const float& size)
         landmark_geode_ptr_->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, ::osg::StateAttribute::OFF | ::osg::StateAttribute::PROTECTED);
         landmark_geode_ptr_->getOrCreateStateSet()->setMode(GL_CULL_FACE, ::osg::StateAttribute::ON | ::osg::StateAttribute::PROTECTED );
         landmark_geode_ptr_->getOrCreateStateSet()->setMode(GL_LIGHTING, ::osg::StateAttribute::OFF | ::osg::StateAttribute::PROTECTED);
-    }
-    static_auto_transform_ptr_->addChild(landmark_geode_ptr_);
+        static_auto_transform_ptr_->addChild(landmark_geode_ptr_);
 }
 
 void Node::deleteLandmark()
 {
     static_auto_transform_ptr_->removeChild(landmark_geode_ptr_);
+    landmark_geode_ptr_.release();
 }
 
 Node::~Node ()
