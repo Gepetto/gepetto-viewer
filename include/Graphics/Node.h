@@ -35,6 +35,9 @@ namespace Graphics {
         
         /** Associated switch node */
         osg::SwitchRefPtr switch_node_ptr_;
+
+        /** Geode pointer for landmarks */
+        ::osg::GeodeRefPtr landmark_geode_ptr_;
         
         /** Initialization function */
         void init ();
@@ -104,6 +107,10 @@ namespace Graphics {
         {
             return switch_node_ptr_;
         }
+
+        void addLandmark(const float& size);
+
+        void deleteLandmark();
         
         /*Tools::ConfigurationPtr_t getConfiguration () const
         {
