@@ -1,12 +1,12 @@
 //
-//  WindowManager.cpp
-//  SceneViewer
+//  window-manager.cpp
+//  gepetto-viewer
 //
 //  Created by Justin Carpentier, Mathieu Geisert in November 2014.
 //  Copyright (c) 2014 LAAS-CNRS. All rights reserved.
 //
 
-#include <Graphics/WindowManager.h>
+#include <gepetto/viewer/window-manager.h>
 
 #include <osg/Camera>
 #include <osgGA/TrackballManipulator>

@@ -1,15 +1,15 @@
 //
-//  URDFparser.cpp
-//  SceneViewer
+//  urdf-parser.cpp
+//  gepetto-viewer
 //
 //  Created by Anthony Couret, Mathieu Geisert in November 2014.
 //  Copyright (c) 2014 LAAS-CNRS. All rights reserved.
 //
 
-#include <Graphics/URDFparser.h>
-#include <Graphics/LeafNodeCylinder.h>
-#include <Graphics/LeafNodeBox.h>
-#include <Graphics/LeafNodeSphere.h>
+#include <gepetto/viewer/urdf-parser.h>
+#include <gepetto/viewer/leaf-node-cylinder.h>
+#include <gepetto/viewer/leaf-node-box.h>
+#include <gepetto/viewer/leaf-node-sphere.h>
 
 namespace Graphics {
 

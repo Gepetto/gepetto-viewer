@@ -1,6 +1,6 @@
 //
-//  Node.h
-//  SceneViewer
+//  node.h
+//  gepetto-viewer
 //
 //  Created by Justin Carpentier, Mathieu Geisert in November 2014.
 //  Copyright (c) 2014 LAAS-CNRS. All rights reserved.
@@ -10,7 +10,7 @@
 #define SCENEVIEWER_NODE_HH
 
 #include <iostream>
-#include "config.h"
+#include <gepetto/viewer/config-osg.h>
 
 namespace Graphics {
     

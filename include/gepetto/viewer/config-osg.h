@@ -1,6 +1,6 @@
 //
-//  config.h
-//  SceneViewer
+//  config-osg.h
+//  gepetto-viewer
 //
 //  Created by Justin Carpentier on 06/02/2014.
 //  Modified by Mathieu Geisert in November 2014.
@@ -10,7 +10,7 @@
 #ifndef DynAndGraph_config_h
 #define DynAndGraph_config_h
 
-#include "macros.h"
+#include <gepetto/viewer/macros.h>
 
 #include <osg/Shape>
 #include <osg/ShapeDrawable>

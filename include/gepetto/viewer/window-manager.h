@@ -1,5 +1,5 @@
 //
-//  WindowManager.h
+//  window-manager.h
 //  ScneViewer
 //
 //  Created by Justin Carpentier, Mathieu Geisert in  November 2014.
@@ -10,8 +10,8 @@
 #define SCENEVIEWER_WINDOWMANAGER_HH
 
 #include <osgViewer/Viewer>
-#include "GroupNode.h"
-#include "Node.h"
+#include <gepetto/viewer/group-node.h>
+#include <gepetto/viewer/node.h>
 
 namespace Graphics {
 

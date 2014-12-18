@@ -1,27 +1,27 @@
 //
-//  LeafNodeBox.cpp
-//  SceneViewer
+//  leaf-node-sphere.cpp
+//  gepetto-viewer
 //
 //  Created by Justin Carpentier, Mathieu Geisert in November 2014.
 //  Copyright (c) 2014 LAAS-CNRS. All rights reserved.
 //
 
-#include <Graphics/LeafNodeBox.h>
+#include <gepetto/viewer/leaf-node-sphere.h>
 
 namespace Graphics {
     
     /* Declaration of private function members */
-    
-    void LeafNodeBox::init ()
+
+    void LeafNodeSphere::init()
     {
         /* Create sphere object */
-        box_ptr_ = new ::osg::Box();
+        sphere_ptr_ = new ::osg::Sphere();
         
         /* Set ShapeDrawable */
-        shape_drawable_ptr_ = new ::osg::ShapeDrawable(box_ptr_);
+        shape_drawable_ptr_ = new ::osg::ShapeDrawable(sphere_ptr_);
         
         /* Create Geode for adding ShapeDrawable */
-        geode_ptr_ = new ::osg::Geode();
+        geode_ptr_ = new osg::Geode();
         geode_ptr_->addDrawable(shape_drawable_ptr_);
         
         /* Create PositionAttitudeTransform */
@@ -29,34 +29,35 @@ namespace Graphics {
         
         /* Allow transparency */
         geode_ptr_->getOrCreateStateSet()->setRenderBinDetails(10, "DepthSortedBin");
-        geode_ptr_->getOrCreateStateSet()->setMode(GL_BLEND, ::osg::StateAttribute::ON);      
+        geode_ptr_->getOrCreateStateSet()->setMode(GL_BLEND, ::osg::StateAttribute::ON);
     }
     
-    LeafNodeBox::LeafNodeBox (const std::string &name, const osgVector3& half_axis) :
+    LeafNodeSphere::LeafNodeSphere(const std::string& name, const float& radius) :
         Node(name)
     {
         init();
-        setHalfAxis(half_axis);
+        setRadius(radius);
         setColor(osgVector4(1.,1.,1.,1.));
     }
 
-    LeafNodeBox::LeafNodeBox (const std::string &name, const osgVector3& half_axis, const osgVector4 &color) :
+    LeafNodeSphere::LeafNodeSphere(const std::string& name, const float& radius, const osgVector4& color) :
         Node(name)
     {
         init();
-        setHalfAxis(half_axis);
+        setRadius(radius);
         setColor(color);
     }
 
-    LeafNodeBox::LeafNodeBox (const LeafNodeBox& other) :
+    LeafNodeSphere::LeafNodeSphere(const std::string& name, const LeafNodeSphere& other) :
         Node(other)
     {
+        setID(name);
         init();
-        setHalfAxis(other.getHalfAxis());
+        setRadius(other.getRaduis());
         setColor(other.getColor());
     }
     
-    void LeafNodeBox::initWeakPtr (LeafNodeBoxWeakPtr other_weak_ptr )
+    void LeafNodeSphere::initWeakPtr(LeafNodeSphereWeakPtr other_weak_ptr)
     {
         weak_ptr_ = other_weak_ptr;
     }
@@ -65,32 +66,32 @@ namespace Graphics {
     
     /* Declaration of protected function members */
     
-    LeafNodeBoxPtr_t LeafNodeBox::create (const std::string &name, const osgVector3 &half_axis)
+    LeafNodeSpherePtr_t LeafNodeSphere::create(const std::string& name, const float &radius)
     {
-        LeafNodeBoxPtr_t shared_ptr(new LeafNodeBox(name, half_axis));
+        LeafNodeSpherePtr_t shared_ptr(new LeafNodeSphere(name, radius));
         
         // Add reference to itself
-        shared_ptr->initWeakPtr( shared_ptr );
+        shared_ptr->initWeakPtr(shared_ptr);
         
         return shared_ptr;
     }
 
-    LeafNodeBoxPtr_t LeafNodeBox::create (const std::string &name, const osgVector3 &half_axis, const osgVector4 &color)
+    LeafNodeSpherePtr_t LeafNodeSphere::create(const std::string& name, const float &radius, const osgVector4& color)
     {
-        LeafNodeBoxPtr_t shared_ptr(new LeafNodeBox(name, half_axis, color));
+        LeafNodeSpherePtr_t shared_ptr(new LeafNodeSphere(name, radius, color));
 
         // Add reference to itself
-        shared_ptr->initWeakPtr( shared_ptr );
+        shared_ptr->initWeakPtr(shared_ptr);
 
         return shared_ptr;
     }
-    
-    LeafNodeBoxPtr_t LeafNodeBox::createCopy (LeafNodeBoxPtr_t other)
+
+    LeafNodeSpherePtr_t LeafNodeSphere::createCopy(LeafNodeSpherePtr_t other)
     {
-        LeafNodeBoxPtr_t shared_ptr(new LeafNodeBox(*other));
+        LeafNodeSpherePtr_t shared_ptr(new LeafNodeSphere(*other));
         
         // Add reference to itself
-        shared_ptr->initWeakPtr( shared_ptr );
+        shared_ptr->initWeakPtr(shared_ptr);
         
         return shared_ptr;
     }
@@ -99,27 +100,27 @@ namespace Graphics {
     
     /* Declaration of public function members */
     
-    LeafNodeBoxPtr_t LeafNodeBox::clone (void) const
+    LeafNodeSpherePtr_t LeafNodeSphere::clone(void) const
     {
-        return LeafNodeBox::createCopy(weak_ptr_.lock());
+        return LeafNodeSphere::createCopy(weak_ptr_.lock());
     }
     
-    LeafNodeBoxPtr_t LeafNodeBox::self (void) const
+    LeafNodeSpherePtr_t LeafNodeSphere::self(void) const
     {
         return weak_ptr_.lock();
     }
     
-    void LeafNodeBox::setHalfAxis (const osgVector3& half_axis)
-    {        
-        box_ptr_->setHalfLengths(half_axis);
+    void LeafNodeSphere::setRadius (const float& radius)
+    {
+        sphere_ptr_->setRadius(radius);
     }
     
-    void LeafNodeBox::setColor (const osgVector4 &color)
+    void LeafNodeSphere::setColor (osgVector4 color)
     {
         shape_drawable_ptr_->setColor(color);
     }
-
-    LeafNodeBox::~LeafNodeBox()
+    
+    LeafNodeSphere::~LeafNodeSphere()
     {
         /* Proper deletion of all tree scene */
         geode_ptr_->removeDrawable(shape_drawable_ptr_);

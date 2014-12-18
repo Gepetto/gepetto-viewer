@@ -1,12 +1,12 @@
 //
-//  LeafNodeFace.cpp
-//  SceneViewer
+//  leaf-node-face.cpp
+//  gepetto-viewer
 //
 //  Created by Justin Carpentier, Mathieu Geisert in November 2014.
 //  Copyright (c) 2014 LAAS-CNRS. All rights reserved.
 //
 
-#include <Graphics/LeafNodeFace.h>
+#include <gepetto/viewer/leaf-node-face.h>
 
 #include <osgUtil/SmoothingVisitor>
 #include <osg/CullFace>

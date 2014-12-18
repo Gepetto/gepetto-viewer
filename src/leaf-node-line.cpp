@@ -1,16 +1,16 @@
 //
-//  LeafNodeLine.cpp
-//  SceneViewer
+//  leaf-node-line.cpp
+//  gepetto-viewer
 //
 //  Created by Justin Carpentier, Mathieu Geisert in November 2014.
 //  Copyright (c) 2014 LAAS-CNRS. All rights reserved.
 //
 
-#include <Graphics/LeafNodeLine.h>
+#include <gepetto/viewer/leaf-node-line.h>
 
 #include <osg/CullFace>
 #include <osg/LineWidth>
-#include <Graphics/Node.h>
+#include <gepetto/viewer/node.h>
 
 namespace Graphics {
     

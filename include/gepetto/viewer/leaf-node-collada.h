@@ -1,6 +1,6 @@
 //
-//  LeafNodeCollada.h
-//  SceneViewer
+//  leaf-node-collada.h
+//  gepetto-viewer
 //
 //  Created by Justin Carpentier, Anthony Couret, Mathieu Geisert in November 2014.
 //  Copyright (c) 2014 LAAS-CNRS. All rights reserved.
@@ -9,7 +9,7 @@
 #ifndef SCENEVIEWER_LEAFNODECOLLADA_HH
 #define SCENEVIEWER_LEAFNODECOLLADA_HH
 
-#include "Node.h"
+#include <gepetto/viewer/node.h>
 #include <osgDB/ReadFile>
 
 namespace Graphics {

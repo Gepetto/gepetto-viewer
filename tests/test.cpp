@@ -7,19 +7,19 @@
 //
 
 #include <iostream>
-#include <Graphics/WindowManager.h>
-#include <Graphics/Node.h>
-#include <Graphics/GroupNode.h>
-#include <Graphics/LeafNodeBox.h>
-#include <Graphics/LeafNodeCapsule.h>
-#include <Graphics/LeafNodeCone.h>
-#include <Graphics/LeafNodeCylinder.h>
-#include <Graphics/LeafNodeLine.h>
-#include <Graphics/LeafNodeFace.h>
-#include <Graphics/LeafNodeSphere.h>
-#include <Graphics/LeafNodeGround.h>
-#include <Graphics/LeafNodeCollada.h>
-#include <Graphics/URDFparser.h>
+#include <gepetto/viewer/window-manager.h>
+#include <gepetto/viewer/node.h>
+#include <gepetto/viewer/group-node.h>
+#include <gepetto/viewer/leaf-node-box.h>
+#include <gepetto/viewer/leaf-node-capsule.h>
+#include <gepetto/viewer/leaf-node-cone.h>
+#include <gepetto/viewer/leaf-node-cylinder.h>
+#include <gepetto/viewer/leaf-node-line.h>
+#include <gepetto/viewer/leaf-node-face.h>
+#include <gepetto/viewer/leaf-node-sphere.h>
+#include <gepetto/viewer/leaf-node-ground.h>
+#include <gepetto/viewer/leaf-node-collada.h>
+#include <gepetto/viewer/urdf-parser.h>
 
   int main(int argc, const char * argv[])
 
