@@ -12,7 +12,7 @@
 #include <iostream>
 #include <gepetto/viewer/config-osg.h>
 
-namespace Graphics {
+namespace graphics {
     
     DEF_CLASS_SMART_PTR(Node)
     
@@ -137,6 +137,6 @@ namespace Graphics {
         
     }; /* class Node */
     
-} /* namespace Graphics */
+} /* namespace graphics */
 
 #endif /* dSCENEVIEWER_NODE_HH */

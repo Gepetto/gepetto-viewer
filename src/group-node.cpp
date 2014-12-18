@@ -8,17 +8,17 @@
 
 #include <gepetto/viewer/group-node.h>
 
-namespace Graphics {
+namespace graphics {
     
     /* Declaration of private function members */
     
     GroupNode::GroupNode (const std::string& name):
-        Graphics::Node (name), list_of_objects_()
+        graphics::Node (name), list_of_objects_()
     {
     }
     
     GroupNode::GroupNode (const GroupNode& other):
-        Graphics::Node (other), list_of_objects_()
+        graphics::Node (other), list_of_objects_()
     {        
         size_t i;
         for (i=0;
@@ -93,7 +93,7 @@ namespace Graphics {
     void GroupNode::setVisibilityMode (const VisibilityMode& visibility_state)
     {
         Node::setVisibilityMode (visibility_state);
-        std::list<Graphics::NodePtr_t>::iterator iter_list_of_objects;
+        std::list<graphics::NodePtr_t>::iterator iter_list_of_objects;
         for (iter_list_of_objects = list_of_objects_.begin();
              iter_list_of_objects != list_of_objects_.end();
              iter_list_of_objects++)
@@ -158,4 +158,4 @@ namespace Graphics {
     
     /* End of declaration of public function members */
     
-} /* namespace Graphics */
+} /* namespace graphics */

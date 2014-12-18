@@ -12,7 +12,7 @@
 #include <osg/LineWidth>
 #include <gepetto/viewer/node.h>
 
-namespace Graphics {
+namespace graphics {
     
     /* Declaration of private function members */
     void LeafNodeLine::init ()
@@ -52,7 +52,7 @@ namespace Graphics {
     }
     
     LeafNodeLine::LeafNodeLine (const std::string& name, const osgVector3& start_point, const osgVector3& end_point) :
-        Graphics::Node (name)
+        graphics::Node (name)
     {
         init ();
         setStartPoint(start_point);
@@ -61,7 +61,7 @@ namespace Graphics {
     }
 
     LeafNodeLine::LeafNodeLine (const std::string& name, const osgVector3& start_point, const osgVector3& end_point, const osgVector4& color) :
-        Graphics::Node (name)
+        graphics::Node (name)
     {
         init ();
         setStartPoint(start_point);
@@ -70,7 +70,7 @@ namespace Graphics {
     }
 
     LeafNodeLine::LeafNodeLine (const LeafNodeLine& other) :
-        Graphics::Node (other)
+        graphics::Node (other)
     {
         init();
         setStartPoint(other.getStartPoint());
@@ -178,4 +178,4 @@ namespace Graphics {
     
     /* End of declaration of public function members */
     
-} /* namespace Graphics */
+} /* namespace graphics */

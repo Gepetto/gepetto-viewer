@@ -11,7 +11,7 @@
 
 #include <gepetto/viewer/node.h>
 
-namespace Graphics {
+namespace graphics {
     DEF_CLASS_SMART_PTR(LeafNodeCapsule)
     
     /** Implementation of the Capsule GraphicalObject in OSG render */
@@ -94,6 +94,6 @@ namespace Graphics {
         /** Destructor */
         virtual ~LeafNodeCapsule();
     };
-} /* namespace Graphics */
+} /* namespace graphics */
 
 #endif /* SCENEVIEWER_LEAFNODECAPSULE_HH */

@@ -11,7 +11,7 @@
 #include <osg/Camera>
 #include <osgGA/TrackballManipulator>
 
-namespace Graphics {
+namespace graphics {
 
     /* Declaration of private function members */
     void WindowManager::init(const unsigned int& x,
@@ -20,7 +20,7 @@ namespace Graphics {
                                   const unsigned int& height)
     {
         std::string name = "root";
-        scene_ptr_ = ::Graphics::GroupNode::create(name);
+        scene_ptr_ = ::graphics::GroupNode::create(name);
 
         viewer_ptr_ = new ::osgViewer::Viewer();
         viewer_ptr_->setSceneData ( scene_ptr_->asGroup() );
@@ -208,4 +208,4 @@ namespace Graphics {
 
     /* End declaration of public function members */
 
-} /* namespace Graphics */
+} /* namespace graphics */

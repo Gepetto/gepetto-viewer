@@ -8,7 +8,7 @@
 
 #include <gepetto/viewer/leaf-node-cylinder.h>
 
-namespace Graphics {
+namespace graphics {
     
     /* Declaration of private function members */
     
@@ -142,4 +142,4 @@ namespace Graphics {
     
     /* End of declaration of public function members */
     
-} /* namespace Graphics */
+} /* namespace graphics */

@@ -11,7 +11,7 @@
 
 #include <gepetto/viewer/node.h>
 
-namespace Graphics {
+namespace graphics {
     DEF_CLASS_SMART_PTR(LeafNodeSphere)
     
     /** Implementation of the Sphere GraphicalObject in OSG render */
@@ -86,6 +86,6 @@ namespace Graphics {
         virtual ~LeafNodeSphere();
         
     };
-} /* namespace Graphics */
+} /* namespace graphics */
 
 #endif /* SCENEVIEWER_LEAFNODESPHERE_HH */

@@ -10,7 +10,7 @@
 #include <osg/Material>
 #include <climits>
 
-namespace Graphics {
+namespace graphics {
 
 /* Declaration of private function members */
 void Node::init ()
@@ -209,4 +209,4 @@ Node::~Node ()
 /* End of declaration of public function members */
 
 
-} /* namespace Graphics */
+} /* namespace graphics */

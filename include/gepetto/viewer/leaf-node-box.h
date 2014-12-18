@@ -11,7 +11,7 @@
 
 #include <gepetto/viewer/node.h>
 
-namespace Graphics {
+namespace graphics {
     DEF_CLASS_SMART_PTR(LeafNodeBox)
     
     /** Implementation of the Box GraphicalObject in OSG render engine */
@@ -85,6 +85,6 @@ namespace Graphics {
         virtual ~LeafNodeBox();
         
     };
-} /* namespace Graphics */
+} /* namespace graphics */
 
 #endif /* SCENEVIEWER_LEAFNODEBOX_HH */

@@ -14,8 +14,8 @@
 #include <gepetto/viewer/group-node.h>
 #include <gepetto/viewer/leaf-node-collada.h>
 
-namespace Graphics {
-namespace URDFparser{
+namespace graphics {
+namespace urdfParser {
 
         GroupNodePtr_t parse(const std::string& robotName, const std::string& urdf_file_path, const std::string& package_path);
 

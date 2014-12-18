@@ -12,7 +12,7 @@
 #include <gepetto/viewer/node.h>
 #include <osgDB/ReadFile>
 
-namespace Graphics {
+namespace graphics {
     DEF_CLASS_SMART_PTR(LeafNodeCollada)
     
     /** Implementation of the Collada GraphicalObject in OSG render */
@@ -66,6 +66,6 @@ namespace Graphics {
         virtual ~LeafNodeCollada();
         
     };
-} /* namespace Graphics */
+} /* namespace graphics */
 
 #endif /* SCENEVIEWER_LEAFNODECOLLADA_HH */

@@ -13,7 +13,7 @@
 #include <gepetto/viewer/group-node.h>
 #include <gepetto/viewer/node.h>
 
-namespace Graphics {
+namespace graphics {
 
     DEF_CLASS_SMART_PTR(WindowManager)
 
@@ -119,6 +119,6 @@ namespace Graphics {
 
         virtual ~WindowManager();
     };
-} /* namespace Graphics */
+} /* namespace graphics */
 
 #endif /* SCENEVIEWER_WINDOWMANAGER_HH */

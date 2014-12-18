@@ -11,7 +11,7 @@
 
 #include <gepetto/viewer/node.h>
 
-namespace Graphics
+namespace graphics
 {
     DEF_CLASS_SMART_PTR(LeafNodeGround)
     

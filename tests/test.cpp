@@ -24,7 +24,7 @@
   int main(int, const char**)
 
   {
-    using namespace Graphics;
+    using namespace graphics;
 
     LeafNodeBoxPtr_t box = LeafNodeBox::create("box1", osgVector3(1.,1.,1.));
     /*LeafNodeCapsulePtr_t capsule = LeafNodeCapsule::create("capsule1", 1,1);
@@ -40,7 +40,7 @@
 
     GroupNodePtr_t world = GroupNode::create(std::string("world"));
     //GroupNodePtr_t robot = GroupNode::create(std::string("robot"));
-    //GroupNodePtr_t robot = URDFparser::parse(std::string("hrp2"), std::string("/local/mgeisert/devel/src/hrp2/hrp2_14_description/urdf/hrp2_14_capsule.urdf"),std::string("/local/mgeisert/devel/src/hrp2/"));
+    //GroupNodePtr_t robot = urdfParser::parse(std::string("hrp2"), std::string("/local/mgeisert/devel/src/hrp2/hrp2_14_description/urdf/hrp2_14_capsule.urdf"),std::string("/local/mgeisert/devel/src/hrp2/"));
 
 
     /*world->addChild(robot);
