@@ -70,10 +70,10 @@ namespace Graphics {
 
     WindowManager::WindowManager (const WindowManager& other)
     {
-        init (other.getWindowPosition().x(),
-              other.getWindowPosition().y(),
-              other.getWindowDimension().x(),
-              other.getWindowDimension().y() );
+      init ((unsigned int) other.getWindowPosition().x(),
+	    (unsigned int) other.getWindowPosition().y(),
+	    (unsigned int) other.getWindowDimension().x(),
+	    (unsigned int) other.getWindowDimension().y());
     }
 
     void WindowManager::initWeakPtr (WindowManagerWeakPtr other_weak_ptr)
@@ -169,8 +169,8 @@ namespace Graphics {
     osgVector2 WindowManager::getWindowDimension() const
     {
         osgVector2 dimention;
-        dimention.x() = width_window_dimension_;
-        dimention.y() = height_window_dimension_;
+        dimention.x() = (osg::Vec2f::value_type) width_window_dimension_;
+        dimention.y() = (osg::Vec2f::value_type) height_window_dimension_;
         return dimention;
     }
 
@@ -187,8 +187,8 @@ namespace Graphics {
     osgVector2 WindowManager::getWindowPosition() const
     {
         osgVector2 position;
-        position.x() = x_window_position_;
-        position.y() = y_window_position_;
+        position.x() = (osg::Vec2f::value_type) x_window_position_;
+        position.y() = (osg::Vec2f::value_type) y_window_position_;
         return position;
     }
 

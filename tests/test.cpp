@@ -21,7 +21,7 @@
 #include <gepetto/viewer/leaf-node-collada.h>
 #include <gepetto/viewer/urdf-parser.h>
 
-  int main(int argc, const char * argv[])
+  int main(int, const char**)
 
   {
     using namespace Graphics;
