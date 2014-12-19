@@ -42,7 +42,7 @@ namespace graphics {
 
       mesh_shared_ptr = ::boost::static_pointer_cast< ::urdf::Mesh > ( links[i]->visual->geometry );
       link_name = links[i]->name;
-      std::cout << "Mesh" << std::endl;
+      std::cout << "Mesh " << std::endl;
       if ( mesh_shared_ptr != 0 ) 
         {
           mesh_path =  mesh_shared_ptr->filename.substr(10, mesh_shared_ptr->filename.size());
@@ -50,7 +50,9 @@ namespace graphics {
           osgVector3 static_pos; osgQuat static_quat;
           setStaticTransform(links,i,static_pos,static_quat);
           link->setStaticTransform(static_pos,static_quat);
-        
+          link->setScale(osgVector3(mesh_shared_ptr->scale.x,
+                                    mesh_shared_ptr->scale.y,
+                                    mesh_shared_ptr->scale.z));
           // add links to robot node
           robot->addChild(link);
         }
