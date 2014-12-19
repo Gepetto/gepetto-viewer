@@ -1,14 +1,14 @@
 //
-//  LeafNodeCollada.cpp
-//  SceneViewer
+//  leaf-node-collada.cpp
+//  gepetto-viewer
 //
 //  Created by Anthony Couret, Mathieu Geisert in November 2014.
 //  Copyright (c) 2014 LAAS-CNRS. All rights reserved.
 //
 
-#include <Graphics/LeafNodeCollada.h>
+#include <gepetto/viewer/leaf-node-collada.h>
 
-namespace Graphics {
+namespace graphics {
     
     /* Declaration of private function members */
 
@@ -90,4 +90,4 @@ namespace Graphics {
     
     /* End of declaration of public function members */
     
-} /* namespace Graphics */
+} /* namespace graphics */

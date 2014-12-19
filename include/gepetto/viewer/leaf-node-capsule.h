@@ -1,6 +1,6 @@
 //
-//  LeafNodeCapsule.h
-//  SceneViewer
+//  leaf-node-capsule.h
+//  gepetto-viewer
 //
 //  Created by Justin Carpentier, Mathieu Geisert in November 2014.
 //  Copyright (c) 2014 LAAS-CNRS. All rights reserved.
@@ -9,9 +9,9 @@
 #ifndef SCENEVIEWER_LEAFNODECAPSULE_HH
 #define SCENEVIEWER_LEAFNODECAPSULE_HH
 
-#include "Node.h"
+#include <gepetto/viewer/node.h>
 
-namespace Graphics {
+namespace graphics {
     DEF_CLASS_SMART_PTR(LeafNodeCapsule)
     
     /** Implementation of the Capsule GraphicalObject in OSG render */
@@ -94,6 +94,6 @@ namespace Graphics {
         /** Destructor */
         virtual ~LeafNodeCapsule();
     };
-} /* namespace Graphics */
+} /* namespace graphics */
 
 #endif /* SCENEVIEWER_LEAFNODECAPSULE_HH */

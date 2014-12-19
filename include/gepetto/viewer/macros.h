@@ -1,6 +1,6 @@
 //
 //  macros.h
-//  SceneViewer
+//  gepetto-viewer
 //
 //  Created by Justin Carpentier, Mathieu Geisert in  November 2014.
 //  Copyright (c) 2014 LAAS-CNRS. All rights reserved.

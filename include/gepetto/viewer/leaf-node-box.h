@@ -1,6 +1,6 @@
 //
-//  LeafNodeBox.h
-//  SceneViewer
+//  leaf-node-box.h
+//  gepetto-viewer
 //
 //  Created by Justin Carpentier, Mathieu Geisert in November 2014.
 //  Copyright (c) 2014 LAAS-CNRS. All rights reserved.
@@ -9,9 +9,9 @@
 #ifndef SCENEVIEWER_LEAFNODEBOX_HH
 #define SCENEVIEWER_LEAFNODEBOX_HH
 
-#include "Node.h"
+#include <gepetto/viewer/node.h>
 
-namespace Graphics {
+namespace graphics {
     DEF_CLASS_SMART_PTR(LeafNodeBox)
     
     /** Implementation of the Box GraphicalObject in OSG render engine */
@@ -85,6 +85,6 @@ namespace Graphics {
         virtual ~LeafNodeBox();
         
     };
-} /* namespace Graphics */
+} /* namespace graphics */
 
 #endif /* SCENEVIEWER_LEAFNODEBOX_HH */

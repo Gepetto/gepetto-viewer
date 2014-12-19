@@ -1,6 +1,6 @@
 //
-//  config.h
-//  SceneViewer
+//  config-osg.h
+//  gepetto-viewer
 //
 //  Created by Justin Carpentier on 06/02/2014.
 //  Modified by Mathieu Geisert in November 2014.
@@ -10,7 +10,7 @@
 #ifndef DynAndGraph_config_h
 #define DynAndGraph_config_h
 
-#include "macros.h"
+#include <gepetto/viewer/macros.h>
 
 #include <osg/Shape>
 #include <osg/ShapeDrawable>
@@ -109,7 +109,7 @@ typedef ::osg::Vec4f osgVector4;
 
 typedef ::osg::Quat osgQuat;
 
-namespace Graphics {
+namespace graphics {
     
 #define DEF_WIDTH_WINDOW 600
 #define DEF_HEIGHT_WINDOW 480
@@ -142,6 +142,6 @@ namespace Graphics {
     };     
 
     
-} /* namespace Graphics */
+} /* namespace graphics */
 
 #endif

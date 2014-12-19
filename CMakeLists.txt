@@ -24,7 +24,7 @@ INCLUDE(cmake/base.cmake)
 INCLUDE(cmake/eigen.cmake)
 #INCLUDE(cmake/cpack.cmake)
 
-SET(PROJECT_NAME SceneViewer)
+SET(PROJECT_NAME gepetto-viewer)
 SET(PROJECT_DESCRIPTION
   "Implement simple Viewer using OpenSceneGraph."
   )
@@ -38,21 +38,21 @@ SETUP_PROJECT()
 
 # Declare Headers
 SET(${PROJECT_NAME}_HEADERS
-  include/Graphics/config.h
-  include/Graphics/GroupNode.h
-  include/Graphics/LeafNodeBox.h
-  include/Graphics/LeafNodeCapsule.h
-  include/Graphics/LeafNodeCollada.h
-  include/Graphics/LeafNodeCone.h
-  include/Graphics/LeafNodeCylinder.h
-  include/Graphics/LeafNodeFace.h
-  include/Graphics/LeafNodeGround.h
-  include/Graphics/LeafNodeLine.h
-  include/Graphics/LeafNodeSphere.h
-  include/Graphics/macros.h
-  include/Graphics/Node.h
-  include/Graphics/URDFparser.h
-  include/Graphics/WindowManager.h
+  include/gepetto/viewer/config-osg.h
+  include/gepetto/viewer/group-node.h
+  include/gepetto/viewer/leaf-node-box.h
+  include/gepetto/viewer/leaf-node-capsule.h
+  include/gepetto/viewer/leaf-node-collada.h
+  include/gepetto/viewer/leaf-node-cone.h
+  include/gepetto/viewer/leaf-node-cylinder.h
+  include/gepetto/viewer/leaf-node-face.h
+  include/gepetto/viewer/leaf-node-ground.h
+  include/gepetto/viewer/leaf-node-line.h
+  include/gepetto/viewer/leaf-node-sphere.h
+  include/gepetto/viewer/macros.h
+  include/gepetto/viewer/node.h
+  include/gepetto/viewer/urdf-parser.h
+  include/gepetto/viewer/window-manager.h
 )
 
 ADD_REQUIRED_DEPENDENCY("openscenegraph >= 3.2")

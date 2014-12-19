@@ -7,40 +7,40 @@
 //
 
 #include <iostream>
-#include <Graphics/WindowManager.h>
-#include <Graphics/Node.h>
-#include <Graphics/GroupNode.h>
-#include <Graphics/LeafNodeBox.h>
-#include <Graphics/LeafNodeCapsule.h>
-#include <Graphics/LeafNodeCone.h>
-#include <Graphics/LeafNodeCylinder.h>
-#include <Graphics/LeafNodeLine.h>
-#include <Graphics/LeafNodeFace.h>
-#include <Graphics/LeafNodeSphere.h>
-#include <Graphics/LeafNodeGround.h>
-#include <Graphics/LeafNodeCollada.h>
-#include <Graphics/URDFparser.h>
+#include <gepetto/viewer/window-manager.h>
+#include <gepetto/viewer/node.h>
+#include <gepetto/viewer/group-node.h>
+#include <gepetto/viewer/leaf-node-box.h>
+#include <gepetto/viewer/leaf-node-capsule.h>
+#include <gepetto/viewer/leaf-node-cone.h>
+#include <gepetto/viewer/leaf-node-cylinder.h>
+#include <gepetto/viewer/leaf-node-line.h>
+#include <gepetto/viewer/leaf-node-face.h>
+#include <gepetto/viewer/leaf-node-sphere.h>
+#include <gepetto/viewer/leaf-node-ground.h>
+#include <gepetto/viewer/leaf-node-collada.h>
+#include <gepetto/viewer/urdf-parser.h>
 
-  int main(int argc, const char * argv[])
+  int main(int, const char**)
 
   {
-    using namespace Graphics;
+    using namespace graphics;
 
-    /*LeafNodeBoxPtr_t box = LeafNodeBox::create("box1", osgVector3(1.,1.,1.));
-    LeafNodeCapsulePtr_t capsule = LeafNodeCapsule::create("capsule1", 1,1);
+    LeafNodeBoxPtr_t box = LeafNodeBox::create("box1", osgVector3(1.,1.,1.));
+    /*LeafNodeCapsulePtr_t capsule = LeafNodeCapsule::create("capsule1", 1,1);
     LeafNodeConePtr_t cone = LeafNodeCone::create("cone", 1,1);
     LeafNodeCylinderPtr_t cylindre = LeafNodeCylinder::create("cylindre", 1,1);
     LeafNodeSpherePtr_t sphere = LeafNodeSphere::create("sphere", 1);
-    LeafNodeGroundPtr_t ground = LeafNodeGround::create("ground");
-    LeafNodeColladaPtr_t collada = LeafNodeCollada::create("collada","/local/mgeisert/devel/install/share/airbus_environment/urdf/meshes/screw_gun.dae");
-    */
+    LeafNodeGroundPtr_t ground = LeafNodeGround::create("ground");*/
+    //LeafNodeColladaPtr_t collada = LeafNodeCollada::create("collada","/home/simeval/AluminumChair.dae");
+    box->addLandmark(1.);
     //LeafNodeLinePtr_t line = LeafNodeLine::create(std::string("line"), osgVector3(1.0,1.0,1.0), osgVector3(0.0,0.0,0.0));
-    LeafNodeFacePtr_t face = LeafNodeFace::create(std::string("face"), osgVector3(0.0,0.0,0.0), osgVector3(-2.0,0.0,0.0), osgVector3(-2.0,-2.0,0.0), osgVector3(0.0,-2.0,0.0));
+    //LeafNodeFacePtr_t face = LeafNodeFace::create(std::string("face"), osgVector3(0.0,0.0,0.0), osgVector3(-2.0,0.0,0.0), osgVector3(-2.0,-2.0,0.0), osgVector3(0.0,-2.0,0.0));
     //face->addVertex(osgVector3(0.,0.,2.));
 
     GroupNodePtr_t world = GroupNode::create(std::string("world"));
     //GroupNodePtr_t robot = GroupNode::create(std::string("robot"));
-    //GroupNodePtr_t robot = URDFparser::parse(std::string("hrp2"), std::string("/local/mgeisert/devel/src/hrp2/hrp2_14_description/urdf/hrp2_14_capsule.urdf"),std::string("/local/mgeisert/devel/src/hrp2/"));
+    //GroupNodePtr_t robot = urdfParser::parse(std::string("hrp2"), std::string("/local/mgeisert/devel/src/hrp2/hrp2_14_description/urdf/hrp2_14_capsule.urdf"),std::string("/local/mgeisert/devel/src/hrp2/"));
 
 
     /*world->addChild(robot);
@@ -78,12 +78,16 @@
 
     //world->addChild(ground);
     //world->addChild(line);
-    world->addChild(face);
+    world->addChild(box);
     //world->addChild(robot);
     WindowManagerPtr_t gm = WindowManager::create();
     gm->addNode(world);
     //osgViewer::Viewer viewer;
     //viewer.setSceneData( world->asGroup() );
+    box->deleteLandmark();
+    box->addLandmark(2.);
+    box->applyConfiguration(osgVector3(0.,0.,0.), osgQuat(0.884,0.306,-0.177,0.306));
+    world->addLandmark(1.);
 
     return gm->run();
   }

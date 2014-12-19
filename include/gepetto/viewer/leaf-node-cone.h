@@ -1,6 +1,6 @@
 //
-//  LeafNodeCone.h
-//  SceneViewer
+//  leaf-node-cone.h
+//  gepetto-viewer
 //
 //  Created by Justin Carpentier, Mathieu Geisert in November 2014.
 //  Copyright (c) 2014 LAAS-CNRS. All rights reserved.
@@ -9,9 +9,9 @@
 #ifndef SCENEVIEWER_LEAFNODECONE_HH
 #define SCENEVIEWER_LEAFNODECONE_HH
 
-#include "Node.h"
+#include <gepetto/viewer/node.h>
 
-namespace Graphics {
+namespace graphics {
     DEF_CLASS_SMART_PTR(LeafNodeCone)
     
     /** Implementation of the Cone GraphicalObject in OSG render */
@@ -96,6 +96,6 @@ namespace Graphics {
         virtual ~LeafNodeCone();
         
     };
-} /* namespace Graphics */
+} /* namespace graphics */
 
 #endif /* SCENEVIEWER_LEAFNODECONE_HH */

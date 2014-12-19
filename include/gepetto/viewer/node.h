@@ -1,6 +1,6 @@
 //
-//  Node.h
-//  SceneViewer
+//  node.h
+//  gepetto-viewer
 //
 //  Created by Justin Carpentier, Mathieu Geisert in November 2014.
 //  Copyright (c) 2014 LAAS-CNRS. All rights reserved.
@@ -10,9 +10,9 @@
 #define SCENEVIEWER_NODE_HH
 
 #include <iostream>
-#include "config.h"
+#include <gepetto/viewer/config-osg.h>
 
-namespace Graphics {
+namespace graphics {
     
     DEF_CLASS_SMART_PTR(Node)
     
@@ -35,6 +35,9 @@ namespace Graphics {
         
         /** Associated switch node */
         osg::SwitchRefPtr switch_node_ptr_;
+
+        /** Geode pointer for landmarks */
+        ::osg::GeodeRefPtr landmark_geode_ptr_;
         
         /** Initialization function */
         void init ();
@@ -107,6 +110,10 @@ namespace Graphics {
         {
             return switch_node_ptr_;
         }
+
+        void addLandmark(const float& size);
+
+        void deleteLandmark();
         
         /*Tools::ConfigurationPtr_t getConfiguration () const
         {
@@ -133,6 +140,6 @@ namespace Graphics {
         
     }; /* class Node */
     
-} /* namespace Graphics */
+} /* namespace graphics */
 
 #endif /* dSCENEVIEWER_NODE_HH */

@@ -3,8 +3,8 @@
 # Authors: Mathieu Geisert
 #
 #
-# This file is part of SceneViewer
-# SceneViewer is free software: you can redistribute it
+# This file is part of gepetto-viewer
+# gepetto-viewer is free software: you can redistribute it
 # and/or modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation, either version
 # 3 of the License, or (at your option) any later version.
@@ -20,19 +20,19 @@
 SET(LIBRARY_NAME ${PROJECT_NAME})
 
 ADD_LIBRARY(${LIBRARY_NAME} SHARED
-  GroupNode.cpp
-  Node.cpp
-  WindowManager.cpp
-  LeafNodeLine.cpp
-  LeafNodeBox.cpp
-  LeafNodeCylinder.cpp
-  LeafNodeCone.cpp
-  LeafNodeFace.cpp
-  LeafNodeSphere.cpp
-  LeafNodeCapsule.cpp
-  LeafNodeGround.cpp
-  LeafNodeCollada.cpp
-  URDFparser.cpp
+  group-node.cpp
+  node.cpp
+  window-manager.cpp
+  leaf-node-line.cpp
+  leaf-node-box.cpp
+  leaf-node-cylinder.cpp
+  leaf-node-cone.cpp
+  leaf-node-face.cpp
+  leaf-node-sphere.cpp
+  leaf-node-capsule.cpp
+  leaf-node-ground.cpp
+  leaf-node-collada.cpp
+  urdf-parser.cpp
 )
 
 PKG_CONFIG_USE_DEPENDENCY(${LIBRARY_NAME} openscenegraph)

@@ -1,17 +1,17 @@
 //
-//  URDFparser.cpp
-//  SceneViewer
+//  urdf-parser.cpp
+//  gepetto-viewer
 //
 //  Created by Anthony Couret, Mathieu Geisert in November 2014.
 //  Copyright (c) 2014 LAAS-CNRS. All rights reserved.
 //
 
-#include <Graphics/URDFparser.h>
-#include <Graphics/LeafNodeCylinder.h>
-#include <Graphics/LeafNodeBox.h>
-#include <Graphics/LeafNodeSphere.h>
+#include <gepetto/viewer/urdf-parser.h>
+#include <gepetto/viewer/leaf-node-cylinder.h>
+#include <gepetto/viewer/leaf-node-box.h>
+#include <gepetto/viewer/leaf-node-sphere.h>
 
-namespace Graphics {
+namespace graphics {
 
   namespace internal_urdf_parser
   {
@@ -135,7 +135,7 @@ namespace Graphics {
   
   }
 
-  GroupNodePtr_t URDFparser::parse(const std::string& robotName, const std::string& urdf_file_path, const std::string& package_path)
+  GroupNodePtr_t urdfParser::parse(const std::string& robotName, const std::string& urdf_file_path, const std::string& package_path)
   {
     boost::shared_ptr< urdf::ModelInterface > model = urdf::parseURDFFile( urdf_file_path );
     GroupNodePtr_t robot = GroupNode::create(robotName);

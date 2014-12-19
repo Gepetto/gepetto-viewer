@@ -1,20 +1,20 @@
 //
-//  LeafNodeGround.cpp
-//  SceneViewer
+//  leaf-node-ground.cpp
+//  gepetto-viewer
 //
 //  Created by Justin Carpentier, Mathieu Geisert in November 2014.
 //  Copyright (c) 2014 LAAS-CNRS. All rights reserved.
 //
 
-#include <Graphics/LeafNodeGround.h>
+#include <gepetto/viewer/leaf-node-ground.h>
 
-namespace Graphics {
+namespace graphics {
     
     /* Declaration of private function members */
     
     void LeafNodeGround::init()
     {
-      //node_osg_ptr_ = ::Graphics::NodeOSG::create(getCenter(), getRotation(), getConfiguration());
+      //node_osg_ptr_ = ::graphics::NodeOSG::create(getCenter(), getRotation(), getConfiguration());
       osgVector3 center = osgVector3( length_ , width_ , 0.f );
       
       /* Number of cells on both dimensions */

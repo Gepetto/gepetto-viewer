@@ -1,24 +1,24 @@
 //
-//  LeafNodeCone.cpp
-//  SceneViewer
+//  leaf-node-capsule.cpp
+//  gepetto-viewer
 //
 //  Created by Justin Carpentier, Mathieu Geisert in November 2014.
 //  Copyright (c) 2014 LAAS-CNRS. All rights reserved.
 //
 
-#include <Graphics/LeafNodeCone.h>
+#include <gepetto/viewer/leaf-node-capsule.h>
 
-namespace Graphics {
+namespace graphics {
     
     /* Declaration of private function members */
     
-    void LeafNodeCone::init ()
+    void LeafNodeCapsule::init ()
     {
-        /* Create cone object */
-        cone_ptr_ = new ::osg::Cone ();
-
+        /* Create capsule object */
+        capsule_ptr_ = new ::osg::Capsule ();
+        
         /* Set ShapeDrawable */
-        shape_drawable_ptr_ = new ::osg::ShapeDrawable(cone_ptr_);
+        shape_drawable_ptr_ = new ::osg::ShapeDrawable(capsule_ptr_);
         
         /* Create Geode for adding ShapeDrawable */
         geode_ptr_ = new osg::Geode ();
@@ -32,8 +32,8 @@ namespace Graphics {
         geode_ptr_->getOrCreateStateSet()->setMode(GL_BLEND, ::osg::StateAttribute::ON);
     }
     
-    LeafNodeCone::LeafNodeCone (const std::string& name, const float& radius, const float &height) :
-        Node (name)
+    LeafNodeCapsule::LeafNodeCapsule (const std::string& name, const float& radius, const float &height) :
+        Node(name)
     {
         init();
         setRadius(radius);
@@ -41,15 +41,16 @@ namespace Graphics {
         setColor(osgVector4(1.,1.,1.,1.));
     }
 
-    LeafNodeCone::LeafNodeCone (const std::string& name, const float& radius, const float &height, const osgVector4& color) :
-        Node (name)
+    LeafNodeCapsule::LeafNodeCapsule (const std::string& name, const float& radius, const float &height, const osgVector4& color) :
+        Node(name)
     {
         init();
         setRadius(radius);
         setHeight(height);
         setColor(color);
     }
-    LeafNodeCone::LeafNodeCone (const LeafNodeCone& other) :
+
+    LeafNodeCapsule::LeafNodeCapsule (const LeafNodeCapsule& other) :
         Node(other)
     {
         init();
@@ -58,7 +59,7 @@ namespace Graphics {
         setColor(other.getColor());
     }
     
-    void LeafNodeCone::initWeakPtr (LeafNodeConeWeakPtr other_weak_ptr)
+    void LeafNodeCapsule::initWeakPtr (LeafNodeCapsuleWeakPtr other_weak_ptr)
     {
         weak_ptr_ = other_weak_ptr;
     }
@@ -67,9 +68,9 @@ namespace Graphics {
     
     /* Declaration of protected function members */
     
-    LeafNodeConePtr_t LeafNodeCone::create (const std::string& name, const float &radius, const float &height)
+    LeafNodeCapsulePtr_t LeafNodeCapsule::create (const std::string& name, const float &radius, const float &height)
     {
-        LeafNodeConePtr_t shared_ptr (new LeafNodeCone(name, radius, height));
+        LeafNodeCapsulePtr_t shared_ptr (new LeafNodeCapsule(name, radius, height));
         
         // Add reference to itself
         shared_ptr->initWeakPtr (shared_ptr);
@@ -77,9 +78,9 @@ namespace Graphics {
         return shared_ptr;
     }
     
-    LeafNodeConePtr_t LeafNodeCone::create (const std::string& name, const float &radius, const float &height, const osgVector4& color)
+    LeafNodeCapsulePtr_t LeafNodeCapsule::create (const std::string& name, const float &radius, const float &height, const osgVector4& color)
     {
-        LeafNodeConePtr_t shared_ptr (new LeafNodeCone(name, radius, height, color));
+        LeafNodeCapsulePtr_t shared_ptr (new LeafNodeCapsule(name, radius, height, color));
 
         // Add reference to itself
         shared_ptr->initWeakPtr (shared_ptr);
@@ -87,9 +88,9 @@ namespace Graphics {
         return shared_ptr;
     }
 
-    LeafNodeConePtr_t LeafNodeCone::createCopy (LeafNodeConePtr_t other)
+    LeafNodeCapsulePtr_t LeafNodeCapsule::createCopy (const LeafNodeCapsulePtr_t& other)
     {
-        LeafNodeConePtr_t shared_ptr (new LeafNodeCone(*other));
+        LeafNodeCapsulePtr_t shared_ptr (new LeafNodeCapsule(*other));
         
         // Add reference to itself
         shared_ptr->initWeakPtr (shared_ptr);
@@ -101,37 +102,37 @@ namespace Graphics {
     
     /* Declaration of public function members */
     
-    LeafNodeConePtr_t LeafNodeCone::clone (void) const
+    LeafNodeCapsulePtr_t LeafNodeCapsule::clone (void) const
     {
-        return LeafNodeCone::createCopy(weak_ptr_.lock());
+        return LeafNodeCapsule::createCopy(weak_ptr_.lock());
     }
     
-    LeafNodeConePtr_t LeafNodeCone::self (void) const
+    LeafNodeCapsulePtr_t LeafNodeCapsule::self (void) const
     {
         return weak_ptr_.lock ();
     }
     
-    void LeafNodeCone::setRadius (const float& radius)
+    void LeafNodeCapsule::setRadius (const float& radius)
     {
-        cone_ptr_->setRadius(radius);
+        capsule_ptr_->setRadius(radius);
     }
     
-    void LeafNodeCone::setHeight (const float& height)
-    {  
-        cone_ptr_->setHeight(height);
+    void LeafNodeCapsule::setHeight (const float& height)
+    {
+        capsule_ptr_->setHeight(height);
     }
     
-    void LeafNodeCone::setColor (const osgVector4& color)
+    void LeafNodeCapsule::setColor (const osgVector4& color)
     {
         shape_drawable_ptr_->setColor(color);
     }
-    
-    LeafNodeCone::~LeafNodeCone ()
+
+    LeafNodeCapsule::~LeafNodeCapsule ()
     {
         /* Proper deletion of all tree scene */
         geode_ptr_->removeDrawable(shape_drawable_ptr_);
         shape_drawable_ptr_ = NULL;
-
+        
         this->asQueue()->removeChild(geode_ptr_);
         geode_ptr_ = NULL;
         
@@ -140,4 +141,4 @@ namespace Graphics {
     
     /* End of declaration of public function members */
     
-} /* namespace Graphics */
+} /* namespace graphics */

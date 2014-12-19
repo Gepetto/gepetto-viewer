@@ -1,6 +1,6 @@
 //
-//  GroupNode.h
-//  SceneViewer
+//  group-node.h
+//  gepetto-viewer
 //
 //  Created by Justin Carpentier, Mathieu Geisert in November 2014.
 //  Copyright (c) 2014 LAAS-CNRS. All rights reserved.
@@ -9,9 +9,9 @@
 #ifndef SCENEVIEWER_GROUPNODE_HH
 #define SCENEVIEWER_GROUPNODE_HH
 
-#include "Node.h"
+#include <gepetto/viewer/node.h>
 
-namespace Graphics {
+namespace graphics {
     
     DEF_CLASS_SMART_PTR(GroupNode)
     
@@ -21,7 +21,7 @@ namespace Graphics {
         /**
          \brief List of all child graphical object
          */
-        std::list<Graphics::NodePtr_t> list_of_objects_;
+        std::list<graphics::NodePtr_t> list_of_objects_;
         
         /** Associated weak pointer */
         GroupNodeWeakPtr weak_ptr_;
@@ -58,11 +58,11 @@ namespace Graphics {
         
         /** Add a GraphicalObject to the list
          */
-        virtual bool addChild (::Graphics::NodePtr_t child_ptr);
+        virtual bool addChild (::graphics::NodePtr_t child_ptr);
         
         /** Remove a GraphicalObject from the list
          */
-        virtual bool removeChild (::Graphics::NodePtr_t child_ptr);
+        virtual bool removeChild (::graphics::NodePtr_t child_ptr);
         
         /** Remove all children
          */
@@ -73,9 +73,9 @@ namespace Graphics {
           return list_of_objects_.size();
         }
 
-        virtual Graphics::NodePtr_t getChild(size_t i) const
+        virtual graphics::NodePtr_t getChild(size_t i) const
         {  
-           std::list<Graphics::NodePtr_t>::const_iterator it = list_of_objects_.begin();
+           std::list<graphics::NodePtr_t>::const_iterator it = list_of_objects_.begin();
            if (list_of_objects_.size() > i)
            {
                std::advance(it, i);
@@ -115,6 +115,6 @@ namespace Graphics {
         
     }; /* class GraphicalGroupOSG */
 
-} /* namespace Graphics */
+} /* namespace graphics */
 
 #endif /* SCENEVIEWER_GROUPNODE_HH */

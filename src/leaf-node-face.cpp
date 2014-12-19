@@ -1,18 +1,18 @@
 //
-//  LeafNodeFace.cpp
-//  SceneViewer
+//  leaf-node-face.cpp
+//  gepetto-viewer
 //
 //  Created by Justin Carpentier, Mathieu Geisert in November 2014.
 //  Copyright (c) 2014 LAAS-CNRS. All rights reserved.
 //
 
-#include <Graphics/LeafNodeFace.h>
+#include <gepetto/viewer/leaf-node-face.h>
 
 #include <osgUtil/SmoothingVisitor>
 #include <osg/CullFace>
 
 
-namespace Graphics {
+namespace graphics {
     
     /* Declaration of private function members */
     
@@ -188,4 +188,4 @@ namespace Graphics {
     
     /* End of declaration of public function members */
     
-} /* namespace Graphics */
+} /* namespace graphics */

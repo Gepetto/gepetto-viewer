@@ -1,14 +1,14 @@
 //
-//  LeafNodeCylinder.cpp
-//  SceneViewer
+//  leaf-node-cylinder.cpp
+//  gepetto-viewer
 //
 //  Created by Justin Carpentier, Mathieu Geisert in November 2014.
 //  Copyright (c) 2014 LAAS-CNRS. All rights reserved.
 //
 
-#include <Graphics/LeafNodeCylinder.h>
+#include <gepetto/viewer/leaf-node-cylinder.h>
 
-namespace Graphics {
+namespace graphics {
     
     /* Declaration of private function members */
     
@@ -142,4 +142,4 @@ namespace Graphics {
     
     /* End of declaration of public function members */
     
-} /* namespace Graphics */
+} /* namespace graphics */
