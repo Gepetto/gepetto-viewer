@@ -86,6 +86,20 @@ namespace Graphics {
     {
         auto_transform_ptr_->setScale(scale);
     }
+
+    void Node::setScale(const osg::Vec3d &scale)
+    {
+      double lmin=scale._v[0];
+      if (lmin>scale._v[1])
+        lmin=scale._v[1];
+      if (lmin>scale._v[2])
+        lmin=scale._v[2];
+
+      if(lmin<auto_transform_ptr_->getMinimumScale())
+        auto_transform_ptr_->setMinimumScale(lmin);
+        
+      auto_transform_ptr_->setScale(scale);
+    }
     
     void Node::setVisibilityMode (const VisibilityMode& mode)
     {

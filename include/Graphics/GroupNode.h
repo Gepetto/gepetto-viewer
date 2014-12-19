@@ -41,7 +41,7 @@ namespace Graphics {
     public:
         /** Static method which create a new box defined by the half_axis vector
          */
-        static GroupNodePtr_t create(const std::string& name);
+       static GroupNodePtr_t create(const std::string& name);
         
         /** Static method for creating a clone of box other with the copy constructor
          */

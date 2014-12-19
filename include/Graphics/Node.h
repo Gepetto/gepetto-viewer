@@ -96,6 +96,9 @@ namespace Graphics {
         
         /** Set scale value of the OSG object */
         virtual void setScale (const float& scale);
+
+        /** Set scales value of the OSG object */
+        virtual void setScale (const osg::Vec3d & scale);
         
         /**
          \brief Return the root node to include it in the scene
