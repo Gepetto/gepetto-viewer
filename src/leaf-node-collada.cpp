@@ -6,6 +6,8 @@
 //  Copyright (c) 2014 LAAS-CNRS. All rights reserved.
 //
 
+#include <fstream>
+#include <ios>
 #include <gepetto/viewer/leaf-node-collada.h>
 
 namespace graphics {
@@ -47,12 +49,18 @@ namespace graphics {
     
     LeafNodeColladaPtr_t LeafNodeCollada::create(const std::string& name, const std::string& collada_file_path)
     {
-        LeafNodeColladaPtr_t shared_ptr(new LeafNodeCollada(name, collada_file_path));
+      std::ifstream infile(collada_file_path.c_str ());
+      if (!infile.good()) {
+	throw std::ios_base::failure (collada_file_path +
+				      std::string (" does not exist."));
+      }
+      LeafNodeColladaPtr_t shared_ptr(new LeafNodeCollada
+				      (name, collada_file_path));
         
-        // Add reference to itself
-        shared_ptr->initWeakPtr(shared_ptr);
+      // Add reference to itself
+      shared_ptr->initWeakPtr(shared_ptr);
         
-        return shared_ptr;
+      return shared_ptr;
     }
     
     LeafNodeColladaPtr_t LeafNodeCollada::createCopy(LeafNodeColladaPtr_t other)
