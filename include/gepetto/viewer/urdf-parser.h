@@ -15,11 +15,23 @@
 #include <gepetto/viewer/leaf-node-collada.h>
 
 namespace graphics {
-namespace urdfParser {
+  namespace urdfParser {
 
-        GroupNodePtr_t parse(const std::string& robotName, const std::string& urdf_file_path, const std::string& package_path);
+    /// Parse an urdf file
+    /// \param robotName Name of the node that will contain the robot geometry,
+    ///                  each geometric part is prefixed by this name,
+    /// \param urdf_file_path to the package containing the urdf file,
+    ///                       i.e. "/opt/ros/hydro/share/pr2_description",
+    /// \param meshDataRootDir path to the package that contains the collada
+    ///                        files,
+    ///                        i.e. "/opt/ros/hydro/share/"
+    /// \note the parser will replace "package://" by meshDataRootDir in the
+    ///       urdf file.
+    GroupNodePtr_t parse (const std::string& robotName,
+			  const std::string& urdf_file_path,
+			  const std::string& meshDataRootDir);
 
-}    
+  }
 }
 
 #endif // SCENEVIEWER_URDFPARSER_HH

@@ -31,8 +31,8 @@ namespace graphics {
     }
 
     void addMesh(const std::string &robotName,
-                 const std::string &package_path,
-                 std::vector< boost::shared_ptr < urdf::Link > > &links, 
+                 const std::string &meshDataRootDir,
+                 std::vector< boost::shared_ptr < urdf::Link > > &links,
                  int i,
                  GroupNodePtr_t &robot)
     {
@@ -135,7 +135,9 @@ namespace graphics {
   
   }
 
-  GroupNodePtr_t urdfParser::parse(const std::string& robotName, const std::string& urdf_file_path, const std::string& package_path)
+  GroupNodePtr_t urdfParser::parse (const std::string& robotName,
+				    const std::string& urdf_file_path,
+				    const std::string& meshDataRootDir)
   {
     boost::shared_ptr< urdf::ModelInterface > model = urdf::parseURDFFile( urdf_file_path );
     GroupNodePtr_t robot = GroupNode::create(robotName);
@@ -150,8 +152,9 @@ namespace graphics {
       if ( links[i]->visual != NULL && links[i]->visual->geometry != NULL)
         {
           switch (links[i]->visual->geometry->type) {
-          case urdf::Geometry::MESH:	
-            internal_urdf_parser::addMesh(robotName,package_path,links,i,robot);
+          case urdf::Geometry::MESH:
+            internal_urdf_parser::addMesh (robotName, meshDataRootDir, links,
+					   i,robot);
             break;
           case urdf::Geometry::CYLINDER:
             internal_urdf_parser::addCylinder(robotName,links,i,robot);
