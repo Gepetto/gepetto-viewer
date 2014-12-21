@@ -17,7 +17,7 @@
 namespace graphics {
   namespace urdfParser {
 
-    /// Parse an urdf file
+    /// Create a node from an urdf file
     /// \param robotName Name of the node that will contain the robot geometry,
     ///                  each geometric part is prefixed by this name,
     /// \param urdf_file_path to the package containing the urdf file,

@@ -45,8 +45,15 @@ namespace graphics {
       std::cout << "Mesh " << std::endl;
       if ( mesh_shared_ptr != 0 )
         {
-          mesh_path =  mesh_shared_ptr->filename.substr(10, mesh_shared_ptr->filename.size());
-          LeafNodeColladaPtr_t link = LeafNodeCollada::create( robotName + "/" + link_name, package_path + mesh_path);
+	  if (mesh_shared_ptr->filename.substr(0, 10) != "package://") {
+	    throw std::runtime_error ("Error when parsing urdf file: "
+				      "mesh filename should start with"
+				      " \"package://\"");
+	  }
+          mesh_path =  mesh_shared_ptr->filename.substr
+	    (10, mesh_shared_ptr->filename.size());
+          LeafNodeColladaPtr_t link = LeafNodeCollada::create
+	    (robotName + "/" + link_name, meshDataRootDir + mesh_path);
           osgVector3 static_pos; osgQuat static_quat;
           setStaticTransform(links,i,static_pos,static_quat);
           link->setStaticTransform(static_pos,static_quat);
