@@ -53,6 +53,9 @@ namespace graphics {
          */
         virtual LeafNodeColladaPtr_t clone(void) const;
         
+        /** Returns a pointer to the NodeRefPtr  */
+        ::osg::NodeRefPtr getColladaPtr(void);
+
         /** Copy
          \brief Proceed to a copy of the currend object as clone
          */
