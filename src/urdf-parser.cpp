@@ -34,13 +34,19 @@ namespace graphics {
                  const std::string &meshDataRootDir,
                  std::vector< boost::shared_ptr < urdf::Link > > &links,
                  int i,
-                 GroupNodePtr_t &robot)
+                 GroupNodePtr_t &robot, bool visual)
     {
       std::string link_name;
       std::string mesh_path;
       ::boost::shared_ptr< ::urdf::Mesh > mesh_shared_ptr;
 
-      mesh_shared_ptr = ::boost::static_pointer_cast< ::urdf::Mesh > ( links[i]->visual->geometry );
+      if (visual) {
+	mesh_shared_ptr = boost::static_pointer_cast< ::urdf::Mesh >
+	  ( links[i]->visual->geometry );
+      } else {
+	mesh_shared_ptr = boost::static_pointer_cast< ::urdf::Mesh >
+	  ( links[i]->collision->geometry );
+      }
       link_name = links[i]->name;
       std::cout << "Mesh " << std::endl;
       if ( mesh_shared_ptr != 0 )
@@ -68,12 +74,18 @@ namespace graphics {
     void addCylinder(const std::string &robotName,
                      std::vector< boost::shared_ptr < urdf::Link > > &links,
                      int i,
-                     GroupNodePtr_t &robot)
+                     GroupNodePtr_t &robot, bool visual)
     {
       std::string link_name;
       ::boost::shared_ptr< ::urdf::Cylinder > cylinder_shared_ptr;
 
-      cylinder_shared_ptr = ::boost::static_pointer_cast< ::urdf::Cylinder > ( links[i]->visual->geometry );
+      if (visual) {
+	cylinder_shared_ptr = boost::static_pointer_cast < ::urdf::Cylinder >
+	  ( links[i]->visual->geometry );
+      } else {
+	cylinder_shared_ptr = boost::static_pointer_cast < ::urdf::Cylinder >
+	  ( links[i]->collision->geometry );
+      }
       link_name = links[i]->name;
       std::cout << "Cylinder" << std::endl;
       if ( cylinder_shared_ptr != 0 )
@@ -93,12 +105,18 @@ namespace graphics {
     void addBox(const std::string &robotName,
                 std::vector< boost::shared_ptr < urdf::Link > >&links,
                 int i,
-                GroupNodePtr_t &robot)
+                GroupNodePtr_t &robot, bool visual)
     {
       std::string link_name;
       ::boost::shared_ptr< ::urdf::Box > box_shared_ptr;
 
-      box_shared_ptr = ::boost::static_pointer_cast< ::urdf::Box > ( links[i]->visual->geometry );
+      if (visual) {
+	box_shared_ptr = boost::static_pointer_cast< ::urdf::Box >
+	  ( links[i]->visual->geometry);
+      } else {
+	box_shared_ptr = boost::static_pointer_cast< ::urdf::Box >
+	  ( links[i]->collision->geometry);
+      }
       link_name = links[i]->name;
       std::cout << "Box" << std::endl;
       if ( box_shared_ptr != 0 )
@@ -119,12 +137,18 @@ namespace graphics {
     void addSphere(const std::string &robotName,
                    std::vector< boost::shared_ptr < urdf::Link > >&links,
                    int i,
-                   GroupNodePtr_t &robot)
+                   GroupNodePtr_t &robot, bool visual)
     {
       std::string link_name;
       ::boost::shared_ptr< ::urdf::Sphere > sphere_shared_ptr;
 
-      sphere_shared_ptr = ::boost::static_pointer_cast< ::urdf::Sphere > ( links[i]->visual->geometry );
+      if (visual) {
+	sphere_shared_ptr = boost::static_pointer_cast < ::urdf::Sphere >
+	  ( links[i]->visual->geometry );
+      } else {
+	sphere_shared_ptr = boost::static_pointer_cast < ::urdf::Sphere >
+	  ( links[i]->collision->geometry );
+      }
       link_name = links[i]->name;
       std::cout << "Sphere" << std::endl;
       if ( sphere_shared_ptr != 0 )
@@ -144,9 +168,15 @@ namespace graphics {
 
   GroupNodePtr_t urdfParser::parse (const std::string& robotName,
 				    const std::string& urdf_file_path,
-				    const std::string& meshDataRootDir)
+				    const std::string& meshDataRootDir,
+				    const std::string& collisionOrVisual)
   {
-    boost::shared_ptr< urdf::ModelInterface > model = urdf::parseURDFFile( urdf_file_path );
+    if (collisionOrVisual != "visual" && collisionOrVisual != "collision") {
+      throw std::runtime_error ("parameter collisionOrVisual should be either "
+				"\"collision\" or \"visual\"");
+    }
+    boost::shared_ptr< urdf::ModelInterface > model =
+      urdf::parseURDFFile( urdf_file_path );
     GroupNodePtr_t robot = GroupNode::create(robotName);
     std::vector< boost::shared_ptr < urdf::Link > > links;
     model->getLinks(links);
@@ -156,29 +186,44 @@ namespace graphics {
       link_name = links[i]->name;
       std::cout << link_name << std::endl;
 
-      if ( links[i]->visual != NULL && links[i]->visual->geometry != NULL)
-        {
-          switch (links[i]->visual->geometry->type) {
-          case urdf::Geometry::MESH:
-            internal_urdf_parser::addMesh (robotName, meshDataRootDir, links,
-					   i,robot);
-            break;
-          case urdf::Geometry::CYLINDER:
-            internal_urdf_parser::addCylinder(robotName,links,i,robot);
-            break;
-          case urdf::Geometry::BOX:
-            internal_urdf_parser::addBox(robotName,links,i,robot);
-            break;
-          case urdf::Geometry::SPHERE:
-            internal_urdf_parser::addSphere(robotName,links,i,robot);
-            break;
-
-          }
-
-        }
+      if (collisionOrVisual == "visual") {
+	if ( links[i]->visual != NULL && links[i]->visual->geometry != NULL) {
+	  switch (links[i]->visual->geometry->type) {
+	  case urdf::Geometry::MESH:
+	    internal_urdf_parser::addMesh (robotName, meshDataRootDir, links,
+					   i,robot, true);
+	    break;
+	  case urdf::Geometry::CYLINDER:
+	    internal_urdf_parser::addCylinder(robotName,links,i,robot, true);
+	    break;
+	  case urdf::Geometry::BOX:
+	    internal_urdf_parser::addBox(robotName,links,i,robot, true);
+	    break;
+	  case urdf::Geometry::SPHERE:
+	    internal_urdf_parser::addSphere(robotName,links,i,robot, true);
+	    break;
+	  }
+	}
+      } else {
+	if ( links[i]->visual != NULL && links[i]->visual->geometry != NULL) {
+	  switch (links[i]->collision->geometry->type) {
+	  case urdf::Geometry::MESH:
+	    internal_urdf_parser::addMesh (robotName, meshDataRootDir, links,
+					   i,robot, false);
+	    break;
+	  case urdf::Geometry::CYLINDER:
+	    internal_urdf_parser::addCylinder(robotName,links,i,robot, false);
+	    break;
+	  case urdf::Geometry::BOX:
+	    internal_urdf_parser::addBox(robotName,links,i,robot, false);
+	    break;
+	  case urdf::Geometry::SPHERE:
+	    internal_urdf_parser::addSphere(robotName,links,i,robot, false);
+	    break;
+	  }
+	}
+      }
     }
-
     return robot;
-
   }
 }
