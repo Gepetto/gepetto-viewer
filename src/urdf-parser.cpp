@@ -16,7 +16,7 @@ namespace graphics {
   namespace internal_urdf_parser
   {
 
-    void setStaticTransform (const boost::shared_ptr < urdf::Link >& link,
+    void getStaticTransform (const boost::shared_ptr < urdf::Link >& link,
 			     osgVector3 &static_pos, osgQuat &static_quat,
 			     bool visual)
     {
@@ -73,7 +73,7 @@ namespace graphics {
           LeafNodeColladaPtr_t link = LeafNodeCollada::create
 	    (robotName + "/" + link_name, meshDataRootDir + mesh_path);
           osgVector3 static_pos; osgQuat static_quat;
-          setStaticTransform (urdfLink, static_pos, static_quat, visual);
+          getStaticTransform (urdfLink, static_pos, static_quat, visual);
           link->setStaticTransform(static_pos,static_quat);
           link->setScale(osgVector3(mesh_shared_ptr->scale.x,
                                     mesh_shared_ptr->scale.y,
@@ -105,7 +105,7 @@ namespace graphics {
                                                                  (float)cylinder_shared_ptr.get()->radius,
                                                                  (float)cylinder_shared_ptr.get()->length);
           osgVector3 static_pos; osgQuat static_quat;
-          setStaticTransform (urdfLink, static_pos, static_quat, visual);
+          getStaticTransform (urdfLink, static_pos, static_quat, visual);
           link->setStaticTransform(static_pos,static_quat);
 
           // add links to robot node
@@ -136,7 +136,7 @@ namespace graphics {
                                                                   (float)box_shared_ptr.get()->dim.y,
                                                                   (float)box_shared_ptr.get()->dim.z));
           osgVector3 static_pos; osgQuat static_quat;
-          setStaticTransform (urdfLink, static_pos, static_quat, visual);
+          getStaticTransform (urdfLink, static_pos, static_quat, visual);
           link->setStaticTransform(static_pos,static_quat);
 
           // add links to robot node
@@ -165,7 +165,7 @@ namespace graphics {
           LeafNodeSpherePtr_t link = LeafNodeSphere::create( robotName + "/" + link_name,
                                                              (float)sphere_shared_ptr.get()->radius);
           osgVector3 static_pos; osgQuat static_quat;
-          setStaticTransform (urdfLink, static_pos, static_quat, visual);
+          getStaticTransform (urdfLink, static_pos, static_quat, visual);
           link->setStaticTransform(static_pos,static_quat);
 
           // add links to robot node
