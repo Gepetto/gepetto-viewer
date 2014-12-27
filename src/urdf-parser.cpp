@@ -186,6 +186,11 @@ namespace graphics {
     }
     boost::shared_ptr< urdf::ModelInterface > model =
       urdf::parseURDFFile( urdf_file_path );
+    // Test that file has correctly been parsed
+    if (!model) {
+      throw std::runtime_error (std::string ("Failed to parse ") +
+				urdf_file_path);
+    }
     GroupNodePtr_t robot = GroupNode::create(robotName);
     std::vector< boost::shared_ptr < urdf::Link > > links;
     model->getLinks(links);
