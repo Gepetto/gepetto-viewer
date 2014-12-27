@@ -129,12 +129,12 @@ namespace graphics {
       }
       link_name = urdfLink->name;
       std::cout << "Box" << std::endl;
-      if ( box_shared_ptr != 0 )
-        {
-          LeafNodeBoxPtr_t link = LeafNodeBox::create( robotName + "/" + link_name,
-                                                       osgVector3((float)box_shared_ptr.get()->dim.x,
-                                                                  (float)box_shared_ptr.get()->dim.y,
-                                                                  (float)box_shared_ptr.get()->dim.z));
+      if ( box_shared_ptr != 0 ) {
+	LeafNodeBoxPtr_t link = LeafNodeBox::create
+	  (robotName + "/" + link_name,
+	   osgVector3(.5*(float)box_shared_ptr->dim.x,
+		      .5*(float)box_shared_ptr->dim.y,
+		      .5*(float)box_shared_ptr->dim.z));
           osgVector3 static_pos; osgQuat static_quat;
           getStaticTransform (urdfLink, static_pos, static_quat, visual);
           link->setStaticTransform(static_pos,static_quat);
