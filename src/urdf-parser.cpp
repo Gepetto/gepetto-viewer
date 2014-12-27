@@ -46,7 +46,7 @@ namespace graphics {
     void addMesh (const std::string &robotName,
                   const std::string &meshDataRootDir,
 		  boost::shared_ptr < urdf::Link >& urdfLink,
-		  GroupNodePtr_t &robot, bool visual)
+		  GroupNodePtr_t &robot, bool visual, bool linkFrame)
     {
       std::string link_name;
       std::string mesh_path;
@@ -73,7 +73,9 @@ namespace graphics {
           LeafNodeColladaPtr_t link = LeafNodeCollada::create
 	    (robotName + "/" + link_name, meshDataRootDir + mesh_path);
           osgVector3 static_pos; osgQuat static_quat;
-          getStaticTransform (urdfLink, static_pos, static_quat, visual);
+	  if (linkFrame) {
+	    getStaticTransform (urdfLink, static_pos, static_quat, visual);
+	  }
           link->setStaticTransform(static_pos,static_quat);
           link->setScale(osgVector3(mesh_shared_ptr->scale.x,
                                     mesh_shared_ptr->scale.y,
@@ -85,7 +87,7 @@ namespace graphics {
 
     void addCylinder (const std::string &robotName,
 		      boost::shared_ptr < urdf::Link >& urdfLink,
-		      GroupNodePtr_t &robot, bool visual)
+		      GroupNodePtr_t &robot, bool visual, bool linkFrame)
     {
       std::string link_name;
       ::boost::shared_ptr< ::urdf::Cylinder > cylinder_shared_ptr;
@@ -105,7 +107,9 @@ namespace graphics {
                                                                  (float)cylinder_shared_ptr.get()->radius,
                                                                  (float)cylinder_shared_ptr.get()->length);
           osgVector3 static_pos; osgQuat static_quat;
-          getStaticTransform (urdfLink, static_pos, static_quat, visual);
+	  if (linkFrame) {
+	    getStaticTransform (urdfLink, static_pos, static_quat, visual);
+	  }
           link->setStaticTransform(static_pos,static_quat);
 
           // add links to robot node
@@ -115,7 +119,7 @@ namespace graphics {
 
     void addBox (const std::string &robotName,
 		 boost::shared_ptr < urdf::Link >& urdfLink,
-		 GroupNodePtr_t &robot, bool visual)
+		 GroupNodePtr_t &robot, bool visual, bool linkFrame)
     {
       std::string link_name;
       ::boost::shared_ptr< ::urdf::Box > box_shared_ptr;
@@ -136,7 +140,9 @@ namespace graphics {
 		      .5*(float)box_shared_ptr->dim.y,
 		      .5*(float)box_shared_ptr->dim.z));
           osgVector3 static_pos; osgQuat static_quat;
-          getStaticTransform (urdfLink, static_pos, static_quat, visual);
+	  if (linkFrame) {
+	    getStaticTransform (urdfLink, static_pos, static_quat, visual);
+	  }
           link->setStaticTransform(static_pos,static_quat);
 
           // add links to robot node
@@ -146,7 +152,7 @@ namespace graphics {
 
     void addSphere (const std::string &robotName,
 		    boost::shared_ptr < urdf::Link >& urdfLink,
-		    GroupNodePtr_t &robot, bool visual)
+		    GroupNodePtr_t &robot, bool visual, bool linkFrame)
     {
       std::string link_name;
       ::boost::shared_ptr< ::urdf::Sphere > sphere_shared_ptr;
@@ -165,7 +171,9 @@ namespace graphics {
           LeafNodeSpherePtr_t link = LeafNodeSphere::create( robotName + "/" + link_name,
                                                              (float)sphere_shared_ptr.get()->radius);
           osgVector3 static_pos; osgQuat static_quat;
-          getStaticTransform (urdfLink, static_pos, static_quat, visual);
+	  if (linkFrame) {
+	    getStaticTransform (urdfLink, static_pos, static_quat, visual);
+	  }
           link->setStaticTransform(static_pos,static_quat);
 
           // add links to robot node
@@ -178,12 +186,20 @@ namespace graphics {
   GroupNodePtr_t urdfParser::parse (const std::string& robotName,
 				    const std::string& urdf_file_path,
 				    const std::string& meshDataRootDir,
-				    const std::string& collisionOrVisual)
+				    const std::string& collisionOrVisual,
+				    const std::string& linkOrObjectFrame)
   {
     if (collisionOrVisual != "visual" && collisionOrVisual != "collision") {
       throw std::runtime_error ("parameter collisionOrVisual should be either "
 				"\"collision\" or \"visual\"");
     }
+    if (linkOrObjectFrame != "link" && linkOrObjectFrame != "object") {
+      throw std::runtime_error ("parameter linkOrObjectFrame should be either "
+				"\"link\" or \"object\"");
+    }
+    bool linkFrame = true;
+    if (linkOrObjectFrame == "object") linkFrame = false;
+
     boost::shared_ptr< urdf::ModelInterface > model =
       urdf::parseURDFFile( urdf_file_path );
     // Test that file has correctly been parsed
@@ -205,36 +221,41 @@ namespace graphics {
 	  switch (links[i]->visual->geometry->type) {
 	  case urdf::Geometry::MESH:
 	    internal_urdf_parser::addMesh (robotName, meshDataRootDir,
-					   links [i], robot, true);
+					   links [i], robot, true, linkFrame);
 	    break;
 	  case urdf::Geometry::CYLINDER:
 	    internal_urdf_parser::addCylinder (robotName, links [i], robot,
-					       true);
+					       true, linkFrame);
 	    break;
 	  case urdf::Geometry::BOX:
-	    internal_urdf_parser::addBox (robotName, links [i], robot, true);
+	    internal_urdf_parser::addBox (robotName, links [i], robot, true,
+					  linkFrame);
 	    break;
 	  case urdf::Geometry::SPHERE:
-	    internal_urdf_parser::addSphere (robotName, links [i], robot, true);
+	    internal_urdf_parser::addSphere (robotName, links [i], robot, true,
+					     linkFrame);
 	    break;
 	  }
 	}
       } else {
-	if ( links[i]->visual != NULL && links[i]->visual->geometry != NULL) {
+	if (links[i]->collision != NULL &&
+	    links[i]->collision->geometry != NULL) {
 	  switch (links[i]->collision->geometry->type) {
 	  case urdf::Geometry::MESH:
 	    internal_urdf_parser::addMesh (robotName, meshDataRootDir,
-					   links [i], robot, false);
+					   links [i], robot, false, linkFrame);
 	    break;
 	  case urdf::Geometry::CYLINDER:
-	    internal_urdf_parser::addCylinder(robotName, links [i], robot,
-					      false);
+	    internal_urdf_parser::addCylinder (robotName, links [i], robot,
+					      false, linkFrame);
 	    break;
 	  case urdf::Geometry::BOX:
-	    internal_urdf_parser::addBox (robotName, links [i], robot, false);
+	    internal_urdf_parser::addBox (robotName, links [i], robot, false,
+					  linkFrame);
 	    break;
 	  case urdf::Geometry::SPHERE:
-	    internal_urdf_parser::addSphere(robotName, links [i], robot, false);
+	    internal_urdf_parser::addSphere (robotName, links [i], robot, false,
+					    linkFrame);
 	    break;
 	  }
 	}

@@ -27,12 +27,17 @@ namespace graphics {
     ///                        i.e. "/opt/ros/hydro/share/"
     /// \param collisionOrVisual whether to parse the visual part or the
     ///        collision part of links.
+    /// \param linkOrObjectFrame in the urdf kinematic chain, objects are
+    ///        rigidly attached to a link. This parameter determines whether
+    ///        the node frame corresponds to the link frame or to the object
+    ///        frame.
     /// \note the parser will replace "package://" by meshDataRootDir in the
     ///       urdf file.
     GroupNodePtr_t parse (const std::string& robotName,
 			  const std::string& urdf_file_path,
 			  const std::string& meshDataRootDir,
-			  const std::string& collisionOrVisual = "visual");
+			  const std::string& collisionOrVisual = "visual",
+			  const std::string& linkOrObjectFrame = "link");
 
   }
 }
