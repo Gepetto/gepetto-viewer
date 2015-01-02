@@ -117,6 +117,9 @@ namespace graphics {
         /** Return the window width and height as a 2D vector */
         osgVector2 getWindowDimension () const;
 
+        /** Return a ref to the viewer */
+        ::osgViewer::ViewerRefPtr getViewerClone();
+
         virtual ~WindowManager();
     };
 } /* namespace graphics */
