@@ -77,9 +77,9 @@ namespace graphics {
 	    getStaticTransform (urdfLink, static_pos, static_quat, visual);
 	  }
           link->setStaticTransform(static_pos,static_quat);
-          link->setScale(osgVector3(mesh_shared_ptr->scale.x,
-                                    mesh_shared_ptr->scale.y,
-                                    mesh_shared_ptr->scale.z));
+          link->setScale(osgVector3((float)mesh_shared_ptr->scale.x,
+                                    (float)mesh_shared_ptr->scale.y,
+                                    (float)mesh_shared_ptr->scale.z));
           // add links to robot node
           robot->addChild(link);
         }
@@ -136,9 +136,9 @@ namespace graphics {
       if ( box_shared_ptr != 0 ) {
 	LeafNodeBoxPtr_t link = LeafNodeBox::create
 	  (robotName + "/" + link_name,
-	   osgVector3(.5*(float)box_shared_ptr->dim.x,
-		      .5*(float)box_shared_ptr->dim.y,
-		      .5*(float)box_shared_ptr->dim.z));
+	   osgVector3((float)(.5*box_shared_ptr->dim.x),
+		      (float)(.5*box_shared_ptr->dim.y), 
+		      (float)(.5*box_shared_ptr->dim.z)));
           osgVector3 static_pos; osgQuat static_quat;
 	  if (linkFrame) {
 	    getStaticTransform (urdfLink, static_pos, static_quat, visual);

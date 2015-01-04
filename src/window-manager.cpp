@@ -205,7 +205,12 @@ namespace graphics {
         viewer_ptr_ = NULL;
 
     }
-
+  
+  osgViewer::ViewerRefPtr WindowManager::getViewerClone()
+  {
+    return ::osgViewer::ViewerRefPtr(viewer_ptr_.get());
+  }
+  
     /* End declaration of public function members */
 
 } /* namespace graphics */
