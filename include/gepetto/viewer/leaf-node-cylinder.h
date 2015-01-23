@@ -10,6 +10,7 @@
 #define SCENEVIEWER_LEAFNODECYLINDER_HH
 
 #include <gepetto/viewer/node.h>
+#include <osgDB/ReadFile>
 
 namespace graphics {
     DEF_CLASS_SMART_PTR(LeafNodeCylinder)
@@ -91,6 +92,8 @@ namespace graphics {
         {
             return shape_drawable_ptr_->getColor();
         }
+
+        void setTexture(const std::string& image_path);
         
         /** Destructor */
         virtual ~LeafNodeCylinder();

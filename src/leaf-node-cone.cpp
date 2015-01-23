@@ -15,10 +15,10 @@ namespace graphics {
     void LeafNodeCone::init ()
     {
         /* Create cone object */
-        cone_ptr_ = new ::osg::Cone ();
+        cone_ptr_ = new osg::Cone ();
 
         /* Set ShapeDrawable */
-        shape_drawable_ptr_ = new ::osg::ShapeDrawable(cone_ptr_);
+        shape_drawable_ptr_ = new osg::ShapeDrawable(cone_ptr_);
         
         /* Create Geode for adding ShapeDrawable */
         geode_ptr_ = new osg::Geode ();
@@ -124,6 +124,20 @@ namespace graphics {
     void LeafNodeCone::setColor (const osgVector4& color)
     {
         shape_drawable_ptr_->setColor(color);
+    }
+
+    void LeafNodeCone::setTexture(const std::string& image_path)
+    {
+      osg::ref_ptr<osg::Texture2D> texture = new osg::Texture2D;
+      texture->setDataVariance(osg::Object::DYNAMIC); 
+      osg::ref_ptr<osg::Image> image = osgDB::readImageFile(image_path);
+      if (!image)
+      {
+        std::cout << " couldn't find texture, quiting." << std::endl;
+        return;
+      } 
+      texture->setImage(image);
+      geode_ptr_->getStateSet()->setTextureAttributeAndModes(0,texture,osg::StateAttribute::ON);
     }
     
     LeafNodeCone::~LeafNodeCone ()

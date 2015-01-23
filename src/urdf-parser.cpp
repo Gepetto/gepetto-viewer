@@ -85,6 +85,9 @@ namespace graphics {
           if (visual && urdfLink->visual->material != NULL) {
             osgVector4 color(urdfLink->visual->material->color.r, urdfLink->visual->material->color.g, urdfLink->visual->material->color.b, urdfLink->visual->material->color.a);
             link->setColor(color);
+            if (urdfLink->visual->material->texture_filename != "") {
+              link->setTexture(urdfLink->visual->material->texture_filename);
+            }
           }
 
           // add links to robot node
@@ -123,6 +126,9 @@ namespace graphics {
           if (visual && urdfLink->visual->material != NULL) {
             osgVector4 color(urdfLink->visual->material->color.r, urdfLink->visual->material->color.g, urdfLink->visual->material->color.b, urdfLink->visual->material->color.a);
             link->setColor(color);
+            if (urdfLink->visual->material->texture_filename != "") {
+              link->setTexture(urdfLink->visual->material->texture_filename);
+            }
           }
 
           // add links to robot node
@@ -162,6 +168,9 @@ namespace graphics {
           if (visual && urdfLink->visual->material != NULL) {
             osgVector4 color(urdfLink->visual->material->color.r, urdfLink->visual->material->color.g, urdfLink->visual->material->color.b, urdfLink->visual->material->color.a);
             link->setColor(color);
+            if (urdfLink->visual->material->texture_filename != "") {
+              link->setTexture(urdfLink->visual->material->texture_filename);
+            }
           }
           // add links to robot node
           robot->addChild(link);
@@ -198,6 +207,9 @@ namespace graphics {
           if (visual && urdfLink->visual->material != NULL) {
             osgVector4 color(urdfLink->visual->material->color.r, urdfLink->visual->material->color.g, urdfLink->visual->material->color.b, urdfLink->visual->material->color.a);
             link->setColor(color);
+            if (urdfLink->visual->material->texture_filename != "") {
+              link->setTexture(urdfLink->visual->material->texture_filename);
+            }
           }
 
           // add links to robot node

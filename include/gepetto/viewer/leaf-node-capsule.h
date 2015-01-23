@@ -10,6 +10,7 @@
 #define SCENEVIEWER_LEAFNODECAPSULE_HH
 
 #include <gepetto/viewer/node.h>
+#include <osgDB/ReadFile>
 
 namespace graphics {
     DEF_CLASS_SMART_PTR(LeafNodeCapsule)
@@ -90,6 +91,8 @@ namespace graphics {
         {
             return shape_drawable_ptr_->getColor();
         }
+
+        void setTexture(const std::string& image_path);
 
         /** Destructor */
         virtual ~LeafNodeCapsule();

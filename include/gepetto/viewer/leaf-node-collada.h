@@ -12,6 +12,7 @@
 #include <gepetto/viewer/node.h>
 #include <osgDB/ReadFile>
 
+
 namespace graphics {
     DEF_CLASS_SMART_PTR(LeafNodeCollada)
     
@@ -68,7 +69,9 @@ namespace graphics {
          */
         LeafNodeColladaPtr_t self(void) const;
         
-        void setColor(const osgVector4& color);        
+        void setColor(const osgVector4& color);   
+
+        void setTexture(const std::string& image_path);     
 
         /** Destructor */
         virtual ~LeafNodeCollada();

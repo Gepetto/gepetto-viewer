@@ -16,8 +16,7 @@ namespace graphics {
 
   void LeafNodeCollada::init()
   {
-osg::ref_ptr<osgDB::Options> option = new osgDB::Options("daeUsePredefinedTextureUnits");
-    collada_ptr_ = osgDB::readNodeFile(collada_file_path_, option);
+    collada_ptr_ = osgDB::readNodeFile(collada_file_path_);
         
     /* Create PositionAttitudeTransform */
     this->asQueue()->addChild(collada_ptr_);
@@ -123,6 +122,20 @@ osg::ref_ptr<osgDB::Options> option = new osgDB::Options("daeUsePredefinedTextur
     osg::ref_ptr<osg::Material> mat_ptr (new osg::Material); 
     mat_ptr->setDiffuse(osg::Material::FRONT_AND_BACK,color); 
     collada_ptr_->getStateSet()->setAttribute(mat_ptr.get());    
+  }
+ 
+  void LeafNodeCollada::setTexture(const std::string& image_path)
+  {
+    osg::ref_ptr<osg::Texture2D> texture = new osg::Texture2D;
+    texture->setDataVariance(osg::Object::DYNAMIC); 
+    osg::ref_ptr<osg::Image> image = osgDB::readImageFile(image_path);
+    if (!image)
+    {
+      std::cout << " couldn't find texture, quiting." << std::endl;
+      return;
+    } 
+    texture->setImage(image);
+    collada_ptr_->getStateSet()->setTextureAttributeAndModes(0,texture,osg::StateAttribute::ON);
   }
 
   /*void LeafNodeCollada::setColor(osg::NodeRefPtr osgNode_ptr,const osgVector4& color)

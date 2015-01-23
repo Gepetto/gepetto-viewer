@@ -10,6 +10,7 @@
 #define SCENEVIEWER_LEAFNODEFACE_HH
 
 #include <gepetto/viewer/node.h>
+#include <osgDB/ReadFile>
 
 namespace graphics {
 
@@ -72,6 +73,8 @@ namespace graphics {
 
         // set color
         void setColor (const osgVector4& color);
+
+        void setTexture(const std::string& image_path);
         
         /** Destructor */
         virtual ~LeafNodeFace();

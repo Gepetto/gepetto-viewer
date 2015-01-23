@@ -10,6 +10,7 @@
 #define SCENEVIEWER_LEAFNODESPHERE_HH
 
 #include <gepetto/viewer/node.h>
+#include <osgDB/ReadFile>
 
 namespace graphics {
     DEF_CLASS_SMART_PTR(LeafNodeSphere)
@@ -81,6 +82,8 @@ namespace graphics {
         {
             return shape_drawable_ptr_->getColor();
         }
+        
+        void setTexture(const std::string& image_path);
         
         /** Destructor */
         virtual ~LeafNodeSphere();
