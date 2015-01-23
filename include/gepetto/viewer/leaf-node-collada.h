@@ -32,18 +32,21 @@ namespace graphics {
         
         /* Default constructor */
         LeafNodeCollada(const std::string& name, const std::string& collada_file_path);
-        
+        LeafNodeCollada(const std::string& name, const std::string& collada_file_path, const osgVector4& color);
         /* Copy constructor */
         LeafNodeCollada(const LeafNodeCollada& other);
         
         /** Initialize weak_ptr */
         void initWeakPtr (LeafNodeColladaWeakPtr other_weak_ptr);
+
+        //static void setColor(osg::NodeRefPtr osgNode_ptr,const osgVector4& color);
         
     protected:
     public:
         /** Static method which create a new LeafNodeCollada
          */
         static LeafNodeColladaPtr_t create(const std::string& name, const std::string& collada_file_path);
+        static LeafNodeColladaPtr_t create(const std::string& name, const std::string& collada_file_path, const osgVector4& color);
         
         /** Static method for creating a clone of LeafNodeCollada other
          */
@@ -65,6 +68,8 @@ namespace graphics {
          */
         LeafNodeColladaPtr_t self(void) const;
         
+        void setColor(const osgVector4& color);        
+
         /** Destructor */
         virtual ~LeafNodeCollada();
         

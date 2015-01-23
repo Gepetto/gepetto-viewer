@@ -80,6 +80,13 @@ namespace graphics {
           link->setScale(osgVector3((float)mesh_shared_ptr->scale.x,
                                     (float)mesh_shared_ptr->scale.y,
                                     (float)mesh_shared_ptr->scale.z));
+
+          // Set Color if specified
+          if (visual && urdfLink->visual->material != NULL) {
+            osgVector4 color(urdfLink->visual->material->color.r, urdfLink->visual->material->color.g, urdfLink->visual->material->color.b, urdfLink->visual->material->color.a);
+            link->setColor(color);
+          }
+
           // add links to robot node
           robot->addChild(link);
         }
@@ -111,6 +118,12 @@ namespace graphics {
 	    getStaticTransform (urdfLink, static_pos, static_quat, visual);
 	  }
           link->setStaticTransform(static_pos,static_quat);
+
+          // Set Color if specified
+          if (visual && urdfLink->visual->material != NULL) {
+            osgVector4 color(urdfLink->visual->material->color.r, urdfLink->visual->material->color.g, urdfLink->visual->material->color.b, urdfLink->visual->material->color.a);
+            link->setColor(color);
+          }
 
           // add links to robot node
           robot->addChild(link);
@@ -145,6 +158,11 @@ namespace graphics {
 	  }
           link->setStaticTransform(static_pos,static_quat);
 
+          // Set Color if specified
+          if (visual && urdfLink->visual->material != NULL) {
+            osgVector4 color(urdfLink->visual->material->color.r, urdfLink->visual->material->color.g, urdfLink->visual->material->color.b, urdfLink->visual->material->color.a);
+            link->setColor(color);
+          }
           // add links to robot node
           robot->addChild(link);
         }
@@ -175,6 +193,12 @@ namespace graphics {
 	    getStaticTransform (urdfLink, static_pos, static_quat, visual);
 	  }
           link->setStaticTransform(static_pos,static_quat);
+
+          // Set Color if specified
+          if (visual && urdfLink->visual->material != NULL) {
+            osgVector4 color(urdfLink->visual->material->color.r, urdfLink->visual->material->color.g, urdfLink->visual->material->color.b, urdfLink->visual->material->color.a);
+            link->setColor(color);
+          }
 
           // add links to robot node
           robot->addChild(link);

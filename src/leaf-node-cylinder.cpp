@@ -123,7 +123,7 @@ namespace graphics {
         cylinder_ptr_->setHeight(height);
     }
     
-    void LeafNodeCylinder::setColor (osgVector4 color)
+    void LeafNodeCylinder::setColor (const osgVector4& color)
     {
         shape_drawable_ptr_->setColor(color);
     }

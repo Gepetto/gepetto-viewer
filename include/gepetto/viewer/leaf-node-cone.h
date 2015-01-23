@@ -84,7 +84,7 @@ namespace graphics {
             return cone_ptr_->getHeight();
         }
 
-        /** Replace the old color with the new one defined by DefVector3 color_vector */
+        /** Replace the old color with the new one defined by osgVector4 color_vector */
         virtual void setColor (const osgVector4& color);
 
         osgVector4 getColor() const

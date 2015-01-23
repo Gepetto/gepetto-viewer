@@ -85,7 +85,7 @@ namespace graphics {
             return cylinder_ptr_->getHeight();
         }
 
-        void setColor (osgVector4 color);
+        void setColor (const osgVector4& color);
 
         osgVector4 getColor() const
         {
