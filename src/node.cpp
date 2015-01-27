@@ -176,9 +176,9 @@ namespace graphics {
 
     /* Define the color */
     ::osg::Vec4ArrayRefPtr color_ptr = new ::osg::Vec4Array(3);
-    color_ptr->at(0) = osgVector4(0.,0.,1.,1.);
+    color_ptr->at(0) = osgVector4(1.,0.,0.,1.);
     color_ptr->at(1) = osgVector4(0.,1.,0.,1.);
-    color_ptr->at(2) = osgVector4(1.,0.,0.,1.);
+    color_ptr->at(2) = osgVector4(0.,0.,1.,1.);
 
     geom_ptr->setVertexArray(points_ptr.get());
     geom_ptr->setColorArray(color_ptr   .get());
