@@ -32,6 +32,7 @@ namespace graphics {
 
         traits_ptr_ = new ::osg::GraphicsContext::Traits;
 
+        traits_ptr_->windowName = "Gepetto Viewer";
         traits_ptr_->x = x;
         traits_ptr_->y = y;
         traits_ptr_->width = width;
