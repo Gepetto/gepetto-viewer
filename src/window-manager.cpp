@@ -42,6 +42,8 @@ namespace graphics {
         traits_ptr_->sharedContext = 0;
         traits_ptr_->sampleBuffers = 1;
         traits_ptr_->samples = 1;
+        traits_ptr_->readDISPLAY ();
+        traits_ptr_->setUndefinedScreenDetailsToDefaultScreen ();
 
         osg::ref_ptr<osg::GraphicsContext> gc = osg::GraphicsContext::createGraphicsContext( traits_ptr_ );
 
