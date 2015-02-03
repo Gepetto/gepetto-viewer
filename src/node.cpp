@@ -84,7 +84,7 @@ namespace graphics {
 
   void Node::setScale(const float &scale)
   {
-    auto_transform_ptr_->setScale(scale);
+    static_auto_transform_ptr_->setScale(scale);
   }
 
  void Node::setScale(const osg::Vec3d &scale)
@@ -95,10 +95,10 @@ namespace graphics {
      if (lmin>scale._v[2])
        lmin=scale._v[2];
  
-     if(lmin<auto_transform_ptr_->getMinimumScale())
-       auto_transform_ptr_->setMinimumScale(lmin);
+     if(lmin<static_auto_transform_ptr_->getMinimumScale())
+       static_auto_transform_ptr_->setMinimumScale(lmin);
         
-     auto_transform_ptr_->setScale(scale);
+     static_auto_transform_ptr_->setScale(scale);
    }
 
   void Node::setVisibilityMode (const VisibilityMode& mode)
@@ -176,9 +176,9 @@ namespace graphics {
 
     /* Define the color */
     ::osg::Vec4ArrayRefPtr color_ptr = new ::osg::Vec4Array(3);
-    color_ptr->at(0) = osgVector4(0.,0.,1.,1.);
+    color_ptr->at(0) = osgVector4(1.,0.,0.,1.);
     color_ptr->at(1) = osgVector4(0.,1.,0.,1.);
-    color_ptr->at(2) = osgVector4(1.,0.,0.,1.);
+    color_ptr->at(2) = osgVector4(0.,0.,1.,1.);
 
     geom_ptr->setVertexArray(points_ptr.get());
     geom_ptr->setColorArray(color_ptr   .get());

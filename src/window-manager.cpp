@@ -32,6 +32,7 @@ namespace graphics {
 
         traits_ptr_ = new ::osg::GraphicsContext::Traits;
 
+        traits_ptr_->windowName = "Gepetto Viewer";
         traits_ptr_->x = x;
         traits_ptr_->y = y;
         traits_ptr_->width = width;
@@ -41,6 +42,8 @@ namespace graphics {
         traits_ptr_->sharedContext = 0;
         traits_ptr_->sampleBuffers = 1;
         traits_ptr_->samples = 1;
+        traits_ptr_->readDISPLAY ();
+        traits_ptr_->setUndefinedScreenDetailsToDefaultScreen ();
 
         osg::ref_ptr<osg::GraphicsContext> gc = osg::GraphicsContext::createGraphicsContext( traits_ptr_ );
 
