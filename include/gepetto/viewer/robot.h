@@ -46,7 +46,7 @@ class Joint:public osg::MatrixTransform
 protected:
     boost::shared_ptr<urdf::Joint > _urdfmodel;
 public:
-    Joint() :osg::MatrixTransform(){    }
+    Joint() :osg::MatrixTransform() {    }
     Joint(boost::shared_ptr<urdf::Joint >&l) :osg::MatrixTransform()
     {
         _urdfmodel=l;
@@ -58,6 +58,16 @@ public:
 
     Joint(const Joint&rhs,const osg::CopyOp& copyop=osg::CopyOp::SHALLOW_COPY):osg::MatrixTransform(rhs,  copyop) {}
     META_Node(graphics, Joint);
+
+    ///Dangerous User Interface (call it in a updatecallback or in the main osg loop to prevent thread issues)
+    inline void applyConfiguration(const osg::Vec3&v,const osg::Quat&q)
+    {
+        osg::Matrixd m;
+        m.setTrans(v);
+        m.setRotate(q);
+        setMatrix(m);
+    }
+
     ///Properties
     inline const urdf::Joint *getUrdfModel()const
     {
@@ -69,6 +79,67 @@ public:
     }
 };
 
+class UpdateOrder
+{
+public:
+    virtual void exec()=0;
+};
+class UpdateJointOrder:public UpdateOrder
+{
+public:
+    Joint &joint;
+    osg::Vec3 pos;
+    osg::Quat quat;
+    UpdateJointOrder(Joint&j,const osg::Vec3&v,const osg::Quat&q):joint(j),pos(v),quat(q) {}
+    virtual void exec()
+    {
+        joint.applyConfiguration(pos,quat);
+    }
+
+};
+
+class Robot;
+///ThreadSafe Visual Robot Update Callback
+class RobotUpdate: public osg::NodeCallback
+{
+    OpenThreads::Mutex _mutex;
+    Robot* _rob;
+
+    std::list<UpdateOrder*> _stackorders;
+public:
+    META_Object(graphics,RobotUpdate);
+    RobotUpdate():_rob(0) {};
+    RobotUpdate(Robot*r):_rob(r) {}
+    RobotUpdate(const RobotUpdate& nc,const osg::CopyOp&c):osg::NodeCallback(nc,c) {}
+
+///add order
+    inline void addJoint2Update(Joint&j,const osg::Vec3&v,const osg::Quat&q)
+    {
+        _mutex.lock();
+        _stackorders.push_back(new UpdateJointOrder(j,v,q));
+        _mutex.unlock();
+    }
+
+///treat Order Queue
+    virtual void operator()(osg::Node* node, osg::NodeVisitor* nv)
+    {
+//assert(nv->type==osg::UPDATE)
+///mutex.lock
+        _mutex.lock();
+        while(!_stackorders.empty())
+        {
+            UpdateOrder * order=_stackorders. front();
+            order->exec();
+            _stackorders.pop_front();
+            delete order;
+        }
+///mutex.unlock
+        _mutex.unlock();
+        traverse(node,nv);
+    }
+
+
+};
 class Robot:public osg::Group
 {
 
