@@ -4,32 +4,56 @@
 
 #include <urdf_model/model.h>
 #include <osg/MatrixTransform>
+#include <osg/Switch>
 namespace se3
 {
 class Model;
 }
 namespace graphics
 {
-class Link:public osg::Group
+class Link:public osg::Switch
 {
 protected:
     boost::shared_ptr<urdf::Link > _urdfmodel;
+    osg::ref_ptr<osg::Node> _collisionmesh;
+    osg::ref_ptr<osg::Node> _visualmesh;
 public:
-    Link(): osg::Group() {}
-    Link(boost::shared_ptr<urdf::Link >&l) :osg::Group()
+    Link(): osg::Switch() ,_collisionmesh(0),_visualmesh(0) {}
+    Link(boost::shared_ptr<urdf::Link >&l) :osg::Switch()
     {
         _urdfmodel=l;
     }
+
+
     Link(const Link&rhs)
     {
         this->_urdfmodel=rhs._urdfmodel;
     }
 
 
-    Link(const Link&rhs,const osg::CopyOp& copyop=osg::CopyOp::SHALLOW_COPY):osg::Group(rhs,  copyop) {}
+    Link(const Link&rhs,const osg::CopyOp& copyop=osg::CopyOp::SHALLOW_COPY):osg::Switch(rhs,  copyop) {}
     META_Node(graphics, Link);
 
     ///Properties
+   const osg::Node* getVisualNode()const
+    {
+        return _visualmesh;
+    }
+
+    void setVisualNode(  osg::Node*n)
+    {
+        _visualmesh=n;
+    }
+
+   const osg::Node* getCollisionNode()const
+    {
+        return _collisionmesh;
+    }
+
+    void setCollisionNode(  osg::Node*n)
+    {
+        _collisionmesh=n;
+    }
     inline const urdf::Link *getUrdfModel()const
     {
         return _urdfmodel.get() ;
@@ -84,19 +108,8 @@ class UpdateOrder
 public:
     virtual void exec()=0;
 };
-class UpdateJointOrder:public UpdateOrder
-{
-public:
-    Joint &joint;
-    osg::Vec3 pos;
-    osg::Quat quat;
-    UpdateJointOrder(Joint&j,const osg::Vec3&v,const osg::Quat&q):joint(j),pos(v),quat(q) {}
-    virtual void exec()
-    {
-        joint.applyConfiguration(pos,quat);
-    }
 
-};
+
 
 class Robot;
 ///ThreadSafe Visual Robot Update Callback
@@ -112,19 +125,21 @@ public:
     RobotUpdate(Robot*r):_rob(r) {}
     RobotUpdate(const RobotUpdate& nc,const osg::CopyOp&c):osg::NodeCallback(nc,c) {}
 
+    Robot * getRobot()const{return _rob;}
 ///add order
-    inline void addJoint2Update(Joint&j,const osg::Vec3&v,const osg::Quat&q)
+    inline void addOrder(UpdateOrder*o)
     {
         _mutex.lock();
-        _stackorders.push_back(new UpdateJointOrder(j,v,q));
+        _stackorders.push_back(o);
         _mutex.unlock();
     }
 
 ///treat Order Queue
     virtual void operator()(osg::Node* node, osg::NodeVisitor* nv)
     {
-//assert(nv->type==osg::UPDATE)
-///mutex.lock
+        ///use addUpdateCallBack on Robot instead of whatUdid...
+        assert(nv->getVisitorType()==osg:: NodeVisitor::UPDATE_VISITOR);
+
         _mutex.lock();
         while(!_stackorders.empty())
         {
@@ -133,7 +148,6 @@ public:
             _stackorders.pop_front();
             delete order;
         }
-///mutex.unlock
         _mutex.unlock();
         traverse(node,nv);
     }
@@ -163,7 +177,11 @@ public:
     {
         return _urdfPackageRootDirectory ;
     }
-
+    void setUrdfFile(const std::string & s);
+    const std::string & getUrdfFile()const
+    {
+        return _urdfFile ;
+    }
 
     void addLink(boost::shared_ptr<urdf::Link > &link)
     {
@@ -175,7 +193,16 @@ public:
     }
     Joint *getOsgJoint(boost::shared_ptr<urdf::Joint >j) ;
     Link *getOsgLink(boost::shared_ptr<urdf::Link >j);
-
+    typedef std::vector<osg::ref_ptr<Joint > > Joints;
+    typedef std::vector<osg::ref_ptr<Link > > Links;
+    inline Joints & getJoints()
+    {
+        return _osgjoints;
+    }
+    inline Links & getLinks()
+    {
+        return _osglinks;
+    }
 
 protected:
     ///Meshes loading
@@ -185,12 +212,13 @@ protected:
     ~Robot();
     osg::ref_ptr<osg::Node> _debugaxes; ///
     std::string _urdfPackageRootDirectory;
+    std::string _urdfFile;
     se3::Model *SE3Model;
 
 protected:
     ///classic async model
     ///typedef std::tuple<urdf::Model *,osg::Model,SE3::Model,...> ModelstoSync
-    ///choice done: urdf as entry point and maintain with dirtyflag and use osg update callback to sync models
+    ///choice done: urdf as entry point and maintain with dirtyflag and use RobotUpdate overload to sync models
     ///store local reference to joint and link for direct memory access
     /// inner indexes
     typedef unsigned int LinkIndex;
@@ -202,6 +230,48 @@ protected:
     std::vector<boost::shared_ptr<urdf::Joint > > _joints;
     std::vector<osg::ref_ptr<Joint > > _osgjoints;
     std::map< urdf::Joint *,JointIndex  > _invJointsMap;
+
+};
+
+///ThreadSafe Order for RobotUpdateCallback
+///Update joint transform
+class UpdateJointOrder:public UpdateOrder
+{
+public:
+    Joint &joint;
+    osg::Vec3 pos;
+    osg::Quat quat;
+    UpdateJointOrder(Joint&j,const osg::Vec3&v,const osg::Quat&q):joint(j),pos(v),quat(q) {}
+    virtual void exec()
+    {
+        joint.applyConfiguration(pos,quat);
+    }
+
+};
+///switch on/off Collision/Visual Meshes
+class SwitchDebugOrder:public UpdateOrder
+{
+public:
+    Robot &rob;
+    SwitchDebugOrder(Robot&j):rob(j)  {}
+    virtual void exec()
+    { int index;
+        for(Robot::Links::iterator it=rob.getLinks().begin(); it!=rob.getLinks().end(); it++)
+        {
+        if((*it)->getVisualNode()){
+
+     index=  (*it)->getChildIndex((*it)->getVisualNode());
+      (*it)->setValue(index,!(*it)->getValue(index));
+        }
+
+        if((*it)->getCollisionNode()){
+
+      index=  (*it)->getChildIndex((*it)->getCollisionNode());
+      (*it)->setValue(index,!(*it)->getValue(index));
+        }
+
+    }
+    }
 
 };
 }

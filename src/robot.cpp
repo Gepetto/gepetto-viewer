@@ -1,7 +1,9 @@
 #include "gepetto/viewer/robot.h"
 #include <osgDB/ReadFile>
+#include <osg/Switch>
 #include "pinocchio/multibody/model.hpp"
 
+#include <urdf_parser/urdf_parser.h>
 using namespace graphics;
 Robot::Robot(): osg::Group(),_debugaxes(0)
 {
@@ -22,7 +24,41 @@ Joint *Robot::getOsgJoint(boost::shared_ptr<urdf::Joint >j)
     std::map< urdf::Joint *,JointIndex  >::iterator it= _invJointsMap.find(j.get());
     return it!=_invJointsMap.end()? _osgjoints[(*it).second ]:0;
 }
+void  Robot::setUrdfFile(const std::string & s)
+{
 
+    _urdfFile=s;
+    ///reset robot
+    _invJointsMap.clear();
+    _invJointsMap.clear();
+    _osglinks.clear();
+    _osgjoints.clear();
+    removeChildren(0,getNumChildren());
+
+    boost::shared_ptr< urdf::ModelInterface > model =
+        urdf::parseURDFFile( _urdfFile );
+    // Test that file has correctly been parsed
+    if (!model)
+    {
+        throw std::runtime_error (std::string ("Failed to parse ") +
+                                  _urdfFile);
+    }
+
+
+    std::vector< boost::shared_ptr < urdf::Link > > links;
+    //std::vector< boost::shared_ptr < urdf::Joint > > joints;
+    model->getLinks(links);
+    //model->getJoints(joints);
+    std::string link_name;
+
+
+    for (unsigned int i = 0 ; i < links.size() ; i++)
+    {
+        link_name = links[i]->name;
+        addLink(links[i]);
+
+    }
+}
 bool Robot::parse (boost::shared_ptr<urdf::Link > &link)
 {
     osg::ref_ptr<Link> lastone=0,newone=0;
@@ -63,7 +99,7 @@ bool Robot::parse (boost::shared_ptr<urdf::Link > &link)
 
     }
 
-
+    osg::ref_ptr<osg::Switch> debugswitch= new osg::Switch();
 
     if(link->visual &&link->visual->geometry->type==urdf::Geometry::MESH)
     {
@@ -92,20 +128,65 @@ bool Robot::parse (boost::shared_ptr<urdf::Link > &link)
             m.makeScale( mesh_shared_ptr->scale.x,mesh_shared_ptr->scale.x,mesh_shared_ptr->scale.x);
             scaler->setMatrix(m);
             scaler->addChild(node);
+
+            newone->setVisualNode(scaler);
+            newone->addChild(scaler);
+            //newone->addChild(scaler);
+
+
+        }
+    }
+      if(link->collision &&link->collision->geometry->type==urdf::Geometry::MESH)
+    {
+        boost::shared_ptr< ::urdf::Mesh > mesh_shared_ptr;
+        mesh_shared_ptr = boost::static_pointer_cast<  urdf::Mesh >
+                          ( link->collision->geometry );
+
+        if (mesh_shared_ptr->filename.substr(0, 10) != "package://")
+        {
+            throw std::runtime_error ("Error when parsing urdf file: "
+                                      "mesh filename should start with"
+                                      " \"package://\"");
+        }
+        std::string  mesh_path =  mesh_shared_ptr->filename.substr
+                                  (10, mesh_shared_ptr->filename.size());
+
+        osg::Node * node= osgDB::readNodeFile(_urdfPackageRootDirectory+mesh_path);//urdf::Geometry
+        if(!node)std::cerr<<_urdfPackageRootDirectory+mesh_path<<"botfound"<<std::endl;
+        else
+        {
+            osg::ref_ptr<osg::MatrixTransform > scaler=new osg::MatrixTransform();
+            scaler->setDataVariance(osg::Object::STATIC);
+            osg::Matrix m;
+            m.makeScale( mesh_shared_ptr->scale.x,mesh_shared_ptr->scale.x,mesh_shared_ptr->scale.x);
+            scaler->setMatrix(m);
+            scaler->addChild(node);
             if(!_debugaxes )_debugaxes=osgDB::readNodeFile("axes.osgt");
             scaler->addChild(_debugaxes);
+
+            newone->setCollisionNode(scaler);
             newone->addChild(scaler);
-            if(!lastone.valid())
-            {
-///actual add to model
-                _invLinksMap[link.get()]=_links.size();
-                _links.push_back(link);
-                _osglinks.push_back(newone);
-            }
-            return true;
+            //newone->addChild(scaler);
+
+
         }
-        return false;
     }
+
+
+if(newone->getCollisionNode())
+
+    newone->setValue(newone->getChildIndex(newone->getCollisionNode()),false);
+
+
+    if(!lastone.valid())
+    {
+///actual add to model
+        _invLinksMap[link.get()]=_links.size();
+        _links.push_back(link);
+        _osglinks.push_back(newone);
+    }
+    return true;
+
 }
 ///SE3Model.addBody (if DOF) + osg::Transform creation
 bool Robot::parse (boost::shared_ptr<urdf::Joint > &joint)
