@@ -3,7 +3,7 @@
 
 
 #include <urdf_model/model.h>
-#include <osg/PositionAttitudeTransform>
+#include <osg/MatrixTransform>
 namespace se3
 {
 class Model;
@@ -30,18 +30,18 @@ public:
 };
 
 
-class Joint:public osg::PositionAttitudeTransform
+class Joint:public osg::MatrixTransform
 {
 protected:
     boost::shared_ptr<urdf::Joint > _urdfmodel;
 public:
-    Joint() :osg::PositionAttitudeTransform() {}
+    Joint() :osg::MatrixTransform() {}
     Joint(const Joint&rhs)
     {
         this->_urdfmodel=rhs._urdfmodel;
     }
 
-    Joint(const Joint&rhs,const osg::CopyOp& copyop=osg::CopyOp::SHALLOW_COPY):osg::PositionAttitudeTransform(rhs,  copyop) {}
+    Joint(const Joint&rhs,const osg::CopyOp& copyop=osg::CopyOp::SHALLOW_COPY):osg::MatrixTransform(rhs,  copyop) {}
     META_Node(graphics, Joint);
     urdf::Joint *getUrdfModel()
     {
@@ -54,7 +54,7 @@ class Robot:public osg::Group
 
 public:
 
-    Robot(): osg::Group(),_debugaxes(0) {}
+    Robot();
     Robot(const Robot&rhs,const osg::CopyOp& copyop=osg::CopyOp::SHALLOW_COPY) :osg::Group(rhs,  copyop) {}
     META_Node(graphics, Robot);
 

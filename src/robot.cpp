@@ -1,20 +1,24 @@
 #include "gepetto/viewer/robot.h"
 #include <osgDB/ReadFile>
-#include <osg/MatrixTransform>
 #include "pinocchio/multibody/model.hpp"
+
 using namespace graphics;
+Robot::Robot(): osg::Group(),_debugaxes(0)
+{
+    SE3Model=new se3::Model();
+}
 
 Link *Robot::getOsgLink(boost::shared_ptr<urdf::Link >j)
 {
     std::map< urdf::Link *,LinkIndex  >::iterator it= _invLinksMap.find(j.get());
-    return it!=_invLinksMap.end()? _osglinks[_invLinksMap[j.get()] ]:0;
+    return it!=_invLinksMap.end()? _osglinks[(*it).second ]:0;
 }
 Joint *Robot::getOsgJoint(boost::shared_ptr<urdf::Joint >j)
 {
     std::map< urdf::Joint *,JointIndex  >::iterator it= _invJointsMap.find(j.get());
-    return it!=_invJointsMap.end()? _osgjoints[_invJointsMap[j.get()] ]:0;
+    return it!=_invJointsMap.end()? _osgjoints[(*it).second ]:0;
 }
-//void getOsgJoint(JointIndex i){return }
+
 bool Robot::parse (boost::shared_ptr<urdf::Link > &link)
 {
     osg::ref_ptr<Link> lastone=0,newone=0;
@@ -27,12 +31,12 @@ bool Robot::parse (boost::shared_ptr<urdf::Link > &link)
         parent=getOsgJoint(link->parent_joint);
         if(!parent.valid())
         {
-            //   std::cerr<<link->parent_joint->name<<"hasn't been added (Advice: add all joints before adding link)"<<std::endl;
+            /// parent link not parsed yet
             if(!parse(link->parent_joint))        return false;
             parent=getOsgJoint(link->parent_joint);
         }
     }
-    else std::cerr<<"link"<< link->name<<" havenojoint so it's the root"<<std::endl;
+    else std::cerr<<"link"<< link->name<<" have no joint so it's the root"<<std::endl;
 
 
 
@@ -87,7 +91,6 @@ bool Robot::parse (boost::shared_ptr<urdf::Link > &link)
             if(!_debugaxes )_debugaxes=osgDB::readNodeFile("axes.osgt");
             scaler->addChild(_debugaxes);
             newone->addChild(scaler);
-// osg_ref_ptr<Link> osgjoint=new
             if(!lastone.valid())
             {
 ///actual add to model
@@ -98,8 +101,6 @@ bool Robot::parse (boost::shared_ptr<urdf::Link > &link)
             return true;
         }
         return false;
-//osg::ref_ptr<node->asGroup()
-//if(node->asGroup)
     }
 }
 ///SE3Model.addBody (if DOF) + osg::Transform creation
@@ -112,18 +113,24 @@ bool Robot::parse (boost::shared_ptr<urdf::Joint > &link)
 
 
 ///update state
-    newone->setPosition(osg::Vec3(
-                            (float)link->parent_to_joint_origin_transform.position.x,
-                            (float)link->parent_to_joint_origin_transform.position.y,
-                            (float)link->parent_to_joint_origin_transform.position.z
-                        ));
-    newone->setAttitude(osg::Quat(
-                            (float)link->parent_to_joint_origin_transform.rotation.x,
-                            (float)link->parent_to_joint_origin_transform.rotation.y,
-                            (float)link->parent_to_joint_origin_transform.rotation.z,
-                            (float)link->parent_to_joint_origin_transform.rotation.w
-                        ));
 
+///set index in SE3 or use local joint index (_invLinksMap)
+//SE3Model.addBody?
+
+///set osg model
+    osg::Matrixf m;
+    m.setTrans(osg::Vec3(
+                   (float)link->parent_to_joint_origin_transform.position.x,
+                   (float)link->parent_to_joint_origin_transform.position.y,
+                   (float)link->parent_to_joint_origin_transform.position.z
+               ));
+    m.setRotate(osg::Quat(
+                    (float)link->parent_to_joint_origin_transform.rotation.x,
+                    (float)link->parent_to_joint_origin_transform.rotation.y,
+                    (float)link->parent_to_joint_origin_transform.rotation.z,
+                    (float)link->parent_to_joint_origin_transform.rotation.w
+                ));
+    newone->setMatrix(m);
 
     newone->setName(link->name);
     if(!lastone.valid())

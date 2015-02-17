@@ -19,6 +19,9 @@
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
+FILE(TO_CMAKE_PATH ${CMAKE_HOME_DIRECTORY}/cmake PROJ_MODULE_PATH)
+SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJ_MODULE_PATH})
+
 SET(CXX_DISABLE_WERROR TRUE)
 INCLUDE(cmake/base.cmake)
 INCLUDE(cmake/eigen.cmake)
@@ -35,28 +38,30 @@ SET(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 
 SETUP_PROJECT()
-
+set(PINOCCHIO_PATH "${CMAKE_HOME_DIRECTORY}/../pinocchio" CACHE FILEPATH "${CMAKE_HOME_DIRECTORY}/../pinocchio")
 # Declare Headers
 SET(${PROJECT_NAME}_HEADERS
-  include/gepetto/viewer/config-osg.h
-  include/gepetto/viewer/group-node.h
-  include/gepetto/viewer/leaf-node-box.h
-  include/gepetto/viewer/leaf-node-capsule.h
-  include/gepetto/viewer/leaf-node-collada.h
-  include/gepetto/viewer/leaf-node-cone.h
-  include/gepetto/viewer/leaf-node-cylinder.h
-  include/gepetto/viewer/leaf-node-face.h
-  include/gepetto/viewer/leaf-node-ground.h
-  include/gepetto/viewer/leaf-node-line.h
-  include/gepetto/viewer/leaf-node-sphere.h
-  include/gepetto/viewer/macros.h
-  include/gepetto/viewer/node.h
+  #include/gepetto/viewer/config-osg.h
+  #include/gepetto/viewer/group-node.h
+  #include/gepetto/viewer/leaf-node-box.h
+ # include/gepetto/viewer/leaf-node-capsule.h
+  #include/gepetto/viewer/leaf-node-collada.h
+  #include/gepetto/viewer/leaf-node-cone.h
+ # include/gepetto/viewer/leaf-node-cylinder.h
+  #include/gepetto/viewer/leaf-node-face.h
+  #include/gepetto/viewer/leaf-node-ground.h
+ #include/gepetto/viewer/leaf-node-line.h
+ # include/gepetto/viewer/leaf-node-sphere.h
+ # include/gepetto/viewer/macros.h
+ # include/gepetto/viewer/node.h
+include/gepetto/viewer/robot.h
   include/gepetto/viewer/urdf-parser.h
   include/gepetto/viewer/window-manager.h
 )
-
-ADD_REQUIRED_DEPENDENCY("openscenegraph >= 3.2")
-ADD_REQUIRED_DEPENDENCY("openthreads >= 3.2")
+find_package(OpenSceneGraph REQUIRED)
+find_package(Eigen3 REQUIRED)
+#ADD_REQUIRED_DEPENDENCY("openscenegraph >= 3.2")
+#ADD_REQUIRED_DEPENDENCY("openthreads >= 3.2")
 ADD_REQUIRED_DEPENDENCY("urdfdom")
 
 ADD_SUBDIRECTORY(src)

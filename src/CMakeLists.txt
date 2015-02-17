@@ -18,30 +18,36 @@
 # <http://www.gnu.org/licenses/>.
 
 SET(LIBRARY_NAME ${PROJECT_NAME})
+find_package(OpenSceneGraph REQUIRED)
+find_package(osgGA REQUIRED) 
+find_package(osgDB REQUIRED)
+find_package(osgViewer REQUIRED)
 
 ADD_LIBRARY(${LIBRARY_NAME} SHARED
-  group-node.cpp
-  node.cpp
-  window-manager.cpp
-  leaf-node-line.cpp
-  leaf-node-box.cpp
-  leaf-node-cylinder.cpp
-  leaf-node-cone.cpp
-  leaf-node-face.cpp
-  leaf-node-sphere.cpp
-  leaf-node-capsule.cpp
-  leaf-node-ground.cpp
-  leaf-node-collada.cpp
+ # group-node.cpp
+  #node.cpp
+  #window-manager.cpp
+  #leaf-node-line.cpp
+  #leaf-node-box.cpp
+  #leaf-node-cylinder.cpp
+  #leaf-node-cone.cpp
+  #leaf-node-face.cpp
+ # leaf-node-sphere.cpp
+  #leaf-node-capsule.cpp
+  #leaf-node-ground.cpp
+  #leaf-node-collada.cpp
   urdf-parser.cpp
+robot.cpp
 )
-
+include_directories(${PINOCCHIO_PATH}/include)
+include_directories(${EIGEN3_INCLUDE_DIR})
 PKG_CONFIG_USE_DEPENDENCY(${LIBRARY_NAME} openscenegraph)
 PKG_CONFIG_USE_DEPENDENCY(${LIBRARY_NAME} openthreads)
 #PKG_CONFIG_USE_DEPENDENCY(${LIBRARY_NAME} eigen3)
 PKG_CONFIG_USE_DEPENDENCY(${LIBRARY_NAME} urdfdom)
 
 ADD_EXECUTABLE(testing ../tests/test.cpp)
-TARGET_LINK_LIBRARIES(testing ${LIBRARY_NAME})
+TARGET_LINK_LIBRARIES(testing ${LIBRARY_NAME} ${OPENTHREADS_LIBRARIES}  ${OPENSCENEGRAPH_LIBRARIES} ${OSGVIEWER_LIBRARIES} ${OSGDB_LIBRARIES} ${OSGGA_LIBRARIES})
 INSTALL(TARGETS testing DESTINATION bin)
 
 INSTALL(TARGETS ${LIBRARY_NAME} DESTINATION lib)
