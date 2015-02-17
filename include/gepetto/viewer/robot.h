@@ -21,11 +21,18 @@ public:
         this->_urdfmodel=rhs._urdfmodel;
     }
 
+
     Link(const Link&rhs,const osg::CopyOp& copyop=osg::CopyOp::SHALLOW_COPY):osg::Group(rhs,  copyop) {}
     META_Node(graphics, Link);
-    urdf::Link *getUrdfModel()
+
+    ///Properties
+    inline const urdf::Link *getUrdfModel()const
     {
         return _urdfmodel.get() ;
+    }
+    inline void setUrdfModel(boost::shared_ptr<urdf::Link > &l)
+    {
+        _urdfmodel=l ;
     }
 };
 
@@ -43,9 +50,14 @@ public:
 
     Joint(const Joint&rhs,const osg::CopyOp& copyop=osg::CopyOp::SHALLOW_COPY):osg::MatrixTransform(rhs,  copyop) {}
     META_Node(graphics, Joint);
-    urdf::Joint *getUrdfModel()
+    ///Properties
+    inline const urdf::Joint *getUrdfModel()const
     {
         return _urdfmodel.get() ;
+    }
+    inline void setUrdfModel(boost::shared_ptr<urdf::Joint >&l)
+    {
+        _urdfmodel=l ;
     }
 };
 
@@ -55,6 +67,7 @@ class Robot:public osg::Group
 public:
 
     Robot();
+
     Robot(const Robot&rhs,const osg::CopyOp& copyop=osg::CopyOp::SHALLOW_COPY) :osg::Group(rhs,  copyop) {}
     META_Node(graphics, Robot);
 
@@ -83,23 +96,26 @@ public:
     }
     Joint *getOsgJoint(boost::shared_ptr<urdf::Joint >j) ;
     Link *getOsgLink(boost::shared_ptr<urdf::Link >j);
-    //void getOsgJoint(JointIndex i){return }
-    bool parse (boost::shared_ptr<urdf::Link > &link);
-    ///SE3Model.addBody (if DOF) + osg::Transform creation
-    bool  parse (boost::shared_ptr<urdf::Joint > &link);
+
 
 protected:
-    osg::ref_ptr<osg::Node> _debugaxes;
+    ///Meshes loading
+    virtual bool parse (boost::shared_ptr<urdf::Link > &link);
+    ///SE3Model.addBody (if DOF) + osg::Transform creation
+    virtual bool  parse (boost::shared_ptr<urdf::Joint > &link);
+    ~Robot();
+    osg::ref_ptr<osg::Node> _debugaxes; ///
     std::string _urdfPackageRootDirectory;
     se3::Model *SE3Model;
-    //linear inner index
-    typedef unsigned int LinkIndex;
-    typedef unsigned int JointIndex;
+
 protected:
     ///classic async model
     ///typedef std::tuple<urdf::Model *,osg::Model,SE3::Model,...> ModelstoSync
     ///choice done: urdf as entry point and maintain with dirtyflag and use osg update callback to sync models
     ///store local reference to joint and link for direct memory access
+    /// inner indexes
+    typedef unsigned int LinkIndex;
+    typedef unsigned int JointIndex;
     std::vector<boost::shared_ptr<urdf::Link > > _links;
     std::vector<osg::ref_ptr<Link > > _osglinks;
     std::map< urdf::Link *,LinkIndex  > _invLinksMap;

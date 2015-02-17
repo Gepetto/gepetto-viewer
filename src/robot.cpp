@@ -8,6 +8,10 @@ Robot::Robot(): osg::Group(),_debugaxes(0)
     SE3Model=new se3::Model();
 }
 
+Robot::~Robot()
+{
+    delete SE3Model;
+}
 Link *Robot::getOsgLink(boost::shared_ptr<urdf::Link >j)
 {
     std::map< urdf::Link *,LinkIndex  >::iterator it= _invLinksMap.find(j.get());

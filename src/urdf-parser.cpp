@@ -39,7 +39,7 @@ Robot* urdfParser::parse (const std::string& robotName,
         for (unsigned int i = 0 ; i < links.size() ; i++)
         {
             link_name = links[i]->name;
-            rob->parse(links[i]);
+            rob->addLink(links[i]);
 
         }
         return rob  ;
