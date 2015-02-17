@@ -1,6 +1,7 @@
 #include "gepetto/viewer/robot.h"
 #include <osgDB/ReadFile>
 #include <osg/Switch>
+#include <osg/ShapeDrawable>
 #include "pinocchio/multibody/model.hpp"
 
 #include <urdf_parser/urdf_parser.h>
@@ -59,6 +60,93 @@ void  Robot::setUrdfFile(const std::string & s)
 
     }
 }
+
+
+osg::MatrixTransform * Robot::getGeometryNode( boost::shared_ptr< urdf::Geometry > &geom_shared_ptr)
+{
+    osg::ref_ptr<osg::Node> node=0;
+    osg::Matrix m;
+    switch(geom_shared_ptr->type)
+    {
+    case urdf::Geometry::MESH:
+    {
+        boost::shared_ptr<  urdf::Mesh > mesh_shared_ptr=boost::static_pointer_cast<  urdf::Mesh >
+                ( geom_shared_ptr );
+
+        m.makeScale( mesh_shared_ptr->scale.x,mesh_shared_ptr->scale.x,mesh_shared_ptr->scale.x);
+        if (mesh_shared_ptr->filename.substr(0, 10) != "package://")
+        {
+            throw std::runtime_error ("Error when parsing urdf file: "
+                                      "mesh filename should start with"
+                                      " \"package://\"");
+        }
+        std::string  mesh_path =  mesh_shared_ptr->filename.substr
+                                  (10, mesh_shared_ptr->filename.size());
+
+        node=  osgDB::readNodeFile(_urdfPackageRootDirectory+mesh_path);//urdf::Geometry
+        if(!node)
+        {
+            std::cerr<<_urdfPackageRootDirectory+mesh_path<<"botfound"<<std::endl;
+            return 0;
+        }
+
+        break;
+    }
+    case urdf::Geometry::BOX :
+    {
+        boost::shared_ptr<  urdf::Box > mesh_shared_ptr=boost::static_pointer_cast<  urdf::Box >( geom_shared_ptr );
+        osg::ref_ptr<osg::Geode> geode=new osg::Geode();
+        osg::TessellationHints* hints = new osg::TessellationHints;
+        hints->setDetailRatio(0.5f);
+        //convert urdf to osg
+        osg::Vec3 center(0,0,0);
+        osg::Vec3 halfLengths(osg::Vec3(mesh_shared_ptr->dim.x,mesh_shared_ptr->dim.y,mesh_shared_ptr->dim.z));
+        halfLengths*=0.5f;
+        geode->addDrawable(new osg::ShapeDrawable(new osg::Box(center,halfLengths[0],halfLengths[1],halfLengths[2]),hints));
+        node=geode;
+        break;
+    }
+    case urdf::Geometry::CYLINDER :
+    {
+        boost::shared_ptr<  urdf::Cylinder > mesh_shared_ptr=boost::static_pointer_cast<  urdf::Cylinder >( geom_shared_ptr );
+        osg::ref_ptr<osg::Geode> geode=new osg::Geode();
+        osg::TessellationHints* hints = new osg::TessellationHints;
+        hints->setDetailRatio(0.5f);
+        //convert urdf to osg
+        //double length;  double radius;
+//osg::Vec3& center,float radius,float height
+        geode->addDrawable(new osg::ShapeDrawable(new osg::Cylinder(osg::Vec3(0.0f,0.0f,0.0f),mesh_shared_ptr->radius,mesh_shared_ptr->length),hints));
+        node=geode;
+        break;
+    }
+    case urdf::Geometry::SPHERE :
+    {
+        boost::shared_ptr<  urdf::Sphere > mesh_shared_ptr=boost::static_pointer_cast<  urdf::Sphere >( geom_shared_ptr );
+        osg::ref_ptr<osg::Geode> geode=new osg::Geode();
+        osg::TessellationHints* hints = new osg::TessellationHints;
+        hints->setDetailRatio(0.5f);
+
+        geode->addDrawable(new osg::ShapeDrawable(new osg::Sphere(osg::Vec3(0.0f,0.0f,0.0f),mesh_shared_ptr->radius),hints));
+        node=geode;
+
+        break;
+    }
+    default: //TODO
+        break;
+    }
+
+
+    if(node)
+    {
+        osg::ref_ptr<osg::MatrixTransform > scaler=new osg::MatrixTransform();
+        scaler->setDataVariance(osg::Object::STATIC);
+
+        scaler->setMatrix(m);
+        scaler->addChild(node);
+        return scaler.release();
+    }
+    return 0;
+}
 bool Robot::parse (boost::shared_ptr<urdf::Link > &link)
 {
     osg::ref_ptr<Link> lastone=0,newone=0;
@@ -101,81 +189,40 @@ bool Robot::parse (boost::shared_ptr<urdf::Link > &link)
 
     osg::ref_ptr<osg::Switch> debugswitch= new osg::Switch();
 
-    if(link->visual &&link->visual->geometry->type==urdf::Geometry::MESH)
+    if(link->visual )
     {
-        boost::shared_ptr< ::urdf::Mesh > mesh_shared_ptr;
 
-
-        mesh_shared_ptr = boost::static_pointer_cast<  urdf::Mesh >
-                          ( link->visual->geometry );
-
-        if (mesh_shared_ptr->filename.substr(0, 10) != "package://")
+        osg::ref_ptr<osg::MatrixTransform > gr= this->getGeometryNode(link->visual->geometry);
+        if(gr)
         {
-            throw std::runtime_error ("Error when parsing urdf file: "
-                                      "mesh filename should start with"
-                                      " \"package://\"");
+            newone->setVisualNode(gr);
+            newone->addChild(gr);
         }
-        std::string  mesh_path =  mesh_shared_ptr->filename.substr
-                                  (10, mesh_shared_ptr->filename.size());
 
-        osg::Node * node= osgDB::readNodeFile(_urdfPackageRootDirectory+mesh_path);//urdf::Geometry
-        if(!node)std::cerr<<_urdfPackageRootDirectory+mesh_path<<"botfound"<<std::endl;
-        else
-        {
-            osg::ref_ptr<osg::MatrixTransform > scaler=new osg::MatrixTransform();
-            scaler->setDataVariance(osg::Object::STATIC);
-            osg::Matrix m;
-            m.makeScale( mesh_shared_ptr->scale.x,mesh_shared_ptr->scale.x,mesh_shared_ptr->scale.x);
-            scaler->setMatrix(m);
-            scaler->addChild(node);
-
-            newone->setVisualNode(scaler);
-            newone->addChild(scaler);
-            //newone->addChild(scaler);
-
-
-        }
     }
-      if(link->collision &&link->collision->geometry->type==urdf::Geometry::MESH)
+
+    if(link->collision )
     {
-        boost::shared_ptr< ::urdf::Mesh > mesh_shared_ptr;
-        mesh_shared_ptr = boost::static_pointer_cast<  urdf::Mesh >
-                          ( link->collision->geometry );
+        osg::ref_ptr<osg::MatrixTransform > gr= this->getGeometryNode(link->collision->geometry);
 
-        if (mesh_shared_ptr->filename.substr(0, 10) != "package://")
+
+        if(!_debugaxes )_debugaxes=osgDB::readNodeFile("axes.osgt");
+        if(gr)
         {
-            throw std::runtime_error ("Error when parsing urdf file: "
-                                      "mesh filename should start with"
-                                      " \"package://\"");
-        }
-        std::string  mesh_path =  mesh_shared_ptr->filename.substr
-                                  (10, mesh_shared_ptr->filename.size());
+            gr->addChild(_debugaxes);
 
-        osg::Node * node= osgDB::readNodeFile(_urdfPackageRootDirectory+mesh_path);//urdf::Geometry
-        if(!node)std::cerr<<_urdfPackageRootDirectory+mesh_path<<"botfound"<<std::endl;
-        else
-        {
-            osg::ref_ptr<osg::MatrixTransform > scaler=new osg::MatrixTransform();
-            scaler->setDataVariance(osg::Object::STATIC);
-            osg::Matrix m;
-            m.makeScale( mesh_shared_ptr->scale.x,mesh_shared_ptr->scale.x,mesh_shared_ptr->scale.x);
-            scaler->setMatrix(m);
-            scaler->addChild(node);
-            if(!_debugaxes )_debugaxes=osgDB::readNodeFile("axes.osgt");
-            scaler->addChild(_debugaxes);
-
-            newone->setCollisionNode(scaler);
-            newone->addChild(scaler);
-            //newone->addChild(scaler);
-
+            newone->setCollisionNode(gr);
+            newone->addChild(gr);
 
         }
+
     }
 
 
-if(newone->getCollisionNode())
 
-    newone->setValue(newone->getChildIndex(newone->getCollisionNode()),false);
+    if(newone->getCollisionNode())
+
+        newone->setValue(newone->getChildIndex(newone->getCollisionNode()),false);
 
 
     if(!lastone.valid())

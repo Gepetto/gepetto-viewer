@@ -230,7 +230,9 @@ protected:
     std::vector<boost::shared_ptr<urdf::Joint > > _joints;
     std::vector<osg::ref_ptr<Joint > > _osgjoints;
     std::map< urdf::Joint *,JointIndex  > _invJointsMap;
-
+private:
+///local helper generate an osg Group from a ::urdf::Mesh
+osg::MatrixTransform * getGeometryNode( boost::shared_ptr<  urdf::Geometry > &);
 };
 
 ///ThreadSafe Order for RobotUpdateCallback
