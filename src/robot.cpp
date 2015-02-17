@@ -27,7 +27,7 @@ bool Robot::parse (boost::shared_ptr<urdf::Link > &link)
 {
     osg::ref_ptr<Link> lastone=0,newone=0;
     lastone=getOsgLink(link  );
-    if(!lastone.valid())newone=new Link();
+    if(!lastone.valid())newone=new Link(link);
     else return true;//don't update previous ...newone=lastone;//update previous version
     osg::ref_ptr<Joint> child=0,parent=0;
     if(link->parent_joint)
@@ -108,11 +108,11 @@ bool Robot::parse (boost::shared_ptr<urdf::Link > &link)
     }
 }
 ///SE3Model.addBody (if DOF) + osg::Transform creation
-bool Robot::parse (boost::shared_ptr<urdf::Joint > &link)
+bool Robot::parse (boost::shared_ptr<urdf::Joint > &joint)
 {
     osg::ref_ptr<Joint> lastone=0,newone=0;
-    lastone=getOsgJoint(link  );
-    if(!lastone.valid())newone=new Joint();
+    lastone=getOsgJoint(joint  );
+    if(!lastone.valid())newone=new Joint(joint);
     else return true;//don't update previous ...newone=lastone;//update previous version
 
 
@@ -124,24 +124,24 @@ bool Robot::parse (boost::shared_ptr<urdf::Joint > &link)
 ///set osg model
     osg::Matrixf m;
     m.setTrans(osg::Vec3(
-                   (float)link->parent_to_joint_origin_transform.position.x,
-                   (float)link->parent_to_joint_origin_transform.position.y,
-                   (float)link->parent_to_joint_origin_transform.position.z
+                   (float)joint->parent_to_joint_origin_transform.position.x,
+                   (float)joint->parent_to_joint_origin_transform.position.y,
+                   (float)joint->parent_to_joint_origin_transform.position.z
                ));
     m.setRotate(osg::Quat(
-                    (float)link->parent_to_joint_origin_transform.rotation.x,
-                    (float)link->parent_to_joint_origin_transform.rotation.y,
-                    (float)link->parent_to_joint_origin_transform.rotation.z,
-                    (float)link->parent_to_joint_origin_transform.rotation.w
+                    (float)joint->parent_to_joint_origin_transform.rotation.x,
+                    (float)joint->parent_to_joint_origin_transform.rotation.y,
+                    (float)joint->parent_to_joint_origin_transform.rotation.z,
+                    (float)joint->parent_to_joint_origin_transform.rotation.w
                 ));
     newone->setMatrix(m);
 
-    newone->setName(link->name);
+    newone->setName(joint->name);
     if(!lastone.valid())
     {
 ///actual add to model
-        _invJointsMap[link.get()]=_joints.size();
-        _joints.push_back(link);
+        _invJointsMap[joint.get()]=_joints.size();
+        _joints.push_back(joint);
         _osgjoints.push_back(newone);
     }
     return true;

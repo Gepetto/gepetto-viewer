@@ -16,6 +16,10 @@ protected:
     boost::shared_ptr<urdf::Link > _urdfmodel;
 public:
     Link(): osg::Group() {}
+    Link(boost::shared_ptr<urdf::Link >&l) :osg::Group()
+    {
+        _urdfmodel=l;
+    }
     Link(const Link&rhs)
     {
         this->_urdfmodel=rhs._urdfmodel;
@@ -42,7 +46,11 @@ class Joint:public osg::MatrixTransform
 protected:
     boost::shared_ptr<urdf::Joint > _urdfmodel;
 public:
-    Joint() :osg::MatrixTransform() {}
+    Joint() :osg::MatrixTransform(){    }
+    Joint(boost::shared_ptr<urdf::Joint >&l) :osg::MatrixTransform()
+    {
+        _urdfmodel=l;
+    }
     Joint(const Joint&rhs)
     {
         this->_urdfmodel=rhs._urdfmodel;
