@@ -84,12 +84,14 @@ public:
 ///suboptimal (store joint id yourself)
     static int getJointID(  const RobotUpdateHandler & modelPtr,const std::string&name  )
     {
+     modelPtr-> beginSyncCall();
         graphics::Robot::Joints::const_iterator it;
         int cpt=0;
         for(it=modelPtr ->getRobot()->getJoints().begin();
                 it!=modelPtr ->getRobot()->getJoints().end()&& (*it)->getName()!=name; it++)cpt++;
-        if(      it!=modelPtr ->getRobot()->getJoints().end())return cpt;
-        else return -1;
+        if(      it==modelPtr ->getRobot()->getJoints().end()) cpt=-1;
+     modelPtr-> endSyncCall();
+          return cpt;
     }
 
     static void setDebugCollisionOnOff (   RobotUpdateHandler & modelPtr  )

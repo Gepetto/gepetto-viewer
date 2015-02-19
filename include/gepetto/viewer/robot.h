@@ -118,29 +118,37 @@ public:
 
 class Robot;
 ///ThreadSafe Visual Robot Update Callback
+///used 4 python scripting
 class RobotUpdate: public osg::NodeCallback
 {
-    OpenThreads::Mutex _mutex;
-    Robot* _rob;
+    OpenThreads::Mutex _mutex; ///async calls for  rw methods
+    mutable OpenThreads::Mutex _sync;///sync calls for ro methods
+    Robot* _rob;///
 
     std::list<UpdateOrder*> _stackorders;
 public:
     META_Object(graphics,RobotUpdate);
+    ///constructors
     RobotUpdate():_rob(0) {};
     RobotUpdate(Robot*r):_rob(r) {}
+    ///dummy copyop
     RobotUpdate(const RobotUpdate& nc,const osg::CopyOp&c):osg::NodeCallback(nc,c) {}
 
+    ///get the object for which control interactions are delegated
     Robot * getRobot()const
     {
         return _rob;
     }
 ///add order
     inline void addOrder(UpdateOrder*o)
-    {
+    { _sync.lock();///prevent ro sync calls
         _mutex.lock();
         _stackorders.push_back(o);
+
         _mutex.unlock();
     }
+    inline void beginSyncCall()const{_sync.lock();   }
+    inline void endSyncCall()const{_sync.unlock();   }
 
 ///treat Order Queue
     virtual void operator()(osg::Node* node, osg::NodeVisitor* nv)
@@ -156,7 +164,9 @@ public:
             _stackorders.pop_front();
             delete order;
         }
+
         _mutex.unlock();
+        _sync.unlock();///allow ro sync calls
         traverse(node,nv);
     }
 
@@ -231,17 +241,14 @@ public:
     typedef std::vector<osg::ref_ptr<Joint > > Joints;
     typedef std::vector<osg::ref_ptr<Link > > Links;
 
-    ///get all graphics::Joints ordored in a vector
-    inline Joints & getJoints()
-    {
-        return _osgjoints;
-    }
-    ///get all graphics::Links ordored in a vector
-    inline Links & getLinks()
-    {
-        return _osglinks;
-    }
 
+
+    ///get all graphics::Joints ordored in a vector
+    inline const Joints & getJoints()const    {        return _osgjoints;    }
+    inline  Joints & getJoints()    {        return _osgjoints;    }
+    ///get all graphics::Links ordored in a vector
+    inline const Links & getLinks()const    {        return _osglinks;    }
+    inline  Links & getLinks()    {        return _osglinks;    }
 protected:
     ///Meshes loading
     virtual bool parse (boost::shared_ptr<urdf::Link > &link);
