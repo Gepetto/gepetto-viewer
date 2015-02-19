@@ -1,6 +1,6 @@
 #include <eigenpy/eigenpy.hpp>
-/*#include <eigenpy/eigenpy.hpp>
-#include <eigenpy/geometry.hpp>*/
+#include <eigenpy/eigenpy.hpp>
+#include <eigenpy/geometry.hpp>
 #include "gepetto/python/python.hpp"
 
 #include <iostream>
@@ -9,10 +9,10 @@ namespace bp = boost::python;
 
 BOOST_PYTHON_MODULE(libgepetto_pywrap)
 {
-  /*eigenpy::enableEigenPy();
+ eigenpy::enableEigenPy();
   eigenpy::exposeAngleAxis();
   eigenpy::exposeQuaternion();
-
+ /*
   typedef Eigen::Matrix<double,6,6> Matrix6d;
   typedef Eigen::Matrix<double,6,1> Vector6d;
 

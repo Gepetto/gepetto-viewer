@@ -1,15 +1,20 @@
 #ifndef __se3_python_visualrobot_hpp__
 #define __se3_python_visualrobot_hpp__
 
-#include <pinocchio/multibody/model.hpp>
+//#include <pinocchio/multibody/model.hpp>
+#include <eigenpy/eigenpy.hpp>
+#include <eigenpy/geometry.hpp>
+#include "pinocchio/python/se3.hpp"
+#include <pinocchio/spatial/se3.hpp>
+#include <pinocchio/python/se3.hpp>
 #include <pinocchio/multibody/joint.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include <eigenpy/exception.hpp>
 #include <eigenpy/eigenpy.hpp>
-
+#include <numpy/ndarrayobject.h>
 #include <gepetto/viewer/robot.h>
 
-#include "gepetto/python/handler.hpp"
+#include <gepetto/python/handler.hpp>
 
 namespace graphics
 {
@@ -44,7 +49,7 @@ public:
     void visit(PyClass& cl) const
     {
         cl
-        .def("setConfiguration",&RobotUpdatePythonVisitor::setJointConfiguration)
+        .def("setConfiguration",&RobotUpdatePythonVisitor::setConfiguration)
         .def("getVisuJointID",&RobotUpdatePythonVisitor::getJointID)
         .def("setUrdfFile",&RobotUpdatePythonVisitor::setUrdfFile )
         .def("setUrdfPackageDirectory",&RobotUpdatePythonVisitor::setUrdfPackageDirectory)
@@ -87,7 +92,7 @@ public:
         else return -1;
     }
 
- static void setDebugCollisionOnOff (   RobotUpdateHandler & modelPtr  )
+    static void setDebugCollisionOnOff (   RobotUpdateHandler & modelPtr  )
     {
         //write model is
         //not thread safe   return modelPtr ->getRobot()->setUrdfFile(name); is wrong
@@ -112,12 +117,15 @@ public:
         modelPtr ->addOrder(
             new SetUrdfPackageDirectoryOrder(*modelPtr ->getRobot(),name));
     }
-      static void setJointConfiguration(   RobotUpdateHandler & modelPtr,int osgjointid, const se3::SE3::Quaternion & q )
+    static void setConfiguration(   RobotUpdateHandler & modelPtr,const int jointid,
+                                    const se3::python::SE3PythonVisitor<se3::SE3>::SE3_fx &   M )
     {
-        return  modelPtr ->addOrder(
-                    new UpdateJointOrder(*modelPtr ->getRobot()->getJoints()[osgjointid],
-                                         osg::Vec3(0,0,0),///always null...:/
-                                         osg::Quat(q.coeffs().x(),q.coeffs().y(),q.coeffs().z(),q.coeffs().w())));
+        //M.getRotatopn
+        //se3::SE3::Quaternion q=(M.rotation);
+
+        if(jointid>=0&&jointid<modelPtr ->getRobot()->getJoints().size())
+            modelPtr ->addOrder(   new UpdateJointOrder(*modelPtr ->getRobot()->getJoints()[jointid],M) );
+        else std::cerr<<"Warning: Bad Joint Id..you did nothing"<<std::endl;
     }
 
     /*  static boost::shared_ptr<Data> createData(const ModelHandler& m )
@@ -148,7 +156,11 @@ public:
     static std::string toString(const RobotUpdateHandler& m)
     {
         std::ostringstream s;
-        s <<*(unsigned*) (&m. get());
+        s <<*(unsigned*) (&m. get())<<" "<<m->getRobot()->getName()<<std::endl<<"Joints:"<<std::endl;
+
+        int cpt=0;
+        for(graphics::Robot::Joints::const_iterator it=m ->getRobot()->getJoints().begin();
+                it!=m ->getRobot()->getJoints().end(); it++)s<<"index "<<cpt++<<"/ name:"<<(*it)->getName()<<std::endl;
         return s.str();
     }
 

@@ -19,7 +19,7 @@
 
 SET(LIBRARY_NAME ${PROJECT_NAME})
 find_package(OpenSceneGraph REQUIRED)
-find_package(osgGA REQUIRED) 
+find_package(osgGA REQUIRED)
 find_package(osgDB REQUIRED)
 find_package(osgViewer REQUIRED)
 
@@ -38,6 +38,7 @@ ADD_LIBRARY(${LIBRARY_NAME} SHARED
   #leaf-node-collada.cpp
   urdf-parser.cpp
 robot.cpp
+viewer.cpp
 )
 include_directories(${PINOCCHIO_PATH}/include)
 include_directories(${EIGEN3_INCLUDE_DIR})

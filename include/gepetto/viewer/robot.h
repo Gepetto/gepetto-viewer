@@ -1,7 +1,7 @@
 #ifndef OSGROBOT_H
 #define OSGROBOT_H
 
-
+#include <pinocchio/spatial/se3.hpp>
 #include <urdf_model/model.h>
 #include <osg/MatrixTransform>
 #include <osg/Switch>
@@ -35,7 +35,7 @@ public:
     META_Node(graphics, Link);
 
     ///Properties
-   const osg::Node* getVisualNode()const
+    const osg::Node* getVisualNode()const
     {
         return _visualmesh;
     }
@@ -45,7 +45,7 @@ public:
         _visualmesh=n;
     }
 
-   const osg::Node* getCollisionNode()const
+    const osg::Node* getCollisionNode()const
     {
         return _collisionmesh;
     }
@@ -84,12 +84,17 @@ public:
     META_Node(graphics, Joint);
 
     ///Dangerous User Interface (call it in a updatecallback or in the main osg loop to prevent thread issues)
-    inline void applyConfiguration(const osg::Vec3&v,const osg::Quat&q)
-    {
-        osg::Matrixd m;
-        m.setTrans(v);
-        m.setRotate(q);
-        setMatrix(m);
+    inline void applyConfiguration(const se3::SE3 &conf)//const osg::Vec3&v,const osg::Quat&q)
+    {se3::SE3::Matrix4 m=conf.toHomogeneousMatrix();
+       // osg::Matrixd m;
+        osg::Matrixd  M (
+        m(0,0),m(0,1),m(0,2),m(0,3),
+        m(1,0),m(1,1),m(1,2) ,m(1,3),
+       m(2,0),m(2,1),m(2,2),m(2,3),
+         m(3,0),m(3,1),m(3,2),m(3,3)
+        );
+
+        setMatrix(M);
     }
 
     ///Properties
@@ -125,7 +130,10 @@ public:
     RobotUpdate(Robot*r):_rob(r) {}
     RobotUpdate(const RobotUpdate& nc,const osg::CopyOp&c):osg::NodeCallback(nc,c) {}
 
-    Robot * getRobot()const{return _rob;}
+    Robot * getRobot()const
+    {
+        return _rob;
+    }
 ///add order
     inline void addOrder(UpdateOrder*o)
     {
@@ -154,6 +162,15 @@ public:
 
 
 };
+
+
+
+
+
+/**Class representing osg side of a Robot model
+*TODO:SE3:Model is attached but not fill yet
+*
+*/
 class Robot:public osg::Group
 {
 
@@ -168,7 +185,7 @@ public:
     {
         return SE3Model;
     }
-
+    ///Absolute path to directory containing of urdf package
     void setUrdfPackageRootDirectory(const std::string & s)
     {
         _urdfPackageRootDirectory=s;
@@ -177,28 +194,49 @@ public:
     {
         return _urdfPackageRootDirectory ;
     }
+    ///Absolute path to file containing urdf representation
     void setUrdfFile(const std::string & s);
     const std::string & getUrdfFile()const
     {
         return _urdfFile ;
     }
 
+///add urdf::Link to the model do nothing if already there
+///(inner creation of graphics::Link)
     void addLink(boost::shared_ptr<urdf::Link > &link)
     {
         parse(link);
     }
+    void removeLink(boost::shared_ptr<urdf::Link > &link)
+    {
+        ///TODO
+    }
+
+    ///add urdf::Joint to the model
+    ///(inner creation of graphics::Joint)
     void addJoint(boost::shared_ptr<urdf::Joint > &link)
     {
         parse(link);
     }
+    void removeJoint(boost::shared_ptr<urdf::Link > &link)
+    {
+        ///TODO
+    }
+
+    ///get graphics::Joint by urdf::Joint
     Joint *getOsgJoint(boost::shared_ptr<urdf::Joint >j) ;
+
+    ///get graphics::Joint by urdf::Joint
     Link *getOsgLink(boost::shared_ptr<urdf::Link >j);
     typedef std::vector<osg::ref_ptr<Joint > > Joints;
     typedef std::vector<osg::ref_ptr<Link > > Links;
+
+    ///get all graphics::Joints ordored in a vector
     inline Joints & getJoints()
     {
         return _osgjoints;
     }
+    ///get all graphics::Links ordored in a vector
     inline Links & getLinks()
     {
         return _osglinks;
@@ -232,21 +270,52 @@ protected:
     std::map< urdf::Joint *,JointIndex  > _invJointsMap;
 private:
 ///local helper generate an osg Group from a ::urdf::Mesh
-osg::MatrixTransform * getGeometryNode( boost::shared_ptr<  urdf::Geometry > &);
+    osg::MatrixTransform * getGeometryNode( boost::shared_ptr<  urdf::Geometry > &);
 };
 
-///ThreadSafe Order for RobotUpdateCallback
+
+
+/*********************ThreadSafe Orders for RobotUpdateCallback******************************************************************************/
+
+///Load Urdf Model
+class SetUrdfFileOrder:public UpdateOrder
+{
+public:
+    Robot &rob;
+    std::string _filename;
+    SetUrdfFileOrder(  Robot &r,const std::string &name):rob(r),_filename(name) {}
+    virtual void exec()
+    {
+        rob.setUrdfFile(_filename);
+    }
+
+};
+///set Urdf Package path
+class SetUrdfPackageDirectoryOrder:public UpdateOrder
+{
+public:
+    Robot &rob;
+    std::string _filename;
+    SetUrdfPackageDirectoryOrder(  Robot &r,const std::string &name):rob(r),_filename(name) {}
+    virtual void exec()
+    {
+        rob.setUrdfPackageRootDirectory(_filename);
+    }
+
+};
 ///Update joint transform
 class UpdateJointOrder:public UpdateOrder
 {
 public:
     Joint &joint;
+    se3::SE3 conf;
     osg::Vec3 pos;
     osg::Quat quat;
-    UpdateJointOrder(Joint&j,const osg::Vec3&v,const osg::Quat&q):joint(j),pos(v),quat(q) {}
+    UpdateJointOrder(Joint&j,/*const osg::Vec3&v,const osg::Quat&q):joint(j),pos(v),quat(q) {}*/
+    const se3::SE3 & c):joint(j),conf(c){}
     virtual void exec()
     {
-        joint.applyConfiguration(pos,quat);
+        joint.applyConfiguration(conf);//pos,quat);
     }
 
 };
@@ -257,22 +326,25 @@ public:
     Robot &rob;
     SwitchDebugOrder(Robot&j):rob(j)  {}
     virtual void exec()
-    { int index;
+    {
+        int index;
         for(Robot::Links::iterator it=rob.getLinks().begin(); it!=rob.getLinks().end(); it++)
         {
-        if((*it)->getVisualNode()){
+            if((*it)->getVisualNode())
+            {
 
-     index=  (*it)->getChildIndex((*it)->getVisualNode());
-      (*it)->setValue(index,!(*it)->getValue(index));
+                index=  (*it)->getChildIndex((*it)->getVisualNode());
+                (*it)->setValue(index,!(*it)->getValue(index));
+            }
+
+            if((*it)->getCollisionNode())
+            {
+
+                index=  (*it)->getChildIndex((*it)->getCollisionNode());
+                (*it)->setValue(index,!(*it)->getValue(index));
+            }
+
         }
-
-        if((*it)->getCollisionNode()){
-
-      index=  (*it)->getChildIndex((*it)->getCollisionNode());
-      (*it)->setValue(index,!(*it)->getValue(index));
-        }
-
-    }
     }
 
 };

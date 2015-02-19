@@ -7,7 +7,7 @@
 //
 
 #include <iostream>
-#include <gepetto/viewer/window-manager.h>
+#include <gepetto/viewer/viewer.h>
 #include <gepetto/viewer/node.h>
 #include <gepetto/viewer/group-node.h>
 #include <gepetto/viewer/leaf-node-box.h>
@@ -66,10 +66,13 @@ bool myKeyboardEventHandler::handle(const osgGA::GUIEventAdapter& ea,osgGA::GUIA
         return false;
     }
 }
+
 int main(int, const char**)
 
 {
     using namespace graphics;
+    RobotViewer threaded;
+    threaded.start();
     osg::ref_ptr< graphics::Robot > modelNode=    graphics:: urdfParser::parse(std::string("hrp2"),
             std::string("/home/xeul/SRC/Pinocchio/nao_robot-master/nao_description/urdf/naoV50_generated_urdf/nao.urdf"),
             std::string("/home/xeul/SRC/Pinocchio/nao_robot-master/"));
