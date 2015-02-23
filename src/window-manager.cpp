@@ -56,9 +56,12 @@ namespace graphics {
         /* add camera to the viewer */
         viewer_ptr_->addSlave ( main_camera_ );
 
+        screen_capture_ptr_ = NULL;
+        write_to_file_ptr_ = NULL;
     }
 
-    WindowManager::WindowManager ()
+    WindowManager::WindowManager () :
+      screen_capture_ptr_ (NULL), write_to_file_ptr_ (NULL)
     {
         init (0, 0, DEF_WIDTH_WINDOW, DEF_HEIGHT_WINDOW);
     }
@@ -203,10 +206,9 @@ namespace graphics {
 
     WindowManager::~WindowManager()
     {
-
-        scene_ptr_.reset();
-        viewer_ptr_ = NULL;
-
+      stopCapture ();
+      scene_ptr_.reset();
+      viewer_ptr_ = NULL;
     }
   
   osgViewer::ViewerRefPtr WindowManager::getViewerClone()
@@ -214,6 +216,32 @@ namespace graphics {
     return ::osgViewer::ViewerRefPtr(viewer_ptr_.get());
   }
   
+  void WindowManager::startCapture (const std::string& filename,
+      const std::string& extension)
+  {
+    if (screen_capture_ptr_ != NULL) {
+      screen_capture_ptr_->startCapture ();
+      return;
+    }
+    /* Create an handler to save video */
+    write_to_file_ptr_ = new osgViewer::ScreenCaptureHandler::WriteToFile
+      (filename, extension);
+    screen_capture_ptr_ = new osgViewer::ScreenCaptureHandler
+      (write_to_file_ptr_, -1);
+    /* Screen capture can be stopped with stopCapture */
+    screen_capture_ptr_->setKeyEventTakeScreenShot (0);
+    screen_capture_ptr_->setKeyEventToggleContinuousCapture (0);
+    viewer_ptr_->addEventHandler (screen_capture_ptr_);
+    screen_capture_ptr_->startCapture ();
+  }
+
+  void WindowManager::stopCapture ()
+  {
+    if (screen_capture_ptr_ == NULL) return;
+    screen_capture_ptr_->stopCapture ();
+    frame ();
+  }
+
     /* End declaration of public function members */
 
 } /* namespace graphics */

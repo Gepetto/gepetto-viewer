@@ -10,6 +10,7 @@
 #define SCENEVIEWER_WINDOWMANAGER_HH
 
 #include <osgViewer/Viewer>
+#include <osgViewer/ViewerEventHandlers>
 #include <gepetto/viewer/group-node.h>
 #include <gepetto/viewer/node.h>
 
@@ -39,6 +40,9 @@ namespace graphics {
 
         ::osg::CameraRefPtr hud_camera_;
 
+        /* OSG Screen capture handler */
+        ::osgViewer::ScreenCaptureHandler* screen_capture_ptr_;
+        ::osgViewer::ScreenCaptureHandler::WriteToFile* write_to_file_ptr_;
 
         /** Associated weak pointer */
         WindowManagerWeakPtr weak_ptr_;
@@ -121,6 +125,11 @@ namespace graphics {
         ::osgViewer::ViewerRefPtr getViewerClone();
 
         virtual ~WindowManager();
+
+        void startCapture (const std::string& filename,
+            const std::string& extension);
+
+        void stopCapture ();
     };
 } /* namespace graphics */
 
