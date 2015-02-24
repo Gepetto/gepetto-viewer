@@ -69,43 +69,31 @@ class Joint:public osg::MatrixTransform
 {
 protected:
     boost::shared_ptr<urdf::Joint > _urdfmodel;
+    osg::Matrixf _Mlocal; ///static local transform in parentjoint coord
 public:
     Joint() :osg::MatrixTransform() {    }
     Joint(boost::shared_ptr<urdf::Joint >&l) :osg::MatrixTransform()
     {
-        _urdfmodel=l;
+        setUrdfModel(l);
     }
     Joint(const Joint&rhs)
     {
-        this->_urdfmodel=rhs._urdfmodel;
+
+        setUrdfModel(rhs.getUrdfModel());
     }
 
     Joint(const Joint&rhs,const osg::CopyOp& copyop=osg::CopyOp::SHALLOW_COPY):osg::MatrixTransform(rhs,  copyop) {}
     META_Node(graphics, Joint);
 
     ///Dangerous User Interface (call it in a updatecallback or in the main osg loop to prevent thread issues)
-    inline void applyConfiguration(const se3::SE3 &conf)//const osg::Vec3&v,const osg::Quat&q)
-    {se3::SE3::Matrix4 m=conf.toHomogeneousMatrix();
-       // osg::Matrixd m;
-        osg::Matrixd  M (
-        m(0,0),m(0,1),m(0,2),m(0,3),
-        m(1,0),m(1,1),m(1,2) ,m(1,3),
-       m(2,0),m(2,1),m(2,2),m(2,3),
-         m(3,0),m(3,1),m(3,2),m(3,3)
-        );
-
-        setMatrix(M);
-    }
+    void applyConfiguration(const se3::SE3 &conf);
 
     ///Properties
-    inline const urdf::Joint *getUrdfModel()const
+    inline const boost::shared_ptr<urdf::Joint > getUrdfModel()const
     {
-        return _urdfmodel.get() ;
+        return _urdfmodel  ;
     }
-    inline void setUrdfModel(boost::shared_ptr<urdf::Joint >&l)
-    {
-        _urdfmodel=l ;
-    }
+    inline void setUrdfModel(const boost::shared_ptr<urdf::Joint >&l);
 };
 
 class UpdateOrder
@@ -141,14 +129,21 @@ public:
     }
 ///add order
     inline void addOrder(UpdateOrder*o)
-    { _sync.lock();///prevent ro sync calls
+    {
+        _sync.lock();///prevent ro sync calls
         _mutex.lock();
         _stackorders.push_back(o);
 
         _mutex.unlock();
     }
-    inline void beginSyncCall()const{_sync.lock();   }
-    inline void endSyncCall()const{_sync.unlock();   }
+    inline void beginSyncCall()const
+    {
+        _sync.lock();
+    }
+    inline void endSyncCall()const
+    {
+        _sync.unlock();
+    }
 
 ///treat Order Queue
     virtual void operator()(osg::Node* node, osg::NodeVisitor* nv)
@@ -244,11 +239,23 @@ public:
 
 
     ///get all graphics::Joints ordored in a vector
-    inline const Joints & getJoints()const    {        return _osgjoints;    }
-    inline  Joints & getJoints()    {        return _osgjoints;    }
+    inline const Joints & getJoints()const
+    {
+        return _osgjoints;
+    }
+    inline  Joints & getJoints()
+    {
+        return _osgjoints;
+    }
     ///get all graphics::Links ordored in a vector
-    inline const Links & getLinks()const    {        return _osglinks;    }
-    inline  Links & getLinks()    {        return _osglinks;    }
+    inline const Links & getLinks()const
+    {
+        return _osglinks;
+    }
+    inline  Links & getLinks()
+    {
+        return _osglinks;
+    }
 protected:
     ///Meshes loading
     virtual bool parse (boost::shared_ptr<urdf::Link > &link);
@@ -319,7 +326,7 @@ public:
     osg::Vec3 pos;
     osg::Quat quat;
     UpdateJointOrder(Joint&j,/*const osg::Vec3&v,const osg::Quat&q):joint(j),pos(v),quat(q) {}*/
-    const se3::SE3 & c):joint(j),conf(c){}
+                     const se3::SE3 & c):joint(j),conf(c) {}
     virtual void exec()
     {
         joint.applyConfiguration(conf);//pos,quat);

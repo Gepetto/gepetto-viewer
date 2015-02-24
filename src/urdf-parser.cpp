@@ -7,6 +7,7 @@
 //
 #include <gepetto/viewer/urdf-parser.h>
 #include <urdf_parser/urdf_parser.h>
+#include <osgDB/WriteFile>
 
 namespace graphics {
 
@@ -42,6 +43,9 @@ Robot* urdfParser::parse (const std::string& robotName,
             rob->addLink(links[i]);
 
         }
+        osg::Group*gr=new osg::Group();
+
+        osgDB::writeNodeFile(*rob,"readrobot.osg");
         return rob  ;
     }
     }

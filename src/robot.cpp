@@ -235,6 +235,40 @@ bool Robot::parse (boost::shared_ptr<urdf::Link > &link)
     return true;
 
 }
+void Joint::applyConfiguration(const se3::SE3 &conf)//const osg::Vec3&v,const osg::Quat&q)
+{
+    se3::SE3::Matrix4 m=conf.toHomogeneousMatrix();
+    // osg::Matrixd m;
+    osg::Matrixd  M (
+        m(0,0),m(0,1),m(0,2),m(0,3),
+        m(1,0),m(1,1),m(1,2) ,m(1,3),
+        m(2,0),m(2,1),m(2,2),m(2,3),
+        m(3,0),m(3,1),m(3,2),m(3,3)
+    );///joint transform
+    /*  osg::Matrixd  M (
+          m(0,0),m(1,0),m(2,0),m(3,0),
+          m(0,1),m(1,1),m(2,1) ,m(3,1),
+         m(0,2),m(1,2),m(2,2),m(3,2),
+           m(0,3),m(1,3),m(2,3),m(3,3)
+          );*/
+
+    M.postMult(_Mlocal);
+    setMatrix(M);
+}
+void Joint::setUrdfModel(const boost::shared_ptr<urdf::Joint >&l)
+{
+    _urdfmodel=l ;
+    _Mlocal.setTrans(osg::Vec3(
+                         (float)_urdfmodel->parent_to_joint_origin_transform.position.x,
+                         (float)_urdfmodel->parent_to_joint_origin_transform.position.y,
+                         (float)_urdfmodel->parent_to_joint_origin_transform.position.z
+                     ));
+    _Mlocal.setRotate(osg::Quat(
+                          (float)_urdfmodel->parent_to_joint_origin_transform.rotation.x,
+                          (float)_urdfmodel->parent_to_joint_origin_transform.rotation.y,
+                          (float)_urdfmodel->parent_to_joint_origin_transform.rotation.z,
+                          (float)_urdfmodel->parent_to_joint_origin_transform.rotation.w));
+}
 ///SE3Model.addBody (if DOF) + osg::Transform creation
 bool Robot::parse (boost::shared_ptr<urdf::Joint > &joint)
 {
@@ -250,7 +284,7 @@ bool Robot::parse (boost::shared_ptr<urdf::Joint > &joint)
 //SE3Model.addBody?
 
 ///set osg model
-    osg::Matrixf m;
+    osg::Matrixf m; ///local transform
     m.setTrans(osg::Vec3(
                    (float)joint->parent_to_joint_origin_transform.position.x,
                    (float)joint->parent_to_joint_origin_transform.position.y,

@@ -3,8 +3,8 @@ import pinocchio.utils
 import gepetto 
 import time
 
-import numpy as np
-import matrix as eigenpy
+#import numpy as np
+#import matrix as eigenpy
 viewer=gepetto.RobotViewer()
 viewer.start()
 rob=viewer.addNewRobot()
