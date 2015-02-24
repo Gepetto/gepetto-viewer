@@ -7,7 +7,7 @@
 //
 
 #include <iostream>
-#include <gepetto/viewer/window-manager.h>
+#include <gepetto/viewer/viewer.h>
 #include <gepetto/viewer/node.h>
 #include <gepetto/viewer/group-node.h>
 #include <gepetto/viewer/leaf-node-box.h>
@@ -21,73 +21,88 @@
 #include <gepetto/viewer/leaf-node-collada.h>
 #include <gepetto/viewer/urdf-parser.h>
 
-  int main(int, const char**)
+#include <osgViewer/ViewerEventHandlers>
 
-  {
+#include <osgGA/TrackballManipulator>
+#include <osgGA/FlightManipulator>
+#include <osgGA/DriveManipulator>
+#include <osgGA/KeySwitchMatrixManipulator>
+#include <osgGA/StateSetManipulator>
+#include <osgGA/AnimationPathManipulator>
+#include <osgGA/TerrainManipulator>
+#include <osgGA/SphericalManipulator>
+
+
+class myKeyboardEventHandler : public osgGA::GUIEventHandler
+{
+public:
+    graphics:: RobotUpdate *_control;
+    myKeyboardEventHandler(graphics::RobotUpdate *controller):_control(controller) {}
+    virtual bool handle(const osgGA::GUIEventAdapter& ea,osgGA::GUIActionAdapter&);
+    virtual void accept(osgGA::GUIEventHandlerVisitor& v)
+    {
+        v.visit(*this);
+    };
+};
+
+bool myKeyboardEventHandler::handle(const osgGA::GUIEventAdapter& ea,osgGA::GUIActionAdapter& aa)
+{
+    switch(ea.getEventType())
+    {
+    case(osgGA::GUIEventAdapter::KEYDOWN):
+    {
+        switch(ea.getKey())
+        {
+        case 'w':
+            std::cout << " w key pressed" << std::endl;
+            _control->addOrder(new graphics::SwitchDebugOrder(*_control->getRobot()));
+            return false;
+            break;
+        default:
+            return false;
+        }
+    }
+    default:
+        return false;
+    }
+}
+
+int main(int, const char**)
+
+{
     using namespace graphics;
+    RobotViewer threaded;
+    threaded.start();
+    osg::ref_ptr< graphics::Robot > modelNode=    graphics:: urdfParser::parse(std::string("hrp2"),
+            std::string("/home/xeul/SRC/Pinocchio/nao_robot-master/nao_description/urdf/naoV50_generated_urdf/nao.urdf"),
+            std::string("/home/xeul/SRC/Pinocchio/nao_robot-master/"));
+    osg::ref_ptr< RobotUpdate > controller= new RobotUpdate(modelNode);
+    modelNode->addUpdateCallback(controller);
 
-    LeafNodeBoxPtr_t box = LeafNodeBox::create("box1", osgVector3(1.,1.,1.));
-    /*LeafNodeCapsulePtr_t capsule = LeafNodeCapsule::create("capsule1", 1,1);
-    LeafNodeConePtr_t cone = LeafNodeCone::create("cone", 1,1);
-    LeafNodeCylinderPtr_t cylindre = LeafNodeCylinder::create("cylindre", 1,1);
-    LeafNodeSpherePtr_t sphere = LeafNodeSphere::create("sphere", 1);
-    LeafNodeGroundPtr_t ground = LeafNodeGround::create("ground");*/
-    //LeafNodeColladaPtr_t collada = LeafNodeCollada::create("collada","/home/simeval/AluminumChair.dae");
-    box->addLandmark(1.);
-    //LeafNodeLinePtr_t line = LeafNodeLine::create(std::string("line"), osgVector3(1.0,1.0,1.0), osgVector3(0.0,0.0,0.0));
-    //LeafNodeFacePtr_t face = LeafNodeFace::create(std::string("face"), osgVector3(0.0,0.0,0.0), osgVector3(-2.0,0.0,0.0), osgVector3(-2.0,-2.0,0.0), osgVector3(0.0,-2.0,0.0));
-    //face->addVertex(osgVector3(0.,0.,2.));
+    osgViewer::Viewer viewer;
+    viewer.addEventHandler(new myKeyboardEventHandler(controller));
+    // add the thread model handler
+    viewer.addEventHandler(new osgViewer::ThreadingHandler);
 
-    GroupNodePtr_t world = GroupNode::create(std::string("world"));
-    //GroupNodePtr_t robot = GroupNode::create(std::string("robot"));
-    //GroupNodePtr_t robot = urdfParser::parse(std::string("hrp2"), std::string("/local/mgeisert/devel/src/hrp2/hrp2_14_description/urdf/hrp2_14_capsule.urdf"),std::string("/local/mgeisert/devel/src/hrp2/"));
+    // add the window size toggle handler
+    viewer.addEventHandler(new osgViewer::WindowSizeHandler);
 
+    // add the stats handler
+    viewer.addEventHandler(new osgViewer::StatsHandler);
 
-    /*world->addChild(robot);
-    world->addChild(obstacle);
+    // add the help handler
+    //viewer.addEventHandler(new osgViewer::HelpHandler(arguments.getApplicationUsage()));
 
-    DefVector3 position1(2.,0.,0.);
-    DefQuat attitude1(1.,0.,0.,0.);
-    Tools::ConfigurationPtr_t config1 = Tools::Configuration::create(position1, attitude1);
-    DefVector3 position2(0.,2.,0.);
-    DefQuat attitude2(1.,0.,0.,0.);
-    Tools::ConfigurationPtr_t config2 = Tools::Configuration::create(position2, attitude2);
+    // add the record camera path handler
+    viewer.addEventHandler(new osgViewer::RecordCameraPathHandler);
 
-    robot->addChild(box);
-    robot->applyConfiguration(config1);
-    box->applyConfiguration(config1);
-    robot->addChild(capsule);
-    capsule->setVisibilityMode(VISIBILITY_OFF);
-    robot->addChild(cone);
-    cone->applyConfiguration(config2);
-    cone->setColor(osgVector4(1.,1.,0.5,1.));
-    cone->setVisibilityMode(VISIBILITY_ON);
-    DefVector3 position3(0.,0.,8.);
-    DefQuat attitude3(1.,0.,0.,0.);
-    Tools::ConfigurationPtr_t config3 = Tools::Configuration::create(position3, attitude3);
-    obstacle->applyConfiguration(config3);
-    obstacle->addChild(cylindre);
-    sphere->applyConfiguration(config2);
-    obstacle->addChild(sphere);
-    sphere->setAlpha(0.1f);
-    world->addChild(ground);
-    world->addChild(collada);
-    collada->applyConfiguration(config2);
-    std::string name("world/robot/genou");
-    std::cout << (parseName(name)) << std::endl;*/
+    // add the LOD Scale handler
+    viewer.addEventHandler(new osgViewer::LODScaleHandler);
 
-    //world->addChild(ground);
-    //world->addChild(line);
-    world->addChild(box);
-    //world->addChild(robot);
-    WindowManagerPtr_t gm = WindowManager::create();
-    gm->addNode(world);
-    //osgViewer::Viewer viewer;
-    //viewer.setSceneData( world->asGroup() );
-    box->deleteLandmark();
-    box->addLandmark(2.);
-    box->applyConfiguration(osgVector3(0.,0.,0.), osgQuat(0.884,0.306,-0.177,0.306));
-    world->addLandmark(1.);
-
-    return gm->run();
-  }
+    // add the screen capture handler
+    viewer.addEventHandler(new osgViewer::ScreenCaptureHandler);
+    viewer.setUpViewInWindow( 10, 30, 800, 600 );
+    viewer.setSceneData( modelNode );
+    viewer.realize();
+    viewer.run();
+}
