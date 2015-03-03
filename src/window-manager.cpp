@@ -10,6 +10,7 @@
 
 #include <osg/Camera>
 #include <osgGA/TrackballManipulator>
+#include <osgDB/WriteFile>
 
 namespace graphics {
 
@@ -240,6 +241,12 @@ namespace graphics {
     if (screen_capture_ptr_ == NULL) return;
     screen_capture_ptr_->stopCapture ();
     frame ();
+  }
+
+  bool WindowManager::writeNodeFile (const std::string& fn)
+  {
+    osgDB::Registry::instance ()->loadLibrary ("osgPlugins-3.3.4/osgdb_osgjs.so");
+    return osgDB::writeNodeFile (*(viewer_ptr_->getSceneData()), fn);
   }
 
     /* End declaration of public function members */

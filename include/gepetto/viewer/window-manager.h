@@ -130,6 +130,8 @@ namespace graphics {
             const std::string& extension);
 
         void stopCapture ();
+
+        bool writeNodeFile (const std::string& filename);
     };
 } /* namespace graphics */
 
