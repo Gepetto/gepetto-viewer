@@ -23,6 +23,7 @@ ADD_LIBRARY(${LIBRARY_NAME} SHARED
   group-node.cpp
   node.cpp
   window-manager.cpp
+  windows-manager.cpp
   leaf-node-line.cpp
   leaf-node-box.cpp
   leaf-node-cylinder.cpp
@@ -39,9 +40,9 @@ PKG_CONFIG_USE_DEPENDENCY(${LIBRARY_NAME} openscenegraph)
 PKG_CONFIG_USE_DEPENDENCY(${LIBRARY_NAME} openthreads)
 #PKG_CONFIG_USE_DEPENDENCY(${LIBRARY_NAME} eigen3)
 PKG_CONFIG_USE_DEPENDENCY(${LIBRARY_NAME} urdfdom)
+TARGET_LINK_LIBRARIES(${LIBRARY_NAME} ${Boost_LIBRARIES})
 
 ADD_EXECUTABLE(testing ../tests/test.cpp)
 TARGET_LINK_LIBRARIES(testing ${LIBRARY_NAME})
 
 INSTALL(TARGETS ${LIBRARY_NAME} DESTINATION lib)
-
