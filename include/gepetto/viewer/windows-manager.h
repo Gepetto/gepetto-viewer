@@ -35,9 +35,9 @@ namespace graphics {
         public:
             // Typedef for position and color values.
             typedef osg::Vec3f::value_type value_type;
+            typedef unsigned int WindowID;
 
         private:
-            typedef unsigned int WindowID;
             typedef std::vector <WindowManagerPtr_t> WindowManagerVector_t;
             WindowManagerVector_t windowManagers_;
             std::map<std::string, NodePtr_t> nodes_;
@@ -125,6 +125,8 @@ namespace graphics {
                     const char* extension);
             virtual bool stopCapture (const WindowID windowId);
             virtual bool writeNodeFile (const WindowID windowId, const char* filename);
+
+            WindowManagerPtr_t getWindowManager (const WindowID wid);
     };
 } /* namespace graphics */
 

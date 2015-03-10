@@ -737,4 +737,15 @@ namespace graphics {
             return false;
         }
     }
+
+    WindowManagerPtr_t WindowsManager::getWindowManager (const WindowID wid)
+    {
+      if (wid >= 0 || wid < windowManagers_.size ()) {
+        return windowManagers_[wid];
+      }
+      else {
+        std::cout << "Window ID " << wid << " doesn't exist." << std::endl;
+        return WindowManagerPtr_t ();
+      }
+    }
 } // namespace graphics
