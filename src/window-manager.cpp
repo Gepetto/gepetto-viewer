@@ -47,6 +47,7 @@ namespace graphics {
 
         viewer_ptr_ = new ::osgViewer::Viewer();
         viewer_ptr_->setSceneData ( scene_ptr_->asGroup() );
+        viewer_ptr_->setKeyEventSetsDone (0);
 
         viewer_ptr_->setCameraManipulator( new ::osgGA::TrackballManipulator );
 
