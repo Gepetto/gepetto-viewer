@@ -41,8 +41,8 @@ namespace graphics {
         ::osg::CameraRefPtr hud_camera_;
 
         /* OSG Screen capture handler */
-        ::osgViewer::ScreenCaptureHandler* screen_capture_ptr_;
-        ::osgViewer::ScreenCaptureHandler::WriteToFile* write_to_file_ptr_;
+        osg::ref_ptr < ::osgViewer::ScreenCaptureHandler> screen_capture_ptr_;
+        osg::ref_ptr < ::osgViewer::ScreenCaptureHandler::WriteToFile> write_to_file_ptr_;
 
         /** Associated weak pointer */
         WindowManagerWeakPtr weak_ptr_;
