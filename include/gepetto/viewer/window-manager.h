@@ -22,12 +22,6 @@ namespace graphics {
     {
     private:
 
-        /** GraphicalEngine    */
-        unsigned int width_window_dimension_, height_window_dimension_;
-        unsigned int x_window_position_, y_window_position_;
-
-        bool window_decoration_status_;
-
         /** Scene Graphical Group */
         GroupNodePtr_t scene_ptr_;
 
@@ -36,7 +30,7 @@ namespace graphics {
 
         /** OSG cameras */
         ::osg::CameraRefPtr main_camera_;
-        ::osg::TraitsRefPtr traits_ptr_;
+        ::osg::GraphicsContextRefPtr gc_;
 
         ::osg::CameraRefPtr hud_camera_;
 
@@ -47,9 +41,13 @@ namespace graphics {
         /** Associated weak pointer */
         WindowManagerWeakPtr weak_ptr_;
 
+        void init(osg::GraphicsContext* gc);
+
         void init(const unsigned int& x, const unsigned int& y, const unsigned int& width, const unsigned int& height);
 
         WindowManager();
+
+        WindowManager (osg::GraphicsContext* gc);
 
         WindowManager(const unsigned int& x, const unsigned int& y, const unsigned int& width, const unsigned int& height);
 
@@ -109,14 +107,8 @@ namespace graphics {
         /** Define the window position */
         virtual void setWindowPosition (const unsigned int& x_position, const unsigned int& y_position);
 
-        /** Define the window decoration state */
-        virtual void setWindowDecoration (bool window_decoration_status);
-
         /** Return the window x and y position as a 2D vector */
         osgVector2 getWindowPosition () const;
-
-        /** Return the current window decoration status */
-        bool getWindowDecoration () const { return window_decoration_status_; }
 
         /** Return the window width and height as a 2D vector */
         osgVector2 getWindowDimension () const;
