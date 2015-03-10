@@ -65,6 +65,10 @@ namespace graphics {
          */
         static WindowManagerPtr_t create();
 
+        /** Create and initialize a graphical engine with a GraphicsContext
+         */
+        static WindowManagerPtr_t create(osg::GraphicsContext* gc);
+
         /** Create and initialize a graphical engine of type OSG with some parameters : position + dimension
          */
         static WindowManagerPtr_t create(const unsigned int& x, const unsigned int& y, const unsigned int& width, const unsigned int& height);

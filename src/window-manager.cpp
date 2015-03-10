@@ -124,6 +124,16 @@ namespace graphics {
         return shared_ptr;
     }
 
+    WindowManagerPtr_t WindowManager::create(osg::GraphicsContext* gc)
+    {
+        WindowManagerPtr_t shared_ptr(new WindowManager(gc));
+
+        // Add reference to itself
+        shared_ptr->initWeakPtr(shared_ptr);
+
+        return shared_ptr;
+    }
+
     WindowManagerPtr_t WindowManager::createCopy (WindowManagerPtr_t other)
     {
         WindowManagerPtr_t shared_ptr(new WindowManager(*other));
