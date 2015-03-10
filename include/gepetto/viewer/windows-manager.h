@@ -60,12 +60,13 @@ namespace graphics {
             static osgVector3 corbaConfToOsgVec3(const value_type* configurationCorba);
 
         protected:
-
-        public:
             /**
               \brief Default constructor
               */
             WindowsManager ();
+
+        public:
+            static WindowsManagerPtr_t create ();
 
             virtual void getNodeList();
             virtual void getWindowList();

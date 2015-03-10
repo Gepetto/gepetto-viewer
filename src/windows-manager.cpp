@@ -41,6 +41,12 @@ namespace graphics {
     {
     }
 
+    WindowsManagerPtr_t WindowsManager::create ()
+    {
+      WindowsManagerPtr_t shPtr (new WindowsManager());
+      return shPtr;
+    }
+
     osgVector4 WindowsManager::getColor (const std::string& colorName)
     {
         if (colorName == "blue")
