@@ -62,6 +62,7 @@ namespace graphics {
         void setID (const std::string& id_name)
         {
             id_name_ = id_name;
+            switch_node_ptr_->setName (id_name_);
         }
     public:
         /**

@@ -24,6 +24,7 @@ namespace graphics {
     auto_transform_ptr_ = new ::osg::AutoTransform;
     static_auto_transform_ptr_ = new ::osg::AutoTransform;
     switch_node_ptr_ = new ::osg::Switch;
+    switch_node_ptr_->setName (id_name_);
 
     wireframe_node_ptr_ = new ::osg::Group;
     normal_node_ptr_ = new ::osg::Group;
@@ -134,7 +135,8 @@ namespace graphics {
     if(mode == LIGHT_INFLUENCE_ON)
       auto_transform_ptr_->getOrCreateStateSet()->setMode(GL_LIGHTING, ::osg::StateAttribute::ON | ::osg::StateAttribute::PROTECTED);
     else
-      auto_transform_ptr_->getOrCreateStateSet()->setMode(GL_LIGHTING, ::osg::StateAttribute::OFF | ::osg::StateAttribute::PROTECTED);    }
+      auto_transform_ptr_->getOrCreateStateSet()->setMode(GL_LIGHTING, ::osg::StateAttribute::OFF | ::osg::StateAttribute::PROTECTED);
+  }
 
   void Node::setWireFrameMode (const WireFrameMode& mode)
   {

@@ -46,24 +46,25 @@ namespace graphics {
         scene_ptr_ = ::graphics::GroupNode::create(name);
 
         viewer_ptr_ = new ::osgViewer::Viewer();
-        viewer_ptr_->setSceneData ( scene_ptr_->asGroup() );
-        viewer_ptr_->setKeyEventSetsDone (0);
-
-        viewer_ptr_->setCameraManipulator( new ::osgGA::TrackballManipulator );
 
         /* init main camera */
-        main_camera_ = new ::osg::Camera;
+        main_camera_ = viewer_ptr_->getCamera ();
 
         gc_ = osg::GraphicsContextRefPtr (gc);
         const osg::GraphicsContext::Traits* traits_ptr = gc->getTraits ();
         main_camera_->setGraphicsContext(gc);
         main_camera_->setViewport(new osg::Viewport(0,0, traits_ptr->width, traits_ptr->height));
+        main_camera_->setProjectionMatrixAsPerspective(
+            30.0f, static_cast<double>(traits_ptr->width)/static_cast<double>(traits_ptr->height), 1.0f, 10000.0f );
         GLenum buffer = traits_ptr->doubleBuffer ? GL_BACK : GL_FRONT;
         main_camera_->setDrawBuffer(buffer);
         main_camera_->setReadBuffer(buffer);
 
         /* add camera to the viewer */
-        viewer_ptr_->addSlave ( main_camera_ );
+        viewer_ptr_->setSceneData ( scene_ptr_->asGroup() );
+        viewer_ptr_->setKeyEventSetsDone (0);
+
+        viewer_ptr_->setCameraManipulator( new ::osgGA::TrackballManipulator );
     }
 
     WindowManager::WindowManager ()
