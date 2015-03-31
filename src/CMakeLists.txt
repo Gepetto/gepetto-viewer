@@ -23,7 +23,6 @@ ADD_LIBRARY(${LIBRARY_NAME} SHARED
   group-node.cpp
   node.cpp
   window-manager.cpp
-  windows-manager.cpp
   leaf-node-line.cpp
   leaf-node-box.cpp
   leaf-node-cylinder.cpp
