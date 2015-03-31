@@ -192,15 +192,22 @@ namespace graphics {
         }
     }
 
-    WindowsManager::WindowID WindowsManager::createWindow (const char* winName)
+    WindowsManager::WindowID WindowsManager::createWindow (const char* winName,
+        osg::GraphicsContext* gc)
     {
         std::string wn (winName);
-        WindowManagerPtr_t newWindow = WindowManager::create ();
+        WindowManagerPtr_t newWindow;
+        if (gc == 0)
+          newWindow = WindowManager::create ();
+        else
+          newWindow = WindowManager::create (gc);
         WindowID windowId = windowManagers_.size ();
         windowManagers_.push_back (newWindow);
-        boost::thread refreshThread (boost::bind
-                (&WindowsManager::threadRefreshing,
-                 this, newWindow));
+        if (gc == 0) {
+          boost::thread refreshThread (boost::bind
+              (&WindowsManager::threadRefreshing,
+               this, newWindow));
+        }
         return windowId;
     }
 
@@ -213,9 +220,6 @@ namespace graphics {
                 it != newNodeConfigurations_.end (); it++) {
             (*it).node->applyConfiguration ( (*it).position, (*it).quat);
         }
-        for (WindowManagerVector_t::iterator it = windowManagers_.begin ();
-                it!=windowManagers_.end (); ++it)
-            (*it)->frame ();
         mtx_.unlock ();
         newNodeConfigurations_.clear ();
     }
@@ -748,4 +752,23 @@ namespace graphics {
         return WindowManagerPtr_t ();
       }
     }
+
+    GroupNodePtr_t WindowsManager::getScene (const std::string sceneName)
+    {
+        std::map<std::string, GroupNodePtr_t>::iterator it =
+            groupNodes_.find (sceneName);
+        if (it == groupNodes_.end ())
+            return GroupNodePtr_t ();
+        return it->second;
+    }
+
+    NodePtr_t WindowsManager::getNode (const std::string nodeName)
+    {
+        std::map<std::string, NodePtr_t>::iterator it =
+            nodes_.find (nodeName);
+        if (it == nodes_.end ())
+            return NodePtr_t ();
+        return it->second;
+    }
+            NodePtr_t getNode (const std::string nodeName);
 } // namespace graphics

@@ -74,7 +74,7 @@ namespace graphics {
             virtual bool setRate(const int& rate);
             virtual void refresh();
 
-            virtual WindowID createWindow(const char* windowNameCorba);
+            virtual WindowID createWindow(const char* windowNameCorba, osg::GraphicsContext* gc = 0);
 
             virtual void createScene(const char* sceneNameCorba);
             virtual void createSceneWithFloor(const char* sceneNameCorba);
@@ -127,6 +127,8 @@ namespace graphics {
             virtual bool writeNodeFile (const WindowID windowId, const char* filename);
 
             WindowManagerPtr_t getWindowManager (const WindowID wid);
+            GroupNodePtr_t getScene (const std::string sceneName);
+            NodePtr_t getNode (const std::string nodeName);
     };
 } /* namespace graphics */
 
