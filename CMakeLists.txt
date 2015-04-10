@@ -53,6 +53,8 @@ SET(${PROJECT_NAME}_HEADERS
   include/gepetto/viewer/node.h
   include/gepetto/viewer/urdf-parser.h
   include/gepetto/viewer/window-manager.h
+	include/gepetto/viewer/leaf-node-xyzaxis.h
+	include/gepetto/viewer/roadmap-viewer.h
 )
 
 ADD_REQUIRED_DEPENDENCY("openscenegraph >= 3.2")
