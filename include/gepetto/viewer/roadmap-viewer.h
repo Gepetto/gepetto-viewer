@@ -3,6 +3,7 @@
 
 #include <gepetto/viewer/node.h>
 #include <gepetto/viewer/group-node.h>
+#include <boost/thread/mutex.hpp>
 
 namespace graphics {
 
@@ -18,7 +19,6 @@ namespace graphics {
 
         /** Associated weak pointer */
         RoadmapViewerWeakPtr weak_ptr_;
-
         // ---
         float radiusSphere_;
         float sizeAxis_;
@@ -53,9 +53,9 @@ namespace graphics {
          */
         RoadmapViewerPtr_t self(void) const;
 
-        bool addNode(osgVector3 position, osgQuat quat);
+        bool addNode(osgVector3 position, osgQuat quat,boost::mutex& mtx);
 
-        bool addEdge(osgVector3 from, osgVector3 to);
+        bool addEdge(osgVector3 from, osgVector3 to, boost::mutex& mtx);
 
         virtual void removeAllChildren();
 

@@ -12,7 +12,7 @@ namespace graphics {
         colorNode_=osgVector4(colorNode);
         colorEdge_=osgVector4(colorEdge);
         radiusSphere_=radiusSphere;
-        sizeAxis_ = sizeAxis_;
+        sizeAxis_ = sizeAxis;
 
     }
 
@@ -56,10 +56,10 @@ namespace graphics {
     }
 
 
-   /*RoadmapViewerPtr_t RoadmapViewer::clone(void) const
+   RoadmapViewerPtr_t RoadmapViewer::clone(void) const
    {
        return RoadmapViewer::createCopy(weak_ptr_.lock());
-   }*/
+   }
 
    RoadmapViewerPtr_t RoadmapViewer::self(void) const
    {
@@ -68,25 +68,27 @@ namespace graphics {
 
    // -------------------------------------------
 
-   bool RoadmapViewer::addNode(osgVector3 position, osgQuat quat){
+   bool RoadmapViewer::addNode(osgVector3 position, osgQuat quat, boost::mutex& mtx){
        std::stringstream msg;
        msg << getID()<<"_node"<<list_nodes_.size();
        LeafNodeXYZAxisPtr_t node = LeafNodeXYZAxis::create(msg.str(),colorNode_,radiusSphere_,sizeAxis_);
+       mtx.lock();
        node->applyConfiguration (position,quat);
 
        list_nodes_.push_back(node);
-       this->asQueue()->addChild(node->asGroup());
-
+       this->asQueue()->addChild(node->asGroup());;
+       mtx.unlock();
        return true;
    }
 
-   bool RoadmapViewer::addEdge(osgVector3 from, osgVector3 to){
+   bool RoadmapViewer::addEdge(osgVector3 from, osgVector3 to, boost::mutex& mtx){
        std::stringstream msg;
        msg << getID()<<"_Edge"<<list_edges_.size();
        LeafNodeLinePtr_t edge = LeafNodeLine::create (msg.str(),from, to, colorEdge_);
-
+       mtx.lock();
        list_edges_.push_back(edge);
        this->asQueue()->addChild(edge->asGroup());
+        mtx.unlock();
        return true;
    }
 
