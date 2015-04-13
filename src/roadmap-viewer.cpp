@@ -1,7 +1,16 @@
+//
+//  roadmap-viewer.cpp
+//  gepetto-viewer
+//
+//  Created by Pierre Fernbach in april 2015.
+//  Copyright (c) 2015 LAAS-CNRS. All rights reserved.
+//
+
 #include <gepetto/viewer/roadmap-viewer.h>
 #include <sstream>
 #include <gepetto/viewer/leaf-node-xyzaxis.h>
 #include <gepetto/viewer/leaf-node-line.h>
+#include <gepetto/viewer/leaf-node-sphere.h>
 
 namespace graphics {
     /* Declaration of private function members */
@@ -19,12 +28,19 @@ namespace graphics {
     RoadmapViewer::RoadmapViewer (const RoadmapViewer& other):
         graphics::Node (other)
     {
-       /*size_t i;
-        for (i=0;i < other.getNumOfChildren(); i++)
+        size_t i;
+        for (i=0;i < other.getNumOfNodes(); i++)
         {
-            addChild(other.getChild(i));
-        }*/
-        //TODO
+            addNode(other.getNode(i));
+        }
+        for (i=0;i < other.getNumOfEdges(); i++)
+        {
+            addEdge(other.getEdge(i));
+        }
+        colorNode_ = other.getColorNode();
+        colorEdge_ = other.getColorEdge();
+        sizeAxis_ = other.getSizeAxis();
+        radiusSphere_ = other.getRadiusSphere();
     }
 
     void RoadmapViewer::initWeakPtr(RoadmapViewerWeakPtr other_weak_ptr)
@@ -71,13 +87,15 @@ namespace graphics {
    bool RoadmapViewer::addNode(osgVector3 position, osgQuat quat, boost::mutex& mtx){
        std::stringstream msg;
        msg << getID()<<"_node"<<list_nodes_.size();
-       LeafNodeXYZAxisPtr_t node = LeafNodeXYZAxis::create(msg.str(),colorNode_,radiusSphere_,sizeAxis_);
-       mtx.lock();
-       node->applyConfiguration (position,quat);
 
+       LeafNodeXYZAxisPtr_t node = LeafNodeXYZAxis::create(msg.str(),colorNode_,radiusSphere_,sizeAxis_);
        list_nodes_.push_back(node);
+
+       mtx.lock(); // need mutex (from windowsManager) : if we add graphical object during the call of osg::frame() we have a gepetto-viewer seg fault
+       node->applyConfiguration (position,quat);
        this->asQueue()->addChild(node->asGroup());;
        mtx.unlock();
+
        return true;
    }
 
@@ -85,10 +103,11 @@ namespace graphics {
        std::stringstream msg;
        msg << getID()<<"_Edge"<<list_edges_.size();
        LeafNodeLinePtr_t edge = LeafNodeLine::create (msg.str(),from, to, colorEdge_);
-       mtx.lock();
        list_edges_.push_back(edge);
+
+       mtx.lock();
        this->asQueue()->addChild(edge->asGroup());
-        mtx.unlock();
+       mtx.unlock();
        return true;
    }
 
@@ -153,6 +172,7 @@ namespace graphics {
            (*iter_list_of_objects)->setWireFrameMode ( wireframe_state );
        }
    }
+
 
 
     /* End of declaration of public function members */

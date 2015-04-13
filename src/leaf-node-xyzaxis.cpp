@@ -1,9 +1,9 @@
 //
-//  leaf-node-face.cpp
+//  leaf-node-xyz.cpp
 //  gepetto-viewer
 //
-//  Created by Justin Carpentier, Mathieu Geisert in November 2014.
-//  Copyright (c) 2014 LAAS-CNRS. All rights reserved.
+//  Created by Justin Carpentier, Mathieu Geisert and Pierre Fernbach in april 2015.
+//  Copyright (c) 2015 LAAS-CNRS. All rights reserved.
 //
 
 #include <gepetto/viewer/leaf-node-xyzaxis.h>
@@ -27,75 +27,75 @@ namespace graphics {
         /* Create Geode for adding ShapeDrawable */
         geode_ptr_ = new osg::Geode();
         geode_ptr_->addDrawable(sphere_drawable_ptr_);
+        if(sizeAxis_ > 0){  // optimisation of memory consumption : doesn't create the axis instead of creating axis with size "0"
+             /* create the axis : */
+            float radiusCyl = (getRadius()/4.) * getSizeAxis();
+            float lengthCyl = (getRadius()*3.) * getSizeAxis();
 
-         /* create the axis : */
-        float radiusCyl = (getRadius()/4.) * getSizeAxis();
-        float lengthCyl = (getRadius()*3.) * getSizeAxis();
-
-        osgVector4 blue = osgVector4(0.f, 0.f, 1.f, 1.f);
-        osgVector4 green = osgVector4(0.f, 1.f, 0.f, 1.f);
-        osgVector4 red = osgVector4(1.f, 0.f, 0.f, 1.f);
-
-
-        /* X_AXIS */
-        /* Create cylinder */
-        ::osg::CylinderRefPtr cylinder_shape_x_ptr = new ::osg::Cylinder();
-        cylinder_shape_x_ptr->set(osgVector3(lengthCyl/2. + getRadius(),0.,0.) , radiusCyl ,lengthCyl);
-        cylinder_shape_x_ptr->setRotation(osgQuat( 0. , ::osg::X_AXIS , M_PI_2 , ::osg::Y_AXIS , 0. , ::osg::Z_AXIS ));
-        /* Create cone */
-        ::osg::ConeRefPtr cone_shape_x_ptr = new ::osg::Cone();
-        cone_shape_x_ptr->set(osgVector3(lengthCyl+getRadius(),0.,0.) , 2. * radiusCyl , 4. * radiusCyl );
-        cone_shape_x_ptr->setRotation(osgQuat( 0. , ::osg::X_AXIS , M_PI_2 , ::osg::Y_AXIS , 0. , ::osg::Z_AXIS ));
-
-        /* create drawable and add them to geode */
-        x_cylinder_drawable_ = new ::osg::ShapeDrawable( cylinder_shape_x_ptr );
-        x_cone_drawable_ = new ::osg::ShapeDrawable( cone_shape_x_ptr );
-        x_cylinder_drawable_->setColor(red);
-        x_cone_drawable_->setColor(red);
-
-        geode_ptr_->addDrawable(x_cylinder_drawable_);
-        geode_ptr_->addDrawable(x_cone_drawable_);
+            osgVector4 blue = osgVector4(0.f, 0.f, 1.f, 1.f);
+            osgVector4 green = osgVector4(0.f, 1.f, 0.f, 1.f);
+            osgVector4 red = osgVector4(1.f, 0.f, 0.f, 1.f);
 
 
-        /* Y_AXIS */
-        /* Create cylinder */
-        ::osg::CylinderRefPtr cylinder_shape_y_ptr = new ::osg::Cylinder();
-        cylinder_shape_y_ptr->set(osgVector3(0.,lengthCyl/2. + getRadius(),0.) , radiusCyl ,lengthCyl);
-        cylinder_shape_y_ptr->setRotation(osgQuat( -M_PI_2 , ::osg::X_AXIS , 0. , ::osg::Y_AXIS , 0. , ::osg::Z_AXIS ));
-        /* Create cone */
-        ::osg::ConeRefPtr cone_shape_y_ptr = new ::osg::Cone();
-        cone_shape_y_ptr->set(osgVector3(0.,lengthCyl + getRadius(),0.) , 2. * radiusCyl , 4. * radiusCyl );
-        cone_shape_y_ptr->setRotation(osgQuat( -M_PI_2 , ::osg::X_AXIS , 0. , ::osg::Y_AXIS , 0. , ::osg::Z_AXIS ));
+            /* X_AXIS */
+            /* Create cylinder */
+            ::osg::CylinderRefPtr cylinder_shape_x_ptr = new ::osg::Cylinder();
+            cylinder_shape_x_ptr->set(osgVector3(lengthCyl/2. + getRadius(),0.,0.) , radiusCyl ,lengthCyl);
+            cylinder_shape_x_ptr->setRotation(osgQuat( 0. , ::osg::X_AXIS , M_PI_2 , ::osg::Y_AXIS , 0. , ::osg::Z_AXIS ));
+            /* Create cone */
+            ::osg::ConeRefPtr cone_shape_x_ptr = new ::osg::Cone();
+            cone_shape_x_ptr->set(osgVector3(lengthCyl+getRadius(),0.,0.) , 2. * radiusCyl , 4. * radiusCyl );
+            cone_shape_x_ptr->setRotation(osgQuat( 0. , ::osg::X_AXIS , M_PI_2 , ::osg::Y_AXIS , 0. , ::osg::Z_AXIS ));
 
-        /* create drawable and add them to geode */
-        y_cylinder_drawable_ = new ::osg::ShapeDrawable( cylinder_shape_y_ptr );
-        y_cone_drawable_ = new ::osg::ShapeDrawable( cone_shape_y_ptr );
-        y_cylinder_drawable_->setColor(green);
-        y_cone_drawable_->setColor(green);
+            /* create drawable and add them to geode */
+            x_cylinder_drawable_ = new ::osg::ShapeDrawable( cylinder_shape_x_ptr );
+            x_cone_drawable_ = new ::osg::ShapeDrawable( cone_shape_x_ptr );
+            x_cylinder_drawable_->setColor(red);
+            x_cone_drawable_->setColor(red);
 
-        geode_ptr_->addDrawable(y_cylinder_drawable_);
-        geode_ptr_->addDrawable(y_cone_drawable_);
-
-
-        /* Z_AXIS */
-        /* Create cylinder */
-        ::osg::CylinderRefPtr cylinder_shape_z_ptr = new ::osg::Cylinder();
-        cylinder_shape_z_ptr->set(osgVector3(0.,0.,lengthCyl/2. + getRadius()) , radiusCyl ,lengthCyl);
-
-        /* Create cone */
-        ::osg::ConeRefPtr cone_shape_z_ptr = new ::osg::Cone();
-        cone_shape_z_ptr->set(osgVector3(0.,0.,lengthCyl +getRadius()) , 2. * radiusCyl , 4. * radiusCyl );
+            geode_ptr_->addDrawable(x_cylinder_drawable_);
+            geode_ptr_->addDrawable(x_cone_drawable_);
 
 
-        /* create drawable and add them to geode */
-        z_cylinder_drawable_ = new ::osg::ShapeDrawable( cylinder_shape_z_ptr );
-        z_cone_drawable_ = new ::osg::ShapeDrawable( cone_shape_z_ptr );
-        z_cylinder_drawable_->setColor(blue);
-        z_cone_drawable_->setColor(blue);
+            /* Y_AXIS */
+            /* Create cylinder */
+            ::osg::CylinderRefPtr cylinder_shape_y_ptr = new ::osg::Cylinder();
+            cylinder_shape_y_ptr->set(osgVector3(0.,lengthCyl/2. + getRadius(),0.) , radiusCyl ,lengthCyl);
+            cylinder_shape_y_ptr->setRotation(osgQuat( -M_PI_2 , ::osg::X_AXIS , 0. , ::osg::Y_AXIS , 0. , ::osg::Z_AXIS ));
+            /* Create cone */
+            ::osg::ConeRefPtr cone_shape_y_ptr = new ::osg::Cone();
+            cone_shape_y_ptr->set(osgVector3(0.,lengthCyl + getRadius(),0.) , 2. * radiusCyl , 4. * radiusCyl );
+            cone_shape_y_ptr->setRotation(osgQuat( -M_PI_2 , ::osg::X_AXIS , 0. , ::osg::Y_AXIS , 0. , ::osg::Z_AXIS ));
 
-        geode_ptr_->addDrawable(z_cylinder_drawable_);
-        geode_ptr_->addDrawable(z_cone_drawable_);
+            /* create drawable and add them to geode */
+            y_cylinder_drawable_ = new ::osg::ShapeDrawable( cylinder_shape_y_ptr );
+            y_cone_drawable_ = new ::osg::ShapeDrawable( cone_shape_y_ptr );
+            y_cylinder_drawable_->setColor(green);
+            y_cone_drawable_->setColor(green);
 
+            geode_ptr_->addDrawable(y_cylinder_drawable_);
+            geode_ptr_->addDrawable(y_cone_drawable_);
+
+
+            /* Z_AXIS */
+            /* Create cylinder */
+            ::osg::CylinderRefPtr cylinder_shape_z_ptr = new ::osg::Cylinder();
+            cylinder_shape_z_ptr->set(osgVector3(0.,0.,lengthCyl/2. + getRadius()) , radiusCyl ,lengthCyl);
+
+            /* Create cone */
+            ::osg::ConeRefPtr cone_shape_z_ptr = new ::osg::Cone();
+            cone_shape_z_ptr->set(osgVector3(0.,0.,lengthCyl +getRadius()) , 2. * radiusCyl , 4. * radiusCyl );
+
+
+            /* create drawable and add them to geode */
+            z_cylinder_drawable_ = new ::osg::ShapeDrawable( cylinder_shape_z_ptr );
+            z_cone_drawable_ = new ::osg::ShapeDrawable( cone_shape_z_ptr );
+            z_cylinder_drawable_->setColor(blue);
+            z_cone_drawable_->setColor(blue);
+
+            geode_ptr_->addDrawable(z_cylinder_drawable_);
+            geode_ptr_->addDrawable(z_cone_drawable_);
+        } // if radius > 0 : create axis
 
 
         /* Create PositionAttitudeTransform */

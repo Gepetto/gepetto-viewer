@@ -1,3 +1,11 @@
+//
+//  roadmap-viewer.h
+//  gepetto-viewer
+//
+//  Created by Pierre Fernbach in april 2015.
+//  Copyright (c) 2015 LAAS-CNRS. All rights reserved.
+//
+
 #ifndef SCENEVIEWER_ROADMAPVIEWER_HH
 #define SCENEVIEWER_ROADMAPVIEWER_HH
 
@@ -77,6 +85,55 @@ namespace graphics {
          */
         virtual void setWireFrameMode (const WireFrameMode& wireframe_state);
 
+        virtual size_t getNumOfNodes() const
+        {
+          return list_nodes_.size();
+        }
+
+        virtual size_t getNumOfEdges() const
+        {
+          return list_edges_.size();
+        }
+
+        virtual graphics::NodePtr_t getNode(size_t i) const
+        {
+           std::list<graphics::NodePtr_t>::const_iterator it = list_nodes_.begin();
+           if (list_nodes_.size() > i)
+           {
+               std::advance(it, i);
+           }
+           return *it;
+        }
+
+        virtual graphics::NodePtr_t getEdge(size_t i) const
+        {
+           std::list<graphics::NodePtr_t>::const_iterator it = list_edges_.begin();
+           if (list_edges_.size() > i)
+           {
+               std::advance(it, i);
+           }
+           return *it;
+        }
+        float radiusSphere_;
+        float sizeAxis_;
+        osgVector4 colorNode_;
+        osgVector4 colorEdge_;
+
+        virtual float getRadiusSphere(){
+            return radiusSphere_;
+        }
+
+        virtual float getSizeAxis(){
+            return sizeAxis_;
+        }
+
+        virtual osgVector4 getColorNode(){
+            return colorNode_;
+        }
+
+        virtual osgVector4 getColorEdge(){
+            return colorEdge_;
+        }
 
 
     }; //class
