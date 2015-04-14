@@ -114,10 +114,6 @@ namespace graphics {
            }
            return *it;
         }
-        float radiusSphere_;
-        float sizeAxis_;
-        osgVector4 colorNode_;
-        osgVector4 colorEdge_;
 
         virtual float getRadiusSphere(){
             return radiusSphere_;
