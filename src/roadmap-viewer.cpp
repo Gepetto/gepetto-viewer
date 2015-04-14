@@ -8,8 +8,7 @@
 
 #include <gepetto/viewer/roadmap-viewer.h>
 #include <sstream>
-#include <gepetto/viewer/leaf-node-xyzaxis.h>
-#include <gepetto/viewer/leaf-node-line.h>
+
 #include <gepetto/viewer/leaf-node-sphere.h>
 
 namespace graphics {
@@ -31,11 +30,13 @@ namespace graphics {
         size_t i;
         for (i=0;i < other.getNumOfNodes(); i++)
         {
-            addNode(other.getNode(i));
+            LeafNodeXYZAxisPtr_t node = LeafNodeXYZAxis::createCopy(other.getNode(i));
+            list_nodes_.push_back(node);
         }
         for (i=0;i < other.getNumOfEdges(); i++)
         {
-            addEdge(other.getEdge(i));
+            LeafNodeLinePtr_t edge = LeafNodeLine::createCopy(other.getEdge(i));
+            list_edges_.push_back(edge);
         }
         colorNode_ = other.getColorNode();
         colorEdge_ = other.getColorEdge();
@@ -121,36 +122,38 @@ namespace graphics {
    void RoadmapViewer::setVisibilityMode (const VisibilityMode& visibility_state)
    {
        Node::setVisibilityMode (visibility_state);
-       std::list<graphics::NodePtr_t>::iterator iter_list_of_objects;
-       for (iter_list_of_objects = list_nodes_.begin();
-            iter_list_of_objects != list_nodes_.end();
-            iter_list_of_objects++)
+       std::list<graphics::LeafNodeXYZAxisPtr_t>::iterator iter_list_of_nodes;
+       for (iter_list_of_nodes = list_nodes_.begin();
+            iter_list_of_nodes != list_nodes_.end();
+            iter_list_of_nodes++)
        {
-           (*iter_list_of_objects)->setVisibilityMode ( visibility_state );
+           (*iter_list_of_nodes)->setVisibilityMode ( visibility_state );
        }
-       for (iter_list_of_objects = list_edges_.begin();
-            iter_list_of_objects != list_edges_.end();
-            iter_list_of_objects++)
+       std::list<graphics::LeafNodeLinePtr_t>::iterator iter_list_of_edges;
+       for (iter_list_of_edges = list_edges_.begin();
+            iter_list_of_edges != list_edges_.end();
+            iter_list_of_edges++)
        {
-           (*iter_list_of_objects)->setVisibilityMode ( visibility_state );
+           (*iter_list_of_edges)->setVisibilityMode ( visibility_state );
        }
    }
 
    void RoadmapViewer::setLightingMode (const LightingMode& lighting_state)
    {
        Node::setLightingMode ( lighting_state );
-       ::std::list<NodePtr_t>::iterator iter_list_of_objects;
-       for (iter_list_of_objects = list_nodes_.begin();
-            iter_list_of_objects != list_nodes_.end();
-            iter_list_of_objects++)
+       std::list<graphics::LeafNodeXYZAxisPtr_t>::iterator iter_list_of_nodes;
+       for (iter_list_of_nodes = list_nodes_.begin();
+            iter_list_of_nodes != list_nodes_.end();
+            iter_list_of_nodes++)
        {
-           (*iter_list_of_objects)->setLightingMode ( lighting_state );
+           (*iter_list_of_nodes)->setLightingMode ( lighting_state );
        }
-       for (iter_list_of_objects = list_edges_.begin();
-            iter_list_of_objects != list_edges_.end();
-            iter_list_of_objects++)
+       std::list<graphics::LeafNodeLinePtr_t>::iterator iter_list_of_edges;
+       for (iter_list_of_edges = list_edges_.begin();
+            iter_list_of_edges != list_edges_.end();
+            iter_list_of_edges++)
        {
-           (*iter_list_of_objects)->setLightingMode ( lighting_state );
+           (*iter_list_of_edges)->setLightingMode ( lighting_state );
        }
    }
 
@@ -158,18 +161,19 @@ namespace graphics {
    {
        Node::setWireFrameMode ( wireframe_state );
 
-       ::std::list<NodePtr_t>::iterator iter_list_of_objects;
-       for (iter_list_of_objects = list_nodes_.begin();
-            iter_list_of_objects != list_nodes_.end();
-            iter_list_of_objects++)
+       std::list<graphics::LeafNodeXYZAxisPtr_t>::iterator iter_list_of_nodes;
+       for (iter_list_of_nodes = list_nodes_.begin();
+            iter_list_of_nodes != list_nodes_.end();
+            iter_list_of_nodes++)
        {
-           (*iter_list_of_objects)->setWireFrameMode ( wireframe_state );
+           (*iter_list_of_nodes)->setWireFrameMode ( wireframe_state );
        }
-       for (iter_list_of_objects = list_edges_.begin();
-            iter_list_of_objects != list_edges_.end();
-            iter_list_of_objects++)
+       std::list<graphics::LeafNodeLinePtr_t>::iterator iter_list_of_edges;
+       for (iter_list_of_edges = list_edges_.begin();
+            iter_list_of_edges != list_edges_.end();
+            iter_list_of_edges++)
        {
-           (*iter_list_of_objects)->setWireFrameMode ( wireframe_state );
+           (*iter_list_of_edges)->setWireFrameMode ( wireframe_state );
        }
    }
 
