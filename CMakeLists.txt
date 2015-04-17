@@ -22,7 +22,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 SET(CXX_DISABLE_WERROR TRUE)
 INCLUDE(cmake/base.cmake)
 INCLUDE(cmake/eigen.cmake)
-#INCLUDE(cmake/cpack.cmake)
+INCLUDE(cmake/boost.cmake)
 
 SET(PROJECT_NAME gepetto-viewer)
 SET(PROJECT_DESCRIPTION
@@ -53,14 +53,16 @@ SET(${PROJECT_NAME}_HEADERS
   include/gepetto/viewer/node.h
   include/gepetto/viewer/urdf-parser.h
   include/gepetto/viewer/window-manager.h
+	include/gepetto/viewer/leaf-node-xyzaxis.h
+	include/gepetto/viewer/roadmap-viewer.h
 )
 
 ADD_REQUIRED_DEPENDENCY("openscenegraph >= 3.2")
 ADD_REQUIRED_DEPENDENCY("openthreads >= 3.2")
 ADD_REQUIRED_DEPENDENCY("urdfdom")
+SEARCH_FOR_BOOST()
 
 ADD_SUBDIRECTORY(src)
 PKG_CONFIG_APPEND_LIBS(${PROJECT_NAME})
 
 SETUP_PROJECT_FINALIZE()
-#SETUP_PROJECT_CPACK()
