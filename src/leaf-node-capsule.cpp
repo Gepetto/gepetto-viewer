@@ -8,15 +8,18 @@
 
 #include <gepetto/viewer/leaf-node-capsule.h>
 
+
 namespace graphics {
     
     /* Declaration of private function members */
     
     void LeafNodeCapsule::init ()
     {
+        auto_transform_ptr_ = new ::osg::AutoTransform;
         /* Create capsule object */
+
         capsule_ptr_ = new ::osg::Capsule ();
-        
+
         /* Set ShapeDrawable */
         shape_drawable_ptr_ = new ::osg::ShapeDrawable(capsule_ptr_);
         
@@ -24,8 +27,10 @@ namespace graphics {
         geode_ptr_ = new osg::Geode ();
         geode_ptr_->addDrawable (shape_drawable_ptr_);
         
+
+        auto_transform_ptr_->addChild(geode_ptr_);
         /* Create PositionAttitudeTransform */
-        this->asQueue()->addChild (geode_ptr_);
+        this->asQueue()->addChild (auto_transform_ptr_);
         
         /* Allow transparency */
         geode_ptr_->getOrCreateStateSet()->setRenderBinDetails(10, "DepthSortedBin");
@@ -120,6 +125,16 @@ namespace graphics {
     void LeafNodeCapsule::setHeight (const float& height)
     {
         capsule_ptr_->setHeight(height);
+    }
+
+    void LeafNodeCapsule::resize(float height){
+        osgVector4 color = shape_drawable_ptr_->getColor();
+        geode_ptr_->removeDrawable(shape_drawable_ptr_);
+        setHeight(height);
+        shape_drawable_ptr_ = new ::osg::ShapeDrawable(capsule_ptr_);
+        shape_drawable_ptr_->setColor(color);
+        geode_ptr_->addDrawable(shape_drawable_ptr_);
+
     }
     
     void LeafNodeCapsule::setColor (const osgVector4& color)

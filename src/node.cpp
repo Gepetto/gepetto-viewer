@@ -115,6 +115,7 @@ namespace graphics {
 
     /* Update attitude */
     auto_transform_ptr_->setRotation(quat);
+
   }
 
   void Node::setStaticTransform(const osgVector3 & position, const osgQuat & quat)
@@ -128,6 +129,7 @@ namespace graphics {
 
   void Node::setScale(float scale)
   {
+      std::cout<<"in node test"<<std::endl;
     static_auto_transform_ptr_->setScale(scale);
   }
 
