@@ -10,7 +10,6 @@
 
 #include <osgUtil/SmoothingVisitor>
 #include <osg/CullFace>
-#include <hpp/util/debug.hh>
 
 namespace graphics {
 
