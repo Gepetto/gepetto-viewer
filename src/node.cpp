@@ -36,11 +36,11 @@ namespace graphics {
       ::osg::GeometryRefPtr circle = new ::osg::Geometry;
       ::osg::ref_ptr< ::osg::Vec3Array> v = new ::osg::Vec3Array;
       const float radius = 1; const int POLYGON_SIZE = 256;
-      double theta, px, py;
+      float theta, px, py;
       for (int i = 1; i <= POLYGON_SIZE; ++i) {
-        theta = 2.0 * osg::PI  / POLYGON_SIZE * i;
-        px = radius * cos (theta);
-        py = radius * sin (theta);
+        theta = 2. * osg::PI  / POLYGON_SIZE * i;
+        px = radius * cosf (theta);
+        py = radius * sinf (theta);
         v->push_back (osg::Vec3(px,py,0));
       }
       circle->setVertexArray (v.get());
@@ -108,7 +108,7 @@ namespace graphics {
     init();
   }
 
-  void Node::applyConfiguration (osgVector3 position, osgQuat quat)
+  void Node::applyConfiguration (const osgVector3 & position, const osgQuat & quat)
   {
     /* Update position */
     auto_transform_ptr_->setPosition(position);
@@ -117,7 +117,7 @@ namespace graphics {
     auto_transform_ptr_->setRotation(quat);
   }
 
-  void Node::setStaticTransform(osgVector3 position, osgQuat quat)
+  void Node::setStaticTransform(const osgVector3 & position, const osgQuat & quat)
   {
     /* Update position */
     static_auto_transform_ptr_->setPosition(position);
@@ -126,7 +126,7 @@ namespace graphics {
     static_auto_transform_ptr_->setRotation(quat);
   }
 
-  void Node::setScale(const float &scale)
+  void Node::setScale(float scale)
   {
     static_auto_transform_ptr_->setScale(scale);
   }
@@ -286,7 +286,7 @@ namespace graphics {
     }
   }
 
-  void Node::addLandmark(const float& size)
+  void Node::addLandmark(float size)
   {
     ::osg::GeometryRefPtr geom_ptr = new ::osg::Geometry();
 
