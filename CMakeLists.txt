@@ -3,7 +3,7 @@
 # Authors: Mathieu Geisert
 #
 #
-# This file is part of SceneViewer.
+# This file is part of Gepetto Viewer.
 # SceneViewer is free software: you can redistribute it
 # and/or modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation, either version
@@ -26,9 +26,9 @@ INCLUDE(cmake/boost.cmake)
 
 SET(PROJECT_NAME gepetto-viewer)
 SET(PROJECT_DESCRIPTION
-  "Implement simple Viewer using OpenSceneGraph."
+  "An easy to use Graphical Interface"
   )
-SET(PROJECT_URL "")
+SET(PROJECT_URL "https://github.com/humanoid-path-planner/gepetto-viewer")
 
 # Where to compile shared objects
 SET(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
