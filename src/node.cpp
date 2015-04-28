@@ -129,7 +129,6 @@ namespace graphics {
 
   void Node::setScale(float scale)
   {
-      std::cout<<"in node test"<<std::endl;
     static_auto_transform_ptr_->setScale(scale);
   }
 

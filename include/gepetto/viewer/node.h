@@ -43,12 +43,15 @@ namespace graphics {
         osg::SwitchRefPtr switch_node_ptr_;
 
         /** Geode pointer for landmarks */
-        ::osg::GeodeRefPtr landmark_geode_ptr_;
+
         
         /** Initialization function */
         void init ();
         
     protected:
+        /** protected because it's used in LeafNodeCapsule */
+        ::osg::GeodeRefPtr landmark_geode_ptr_;
+
         /**
          \brief Default constructor
          */
@@ -135,7 +138,7 @@ namespace graphics {
             return switch_node_ptr_;
         }
 
-        void addLandmark(float size);
+        virtual void addLandmark(const float &size);
 
         void deleteLandmark();
         

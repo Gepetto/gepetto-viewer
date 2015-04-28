@@ -96,6 +96,8 @@ namespace graphics {
             return shape_drawable_ptr_->getColor();
         }
 
+        virtual void addLandmark(const float &size);
+
         void setTexture(const std::string& image_path);
 
         /** Destructor */
