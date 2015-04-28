@@ -29,7 +29,7 @@ namespace graphics {
 
         /** PositionAttitudeTransform related to the global configuration */
         osg::AutoTransformRefPtr auto_transform_ptr_;
-	osg::AutoTransformRefPtr static_auto_transform_ptr_;
+        osg::AutoTransformRefPtr static_auto_transform_ptr_;
 
         /** Position of the arrows */
         osg::PositionAttitudeTransformRefPtr arrows_transform_ptr_;
@@ -92,11 +92,11 @@ namespace graphics {
         
         /** Apply a new global configuration
          */
-        void applyConfiguration (osgVector3 position, osgQuat quat);
+        void applyConfiguration (const osgVector3 & position, const osgQuat & quat);
         
 	/** Set Static transformation
          */
-        void setStaticTransform(osgVector3 position, osgQuat quat);
+        void setStaticTransform (const osgVector3 & position, const osgQuat & quat);
         /**
          \brief Virtual method for setting the visibility mode of the object : visible or not visible
          \param visibilitymode state
@@ -116,7 +116,7 @@ namespace graphics {
         virtual void setWireFrameMode (const WireFrameMode& wireframe_state);
         
         /** Set scale value of the OSG object */
-        virtual void setScale (const float& scale);
+        virtual void setScale (float scale);
 
         /** Set scales value of the OSG object */
         virtual void setScale (const osg::Vec3d & scale);
@@ -135,7 +135,7 @@ namespace graphics {
             return switch_node_ptr_;
         }
 
-        void addLandmark(const float& size);
+        void addLandmark(float size);
 
         void deleteLandmark();
         

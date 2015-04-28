@@ -26,6 +26,7 @@
 #include <osgShadow/ShadowedScene>
 #include <osgShadow/ViewDependentShadowMap>
 #include <osg/ClearNode>
+#include <osg/LineWidth>
 
 #include <osg/AlphaFunc>
 #include <osg/BlendFunc>
@@ -57,6 +58,7 @@ namespace osg
     DEF_OSG_CLASS_REF_PTR(Capsule)
     DEF_OSG_CLASS_REF_PTR(ShapeDrawable)
     DEF_OSG_CLASS_REF_PTR(Geometry)
+    DEF_OSG_CLASS_REF_PTR(LineWidth)
     
     DEF_OSG_CLASS_REF_PTR(Geode)
     DEF_OSG_CLASS_REF_PTR(PositionAttitudeTransform)
