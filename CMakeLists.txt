@@ -3,7 +3,7 @@
 # Authors: Mathieu Geisert
 #
 #
-# This file is part of SceneViewer.
+# This file is part of Gepetto Viewer.
 # SceneViewer is free software: you can redistribute it
 # and/or modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation, either version
@@ -25,10 +25,8 @@ INCLUDE(cmake/eigen.cmake)
 INCLUDE(cmake/boost.cmake)
 
 SET(PROJECT_NAME gepetto-viewer)
-SET(PROJECT_DESCRIPTION
-  "Implement simple Viewer using OpenSceneGraph."
-  )
-SET(PROJECT_URL "")
+SET(PROJECT_DESCRIPTION "An user-friendly Graphical Interface")
+SET(PROJECT_URL "https://github.com/humanoid-path-planner/gepetto-viewer")
 
 # Where to compile shared objects
 SET(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
@@ -38,27 +36,26 @@ SETUP_PROJECT()
 
 # Declare Headers
 SET(${PROJECT_NAME}_HEADERS
-  include/gepetto/viewer/config-osg.h
-  include/gepetto/viewer/group-node.h
-  include/gepetto/viewer/leaf-node-box.h
-  include/gepetto/viewer/leaf-node-capsule.h
-  include/gepetto/viewer/leaf-node-collada.h
-  include/gepetto/viewer/leaf-node-cone.h
-  include/gepetto/viewer/leaf-node-cylinder.h
-  include/gepetto/viewer/leaf-node-face.h
-  include/gepetto/viewer/leaf-node-ground.h
-  include/gepetto/viewer/leaf-node-line.h
-  include/gepetto/viewer/leaf-node-sphere.h
-  include/gepetto/viewer/macros.h
-  include/gepetto/viewer/node.h
-  include/gepetto/viewer/urdf-parser.h
-  include/gepetto/viewer/window-manager.h
-	include/gepetto/viewer/leaf-node-xyzaxis.h
-	include/gepetto/viewer/roadmap-viewer.h
+  ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/config-osg.h
+  ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/group-node.h
+  ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/leaf-node-box.h
+  ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/leaf-node-capsule.h
+  ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/leaf-node-collada.h
+  ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/leaf-node-cone.h
+  ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/leaf-node-cylinder.h
+  ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/leaf-node-face.h
+  ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/leaf-node-ground.h
+  ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/leaf-node-line.h
+  ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/leaf-node-sphere.h
+  ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/macros.h
+  ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/node.h
+  ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/urdf-parser.h
+  ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/window-manager.h
+  ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/leaf-node-xyzaxis.h
+  ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/roadmap-viewer.h
 )
 
 ADD_REQUIRED_DEPENDENCY("openscenegraph >= 3.2")
-ADD_REQUIRED_DEPENDENCY("openthreads >= 3.2")
 ADD_REQUIRED_DEPENDENCY("urdfdom")
 SEARCH_FOR_BOOST()
 
