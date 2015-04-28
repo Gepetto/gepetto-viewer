@@ -29,7 +29,7 @@ namespace graphics {
 
         /** PositionAttitudeTransform related to the global configuration */
         osg::AutoTransformRefPtr auto_transform_ptr_;
-	osg::AutoTransformRefPtr static_auto_transform_ptr_;
+        osg::AutoTransformRefPtr static_auto_transform_ptr_;
 
         /** Position of the arrows */
         osg::PositionAttitudeTransformRefPtr arrows_transform_ptr_;

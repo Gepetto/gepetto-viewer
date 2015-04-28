@@ -46,8 +46,8 @@ namespace graphics {
       circle->setVertexArray (v.get());
       circle->addPrimitiveSet (
           new ::osg::DrawArrays (::osg::PrimitiveSet::LINE_LOOP, 0, POLYGON_SIZE));
-      ::osg::StateSet* stateset = new ::osg::StateSet;
-      ::osg::LineWidth* linewidth = new ::osg::LineWidth;
+      ::osg::StateSetRefPtr stateset = new ::osg::StateSet;
+      ::osg::LineWidthRefPtr linewidth = new ::osg::LineWidth;
       linewidth->setWidth (2.0f);
       stateset->setAttributeAndModes (linewidth, osg::StateAttribute::ON);
       circle->setStateSet (stateset);
