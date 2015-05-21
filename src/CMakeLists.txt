@@ -33,8 +33,9 @@ ADD_LIBRARY(${LIBRARY_NAME} SHARED
   leaf-node-ground.cpp
   leaf-node-collada.cpp
   urdf-parser.cpp
-	leaf-node-xyzaxis.cpp
-	roadmap-viewer.cpp
+  leaf-node-xyzaxis.cpp
+  roadmap-viewer.cpp
+  node-rod.cpp
 )
 
 PKG_CONFIG_USE_DEPENDENCY(${LIBRARY_NAME} openscenegraph)
