@@ -25,7 +25,7 @@ namespace graphics {
     }
 
     RoadmapViewer::RoadmapViewer (const RoadmapViewer& other):
-        graphics::Node (other)
+        graphics::Node (other), list_nodes_(),list_edges_()
     {
         size_t i;
         for (i=0;i < other.getNumOfNodes(); i++)
