@@ -13,6 +13,7 @@
 #include <gepetto/viewer/group-node.h>
 #include <gepetto/viewer/leaf-node-capsule.h>
 #include <gepetto/viewer/config-osg.h>
+#include <vector>
 
 namespace graphics {
 
@@ -38,6 +39,7 @@ namespace graphics {
 
 
         public:
+            typedef osg::Vec3f::value_type value_type;
             /** Static method which create the new rod */
             static NodeRodPtr_t create(const std::string& name,osgVector4 color, float radius, float totalLength,short maxCapsule);
 
@@ -69,6 +71,7 @@ namespace graphics {
                 return maxCapsule_;
             }
 
+            virtual void applyConfiguration(std::vector<std::vector<value_type> > params);
     };
 } //namespace graphics
 
