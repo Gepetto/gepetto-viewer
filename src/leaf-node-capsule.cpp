@@ -128,7 +128,7 @@ namespace graphics {
     }
 
     void LeafNodeCapsule::resize(float height){
-      if(height != getHeight()){
+      if(height != getHeight()){ // avoid useless resize
         osgVector4 color = shape_drawable_ptr_->getColor();
         geode_ptr_->removeDrawable(shape_drawable_ptr_);
         setHeight(height);
@@ -136,7 +136,6 @@ namespace graphics {
         shape_drawable_ptr_->setColor(color);
         geode_ptr_->addDrawable(shape_drawable_ptr_);
         }
-
     }
     
     void LeafNodeCapsule::setColor (const osgVector4& color)
