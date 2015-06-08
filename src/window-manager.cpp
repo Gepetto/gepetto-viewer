@@ -38,6 +38,7 @@ namespace graphics {
       traits_ptr->sampleBuffers = 0;
       traits_ptr->samples = 0;
 #endif
+      traits_ptr->vsync = true;
       traits_ptr->readDISPLAY ();
       traits_ptr->setUndefinedScreenDetailsToDefaultScreen ();
 
