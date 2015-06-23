@@ -85,7 +85,7 @@ namespace graphics {
         grid_geode_ptr_->addDrawable(grid_geometry_ptr_);
       
         //node_osg_ptr_->asGroup()->addChild(grid_geode_ptr_);
-        asGroup()->addChild(grid_geode_ptr_);
+        asQueue()->addChild(grid_geode_ptr_);
         
         /* Apply colors */
         setColors(color1_,color2_);
