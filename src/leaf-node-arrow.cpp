@@ -191,6 +191,8 @@ namespace graphics {
         /* create drawable and add them to geode */
         cylinder_drawable_ = new ::osg::ShapeDrawable( cylinder_shape_x_ptr );
         cone_drawable_ = new ::osg::ShapeDrawable( cone_shape_x_ptr );
+        cylinder_drawable_->setColor(color);
+        cone_drawable_->setColor(color);
 
         geode_ptr_->addDrawable(cylinder_drawable_);
         geode_ptr_->addDrawable(cone_drawable_);
