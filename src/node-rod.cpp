@@ -10,6 +10,7 @@
 
 namespace graphics {
 
+  // ---- protected constructor ---- //
 
   NodeRod::NodeRod (const std::string& name, osgVector4 color, float radius, float totalLength,int maxCapsule):Node(name), list_of_capsule_()
     {
@@ -50,7 +51,7 @@ namespace graphics {
 
 
 
-    //------- public :-------
+    //------- public :------- //
 
 
     NodeRodPtr_t NodeRod::create(const std::string& name,osgVector4 color, float radius, float totalLength,short maxCapsule)
