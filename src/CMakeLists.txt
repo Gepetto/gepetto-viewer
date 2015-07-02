@@ -34,6 +34,7 @@ ADD_LIBRARY(${LIBRARY_NAME} SHARED
   leaf-node-collada.cpp
   urdf-parser.cpp
   leaf-node-xyzaxis.cpp
+  leaf-node-arrow.cpp
   roadmap-viewer.cpp
   node-rod.cpp
 )

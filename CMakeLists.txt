@@ -49,6 +49,7 @@ SET(${PROJECT_NAME}_HEADERS
   include/gepetto/viewer/leaf-node-ground.h
   include/gepetto/viewer/leaf-node-line.h
   include/gepetto/viewer/leaf-node-sphere.h
+  include/gepetto/viewer/leaf-node-arrow.h
   include/gepetto/viewer/macros.h
   include/gepetto/viewer/node.h
   include/gepetto/viewer/urdf-parser.h
