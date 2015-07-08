@@ -71,7 +71,7 @@ namespace graphics {
           mesh_path =  mesh_shared_ptr->filename.substr
 	    (10, mesh_shared_ptr->filename.size());
           LeafNodeColladaPtr_t link = LeafNodeCollada::create
-	    (robotName + "/" + link_name, meshDataRootDir + mesh_path);
+	    (robotName + "/" + link_name, meshDataRootDir + "/" + mesh_path);
           osgVector3 static_pos; osgQuat static_quat;
 	  if (linkFrame) {
 	    getStaticTransform (urdfLink, static_pos, static_quat, visual);

@@ -32,6 +32,7 @@ namespace graphics {
       traits_ptr->sharedContext = 0;
       traits_ptr->sampleBuffers = 1;
       traits_ptr->samples = 1;
+      traits_ptr->vsync = true;
       traits_ptr->readDISPLAY ();
       traits_ptr->setUndefinedScreenDetailsToDefaultScreen ();
 
