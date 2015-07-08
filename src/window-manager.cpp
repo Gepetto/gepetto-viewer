@@ -30,8 +30,14 @@ namespace graphics {
       traits_ptr->windowDecoration = true;
       traits_ptr->doubleBuffer = true;
       traits_ptr->sharedContext = 0;
+
+#ifndef DISABLE_SAMPLING
       traits_ptr->sampleBuffers = 1;
       traits_ptr->samples = 1;
+#else
+      traits_ptr->sampleBuffers = 0;
+      traits_ptr->samples = 0;
+#endif
       traits_ptr->readDISPLAY ();
       traits_ptr->setUndefinedScreenDetailsToDefaultScreen ();
 
