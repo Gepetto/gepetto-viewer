@@ -32,6 +32,7 @@ SET(${LIBRARY_NAME}_SOURCES
   leaf-node-capsule.cpp
   leaf-node-ground.cpp
   leaf-node-collada.cpp
+  leaf-node-light.cpp
   urdf-parser.cpp
   leaf-node-xyzaxis.cpp
   leaf-node-arrow.cpp

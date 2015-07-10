@@ -140,6 +140,11 @@ namespace graphics {
 
         virtual void addLandmark(const float &size);
 
+        ::osg::StateSetRefPtr getOrCreateRootStateSet ()
+        {
+          return switch_node_ptr_->getOrCreateStateSet ();
+        }
+
         void deleteLandmark();
         
         /*Tools::ConfigurationPtr_t getConfiguration () const
