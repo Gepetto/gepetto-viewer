@@ -53,6 +53,7 @@ SET(${PROJECT_NAME}_HEADERS
   ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/leaf-node-ground.h
   ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/leaf-node-line.h
   ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/leaf-node-sphere.h
+  ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/leaf-node-light.h
   ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/macros.h
   ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/node.h
   ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/urdf-parser.h
