@@ -9,7 +9,7 @@
 #include <gepetto/viewer/leaf-node-light.h>
 
 namespace graphics {
-
+    
     /* Declaration of private function members */
 
     int LeafNodeLight::uniqueLightNumber = 1;
