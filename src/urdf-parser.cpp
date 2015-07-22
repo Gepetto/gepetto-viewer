@@ -46,7 +46,8 @@ namespace graphics {
     void addMesh (const std::string &robotName,
                   const std::string &meshDataRootDir,
 		  boost::shared_ptr < urdf::Link >& urdfLink,
-		  GroupNodePtr_t &robot, bool visual, bool linkFrame)
+		  std::size_t j,
+		  GroupNodePtr_t &linkNode, bool visual, bool linkFrame)
     {
       std::string link_name;
       std::string mesh_path;
@@ -54,10 +55,10 @@ namespace graphics {
 
       if (visual) {
 	mesh_shared_ptr = boost::static_pointer_cast< ::urdf::Mesh >
-	  ( urdfLink->visual->geometry );
+	  ( urdfLink->visual_array [j]->geometry );
       } else {
 	mesh_shared_ptr = boost::static_pointer_cast< ::urdf::Mesh >
-	  ( urdfLink->collision->geometry );
+	  ( urdfLink->collision_array [j]->geometry );
       }
       link_name = urdfLink->name;
       std::cout << "Mesh " << std::endl;
@@ -70,91 +71,98 @@ namespace graphics {
 	  }
           mesh_path =  mesh_shared_ptr->filename.substr
 	    (10, mesh_shared_ptr->filename.size());
-          LeafNodeColladaPtr_t link = LeafNodeCollada::create
-	    (robotName + "/" + link_name, meshDataRootDir + "/" + mesh_path);
+	  std::ostringstream oss;
+	  oss << robotName << "/" << link_name << "_" << j;
+          LeafNodeColladaPtr_t meshNode = LeafNodeCollada::create
+	    (oss.str (), meshDataRootDir + "/" + mesh_path);
           osgVector3 static_pos; osgQuat static_quat;
 	  if (linkFrame) {
 	    getStaticTransform (urdfLink, static_pos, static_quat, visual);
 	  }
-          link->setStaticTransform(static_pos,static_quat);
-          link->setScale(osgVector3((float)mesh_shared_ptr->scale.x,
+          meshNode->setStaticTransform(static_pos,static_quat);
+          meshNode->setScale(osgVector3((float)mesh_shared_ptr->scale.x,
                                     (float)mesh_shared_ptr->scale.y,
                                     (float)mesh_shared_ptr->scale.z));
 
+	  linkNode->addChild (meshNode);
           // Set Color if specified
-          if (visual && urdfLink->visual->material != NULL) {
-            osgVector4 color(urdfLink->visual->material->color.r, urdfLink->visual->material->color.g, urdfLink->visual->material->color.b, urdfLink->visual->material->color.a);
-            link->setColor(color);
-            if (urdfLink->visual->material->texture_filename != "") {
-              link->setTexture(urdfLink->visual->material->texture_filename);
+          if (visual && urdfLink->visual_array [j]->material != NULL) {
+            osgVector4 color(urdfLink->visual_array [j]->material->color.r, urdfLink->visual_array [j]->material->color.g, urdfLink->visual_array [j]->material->color.b, urdfLink->visual_array [j]->material->color.a);
+            meshNode->setColor(color);
+            if (urdfLink->visual_array [j]->material->texture_filename != "") {
+              meshNode->setTexture(urdfLink->visual_array [j]->material->texture_filename);
             }
           }
-
-          // add links to robot node
-          robot->addChild(link);
         }
     }
 
     void addCylinder (const std::string &robotName,
 		      boost::shared_ptr < urdf::Link >& urdfLink,
-		      GroupNodePtr_t &robot, bool visual, bool linkFrame)
+		      std::size_t j,
+		      GroupNodePtr_t &linkNode, bool visual, bool linkFrame)
     {
       std::string link_name;
       ::boost::shared_ptr< ::urdf::Cylinder > cylinder_shared_ptr;
 
       if (visual) {
 	cylinder_shared_ptr = boost::static_pointer_cast < ::urdf::Cylinder >
-	  ( urdfLink->visual->geometry );
+	  ( urdfLink->visual_array [j]->geometry );
       } else {
 	cylinder_shared_ptr = boost::static_pointer_cast < ::urdf::Cylinder >
-	  ( urdfLink->collision->geometry );
+	  ( urdfLink->collision_array [j]->geometry );
       }
       link_name = urdfLink->name;
       std::cout << "Cylinder" << std::endl;
       if ( cylinder_shared_ptr != 0 )
         {
-          LeafNodeCylinderPtr_t link = LeafNodeCylinder::create( robotName + "/" + link_name,
-                                                                 (float)cylinder_shared_ptr.get()->radius,
-                                                                 (float)cylinder_shared_ptr.get()->length);
+	  std::ostringstream oss;
+	  oss << robotName << "/" << link_name << "_" << j;
+          LeafNodeCylinderPtr_t cylinderNode
+	    (LeafNodeCylinder::create
+	     (oss.str (), (float)cylinder_shared_ptr.get()->radius,
+	      (float)cylinder_shared_ptr.get()->length));
           osgVector3 static_pos; osgQuat static_quat;
 	  if (linkFrame) {
 	    getStaticTransform (urdfLink, static_pos, static_quat, visual);
 	  }
-          link->setStaticTransform(static_pos,static_quat);
+          cylinderNode->setStaticTransform(static_pos,static_quat);
 
           // Set Color if specified
-          if (visual && urdfLink->visual->material != NULL) {
-            osgVector4 color(urdfLink->visual->material->color.r, urdfLink->visual->material->color.g, urdfLink->visual->material->color.b, urdfLink->visual->material->color.a);
-            link->setColor(color);
-            if (urdfLink->visual->material->texture_filename != "") {
-              link->setTexture(urdfLink->visual->material->texture_filename);
+          if (visual && urdfLink->visual_array [j]->material != NULL) {
+            osgVector4 color(urdfLink->visual_array [j]->material->color.r, urdfLink->visual_array [j]->material->color.g, urdfLink->visual_array [j]->material->color.b, urdfLink->visual_array [j]->material->color.a);
+            cylinderNode->setColor(color);
+            if (urdfLink->visual_array [j]->material->texture_filename != "") {
+              cylinderNode->setTexture(urdfLink->visual_array [j]->material->texture_filename);
             }
           }
 
-          // add links to robot node
-          robot->addChild(link);
+          // add object to link node
+          linkNode->addChild(cylinderNode);
         }
     }
 
     void addBox (const std::string &robotName,
 		 boost::shared_ptr < urdf::Link >& urdfLink,
-		 GroupNodePtr_t &robot, bool visual, bool linkFrame)
+		 std::size_t j,
+		 GroupNodePtr_t &linkNode, bool visual, bool linkFrame)
     {
       std::string link_name;
       ::boost::shared_ptr< ::urdf::Box > box_shared_ptr;
 
       if (visual) {
 	box_shared_ptr = boost::static_pointer_cast< ::urdf::Box >
-	  ( urdfLink->visual->geometry);
+	  ( urdfLink->visual_array [j]->geometry);
       } else {
 	box_shared_ptr = boost::static_pointer_cast< ::urdf::Box >
-	  ( urdfLink->collision->geometry);
+	  ( urdfLink->collision_array [j]->geometry);
       }
       link_name = urdfLink->name;
       std::cout << "Box" << std::endl;
       if ( box_shared_ptr != 0 ) {
-	LeafNodeBoxPtr_t link = LeafNodeBox::create
-	  (robotName + "/" + link_name,
+	std::ostringstream oss;
+	oss << robotName << "/" << link_name << "_" << j;
+	LeafNodeBoxPtr_t boxNode = LeafNodeBox::create
+	  (oss.str (),
 	   osgVector3((float)(.5*box_shared_ptr->dim.x),
 		      (float)(.5*box_shared_ptr->dim.y), 
 		      (float)(.5*box_shared_ptr->dim.z)));
@@ -162,58 +170,62 @@ namespace graphics {
 	  if (linkFrame) {
 	    getStaticTransform (urdfLink, static_pos, static_quat, visual);
 	  }
-          link->setStaticTransform(static_pos,static_quat);
+          boxNode->setStaticTransform(static_pos,static_quat);
 
           // Set Color if specified
-          if (visual && urdfLink->visual->material != NULL) {
-            osgVector4 color(urdfLink->visual->material->color.r, urdfLink->visual->material->color.g, urdfLink->visual->material->color.b, urdfLink->visual->material->color.a);
-            link->setColor(color);
-            if (urdfLink->visual->material->texture_filename != "") {
-              link->setTexture(urdfLink->visual->material->texture_filename);
+          if (visual && urdfLink->visual_array [j]->material != NULL) {
+            osgVector4 color(urdfLink->visual_array [j]->material->color.r, urdfLink->visual_array [j]->material->color.g, urdfLink->visual_array [j]->material->color.b, urdfLink->visual_array [j]->material->color.a);
+            boxNode->setColor(color);
+            if (urdfLink->visual_array [j]->material->texture_filename != "") {
+              boxNode->setTexture(urdfLink->visual_array [j]->material->texture_filename);
             }
           }
-          // add links to robot node
-          robot->addChild(link);
+          // add object to link node
+          linkNode->addChild(boxNode);
         }
     }
 
     void addSphere (const std::string &robotName,
 		    boost::shared_ptr < urdf::Link >& urdfLink,
-		    GroupNodePtr_t &robot, bool visual, bool linkFrame)
+		    std::size_t j,
+		    GroupNodePtr_t &linkNode, bool visual, bool linkFrame)
     {
       std::string link_name;
       ::boost::shared_ptr< ::urdf::Sphere > sphere_shared_ptr;
 
       if (visual) {
 	sphere_shared_ptr = boost::static_pointer_cast < ::urdf::Sphere >
-	  ( urdfLink->visual->geometry );
+	  ( urdfLink->visual_array [j]->geometry );
       } else {
 	sphere_shared_ptr = boost::static_pointer_cast < ::urdf::Sphere >
-	  ( urdfLink->collision->geometry );
+	  ( urdfLink->collision_array [j]->geometry );
       }
       link_name = urdfLink->name;
       std::cout << "Sphere" << std::endl;
       if ( sphere_shared_ptr != 0 )
         {
-          LeafNodeSpherePtr_t link = LeafNodeSphere::create( robotName + "/" + link_name,
-                                                             (float)sphere_shared_ptr.get()->radius);
+	  std::ostringstream oss;
+	  oss << robotName << "/" << link_name << "_" << j;
+          LeafNodeSpherePtr_t sphereNode
+	    (LeafNodeSphere::create(oss.str (),
+				    (float)sphere_shared_ptr.get()->radius));
           osgVector3 static_pos; osgQuat static_quat;
 	  if (linkFrame) {
 	    getStaticTransform (urdfLink, static_pos, static_quat, visual);
 	  }
-          link->setStaticTransform(static_pos,static_quat);
+          sphereNode->setStaticTransform(static_pos,static_quat);
 
           // Set Color if specified
-          if (visual && urdfLink->visual->material != NULL) {
-            osgVector4 color(urdfLink->visual->material->color.r, urdfLink->visual->material->color.g, urdfLink->visual->material->color.b, urdfLink->visual->material->color.a);
-            link->setColor(color);
-            if (urdfLink->visual->material->texture_filename != "") {
-              link->setTexture(urdfLink->visual->material->texture_filename);
+          if (visual && urdfLink->visual_array [j]->material != NULL) {
+            osgVector4 color(urdfLink->visual_array [j]->material->color.r, urdfLink->visual_array [j]->material->color.g, urdfLink->visual_array [j]->material->color.b, urdfLink->visual_array [j]->material->color.a);
+            sphereNode->setColor(color);
+            if (urdfLink->visual_array [j]->material->texture_filename != "") {
+              sphereNode->setTexture(urdfLink->visual_array [j]->material->texture_filename);
             }
           }
 
-          // add links to robot node
-          robot->addChild(link);
+          // add links to link node
+          linkNode->addChild(sphereNode);
         }
     }
 
@@ -251,47 +263,51 @@ namespace graphics {
     for (unsigned int i = 0 ; i < links.size() ; i++) {
       link_name = links[i]->name;
       std::cout << link_name << std::endl;
+      GroupNodePtr_t linkNode (GroupNode::create (robotName + "/" + link_name));
+      // add link to robot node
+      robot->addChild (linkNode);
 
       if (collisionOrVisual == "visual") {
-	if ( links[i]->visual != NULL && links[i]->visual->geometry != NULL) {
-	  switch (links[i]->visual->geometry->type) {
+	for (std::size_t j = 0; j < links[i]->visual_array.size (); ++j) {
+	  switch (links[i]->visual_array [j]->geometry->type) {
 	  case urdf::Geometry::MESH:
 	    internal_urdf_parser::addMesh (robotName, meshDataRootDir,
-					   links [i], robot, true, linkFrame);
+					   links [i], j, linkNode, true,
+					   linkFrame);
 	    break;
 	  case urdf::Geometry::CYLINDER:
-	    internal_urdf_parser::addCylinder (robotName, links [i], robot,
-					       true, linkFrame);
+	    internal_urdf_parser::addCylinder (robotName, links [i], j,
+					       linkNode, true, linkFrame);
 	    break;
 	  case urdf::Geometry::BOX:
-	    internal_urdf_parser::addBox (robotName, links [i], robot, true,
-					  linkFrame);
+	    internal_urdf_parser::addBox (robotName, links [i], j, linkNode,
+					  true, linkFrame);
 	    break;
 	  case urdf::Geometry::SPHERE:
-	    internal_urdf_parser::addSphere (robotName, links [i], robot, true,
-					     linkFrame);
+	    internal_urdf_parser::addSphere (robotName, links [i], j,
+					     linkNode, true, linkFrame);
 	    break;
 	  }
 	}
       } else {
-	if (links[i]->collision != NULL &&
-	    links[i]->collision->geometry != NULL) {
-	  switch (links[i]->collision->geometry->type) {
+	for (std::size_t j=0; j < links[i]->collision_array.size (); ++j) {
+	  switch (links[i]->collision_array [j]->geometry->type) {
 	  case urdf::Geometry::MESH:
 	    internal_urdf_parser::addMesh (robotName, meshDataRootDir,
-					   links [i], robot, false, linkFrame);
+					   links [i], j, linkNode, false,
+					   linkFrame);
 	    break;
 	  case urdf::Geometry::CYLINDER:
-	    internal_urdf_parser::addCylinder (robotName, links [i], robot,
-					      false, linkFrame);
+	    internal_urdf_parser::addCylinder (robotName, links [i], j,
+					       linkNode, false, linkFrame);
 	    break;
 	  case urdf::Geometry::BOX:
-	    internal_urdf_parser::addBox (robotName, links [i], robot, false,
-					  linkFrame);
+	    internal_urdf_parser::addBox (robotName, links [i], j, linkNode,
+					  false, linkFrame);
 	    break;
 	  case urdf::Geometry::SPHERE:
-	    internal_urdf_parser::addSphere (robotName, links [i], robot, false,
-					    linkFrame);
+	    internal_urdf_parser::addSphere (robotName, links [i], j, linkNode,
+					     false, linkFrame);
 	    break;
 	  }
 	}
