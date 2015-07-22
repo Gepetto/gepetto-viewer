@@ -31,12 +31,12 @@ namespace graphics {
 
         /* Create cylinder */
         ::osg::CylinderRefPtr cylinder_shape_x_ptr = new ::osg::Cylinder();
-        cylinder_shape_x_ptr->set(osgVector3(lengthCyl/2.,0.,0.) , radiusCyl ,lengthCyl);
-        cylinder_shape_x_ptr->setRotation(osgQuat( 0. , ::osg::X_AXIS , M_PI_2 , ::osg::Y_AXIS , 0. , ::osg::Z_AXIS ));
+        cylinder_shape_x_ptr->set(osgVector3(lengthCyl/2.f,0.f,0.f) , radiusCyl ,lengthCyl);
+        cylinder_shape_x_ptr->setRotation(osgQuat( 0.f , ::osg::X_AXIS , M_PI_2 , ::osg::Y_AXIS , 0.f , ::osg::Z_AXIS ));
         /* Create cone */
         ::osg::ConeRefPtr cone_shape_x_ptr = new ::osg::Cone();
-        cone_shape_x_ptr->set(osgVector3(lengthCyl+getRadius(),0.,0.) , 2. * radiusCyl , 4. * radiusCyl );
-        cone_shape_x_ptr->setRotation(osgQuat( 0. , ::osg::X_AXIS , M_PI_2 , ::osg::Y_AXIS , 0. , ::osg::Z_AXIS ));
+        cone_shape_x_ptr->set(osgVector3(lengthCyl+getRadius(),0.f,0.f) , 2.f * radiusCyl , 4.f * radiusCyl );
+        cone_shape_x_ptr->setRotation(osgQuat( 0.f , ::osg::X_AXIS , M_PI_2 , ::osg::Y_AXIS , 0.f , ::osg::Z_AXIS ));
 
         /* create drawable and add them to geode */
         cylinder_drawable_ = new ::osg::ShapeDrawable( cylinder_shape_x_ptr );
@@ -181,12 +181,12 @@ namespace graphics {
 
         /* Create cylinder */
         ::osg::CylinderRefPtr cylinder_shape_x_ptr = new ::osg::Cylinder();
-        cylinder_shape_x_ptr->set(osgVector3(getSize()/2. + getRadius(),0.,0.) , getRadius() ,getSize());
-        cylinder_shape_x_ptr->setRotation(osgQuat( 0. , ::osg::X_AXIS , M_PI_2 , ::osg::Y_AXIS , 0. , ::osg::Z_AXIS ));
+        cylinder_shape_x_ptr->set(osgVector3(getSize()/2.f + getRadius(),0.f,0.f) , getRadius() ,getSize());
+        cylinder_shape_x_ptr->setRotation(osgQuat( 0.f , ::osg::X_AXIS , M_PI_2 , ::osg::Y_AXIS , 0. , ::osg::Z_AXIS ));
         /* Create cone */
         ::osg::ConeRefPtr cone_shape_x_ptr = new ::osg::Cone();
-        cone_shape_x_ptr->set(osgVector3(getSize()+getRadius(),0.,0.) , 2. * getRadius() , 4. * getRadius() );
-        cone_shape_x_ptr->setRotation(osgQuat( 0. , ::osg::X_AXIS , M_PI_2 , ::osg::Y_AXIS , 0. , ::osg::Z_AXIS ));
+        cone_shape_x_ptr->set(osgVector3(getSize()+getRadius(),0.f,0.f) , 2.f * getRadius() , 4.f * getRadius() );
+        cone_shape_x_ptr->setRotation(osgQuat( 0.f , ::osg::X_AXIS , M_PI_2 , ::osg::Y_AXIS , 0.f , ::osg::Z_AXIS ));
 
         /* create drawable and add them to geode */
         cylinder_drawable_ = new ::osg::ShapeDrawable( cylinder_shape_x_ptr );

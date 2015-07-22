@@ -28,8 +28,8 @@ namespace graphics {
         geode_ptr_->addDrawable(sphere_drawable_ptr_);
         if(sizeAxis_ > 0){  // optimisation of memory consumption : doesn't create the axis instead of creating axis with size "0"
              /* create the axis : */
-            float radiusCyl = (getRadius()/4.) * getSizeAxis();
-            float lengthCyl = (getRadius()*3.) * getSizeAxis();
+            float radiusCyl = (getRadius()/4.f) * getSizeAxis();
+            float lengthCyl = (getRadius()*3.f) * getSizeAxis();
 
             osgVector4 blue = osgVector4(0.f, 0.f, 1.f, 1.f);
             osgVector4 green = osgVector4(0.f, 1.f, 0.f, 1.f);
@@ -39,12 +39,12 @@ namespace graphics {
             /* X_AXIS */
             /* Create cylinder */
             ::osg::CylinderRefPtr cylinder_shape_x_ptr = new ::osg::Cylinder();
-            cylinder_shape_x_ptr->set(osgVector3(lengthCyl/2. + getRadius(),0.,0.) , radiusCyl ,lengthCyl);
-            cylinder_shape_x_ptr->setRotation(osgQuat( 0. , ::osg::X_AXIS , M_PI_2 , ::osg::Y_AXIS , 0. , ::osg::Z_AXIS ));
+            cylinder_shape_x_ptr->set(osgVector3(lengthCyl/2.f + getRadius(),0.f,0.f) , radiusCyl ,lengthCyl);
+            cylinder_shape_x_ptr->setRotation(osgQuat( 0.f , ::osg::X_AXIS , M_PI_2 , ::osg::Y_AXIS , 0.f , ::osg::Z_AXIS ));
             /* Create cone */
             ::osg::ConeRefPtr cone_shape_x_ptr = new ::osg::Cone();
-            cone_shape_x_ptr->set(osgVector3(lengthCyl+getRadius(),0.,0.) , 2. * radiusCyl , 4. * radiusCyl );
-            cone_shape_x_ptr->setRotation(osgQuat( 0. , ::osg::X_AXIS , M_PI_2 , ::osg::Y_AXIS , 0. , ::osg::Z_AXIS ));
+            cone_shape_x_ptr->set(osgVector3(lengthCyl+getRadius(),0.f,0.f) , 2.f * radiusCyl , 4.f * radiusCyl );
+            cone_shape_x_ptr->setRotation(osgQuat( 0.f , ::osg::X_AXIS , M_PI_2 , ::osg::Y_AXIS , 0.f , ::osg::Z_AXIS ));
 
             /* create drawable and add them to geode */
             x_cylinder_drawable_ = new ::osg::ShapeDrawable( cylinder_shape_x_ptr );
@@ -59,12 +59,12 @@ namespace graphics {
             /* Y_AXIS */
             /* Create cylinder */
             ::osg::CylinderRefPtr cylinder_shape_y_ptr = new ::osg::Cylinder();
-            cylinder_shape_y_ptr->set(osgVector3(0.,lengthCyl/2. + getRadius(),0.) , radiusCyl ,lengthCyl);
-            cylinder_shape_y_ptr->setRotation(osgQuat( -M_PI_2 , ::osg::X_AXIS , 0. , ::osg::Y_AXIS , 0. , ::osg::Z_AXIS ));
+            cylinder_shape_y_ptr->set(osgVector3(0.f,lengthCyl/2.f + getRadius(),0.f) , radiusCyl ,lengthCyl);
+            cylinder_shape_y_ptr->setRotation(osgQuat( -M_PI_2 , ::osg::X_AXIS , 0.f , ::osg::Y_AXIS , 0.f , ::osg::Z_AXIS ));
             /* Create cone */
             ::osg::ConeRefPtr cone_shape_y_ptr = new ::osg::Cone();
-            cone_shape_y_ptr->set(osgVector3(0.,lengthCyl + getRadius(),0.) , 2. * radiusCyl , 4. * radiusCyl );
-            cone_shape_y_ptr->setRotation(osgQuat( -M_PI_2 , ::osg::X_AXIS , 0. , ::osg::Y_AXIS , 0. , ::osg::Z_AXIS ));
+            cone_shape_y_ptr->set(osgVector3(0.,lengthCyl + getRadius(),0.f) , 2.f * radiusCyl , 4.f * radiusCyl );
+            cone_shape_y_ptr->setRotation(osgQuat( -M_PI_2 , ::osg::X_AXIS , 0.f , ::osg::Y_AXIS , 0.f , ::osg::Z_AXIS ));
 
             /* create drawable and add them to geode */
             y_cylinder_drawable_ = new ::osg::ShapeDrawable( cylinder_shape_y_ptr );
@@ -79,11 +79,11 @@ namespace graphics {
             /* Z_AXIS */
             /* Create cylinder */
             ::osg::CylinderRefPtr cylinder_shape_z_ptr = new ::osg::Cylinder();
-            cylinder_shape_z_ptr->set(osgVector3(0.,0.,lengthCyl/2. + getRadius()) , radiusCyl ,lengthCyl);
+            cylinder_shape_z_ptr->set(osgVector3(0.f,0.f,lengthCyl/2.f + getRadius()) , radiusCyl ,lengthCyl);
 
             /* Create cone */
             ::osg::ConeRefPtr cone_shape_z_ptr = new ::osg::Cone();
-            cone_shape_z_ptr->set(osgVector3(0.,0.,lengthCyl +getRadius()) , 2. * radiusCyl , 4. * radiusCyl );
+            cone_shape_z_ptr->set(osgVector3(0.f,0.f,lengthCyl +getRadius()) , 2.f * radiusCyl , 4.f * radiusCyl );
 
 
             /* create drawable and add them to geode */
