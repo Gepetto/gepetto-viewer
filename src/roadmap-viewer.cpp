@@ -104,6 +104,7 @@ namespace graphics {
        std::stringstream msg;
        msg << getID()<<"_Edge"<<list_edges_.size();
        LeafNodeLinePtr_t edge = LeafNodeLine::create (msg.str(),from, to, colorEdge_);
+      // edge->setVisibilityMode(ALWAYS_ON_TOP);
        list_edges_.push_back(edge);
 
        mtx.lock();

@@ -30,7 +30,7 @@ namespace graphics {
       osgVector3 y_base_square = osgVector3( 0.0f , square_width_ , 0.0f );
       
       /* Allocation of vertices */
-      ::osg::Vec3Array* vertices_array_ptr = new ::osg::Vec3Array;
+      ::osg::Vec3ArrayRefPtr vertices_array_ptr = new ::osg::Vec3Array;
       colors_array_ptr_ = new ::osg::Vec4Array;
       
       for ( int j(0) ; j < nY ; j++ )
@@ -85,7 +85,7 @@ namespace graphics {
         grid_geode_ptr_->addDrawable(grid_geometry_ptr_);
       
         //node_osg_ptr_->asGroup()->addChild(grid_geode_ptr_);
-        asGroup()->addChild(grid_geode_ptr_);
+        asQueue()->addChild(grid_geode_ptr_);
         
         /* Apply colors */
         setColors(color1_,color2_);
