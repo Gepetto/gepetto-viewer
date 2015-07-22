@@ -42,6 +42,7 @@ SETUP_PROJECT()
 
 # Declare Headers
 SET(${PROJECT_NAME}_HEADERS
+
   ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/config-osg.h
   ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/group-node.h
   ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/leaf-node-box.h
@@ -53,12 +54,15 @@ SET(${PROJECT_NAME}_HEADERS
   ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/leaf-node-ground.h
   ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/leaf-node-line.h
   ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/leaf-node-sphere.h
+  ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/leaf-node-arrow.h
   ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/macros.h
   ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/node.h
   ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/urdf-parser.h
   ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/window-manager.h
   ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/leaf-node-xyzaxis.h
   ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/roadmap-viewer.h
+  ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/node-rod.h
+
 )
 
 ADD_REQUIRED_DEPENDENCY("openscenegraph >= 3.2")

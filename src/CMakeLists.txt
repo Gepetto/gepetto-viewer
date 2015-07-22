@@ -33,8 +33,10 @@ SET(${LIBRARY_NAME}_SOURCES
   leaf-node-ground.cpp
   leaf-node-collada.cpp
   urdf-parser.cpp
-	leaf-node-xyzaxis.cpp
-	roadmap-viewer.cpp
+  leaf-node-xyzaxis.cpp
+  leaf-node-arrow.cpp
+  roadmap-viewer.cpp
+  node-rod.cpp
 )
 
 ADD_LIBRARY(${LIBRARY_NAME} SHARED ${${LIBRARY_NAME}_SOURCES} ${${PROJECT_NAME}_HEADERS})

@@ -25,7 +25,7 @@ namespace graphics {
     }
 
     RoadmapViewer::RoadmapViewer (const RoadmapViewer& other):
-        graphics::Node (other)
+        graphics::Node (other), list_nodes_(),list_edges_()
     {
         size_t i;
         for (i=0;i < other.getNumOfNodes(); i++)
@@ -104,6 +104,7 @@ namespace graphics {
        std::stringstream msg;
        msg << getID()<<"_Edge"<<list_edges_.size();
        LeafNodeLinePtr_t edge = LeafNodeLine::create (msg.str(),from, to, colorEdge_);
+      // edge->setVisibilityMode(ALWAYS_ON_TOP);
        list_edges_.push_back(edge);
 
        mtx.lock();

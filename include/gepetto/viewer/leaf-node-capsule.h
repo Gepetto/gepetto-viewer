@@ -21,10 +21,9 @@ namespace graphics {
     private:
         /** Associated weak pointer */
         LeafNodeCapsuleWeakPtr weak_ptr_;
-        
+        osg::AutoTransformRefPtr auto_transform_ptr_;
         /** Associated Capsule Shape */
         ::osg::CapsuleRefPtr capsule_ptr_;
-        
         /** Associated ShapeDrawable */
         ::osg::ShapeDrawableRefPtr shape_drawable_ptr_;
         ::osg::GeodeRefPtr geode_ptr_;
@@ -75,6 +74,8 @@ namespace graphics {
         {
             return capsule_ptr_->getRadius();
         }
+
+
         
         /** Fix the new jeight of the capsule
          * Note : radius must be positive scalar
@@ -84,13 +85,18 @@ namespace graphics {
         {
             return capsule_ptr_->getHeight();
         }
-        
+
+        //re implemented form Node
+        virtual void resize(float height);
+
         /** Replace the old color pointer with the new one defined by ColorConstSharedPtr color_ptr */
         virtual void setColor (const osgVector4& color);
         osgVector4 getColor() const
         {
             return shape_drawable_ptr_->getColor();
         }
+
+        virtual void addLandmark(const float &size);
 
         void setTexture(const std::string& image_path);
 

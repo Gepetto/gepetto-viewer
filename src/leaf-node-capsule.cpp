@@ -8,15 +8,18 @@
 
 #include <gepetto/viewer/leaf-node-capsule.h>
 
+
 namespace graphics {
     
     /* Declaration of private function members */
     
     void LeafNodeCapsule::init ()
     {
+        auto_transform_ptr_ = new ::osg::AutoTransform;
         /* Create capsule object */
+
         capsule_ptr_ = new ::osg::Capsule ();
-        
+
         /* Set ShapeDrawable */
         shape_drawable_ptr_ = new ::osg::ShapeDrawable(capsule_ptr_);
         
@@ -24,8 +27,10 @@ namespace graphics {
         geode_ptr_ = new osg::Geode ();
         geode_ptr_->addDrawable (shape_drawable_ptr_);
         
+
+        auto_transform_ptr_->addChild(geode_ptr_);
         /* Create PositionAttitudeTransform */
-        this->asQueue()->addChild (geode_ptr_);
+        this->asQueue()->addChild (auto_transform_ptr_);
         
         /* Allow transparency */
         geode_ptr_->getOrCreateStateSet()->setRenderBinDetails(10, "DepthSortedBin");
@@ -121,10 +126,70 @@ namespace graphics {
     {
         capsule_ptr_->setHeight(height);
     }
+
+    void LeafNodeCapsule::resize(float height){
+      if(height != getHeight()){ // avoid useless resize
+        osgVector4 color = shape_drawable_ptr_->getColor();
+        geode_ptr_->removeDrawable(shape_drawable_ptr_);
+        setHeight(height);
+        shape_drawable_ptr_ = new ::osg::ShapeDrawable(capsule_ptr_);
+        shape_drawable_ptr_->setColor(color);
+        geode_ptr_->addDrawable(shape_drawable_ptr_);
+        }
+    }
     
     void LeafNodeCapsule::setColor (const osgVector4& color)
     {
         shape_drawable_ptr_->setColor(color);
+    }
+
+    // reimplmented from Node : use the mathematical representation instead of OSG representation :
+    //( origin in the extremity and not in the center, length on the X+ and not Z+)
+    // if size <0, display it on the opposite extremity
+    void LeafNodeCapsule::addLandmark(const float& size)
+    {
+      ::osg::GeometryRefPtr geom_ptr = new ::osg::Geometry();
+
+      /* Define points of the beam */
+      ::osg::Vec3ArrayRefPtr points_ptr = new ::osg::Vec3Array(6);
+        float offset;
+        float absSize = fabs(size);
+        if(size<0){
+            offset = getHeight()/2;
+        }else
+            offset = - getHeight()/2;
+
+      points_ptr->at(0) = osgVector3(0.,0.,offset);
+      points_ptr->at(1) = osgVector3(0.,0.,absSize+offset);
+      points_ptr->at(2) = osgVector3(0.,0.,offset);
+      points_ptr->at(3) = osgVector3(0.,absSize,offset);
+      points_ptr->at(4) = osgVector3(0.,0.,offset);
+      points_ptr->at(5) = osgVector3(-absSize,0.,offset);
+
+
+      /* Define the color */
+      ::osg::Vec4ArrayRefPtr color_ptr = new ::osg::Vec4Array(3);
+      color_ptr->at(0) = osgVector4(1.,0.,0.,1.);
+      color_ptr->at(1) = osgVector4(0.,1.,0.,1.);
+      color_ptr->at(2) = osgVector4(0.,0.,1.,1.);
+
+      geom_ptr->setVertexArray(points_ptr.get());
+      geom_ptr->setColorArray(color_ptr.get());
+      geom_ptr->setColorBinding(::osg::Geometry::BIND_PER_PRIMITIVE_SET);
+      geom_ptr->addPrimitiveSet(new osg::DrawArrays(GL_LINES,0,2));
+      geom_ptr->addPrimitiveSet(new osg::DrawArrays(GL_LINES,2,2));
+      geom_ptr->addPrimitiveSet(new osg::DrawArrays(GL_LINES,4,2));
+
+      landmark_geode_ptr_ = new osg::Geode();
+      landmark_geode_ptr_->addDrawable(geom_ptr);
+
+      //set Landmark as ALWAYS ON TOP
+      landmark_geode_ptr_->setNodeMask(0xffffffff);
+      landmark_geode_ptr_->getOrCreateStateSet()->setRenderBinDetails(INT_MAX, "DepthSortedBin");
+      landmark_geode_ptr_->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, ::osg::StateAttribute::OFF | ::osg::StateAttribute::PROTECTED);
+      landmark_geode_ptr_->getOrCreateStateSet()->setMode(GL_CULL_FACE, ::osg::StateAttribute::ON | ::osg::StateAttribute::PROTECTED );
+      landmark_geode_ptr_->getOrCreateStateSet()->setMode(GL_LIGHTING, ::osg::StateAttribute::OFF | ::osg::StateAttribute::PROTECTED);
+      this->asQueue()->addChild(landmark_geode_ptr_);
     }
 
     void LeafNodeCapsule::setTexture(const std::string& image_path)

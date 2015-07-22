@@ -21,13 +21,13 @@ namespace graphics {
   void Node::init ()
   {
     if (firstTime_) {
-      const float factor = 0.1;
+      const float factor = 0.1f;
       ::osg::GroupRefPtr group = new ::osg::Group;
       ::osg::GeodeRefPtr cylinder = new osg::Geode;
       cylinder->addDrawable (new osg::ShapeDrawable (new osg::Cylinder (osg::Vec3(0,0,0), 1*factor, 4*factor)));
       group->addChild (cylinder);
       ::osg::GeodeRefPtr cone = new osg::Geode;
-      cone->addDrawable (new osg::ShapeDrawable (new osg::Cone (osg::Vec3(0,0,0), 1.8*factor, 2*factor)));
+      cone->addDrawable (new osg::ShapeDrawable (new osg::Cone (osg::Vec3(0.f,0.f,0.f), 1.8f*factor, 2*factor)));
       ::osg::PositionAttitudeTransformRefPtr cone_transform = new ::osg::PositionAttitudeTransform;
       cone_transform->addChild (cone);
       cone_transform->setPosition (osg::Vec3 (0,0,2*factor));
@@ -115,6 +115,7 @@ namespace graphics {
 
     /* Update attitude */
     auto_transform_ptr_->setRotation(quat);
+
   }
 
   void Node::setStaticTransform(const osgVector3 & position, const osgQuat & quat)
@@ -322,6 +323,13 @@ namespace graphics {
     landmark_geode_ptr_->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, ::osg::StateAttribute::OFF | ::osg::StateAttribute::PROTECTED);
     landmark_geode_ptr_->getOrCreateStateSet()->setMode(GL_CULL_FACE, ::osg::StateAttribute::ON | ::osg::StateAttribute::PROTECTED );
     landmark_geode_ptr_->getOrCreateStateSet()->setMode(GL_LIGHTING, ::osg::StateAttribute::OFF | ::osg::StateAttribute::PROTECTED);
+    /*auto_transform_ptr_->setNodeMask(0xffffffff);
+    auto_transform_ptr_->getOrCreateStateSet()->setRenderBinToInherit();
+    auto_transform_ptr_->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, ::osg::StateAttribute::ON | ::osg::StateAttribute::PROTECTED);
+    auto_transform_ptr_->getOrCreateStateSet()->setMode(GL_CULL_FACE,::osg::StateAttribute::OFF | ::osg::StateAttribute::PROTECTED);
+    landmark_geode_ptr_->getOrCreateStateSet()->setMode(GL_LIGHTING, ::osg::StateAttribute::OFF | ::osg::StateAttribute::PROTECTED);*/
+
+
     static_auto_transform_ptr_->addChild(landmark_geode_ptr_);
   }
 
