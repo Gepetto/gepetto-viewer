@@ -28,7 +28,7 @@ namespace graphics {
             osgVector4 color_;
             float radius_;
             float totalLength_;
-            short maxCapsule_; // max number of capsule for this rod
+            int maxCapsule_; // max number of capsule for this rod
         protected:
 
             /** Default constructor */
@@ -67,7 +67,7 @@ namespace graphics {
                 return color_;
             }
 
-            virtual short maxCapsule() const{
+            virtual int maxCapsule() const{
                 return maxCapsule_;
             }
 
