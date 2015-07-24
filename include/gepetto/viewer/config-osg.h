@@ -35,6 +35,8 @@
 
 #include <osg/State>
 #include <osg/StateSet>
+#include <osg/Light>
+#include <osg/LightSource>
 
 #include <osg/Material>
 
@@ -64,6 +66,8 @@ namespace osg
     DEF_OSG_CLASS_REF_PTR(PositionAttitudeTransform)
     DEF_OSG_CLASS_REF_PTR(AutoTransform)
     DEF_OSG_CLASS_REF_PTR(MatrixTransform)
+    DEF_OSG_CLASS_REF_PTR(Light)
+    DEF_OSG_CLASS_REF_PTR(LightSource)
 
     DEF_OSG_CLASS_REF_PTR(Node)
     DEF_OSG_CLASS_REF_PTR(Group)

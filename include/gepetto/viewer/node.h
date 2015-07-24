@@ -135,6 +135,11 @@ namespace graphics {
             return switch_node_ptr_;
         }
 
+        ::osg::StateSetRefPtr getOrCreateRootStateSet ()
+        {
+          return switch_node_ptr_->getOrCreateStateSet ();
+        }
+
         void addLandmark(float size);
 
         void deleteLandmark();

@@ -21,13 +21,13 @@ namespace graphics {
   void Node::init ()
   {
     if (firstTime_) {
-      const float factor = 0.1;
+      const float factor = 0.1f;
       ::osg::GroupRefPtr group = new ::osg::Group;
       ::osg::GeodeRefPtr cylinder = new osg::Geode;
       cylinder->addDrawable (new osg::ShapeDrawable (new osg::Cylinder (osg::Vec3(0,0,0), 1*factor, 4*factor)));
       group->addChild (cylinder);
       ::osg::GeodeRefPtr cone = new osg::Geode;
-      cone->addDrawable (new osg::ShapeDrawable (new osg::Cone (osg::Vec3(0,0,0), 1.8*factor, 2*factor)));
+      cone->addDrawable (new osg::ShapeDrawable (new osg::Cone (osg::Vec3(0,0,0), 1.8f*factor, 2.0f*factor)));
       ::osg::PositionAttitudeTransformRefPtr cone_transform = new ::osg::PositionAttitudeTransform;
       cone_transform->addChild (cone);
       cone_transform->setPosition (osg::Vec3 (0,0,2*factor));
@@ -38,7 +38,7 @@ namespace graphics {
       const float radius = 1; const int POLYGON_SIZE = 256;
       float theta, px, py;
       for (int i = 1; i <= POLYGON_SIZE; ++i) {
-        theta = 2. * osg::PI  / POLYGON_SIZE * i;
+        theta = 2.f * (float)osg::PI / (float)(POLYGON_SIZE * i);
         px = radius * cosf (theta);
         py = radius * sinf (theta);
         v->push_back (osg::Vec3(px,py,0));
