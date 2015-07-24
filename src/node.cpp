@@ -287,7 +287,7 @@ namespace graphics {
     }
   }
 
-  void Node::addLandmark(float size)
+  void Node::addLandmark(const float& size)
   {
     ::osg::GeometryRefPtr geom_ptr = new ::osg::Geometry();
 
