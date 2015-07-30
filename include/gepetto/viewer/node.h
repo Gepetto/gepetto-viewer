@@ -146,6 +146,8 @@ namespace graphics {
         }
 
         void deleteLandmark();
+
+        void setHighlightState (unsigned int state);
         
         /*Tools::ConfigurationPtr_t getConfiguration () const
         {

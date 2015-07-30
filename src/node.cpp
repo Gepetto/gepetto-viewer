@@ -339,6 +339,33 @@ namespace graphics {
     landmark_geode_ptr_.release();
   }
 
+  void Node::setHighlightState (unsigned int state)
+  {
+    ::osg::MaterialRefPtr material_switch_ptr = new osg::Material;
+    int glModeValue = ::osg::StateAttribute::ON;
+    switch (state) {
+      case 0:
+        break;
+      case 1: /// collision
+        glModeValue = ::osg::StateAttribute::ON | ::osg::StateAttribute::OVERRIDE;
+        /// Bronze
+        material_switch_ptr->setAmbient  (osg::Material::FRONT_AND_BACK, osgVector4(0.2125f,0.1275f,0.054f,1.f));
+        material_switch_ptr->setDiffuse  (osg::Material::FRONT_AND_BACK, osgVector4(0.714f,0.4284f,0.18144f,1.f));
+        material_switch_ptr->setSpecular (osg::Material::FRONT_AND_BACK, osgVector4(0.393548f,0.271906f,0.166721f,1.f));
+        material_switch_ptr->setShininess(osg::Material::FRONT_AND_BACK, 26.f);
+        break;
+      case 2: /// selection
+        glModeValue = ::osg::StateAttribute::ON | ::osg::StateAttribute::OVERRIDE | ::osg::StateAttribute::PROTECTED;
+        /// Red
+        material_switch_ptr->setAmbient  (osg::Material::FRONT_AND_BACK, osgVector4(0.f,0.f,0.f,1.f));
+        material_switch_ptr->setDiffuse  (osg::Material::FRONT_AND_BACK, osgVector4(1.0f,0.f,0.f,1.f));
+        material_switch_ptr->setSpecular (osg::Material::FRONT_AND_BACK, osgVector4(0.7f,0.6f,0.6f,1.f));
+        material_switch_ptr->setShininess(osg::Material::FRONT_AND_BACK, 96.f);
+        break;
+    }
+    switch_node_ptr_->getOrCreateStateSet()->setAttributeAndModes(material_switch_ptr, glModeValue);
+  }
+
   Node::~Node ()
   {
     /* Proper deletion */
