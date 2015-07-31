@@ -343,24 +343,57 @@ namespace graphics {
   {
     ::osg::MaterialRefPtr material_switch_ptr = new osg::Material;
     int glModeValue = ::osg::StateAttribute::ON;
+    /// Some color codes are taken from
+    /// http://devernay.free.fr/cours/opengl/materials.html
     switch (state) {
-      case 0:
-        break;
       case 1: /// collision
         glModeValue = ::osg::StateAttribute::ON | ::osg::StateAttribute::OVERRIDE;
-        /// Bronze
-        material_switch_ptr->setAmbient  (osg::Material::FRONT_AND_BACK, osgVector4(0.2125f,0.1275f,0.054f,1.f));
-        material_switch_ptr->setDiffuse  (osg::Material::FRONT_AND_BACK, osgVector4(0.714f,0.4284f,0.18144f,1.f));
-        material_switch_ptr->setSpecular (osg::Material::FRONT_AND_BACK, osgVector4(0.393548f,0.271906f,0.166721f,1.f));
-        material_switch_ptr->setShininess(osg::Material::FRONT_AND_BACK, 26.f);
+        material_switch_ptr->setColorMode (osg::Material::AMBIENT);
+        material_switch_ptr->setDiffuse  (osg::Material::FRONT_AND_BACK, osgVector4(1.0f,0.f,0.f,1.f));
+        material_switch_ptr->setTransparency(osg::Material::FRONT_AND_BACK, 0.5f);
         break;
       case 2: /// selection
+        glModeValue = ::osg::StateAttribute::ON | ::osg::StateAttribute::OVERRIDE | ::osg::StateAttribute::PROTECTED;
+        /// Blue
+        material_switch_ptr->setAmbient  (osg::Material::FRONT_AND_BACK, osgVector4(0.f,0.f,0.f,1.f));
+        material_switch_ptr->setDiffuse  (osg::Material::FRONT_AND_BACK, osgVector4(0.f,0.f,1.f,1.f));
+        material_switch_ptr->setSpecular (osg::Material::FRONT_AND_BACK, osgVector4(0.6f,0.6f,0.7f,1.f));
+        material_switch_ptr->setShininess(osg::Material::FRONT_AND_BACK, 128.f);
+        break;
+      case 3: /// selection
         glModeValue = ::osg::StateAttribute::ON | ::osg::StateAttribute::OVERRIDE | ::osg::StateAttribute::PROTECTED;
         /// Red
         material_switch_ptr->setAmbient  (osg::Material::FRONT_AND_BACK, osgVector4(0.f,0.f,0.f,1.f));
         material_switch_ptr->setDiffuse  (osg::Material::FRONT_AND_BACK, osgVector4(1.0f,0.f,0.f,1.f));
         material_switch_ptr->setSpecular (osg::Material::FRONT_AND_BACK, osgVector4(0.7f,0.6f,0.6f,1.f));
         material_switch_ptr->setShininess(osg::Material::FRONT_AND_BACK, 96.f);
+        break;
+      case 4: /// selection
+        glModeValue = ::osg::StateAttribute::ON | ::osg::StateAttribute::OVERRIDE | ::osg::StateAttribute::PROTECTED;
+        /// Red plastic
+        material_switch_ptr->setAmbient  (osg::Material::FRONT_AND_BACK, osgVector4(0.f,0.f,0.f,1.f));
+        material_switch_ptr->setDiffuse  (osg::Material::FRONT_AND_BACK, osgVector4(0.5f,0.f,0.f,1.f));
+        material_switch_ptr->setSpecular (osg::Material::FRONT_AND_BACK, osgVector4(0.7f,0.6f,0.6f,1.f));
+        material_switch_ptr->setShininess(osg::Material::FRONT_AND_BACK, 32.f);
+        break;
+      case 5: /// selection
+        glModeValue = ::osg::StateAttribute::ON | ::osg::StateAttribute::OVERRIDE | ::osg::StateAttribute::PROTECTED;
+        /// Bronze
+        material_switch_ptr->setAmbient  (osg::Material::FRONT_AND_BACK, osgVector4(0.2125f,0.1275f,0.054f,1.f));
+        material_switch_ptr->setDiffuse  (osg::Material::FRONT_AND_BACK, osgVector4(0.714f,0.4284f,0.18144f,1.f));
+        material_switch_ptr->setSpecular (osg::Material::FRONT_AND_BACK, osgVector4(0.393548f,0.271906f,0.166721f,1.f));
+        material_switch_ptr->setShininess(osg::Material::FRONT_AND_BACK, 26.f);
+        break;
+      case 6: /// selection
+        glModeValue = ::osg::StateAttribute::ON | ::osg::StateAttribute::OVERRIDE | ::osg::StateAttribute::PROTECTED;
+        /// Red rubber
+        material_switch_ptr->setAmbient  (osg::Material::FRONT_AND_BACK, osgVector4(0.05f,0.f,0.f,1.f));
+        material_switch_ptr->setDiffuse  (osg::Material::FRONT_AND_BACK, osgVector4(0.5f,0.5f,0.4f,1.f));
+        material_switch_ptr->setSpecular (osg::Material::FRONT_AND_BACK, osgVector4(0.7f,0.04f,0.04f,1.f));
+        material_switch_ptr->setShininess(osg::Material::FRONT_AND_BACK, 10.f);
+        break;
+      case 0:
+      default:
         break;
     }
     switch_node_ptr_->getOrCreateStateSet()->setAttributeAndModes(material_switch_ptr, glModeValue);
