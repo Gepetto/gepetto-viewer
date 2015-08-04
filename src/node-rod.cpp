@@ -12,13 +12,13 @@ namespace graphics {
 
   // ---- protected constructor ---- //
 
-  NodeRod::NodeRod (const std::string& name, osgVector4 color, float radius, float totalLength,int maxCapsule):Node(name), list_of_capsule_()
+  NodeRod::NodeRod (const std::string& name, osgVector4 color, float radius, float totalLength,size_t maxCapsule):Node(name), list_of_capsule_()
     {
         radius_ = radius;
         totalLength_ = totalLength;
         color_ = osgVector4(color);
         maxCapsule_=maxCapsule;
-        for (int i = 0; i< maxCapsule ; i++){
+        for (size_t i = 0; i< maxCapsule ; i++){
             std::stringstream nameCap;
             nameCap << name << "_cap"<<i;
             LeafNodeCapsulePtr_t cap = LeafNodeCapsule::create(nameCap.str(),radius,(totalLength/((float)maxCapsule)),color);
@@ -37,7 +37,7 @@ namespace graphics {
       color_ = other.color();
       maxCapsule_=other.maxCapsule();
 
-      for(i = 0 ; i< other.maxCapsule() ; i++){
+      for(i = 0 ; i < (size_t) other.maxCapsule() ; i++){
           LeafNodeCapsulePtr_t cap = LeafNodeCapsule::createCopy(other.getCapsule(i));
           list_of_capsule_.push_back(cap);
         }
@@ -83,7 +83,7 @@ namespace graphics {
 
 
 
-    std::string NodeRod::getCapsuleName(int i)
+    std::string NodeRod::getCapsuleName(size_t i)
     {
         return list_of_capsule_.at(i)->getID();
     }
@@ -98,7 +98,7 @@ namespace graphics {
       quat : (w,x,y,z)
       */
     void NodeRod::applyConfiguration(std::vector<std::vector<value_type> > params){
-      if(params.size() != maxCapsule_)
+      if(params.size() != (size_t) maxCapsule_)
         std::cout<<"Error in rod Applyconfiguration : the size of the sequence must be the same as the number of capsules"<<std::endl;
 
       for(size_t i = 0; i < params.size(); i++) {

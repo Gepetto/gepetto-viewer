@@ -74,7 +74,9 @@ namespace graphics {
       grid_geometry_ptr_->setNormalBinding( ::osg::Geometry::BIND_OVERALL );
       
       /* Defining type of geometries */
-      grid_geometry_ptr_->addPrimitiveSet( new ::osg::DrawArrays( ::osg::PrimitiveSet::QUADS , 0 , vertices_array_ptr->size() ) );
+      grid_geometry_ptr_->addPrimitiveSet
+	(new ::osg::DrawArrays (::osg::PrimitiveSet::QUADS, 0,
+				(GLsizei) vertices_array_ptr->size ()));
       
       
         /* Allocating grid_geode_ptr_ */

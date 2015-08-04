@@ -28,11 +28,12 @@ namespace graphics {
             osgVector4 color_;
             float radius_;
             float totalLength_;
-            int maxCapsule_; // max number of capsule for this rod
+            size_t maxCapsule_; // max number of capsule for this rod
         protected:
 
             /** Default constructor */
-            NodeRod(const std::string& name,osgVector4 color, float radius, float totalLength, int maxCapsule);
+            NodeRod (const std::string& name,osgVector4 color, float radius,
+		     float totalLength, size_t maxCapsule);
 
             /** Copy constructor */
             NodeRod (const NodeRod& other);
@@ -44,7 +45,7 @@ namespace graphics {
             static NodeRodPtr_t create(const std::string& name,osgVector4 color, float radius, float totalLength,short maxCapsule);
 
             /** Return the ID of the capsule at the index i */
-            virtual std::string getCapsuleName(int i);
+            virtual std::string getCapsuleName(size_t i);
 
             virtual LeafNodeCapsulePtr_t getCapsule(size_t i) const;
 
@@ -67,7 +68,7 @@ namespace graphics {
                 return color_;
             }
 
-            virtual int maxCapsule() const{
+            virtual size_t maxCapsule() const{
                 return maxCapsule_;
             }
 

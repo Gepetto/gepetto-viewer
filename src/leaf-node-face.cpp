@@ -166,7 +166,8 @@ namespace graphics {
     void LeafNodeFace::addVertex (const osgVector3& vertex)
     {
         vertices_->push_back(vertex);
-        face_ptr_->addPrimitiveSet( new ::osg::DrawArrays( GL_POLYGON, 0, vertices_->size() ) );
+        face_ptr_->addPrimitiveSet
+	  (new ::osg::DrawArrays (GL_POLYGON, 0,(GLsizei) vertices_->size ()));
         //osgUtil::Tessellator::retessellatePolygons( *(face_ptr_.get()) );
         osgUtil::SmoothingVisitor::smooth( *(face_ptr_.get()) );
     }

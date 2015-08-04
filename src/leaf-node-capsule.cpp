@@ -153,7 +153,7 @@ namespace graphics {
       /* Define points of the beam */
       ::osg::Vec3ArrayRefPtr points_ptr = new ::osg::Vec3Array(6);
         float offset;
-        float absSize = fabs(size);
+        float absSize = (float) fabs(size);
         if(size<0){
             offset = getHeight()/2;
         }else
