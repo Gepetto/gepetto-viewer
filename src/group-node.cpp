@@ -83,6 +83,13 @@ namespace graphics {
         list_of_objects_.remove(child_ptr);
         return this->asQueue()->removeChild(this->asQueue()->getChildIndex(child_ptr->asGroup()));
     }
+
+    bool GroupNode::hasChild (::graphics::NodePtr_t child_ptr)
+    {
+        std::list<graphics::NodePtr_t>::const_iterator it =
+            std::find (list_of_objects_.begin(), list_of_objects_.end(), child_ptr);
+        return it != list_of_objects_.end();
+    }
     
     void GroupNode::removeAllChildren()
     {
