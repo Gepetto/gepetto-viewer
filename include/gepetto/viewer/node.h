@@ -110,6 +110,15 @@ namespace graphics {
 	/** Set Static transformation
          */
         void setStaticTransform (const osgVector3 & position, const osgQuat & quat);
+        
+	/** Get Static rotation
+        */
+        osgQuat getStaticRotation() const;
+
+	/** Get Static position
+        */
+        osgVector3 getStaticPosition() const;
+
         /**
          \brief Virtual method for setting the visibility mode of the object : visible or not visible
          \param visibilitymode state

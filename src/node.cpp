@@ -137,6 +137,16 @@ namespace graphics {
     static_auto_transform_ptr_->setRotation(quat);
   }
 
+  osgQuat Node::getStaticRotation() const
+  {
+    return static_auto_transform_ptr_->getRotation();
+  }
+
+  osgVector3 Node::getStaticPosition() const
+  {
+    return static_auto_transform_ptr_->getPosition();
+  }
+
   void Node::setScale(float scale)
   {
     static_auto_transform_ptr_->setScale(scale);
