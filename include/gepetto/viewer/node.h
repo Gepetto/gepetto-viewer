@@ -40,14 +40,18 @@ namespace graphics {
         osg::GroupRefPtr normal_node_ptr_;
         
         /** Associated switch node */
+        /** TODO: The use of multiswitch may be better */
         osg::SwitchRefPtr switch_node_ptr_;
+        osg::SwitchRefPtr hl_switch_node_ptr_;
 
         /** Geode pointer for landmarks */
 
         
         /** Initialization function */
         void init ();
-        
+
+        ::osg::Group* setupHighlightState (unsigned int state);
+
     protected:
         /** protected because it's used in LeafNodeCapsule */
         ::osg::GeodeRefPtr landmark_geode_ptr_;

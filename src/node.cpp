@@ -68,6 +68,7 @@ namespace graphics {
     arrows_transform_ptr_ = new ::osg::PositionAttitudeTransform;
     switch_node_ptr_ = new ::osg::Switch;
     switch_node_ptr_->setName (id_name_);
+    hl_switch_node_ptr_ = new ::osg::Switch;
 
     wireframe_node_ptr_ = new ::osg::Group;
     normal_node_ptr_ = new ::osg::Group;
@@ -78,8 +79,17 @@ namespace graphics {
 
     switch_node_ptr_->getOrCreateStateSet()->setDataVariance(::osg::Object::DYNAMIC);
 
-    wireframe_node_ptr_->addChild(auto_transform_ptr_);
-    normal_node_ptr_->addChild(auto_transform_ptr_);
+    wireframe_node_ptr_->addChild(hl_switch_node_ptr_);
+    normal_node_ptr_->addChild(hl_switch_node_ptr_);
+
+    ::osg::GroupRefPtr g = setupHighlightState (0);
+    hl_switch_node_ptr_->addChild (g, true);
+    g->addChild (auto_transform_ptr_);
+    for (unsigned int i = 1; i < 7; ++i) {
+      ::osg::GroupRefPtr g = setupHighlightState (i);
+      hl_switch_node_ptr_->addChild (g, false);
+      g->addChild (auto_transform_ptr_);
+    }
 
     auto_transform_ptr_->addChild(static_auto_transform_ptr_);
 
@@ -339,7 +349,7 @@ namespace graphics {
     landmark_geode_ptr_.release();
   }
 
-  void Node::setHighlightState (unsigned int state)
+  ::osg::Group* Node::setupHighlightState (unsigned int state)
   {
     ::osg::MaterialRefPtr material_switch_ptr = new osg::Material;
     int glModeValue = ::osg::StateAttribute::ON;
@@ -396,7 +406,17 @@ namespace graphics {
       default:
         break;
     }
-    switch_node_ptr_->getOrCreateStateSet()->setAttributeAndModes(material_switch_ptr, glModeValue);
+    osg::Group* node = new ::osg::Group;
+    node->getOrCreateStateSet()->setAttributeAndModes(material_switch_ptr, glModeValue);
+    return node;
+  }
+
+  void Node::setHighlightState (unsigned int state)
+  {
+    if (state < hl_switch_node_ptr_->getNumChildren ()) {
+      hl_switch_node_ptr_->setAllChildrenOff ();
+      hl_switch_node_ptr_->setSingleChildOn (state);
+    }
   }
 
   Node::~Node ()
