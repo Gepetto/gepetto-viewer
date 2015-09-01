@@ -352,7 +352,7 @@ namespace graphics {
   ::osg::Group* Node::setupHighlightState (unsigned int state)
   {
     ::osg::MaterialRefPtr material_switch_ptr = new osg::Material;
-    int glModeValue = ::osg::StateAttribute::ON;
+    int glModeValue = ::osg::StateAttribute::INHERIT;
     /// Some color codes are taken from
     /// http://devernay.free.fr/cours/opengl/materials.html
     switch (state) {
