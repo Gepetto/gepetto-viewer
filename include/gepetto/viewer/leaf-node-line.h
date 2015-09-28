@@ -24,6 +24,7 @@ namespace graphics {
         /** Geometry */
         ::osg::GeometryRefPtr beam_ptr_;
         ::osg::GeodeRefPtr geode_ptr_;
+        ::osg::ref_ptr< ::osg::DrawArrays > drawArray_ptr_;
         ::osg::Vec3ArrayRefPtr points_ptr_;
         ::osg::Vec4ArrayRefPtr color_ptr_;
         
@@ -32,6 +33,7 @@ namespace graphics {
         /* Default constructor */
         LeafNodeLine (const std::string& name, const osgVector3& start_point, const osgVector3& end_point);
         LeafNodeLine (const std::string& name, const osgVector3& start_point, const osgVector3& end_point, const osgVector4& color);
+        LeafNodeLine (const std::string& name, const ::osg::Vec3ArrayRefPtr& points, const osgVector4& color);
         
         /* Copy constructor */
         LeafNodeLine (const LeafNodeLine& other);
@@ -45,6 +47,7 @@ namespace graphics {
          */
         static LeafNodeLinePtr_t create (const std::string& name, const osgVector3& start_point, const osgVector3& end_point);
         static LeafNodeLinePtr_t create (const std::string& name, const osgVector3& start_point, const osgVector3& end_point, const osgVector4& color);
+        static LeafNodeLinePtr_t create (const std::string& name, const ::osg::Vec3ArrayRefPtr& points, const osgVector4& color);
 
         /** Static method for creating a clone of box other with the copy constructor
          */
@@ -81,7 +84,8 @@ namespace graphics {
         /** Define the start and end point of the line
          */
         virtual void setPoints (const osgVector3& start_point, const osgVector3& end_point);
-        
+
+        virtual void setPoints (const ::osg::Vec3ArrayRefPtr& points);
 
         void setColor(osgVector4 color);
 

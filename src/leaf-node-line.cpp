@@ -29,7 +29,8 @@ namespace graphics {
         beam_ptr_->setVertexArray(points_ptr_.get());
         beam_ptr_->setColorArray(color_ptr_.get());
         beam_ptr_->setColorBinding(::osg::Geometry::BIND_PER_PRIMITIVE_SET);
-        beam_ptr_->addPrimitiveSet(new osg::DrawArrays(GL_LINES,0,2));
+        drawArray_ptr_ = new osg::DrawArrays(GL_LINES,0,2);
+        beam_ptr_->addPrimitiveSet(drawArray_ptr_.get());
         
         /* Create Geode for adding ShapeDrawable */
         geode_ptr_ = new osg::Geode();
@@ -69,12 +70,19 @@ namespace graphics {
         setColor(color);
     }
 
+    LeafNodeLine::LeafNodeLine (const std::string& name, const ::osg::Vec3ArrayRefPtr& points, const osgVector4& color) :
+        graphics::Node (name)
+    {
+        init ();
+        setPoints(points);
+        setColor(color);
+    }
+
     LeafNodeLine::LeafNodeLine (const LeafNodeLine& other) :
         graphics::Node (other)
     {
         init();
-        setStartPoint(other.getStartPoint());
-        setEndPoint(other.getEndPoint());
+        setPoints (other.points_ptr_);
         setColor(other.getColor());
     }
     
@@ -99,6 +107,16 @@ namespace graphics {
     LeafNodeLinePtr_t LeafNodeLine::create (const std::string& name, const osgVector3& start_point, const osgVector3& end_point, const osgVector4& color)
     {
         LeafNodeLinePtr_t shared_ptr(new LeafNodeLine (name, start_point, end_point, color));
+
+        // Add reference to itself
+        shared_ptr->initWeakPtr (shared_ptr);
+
+        return shared_ptr;
+    }
+    
+    LeafNodeLinePtr_t LeafNodeLine::create (const std::string& name, const ::osg::Vec3ArrayRefPtr& points, const osgVector4& color)
+    {
+        LeafNodeLinePtr_t shared_ptr(new LeafNodeLine (name, points, color));
 
         // Add reference to itself
         shared_ptr->initWeakPtr (shared_ptr);
@@ -154,6 +172,13 @@ namespace graphics {
     {        
         setStartPoint(start_point);
         setEndPoint(end_point);
+    }
+
+    void LeafNodeLine::setPoints (const ::osg::Vec3ArrayRefPtr& points)
+    {        
+        points_ptr_ = points;
+        beam_ptr_->setVertexArray (points_ptr_.get ());
+        drawArray_ptr_->setCount (points->size());
     }
     
     void LeafNodeLine::setColor (osgVector4 color)
