@@ -86,6 +86,12 @@ namespace graphics {
         };
 
         /**
+         \brief returns rotation and position of the node
+         in word frame
+         */
+        std::pair<osgVector3, osgQuat> getGlobalTransform() const;
+
+        /**
          \brief getID is a public method for getting the id_name of the Object
          */
         std::string getID () const

@@ -413,7 +413,11 @@ namespace graphics {
     switch_node_ptr_->removeChild (normal_node_ptr_);
     normal_node_ptr_ = NULL;
   }
-
+  
+  std::pair<osgVector3, osgQuat> Node::getGlobalTransform() const
+  {
+    return std::make_pair(auto_transform_ptr_->getPosition(),auto_transform_ptr_->getRotation());
+  }
   /* End of declaration of public function members */
 
 
