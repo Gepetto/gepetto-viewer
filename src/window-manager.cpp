@@ -265,7 +265,6 @@ namespace graphics {
 
   bool WindowManager::writeNodeFile (const std::string& fn)
   {
-    osgDB::Registry::instance ()->loadLibrary ("osgPlugins-3.3.4/osgdb_osgjs.so");
     return osgDB::writeNodeFile (*(viewer_ptr_->getSceneData()), fn);
   }
 
