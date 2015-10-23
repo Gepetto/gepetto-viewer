@@ -126,7 +126,7 @@ namespace graphics {
       osg::ref_ptr<osg::Image> image = osgDB::readImageFile(image_path);
       if (!image)
       {
-        std::cout << " couldn't find texture, quiting." << std::endl;
+        std::cerr << " couldn't find texture " << image_path << ", quiting." << std::endl;
         return;
       } 
       texture->setImage(image);
