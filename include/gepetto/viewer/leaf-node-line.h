@@ -81,6 +81,12 @@ namespace graphics {
         
         osgVector3 getEndPoint() const;
 
+        /** Define the type of drawings
+         * See http://svn.openscenegraph.org/osg/OpenSceneGraph-Data/trunk/Images/primitives.gif
+         * for details about possible values
+         */
+        virtual void setMode (const GLenum mode);
+
         /** Define the start and end point of the line
          */
         virtual void setPoints (const osgVector3& start_point, const osgVector3& end_point);

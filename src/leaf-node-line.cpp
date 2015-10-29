@@ -29,7 +29,7 @@ namespace graphics {
         beam_ptr_->setVertexArray(points_ptr_.get());
         beam_ptr_->setColorArray(color_ptr_.get());
         beam_ptr_->setColorBinding(::osg::Geometry::BIND_PER_PRIMITIVE_SET);
-        drawArray_ptr_ = new osg::DrawArrays(GL_LINES,0,2);
+        drawArray_ptr_ = new osg::DrawArrays(GL_LINE_STRIP,0,2);
         beam_ptr_->addPrimitiveSet(drawArray_ptr_.get());
         
         /* Create Geode for adding ShapeDrawable */
@@ -166,6 +166,11 @@ namespace graphics {
     osgVector3 LeafNodeLine::getEndPoint() const
     {
         return points_ptr_->at(1);
+    }
+    
+    void LeafNodeLine::setMode (const GLenum mode)
+    {
+      drawArray_ptr_->set (mode, 0, points_ptr_->size ());
     }
 
     void LeafNodeLine::setPoints (const osgVector3& start_point, const osgVector3& end_point)
