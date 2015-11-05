@@ -143,6 +143,9 @@ namespace graphics {
         /** Set scales value of the OSG object */
         virtual void setScale (const osg::Vec3d & scale);
 
+        /** Set the color of the object */
+        virtual void setColor (const osgVector4& color) = 0;
+
         /** Select the arrows to be shown around the selected body */
         virtual void selectArrows (
             int arrows = ROT_X | ROT_Y | ROT_Z | TRANS_X | TRANS_Y | TRANS_Z);

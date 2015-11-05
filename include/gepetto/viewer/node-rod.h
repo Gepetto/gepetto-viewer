@@ -64,6 +64,10 @@ namespace graphics {
                 return totalLength_;
             }
 
+            void setColor(const osgVector4& color) {
+                color_ = color;
+            }
+
             virtual osgVector4 color() const{
                 return color_;
             }

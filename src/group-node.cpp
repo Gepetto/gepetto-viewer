@@ -148,13 +148,17 @@ namespace graphics {
     
     void GroupNode::setScale (const float scale)
     {
-        GroupNode::setScale (scale);
+        Node::setScale (scale);
+    }
+    
+    void GroupNode::setColor (const osgVector4& color)
+    {
         ::std::list<NodePtr_t>::iterator iter_list_of_objects;
         for (iter_list_of_objects = list_of_objects_.begin();
              iter_list_of_objects != list_of_objects_.end();
              iter_list_of_objects++)
         {
-            (*iter_list_of_objects)->setScale ( scale );
+            (*iter_list_of_objects)->setColor ( color );
         }
     }
     

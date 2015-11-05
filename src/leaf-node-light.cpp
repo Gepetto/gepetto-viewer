@@ -126,7 +126,7 @@ namespace graphics {
         bulb_ptr_->setRadius(radius);
     }
 
-    void LeafNodeLight::setColor (osgVector4 color)
+    void LeafNodeLight::setColor (const osgVector4& color)
     {
         shape_drawable_ptr_->setColor(color);
         light_ptr_->getLight ()->setDiffuse (color);

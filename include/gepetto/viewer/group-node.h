@@ -113,6 +113,9 @@ namespace graphics {
          * note : scale value must be positive
          */
         virtual void setScale (const float scale);
+
+        /** Set the color of the object */
+        void setColor (const osgVector4& color);
         
         /* Destructor */
         virtual ~GroupNode();

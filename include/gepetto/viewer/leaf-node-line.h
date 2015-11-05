@@ -93,7 +93,7 @@ namespace graphics {
 
         virtual void setPoints (const ::osg::Vec3ArrayRefPtr& points);
 
-        void setColor(osgVector4 color);
+        void setColor(const osgVector4& color);
 
         osgVector4 getColor() const
         {

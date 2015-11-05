@@ -174,6 +174,11 @@ namespace graphics {
         return weak_ptr_.lock();
     }
   
+    void LeafNodeGround::setColor(const osgVector4 &color)
+    {
+        setColor1(color);
+    }
+  
     void LeafNodeGround::setColor1(const osgVector4 &color1)
     {
         LeafNodeGround::setColors(color1, color2_);
