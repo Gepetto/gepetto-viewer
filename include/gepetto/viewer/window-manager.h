@@ -43,9 +43,13 @@ namespace graphics {
 
         void init(osg::GraphicsContext* gc);
 
+        void init(osgViewer::Viewer* v, osg::GraphicsContext* gc);
+
         void init(const unsigned int& x, const unsigned int& y, const unsigned int& width, const unsigned int& height);
 
         WindowManager();
+
+        WindowManager (osgViewer::Viewer* v, osg::GraphicsContext* gc);
 
         WindowManager (osg::GraphicsContext* gc);
 
@@ -68,6 +72,8 @@ namespace graphics {
         /** Create and initialize a graphical engine with a GraphicsContext
          */
         static WindowManagerPtr_t create(osg::GraphicsContext* gc);
+
+        static WindowManagerPtr_t create(osgViewer::Viewer* v, osg::GraphicsContext* gc);
 
         /** Create and initialize a graphical engine of type OSG with some parameters : position + dimension
          */
