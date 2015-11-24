@@ -116,6 +116,8 @@ namespace graphics {
 
         /** Set the color of the object */
         void setColor (const osgVector4& color);
+
+        void traverse (NodeVisitor& visitor);
         
         /* Destructor */
         virtual ~GroupNode();

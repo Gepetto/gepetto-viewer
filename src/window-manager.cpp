@@ -294,7 +294,10 @@ namespace graphics {
 
   bool WindowManager::writeNodeFile (const std::string& fn)
   {
-    return osgDB::writeNodeFile (*(viewer_ptr_->getSceneData()), fn);
+    osg::ref_ptr <osgDB::Options> options = new osgDB::Options;
+    options->setOptionString ("NoExtras");
+    return osgDB::writeNodeFile (*(viewer_ptr_->getSceneData()), fn,
+        options.get());
   }
 
     /* End declaration of public function members */

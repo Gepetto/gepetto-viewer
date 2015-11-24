@@ -7,6 +7,8 @@
 //
 
 #include <gepetto/viewer/node.h>
+
+#include <gepetto/viewer/node-visitor.h>
 #include <osg/Material>
 #include <osg/LineWidth>
 #include <climits>
@@ -448,6 +450,14 @@ namespace graphics {
   {
     return std::make_pair(auto_transform_ptr_->getPosition(),auto_transform_ptr_->getRotation());
   }
+
+  void Node::accept (NodeVisitor& nv) {
+    nv.apply (*this);
+  }
+
+  void Node::traverse (NodeVisitor& /*visitor*/) {
+  }
+
   /* End of declaration of public function members */
 
 

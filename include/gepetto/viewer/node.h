@@ -13,6 +13,7 @@
 #include <gepetto/viewer/config-osg.h>
 
 namespace graphics {
+    class NodeVisitor;
     
     DEF_CLASS_SMART_PTR(Node)
     
@@ -189,7 +190,8 @@ namespace graphics {
             return alpha_;
         }*/
 
-
+        virtual void accept (NodeVisitor& visitor);
+        virtual void traverse (NodeVisitor& visitor);
 
         /* Destructor */
         virtual ~Node ();

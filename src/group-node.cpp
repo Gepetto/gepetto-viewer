@@ -161,7 +161,18 @@ namespace graphics {
             (*iter_list_of_objects)->setColor ( color );
         }
     }
-    
+
+    void GroupNode::traverse (NodeVisitor& visitor)
+    {
+        std::list<graphics::NodePtr_t>::iterator iter_list_of_objects;
+        for (iter_list_of_objects = list_of_objects_.begin();
+             iter_list_of_objects != list_of_objects_.end();
+             iter_list_of_objects++)
+        {
+            (*iter_list_of_objects)->accept ( visitor );
+        }
+    }
+
     GroupNode::~GroupNode()
     {
         removeAllChildren();
