@@ -29,8 +29,11 @@ namespace graphics {
     this->asQueue()->addChild(collada_ptr_);
         
     /* Allow transparency */
-    collada_ptr_->getOrCreateStateSet()->setRenderBinDetails(10, "DepthSortedBin");
-    collada_ptr_->getOrCreateStateSet()->setMode(GL_BLEND, ::osg::StateAttribute::ON);
+    if (collada_ptr_->getOrCreateStateSet())
+      {
+	collada_ptr_->getOrCreateStateSet()->setRenderBinDetails(10, "DepthSortedBin");
+	collada_ptr_->getOrCreateStateSet()->setMode(GL_BLEND, ::osg::StateAttribute::ON);
+      }
   }
     
   LeafNodeCollada::LeafNodeCollada(const std::string& name, const std::string& collada_file_path) :
@@ -128,7 +131,8 @@ namespace graphics {
     //setColor(collada_ptr_,color);
     osg::ref_ptr<osg::Material> mat_ptr (new osg::Material); 
     mat_ptr->setDiffuse(osg::Material::FRONT_AND_BACK,color); 
-    collada_ptr_->getStateSet()->setAttribute(mat_ptr.get());    
+    if (collada_ptr_->getStateSet())
+      collada_ptr_->getStateSet()->setAttribute(mat_ptr.get());    
   }
  
   void LeafNodeCollada::setTexture(const std::string& image_path)
