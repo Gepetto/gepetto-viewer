@@ -26,18 +26,34 @@ namespace graphics {
 
     void getStaticTransform (const boost::shared_ptr < urdf::Link >& link,
 			     osgVector3 &static_pos, osgQuat &static_quat,
-			     bool visual)
+			     bool visual, long unsigned int visual_index)
     {
-      if (visual) {
-	// Set staticTransform = transform from link to visual
-	static_pos = osgVector3((float)link->visual->origin.position.x,
-				(float)link->visual->origin.position.y,
-				(float)link->visual->origin.position.z);
-
-	static_quat=osgQuat( (float)link->visual->origin.rotation.x,
-			     (float)link->visual->origin.rotation.y,
-			     (float)link->visual->origin.rotation.z,
-			     (float)link->visual->origin.rotation.w);
+      if (visual || (link->visual_array.size()>1))
+	{
+	  if (link->visual_array.size()>1)
+	    {
+	      // Set staticTransform = transform from link to visual
+	      static_pos = osgVector3((float)link->visual_array[visual_index]->origin.position.x,
+				      (float)link->visual_array[visual_index]->origin.position.y,
+				      (float)link->visual_array[visual_index]->origin.position.z);
+	      
+	      static_quat=osgQuat( (float)link->visual_array[visual_index]->origin.rotation.x,
+				   (float)link->visual_array[visual_index]->origin.rotation.y,
+				   (float)link->visual_array[visual_index]->origin.rotation.z,
+				   (float)link->visual_array[visual_index]->origin.rotation.w);
+	    }
+	  else
+	    {
+	      // Set staticTransform = transform from link to visual
+	      static_pos = osgVector3((float)link->visual->origin.position.x,
+				      (float)link->visual->origin.position.y,
+				      (float)link->visual->origin.position.z);
+	      
+	      static_quat=osgQuat( (float)link->visual->origin.rotation.x,
+				   (float)link->visual->origin.rotation.y,
+				   (float)link->visual->origin.rotation.z,
+				   (float)link->visual->origin.rotation.w);
+	    }
       } else {
 	// Set staticTransform = transform from link to visual
 	static_pos = osgVector3((float)link->collision->origin.position.x,
@@ -69,7 +85,6 @@ namespace graphics {
 	  ( urdfLink->collision_array [j]->geometry );
       }
       link_name = urdfLink->name;
-      std::cout << "Mesh " << std::endl;
       if ( mesh_shared_ptr != 0 )
         {
           mesh_path = getFilename (mesh_shared_ptr->filename, meshDataRootDir);
@@ -79,7 +94,7 @@ namespace graphics {
 	    (oss.str (), mesh_path);
           osgVector3 static_pos; osgQuat static_quat;
 	  if (linkFrame) {
-	    getStaticTransform (urdfLink, static_pos, static_quat, visual);
+	    getStaticTransform (urdfLink, static_pos, static_quat, visual,j);
 	  }
           meshNode->setStaticTransform(static_pos,static_quat);
           meshNode->setScale(osgVector3((float)mesh_shared_ptr->scale.x,
@@ -89,7 +104,10 @@ namespace graphics {
 	  linkNode->addChild (meshNode);
           // Set Color if specified
           if (visual && urdfLink->visual_array [j]->material != NULL) {
-            osgVector4 color(urdfLink->visual_array [j]->material->color.r, urdfLink->visual_array [j]->material->color.g, urdfLink->visual_array [j]->material->color.b, urdfLink->visual_array [j]->material->color.a);
+            osgVector4 color(urdfLink->visual_array [j]->material->color.r, 
+			     urdfLink->visual_array [j]->material->color.g, 
+			     urdfLink->visual_array [j]->material->color.b, 
+			     urdfLink->visual_array [j]->material->color.a);
             meshNode->setColor(color);
             if (urdfLink->visual_array [j]->material->texture_filename != "") {
               std::string textureFilename = getFilename
@@ -128,7 +146,7 @@ namespace graphics {
 	      (float)cylinder_shared_ptr.get()->length));
           osgVector3 static_pos; osgQuat static_quat;
 	  if (linkFrame) {
-	    getStaticTransform (urdfLink, static_pos, static_quat, visual);
+	    getStaticTransform (urdfLink, static_pos, static_quat, visual,j);
 	  }
           cylinderNode->setStaticTransform(static_pos,static_quat);
 
@@ -176,7 +194,7 @@ namespace graphics {
 		      (float)(.5*box_shared_ptr->dim.z)));
           osgVector3 static_pos; osgQuat static_quat;
 	  if (linkFrame) {
-	    getStaticTransform (urdfLink, static_pos, static_quat, visual);
+	    getStaticTransform (urdfLink, static_pos, static_quat, visual,j);
 	  }
           boxNode->setStaticTransform(static_pos,static_quat);
 
@@ -222,7 +240,7 @@ namespace graphics {
 				    (float)sphere_shared_ptr.get()->radius));
           osgVector3 static_pos; osgQuat static_quat;
 	  if (linkFrame) {
-	    getStaticTransform (urdfLink, static_pos, static_quat, visual);
+	    getStaticTransform (urdfLink, static_pos, static_quat, visual,j);
 	  }
           sphereNode->setStaticTransform(static_pos,static_quat);
 
