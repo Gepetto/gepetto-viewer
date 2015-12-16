@@ -40,11 +40,13 @@
 
     GroupNodePtr_t world = GroupNode::create(std::string("world"));
     //GroupNodePtr_t robot = GroupNode::create(std::string("robot"));
-    //GroupNodePtr_t robot = urdfParser::parse(std::string("hrp2"), std::string("/local/mgeisert/devel/src/hrp2/hrp2_14_description/urdf/hrp2_14_capsule.urdf"),std::string("/local/mgeisert/devel/src/hrp2/"));
+    //    GroupNodePtr_t robot = urdfParser::parse(std::string("hrp2"), 
+    //std::string("/home/ostasse/devel/ros-indigo-1/install/share/hrp2_14_description/urdf/hrp2_14.urdf"),
+    //std::string("/home/ostasse/devel/ros-indigo-1/install/share/"));
 
 
-    /*world->addChild(robot);
-    world->addChild(obstacle);
+    world->addChild(box);
+    /*world->addChild(obstacle);
 
     DefVector3 position1(2.,0.,0.);
     DefQuat attitude1(1.,0.,0.,0.);
