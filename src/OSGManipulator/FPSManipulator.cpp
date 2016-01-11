@@ -73,13 +73,12 @@ bool FPSManipulator::handleKeyDown( const GUIEventAdapter& ea, GUIActionAdapter&
 
 
 
-  switch(ea.getKey())
+  switch(ea.getUnmodifiedKey())
   {
     case 'h' :
       printHelp();
       return false;
     case osgGA::GUIEventAdapter::KEY_Z :
-    case 26 : // with ctrl down
       // move forward
       if(speedX_ <= 0){
         speedX_ =1.;
@@ -89,7 +88,6 @@ bool FPSManipulator::handleKeyDown( const GUIEventAdapter& ea, GUIActionAdapter&
          return false;
     break;
     case osgGA::GUIEventAdapter::KEY_S :
-    case 19 : // with ctrl down
       // move backward
       if(speedX_ >=0){
         speedX_ =-1.;
@@ -99,7 +97,6 @@ bool FPSManipulator::handleKeyDown( const GUIEventAdapter& ea, GUIActionAdapter&
         return false;
     break;
     case osgGA::GUIEventAdapter::KEY_Q :
-    case 17 : // q and ctrl
       // move left
       if(speedY_ >= 0){
         speedY_ = -1.;
@@ -109,7 +106,6 @@ bool FPSManipulator::handleKeyDown( const GUIEventAdapter& ea, GUIActionAdapter&
         return false;
     break;
     case osgGA::GUIEventAdapter::KEY_D :
-    case 4 : // with ctrl down
       // move right
       if(speedY_ <= 0){
         speedY_ = 1.;
@@ -118,8 +114,7 @@ bool FPSManipulator::handleKeyDown( const GUIEventAdapter& ea, GUIActionAdapter&
       else
         return false;
     break;
-    case osgGA::GUIEventAdapter::KEY_KP_Space : //spacebar
-    case 32 : // with ctrl down
+    case osgGA::GUIEventAdapter::KEY_Space : //spacebar
       // move up
       if(speedZ_ <= 0){
         speedZ_ = 1.;
@@ -129,7 +124,6 @@ bool FPSManipulator::handleKeyDown( const GUIEventAdapter& ea, GUIActionAdapter&
         return false;
     break;
     case osgGA::GUIEventAdapter::KEY_C :
-    case 3 : // with ctrl down
       // move down
       if(speedZ_ >= 0 ){
         speedZ_ = -1.;
@@ -139,7 +133,6 @@ bool FPSManipulator::handleKeyDown( const GUIEventAdapter& ea, GUIActionAdapter&
         return false;
     break;
     case osgGA::GUIEventAdapter::KEY_A :
-    case 1 : // with ctrl down
       // roll rotation left
       if (speedRoll_ >=0){
         speedRoll_ = -1.;
@@ -149,7 +142,6 @@ bool FPSManipulator::handleKeyDown( const GUIEventAdapter& ea, GUIActionAdapter&
         return false;
     break;
     case osgGA::GUIEventAdapter::KEY_E :
-    case 5 : // with ctrl down
       // roll rotation right
       if(speedRoll_ <=0){
         speedRoll_ = 1.;
@@ -191,34 +183,26 @@ bool FPSManipulator::handleKeyDown( const GUIEventAdapter& ea, GUIActionAdapter&
 /// Releasing the key
 bool FPSManipulator::handleKeyUp( const GUIEventAdapter& ea, GUIActionAdapter& /*us*/ )
 {
-  std::cout<<"key : "<<ea.getKey()<<std::endl;
-  switch(ea.getKey())
+  std::cout<<"key : "<<ea.getKey()<<" unmodified code : "<<ea.getUnmodifiedKey()<<" keyMask : "<<ea.getModKeyMask()<<std::endl;
+  switch(ea.getUnmodifiedKey())
   {
     case osgGA::GUIEventAdapter::KEY_Z :
-    case 26 : // with ctrl down
     case osgGA::GUIEventAdapter::KEY_S :
-    case 19 : // with ctrl down
       speedX_ =0.;
       return false;
     break;
     case osgGA::GUIEventAdapter::KEY_Q :
-    case 17 : // q and ctrl
     case osgGA::GUIEventAdapter::KEY_D :
-    case 4 : // with ctrl down
       speedY_ = 0.;
       return false;
     break;
-    case osgGA::GUIEventAdapter::KEY_KP_Space : //spacebar
-    case 32 : // with ctrl down
+    case osgGA::GUIEventAdapter::KEY_Space : //spacebar
     case osgGA::GUIEventAdapter::KEY_C :
-    case 3 : // with ctrl down
       speedZ_=0.;
       return false;
     break;
     case osgGA::GUIEventAdapter::KEY_A :
-    case 1 : // with ctrl down
     case osgGA::GUIEventAdapter::KEY_E :
-    case 5 : // with ctrl down
       speedRoll_=0.;
       return false;
     break;
