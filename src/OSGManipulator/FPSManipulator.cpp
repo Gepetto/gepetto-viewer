@@ -11,10 +11,22 @@
 #include <gepetto/viewer/OSGManipulator/FPSManipulator.h>
 #include <iostream>
 #include <gepetto/viewer/config-osg.h>
+#include <X11/XKBlib.h>
 #include <cassert>
 
 
-
+/**
+ * CameraManipulator which use keyboard for moving the camera, same deplacement as most of the FPS games :
+ *
+ * independant of keyboard layout (use the active keyboard layout when the osg::viewer constructor is called) , only use physical position of the key
+ * keybinding for azerty (qwerty) users :
+ * z/s (w/s) : move forward/backward
+ * q/d (a/d) : move left/right
+ * a/e (a/e) : rotation (roll) left/right
+ * space/c : move up/down
+ * rotation yaw and pitch with the mouse (keep button 1 pressed)
+ *
+ */
 using namespace osg;
 using namespace osgGA;
 
@@ -30,6 +42,9 @@ FPSManipulator::FPSManipulator( int flags )
   ctrl_ = false;
   shift_ = false;
   rightClic_ = false;
+  setAllowThrow(false);// stop all mouse motions when mouse is released
+  display_=XOpenDisplay(0);
+
 }
 
 /// Constructor with reference to the viewer, needed for hidding mouse cursor and changing clipping value
@@ -44,7 +59,9 @@ FPSManipulator::FPSManipulator(osgViewer::Viewer* viewer, int flags)
  ctrl_ = false;
  shift_ = false;
  rightClic_ = false;
+ setAllowThrow(false);// stop all mouse motions when mouse is released
  osgViewer::Viewer::Windows windows;
+ display_=XOpenDisplay(0);
  viewer->getWindows(windows);
  gWindow_=windows.front();
  camera_->getProjectionMatrixAsPerspective(fovy_,ratio_,zNear_,zFar_);  // initialise value with current setting
@@ -61,24 +78,11 @@ FPSManipulator::FPSManipulator( const FPSManipulator& fpm, const CopyOp& copyOp 
 // pressing a key
 bool FPSManipulator::handleKeyDown( const GUIEventAdapter& ea, GUIActionAdapter& us )
 {
- // std::cout<<"Key Pressed : "<<ea.getKey()<<std::endl;
-  // reset the view
-  if( ea.getKey() == GUIEventAdapter::KEY_R )
-  {
-    flushMouseEventStack();
-    _thrown = false;
-    home(ea,us);
-    return true;
-  }
 
+  keycode_ = XKeysymToKeycode(display_,ea.getUnmodifiedKey());
 
-
-  switch(ea.getUnmodifiedKey())
-  {
-    case 'h' :
-      printHelp();
-      return false;
-    case osgGA::GUIEventAdapter::KEY_Z :
+  switch(keycode_){
+    case osgGA::key_forward :
       // move forward
       if(speedX_ <= 0){
         speedX_ =1.;
@@ -87,7 +91,7 @@ bool FPSManipulator::handleKeyDown( const GUIEventAdapter& ea, GUIActionAdapter&
       else
          return false;
     break;
-    case osgGA::GUIEventAdapter::KEY_S :
+    case osgGA::key_backward :
       // move backward
       if(speedX_ >=0){
         speedX_ =-1.;
@@ -96,7 +100,7 @@ bool FPSManipulator::handleKeyDown( const GUIEventAdapter& ea, GUIActionAdapter&
       else
         return false;
     break;
-    case osgGA::GUIEventAdapter::KEY_Q :
+    case osgGA::key_left :
       // move left
       if(speedY_ >= 0){
         speedY_ = -1.;
@@ -105,7 +109,7 @@ bool FPSManipulator::handleKeyDown( const GUIEventAdapter& ea, GUIActionAdapter&
       else
         return false;
     break;
-    case osgGA::GUIEventAdapter::KEY_D :
+    case osgGA::key_right :
       // move right
       if(speedY_ <= 0){
         speedY_ = 1.;
@@ -114,7 +118,7 @@ bool FPSManipulator::handleKeyDown( const GUIEventAdapter& ea, GUIActionAdapter&
       else
         return false;
     break;
-    case osgGA::GUIEventAdapter::KEY_Space : //spacebar
+    case osgGA::key_up : //spacebar
       // move up
       if(speedZ_ <= 0){
         speedZ_ = 1.;
@@ -123,7 +127,7 @@ bool FPSManipulator::handleKeyDown( const GUIEventAdapter& ea, GUIActionAdapter&
       else
         return false;
     break;
-    case osgGA::GUIEventAdapter::KEY_C :
+    case osgGA::key_down :
       // move down
       if(speedZ_ >= 0 ){
         speedZ_ = -1.;
@@ -132,7 +136,7 @@ bool FPSManipulator::handleKeyDown( const GUIEventAdapter& ea, GUIActionAdapter&
       else
         return false;
     break;
-    case osgGA::GUIEventAdapter::KEY_A :
+    case osgGA::key_roll_left :
       // roll rotation left
       if (speedRoll_ >=0){
         speedRoll_ = -1.;
@@ -141,7 +145,7 @@ bool FPSManipulator::handleKeyDown( const GUIEventAdapter& ea, GUIActionAdapter&
       else
         return false;
     break;
-    case osgGA::GUIEventAdapter::KEY_E :
+    case osgGA::key_roll_right :
       // roll rotation right
       if(speedRoll_ <=0){
         speedRoll_ = 1.;
@@ -149,6 +153,20 @@ bool FPSManipulator::handleKeyDown( const GUIEventAdapter& ea, GUIActionAdapter&
         }
       else
         return false;
+    break;
+    }
+
+  switch(ea.getKey())
+  {
+    case osgGA::GUIEventAdapter::KEY_R:
+      flushMouseEventStack();
+      _thrown = false;
+      home(ea,us);
+      return true;
+    break;
+    case osgGA::GUIEventAdapter::KEY_H :
+      printHelp();
+      return false;
     break;
     case osgGA::GUIEventAdapter::KEY_Plus :
     case 65451 :// '+'  numpad
@@ -183,29 +201,36 @@ bool FPSManipulator::handleKeyDown( const GUIEventAdapter& ea, GUIActionAdapter&
 /// Releasing the key
 bool FPSManipulator::handleKeyUp( const GUIEventAdapter& ea, GUIActionAdapter& /*us*/ )
 {
-  std::cout<<"key : "<<ea.getKey()<<" unmodified code : "<<ea.getUnmodifiedKey()<<" keyMask : "<<ea.getModKeyMask()<<std::endl;
-  switch(ea.getUnmodifiedKey())
+  //std::cout<<"key : "<<ea.getKey()<<" unmodified code : "<<ea.getUnmodifiedKey()<<" keyMask : "<<ea.getModKeyMask()<<std::endl;
+
+
+  keycode_ = XKeysymToKeycode(display_,ea.getUnmodifiedKey());
+ // std::cout<<"keycode = "<<keycode_<<std::endl;
+
+  switch(keycode_)
   {
-    case osgGA::GUIEventAdapter::KEY_Z :
-    case osgGA::GUIEventAdapter::KEY_S :
+    case osgGA::key_forward :
+    case osgGA::key_backward :
       speedX_ =0.;
       return false;
     break;
-    case osgGA::GUIEventAdapter::KEY_Q :
-    case osgGA::GUIEventAdapter::KEY_D :
+    case osgGA::key_right :
+    case osgGA::key_left :
       speedY_ = 0.;
       return false;
     break;
-    case osgGA::GUIEventAdapter::KEY_Space : //spacebar
-    case osgGA::GUIEventAdapter::KEY_C :
+    case osgGA::key_up : //spacebar
+    case osgGA::key_down :
       speedZ_=0.;
       return false;
     break;
-    case osgGA::GUIEventAdapter::KEY_A :
-    case osgGA::GUIEventAdapter::KEY_E :
+    case osgGA::key_roll_left :
+    case osgGA::key_roll_right :
       speedRoll_=0.;
       return false;
     break;
+  }
+  switch(ea.getKey()){
     case osgGA::GUIEventAdapter::KEY_Control_L:
     case osgGA::GUIEventAdapter::KEY_Control_R:
         ctrl_ = false;
@@ -260,7 +285,6 @@ bool FPSManipulator::handleMousePush( const osgGA::GUIEventAdapter& ea, osgGA::G
 
 bool FPSManipulator::handleMouseRelease( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us ){
   gWindow_->useCursor(true);
-  setAllowThrow(false);// stop all mouse motions
   return inherited::handleMouseRelease(ea,us);
 }
 

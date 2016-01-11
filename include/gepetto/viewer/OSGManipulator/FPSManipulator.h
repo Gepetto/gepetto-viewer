@@ -5,6 +5,7 @@
 #include <osgViewer/Viewer>
 #include <osg/Camera>
 #include <osgViewer/GraphicsWindow>
+#include <X11/Xlib.h>
 
 
 
@@ -56,6 +57,8 @@ namespace osgGA {
 
     osg::Camera* camera_;
     osgViewer::GraphicsWindow* gWindow_;
+    Display *display_;
+    int keycode_;
     bool rightClic_;
     bool ctrl_;
     bool shift_;
@@ -63,6 +66,17 @@ namespace osgGA {
 
   };// end class
 
+  enum KeySymbol
+  {
+    key_forward = 25,
+    key_backward = 39,
+    key_right = 40,
+    key_left = 38,
+    key_roll_right = 26,
+    key_roll_left = 24,
+    key_up = 65,
+    key_down = 54
+  };
 
 }//namespace osgGA
 #endif // FPSMANIPULATOR_H
