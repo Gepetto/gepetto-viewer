@@ -36,8 +36,7 @@ namespace osgGA {
     virtual bool handleMousePush( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us );
     virtual bool handleMouseRelease( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us );
   //  virtual bool handleMouseWheel( const GUIEventAdapter& ea, GUIActionAdapter& us );
-
-    //virtual bool performMovement(); needed for right clic move
+    virtual bool performMovementLeftMouseButton( const double eventTimeDelta, const double dx, const double dy );
 
     virtual void rotateRoll( const double roll/*,const osg::Vec3d& localUp */);
     void printHelp();
@@ -53,6 +52,8 @@ namespace osgGA {
     double fovy_;
     double ratio_;
     osg::Quat rotateRoll_;
+    osg::Quat rotatePitch_;
+    osg::Quat rotateYaw_;
 
 
     osg::Camera* camera_;

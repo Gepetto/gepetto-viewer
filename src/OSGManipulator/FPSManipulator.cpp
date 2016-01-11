@@ -255,6 +255,20 @@ void FPSManipulator::rotateRoll(const double roll/*,const osg::Vec3d& localUp */
     _rotation = _rotation * rotateRoll_;
 }
 
+// free rotation (remove localUp constraint from parent class)
+bool FPSManipulator::performMovementLeftMouseButton( const double /*eventTimeDelta*/, const double dx, const double dy )
+{
+
+  // rotations
+  rotateYaw_.makeRotate(-dx, _rotation * Vec3d( 0.,1.,0. ) );
+  rotatePitch_.makeRotate(dy, _rotation * Vec3d( 1.,0.,0. ) );
+
+  _rotation = _rotation * rotateYaw_ * rotatePitch_;
+
+  return true;
+}
+
+
 // called at each refresh, need to check the speed and move camera accordingly
 bool FPSManipulator::handleFrame( const GUIEventAdapter& ea, GUIActionAdapter& us )
 {
