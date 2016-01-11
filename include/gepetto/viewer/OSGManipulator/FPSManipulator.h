@@ -30,16 +30,14 @@ namespace osgGA {
 
     virtual bool handleKeyDown( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us );
     virtual bool handleKeyUp( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us );
- //   virtual void applyAnimationStep( const double currentProgress, const double prevProgress );
     virtual bool handleFrame( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us );
-
     virtual bool handleMousePush( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us );
     virtual bool handleMouseRelease( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us );
   //  virtual bool handleMouseWheel( const GUIEventAdapter& ea, GUIActionAdapter& us );
     virtual bool performMovementLeftMouseButton( const double eventTimeDelta, const double dx, const double dy );
 
     virtual void rotateRoll( const double roll/*,const osg::Vec3d& localUp */);
-    void printHelp();
+    virtual void getUsage();
   private :
 
     double speed_;
@@ -67,6 +65,9 @@ namespace osgGA {
 
   };// end class
 
+  /*
+   * zqsd for azerty keyboard or wasd for qwerty keyboard
+   * */
   enum KeySymbol
   {
     key_forward = 25,

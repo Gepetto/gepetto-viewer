@@ -24,7 +24,7 @@
  * q/d (a/d) : move left/right
  * a/e (a/e) : rotation (roll) left/right
  * space/c : move up/down
- * rotation yaw and pitch with the mouse (keep button 1 pressed)
+ * rotation yaw and pitch with the mouse (keep left button pressed)
  *
  */
 using namespace osg;
@@ -165,7 +165,7 @@ bool FPSManipulator::handleKeyDown( const GUIEventAdapter& ea, GUIActionAdapter&
       return true;
     break;
     case osgGA::GUIEventAdapter::KEY_H :
-      printHelp();
+      getUsage();
       return false;
     break;
     case osgGA::GUIEventAdapter::KEY_Plus :
@@ -231,6 +231,9 @@ bool FPSManipulator::handleKeyUp( const GUIEventAdapter& ea, GUIActionAdapter& /
     break;
   }
   switch(ea.getKey()){
+    case '2' :
+      getUsage();
+    break;
     case osgGA::GUIEventAdapter::KEY_Control_L:
     case osgGA::GUIEventAdapter::KEY_Control_R:
         ctrl_ = false;
@@ -397,20 +400,22 @@ bool FPSManipulator::handleMouseRelease( const osgGA::GUIEventAdapter& ea, osgGA
 
 
 
-void FPSManipulator::printHelp(){
+void FPSManipulator::getUsage(){
   std::cout<<"###################################################"<<std::endl;
   std::cout<<"#              Usage of FPSManipulator :          #"<<std::endl;
   std::cout<<"# Translation with the keyboard                   #"<<std::endl;
-  std::cout<<"# z/s : forward/backward                          #"<<std::endl;
-  std::cout<<"# q/d : left/right                                #"<<std::endl;
+  std::cout<<"# zqsd for azerty or wasd for qwerty :            #"<<std::endl;
+  std::cout<<"# z/s (w/s) : forward/backward                    #"<<std::endl;
+  std::cout<<"# q/d (a/d) : left/right                          #"<<std::endl;
   std::cout<<"# space/c : up/down                               #"<<std::endl;
-  std::cout<<"# Mouse (left button) : yaw/pitch  rotation       #"<<std::endl;
-  std::cout<<"# a/e : roll rotation                             #"<<std::endl;
+  std::cout<<"# a/e (q/e) : roll rotation                       #"<<std::endl;
+  std::cout<<"# Mouse (left button) : yaw/pitch rotation        #"<<std::endl;
   std::cout<<"#            -------------------------            #"<<std::endl;
   std::cout<<"# r : Reset the view                              #"<<std::endl;
   std::cout<<"# hold Ctrl : Slow mouvements                     #"<<std::endl;
   std::cout<<"# + / - : change mouvement speed (keyboard only)  #"<<std::endl;
   std::cout<<"# * : reset mouvement speed (keyboard only)       #"<<std::endl;
+  std::cout<<"# h : display this message                        #"<<std::endl;
   std::cout<<"# 1 : switch back to trackball manipulator        #"<<std::endl;
   std::cout<<"###################################################"<<std::endl;
 
