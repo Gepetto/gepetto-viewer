@@ -64,7 +64,7 @@ SET(${PROJECT_NAME}_HEADERS
   include/gepetto/viewer/node-rod.h
   include/gepetto/viewer/node-visitor.h
   include/gepetto/viewer/transform-writer.h
-  include/gepetto/viewer/OSGManipulator/FPSManipulator.h
+  include/gepetto/viewer/OSGManipulator/keyboard-manipulator.h
 )
 
 ADD_REQUIRED_DEPENDENCY("openscenegraph >= 3.2")

@@ -1,5 +1,15 @@
 #ifndef SCENEVIEWER_FPSMANIPULATOR_H
 #define SCENEVIEWER_FPSMANIPULATOR_H
+//
+//  KeyboardManipulator
+//  gepetto-viewer
+//
+//  Alternative CameraManipulator for OSG, use keyboard and mouse
+//  KeyBinding are inspired by the classic system in games
+//
+//  Created by Pierre Fernbach in january 2016
+//
+
 
 #include <osgGA/FirstPersonManipulator>
 #include <osgViewer/Viewer>
@@ -15,31 +25,29 @@ namespace osgGA {
   const double startSpeed_ = 2.;
   /** FirstPersonManipulator is base class for camera control based on position
       and orientation of camera, like walk, drive, and flight manipulators. */
-  class OSGGA_EXPORT FPSManipulator : public FirstPersonManipulator
+  class OSGGA_EXPORT KeyboardManipulator : public FirstPersonManipulator
   {
           typedef FirstPersonManipulator inherited;
 
   public:
-    FPSManipulator( int flags = DEFAULT_SETTINGS );
-    FPSManipulator( const FPSManipulator& fpm, const osg::CopyOp& copyOp = osg::CopyOp::SHALLOW_COPY );
-    FPSManipulator(osgViewer::Viewer* viewer, int flags = DEFAULT_SETTINGS );
+    KeyboardManipulator( int flags = DEFAULT_SETTINGS );
+    KeyboardManipulator( const KeyboardManipulator& fpm, const osg::CopyOp& copyOp = osg::CopyOp::SHALLOW_COPY );
+    KeyboardManipulator(osgViewer::Viewer* viewer, int flags = DEFAULT_SETTINGS );
 
-    META_Object( osgGA, FPSManipulator );
+    META_Object( osgGA, KeyboardManipulator );
 
   protected :
 
     virtual bool handleKeyDown( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us );
     virtual bool handleKeyUp( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us );
- //   virtual void applyAnimationStep( const double currentProgress, const double prevProgress );
     virtual bool handleFrame( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us );
-
     virtual bool handleMousePush( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us );
     virtual bool handleMouseRelease( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us );
   //  virtual bool handleMouseWheel( const GUIEventAdapter& ea, GUIActionAdapter& us );
     virtual bool performMovementLeftMouseButton( const double eventTimeDelta, const double dx, const double dy );
 
     virtual void rotateRoll( const double roll/*,const osg::Vec3d& localUp */);
-    void printHelp();
+    virtual void getUsage();
   private :
 
     double speed_;
@@ -67,6 +75,9 @@ namespace osgGA {
 
   };// end class
 
+  /*
+   * zqsd for azerty keyboard or wasd for qwerty keyboard
+   * */
   enum KeySymbol
   {
     key_forward = 25,

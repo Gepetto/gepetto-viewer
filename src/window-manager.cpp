@@ -9,7 +9,7 @@
 #include <gepetto/viewer/window-manager.h>
 
 #include <osg/Camera>
-#include <gepetto/viewer/OSGManipulator/FPSManipulator.h>
+#include <gepetto/viewer/OSGManipulator/keyboard-manipulator.h>
 #include <osgGA/KeySwitchMatrixManipulator>
 #include <osgGA/TrackballManipulator>
 #include <osgDB/WriteFile>
@@ -75,7 +75,7 @@ namespace graphics {
 
       osgGA::KeySwitchMatrixManipulator *manipulator_ptr = new ::osgGA::KeySwitchMatrixManipulator;
       manipulator_ptr->addNumberedMatrixManipulator(new ::osgGA::TrackballManipulator);
-      manipulator_ptr->addNumberedMatrixManipulator(new ::osgGA::FPSManipulator(viewer_ptr_));
+      manipulator_ptr->addNumberedMatrixManipulator(new ::osgGA::KeyboardManipulator(viewer_ptr_));
       viewer_ptr_->setCameraManipulator( manipulator_ptr);
     }
 
