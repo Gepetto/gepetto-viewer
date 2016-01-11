@@ -1,5 +1,15 @@
 #ifndef SCENEVIEWER_FPSMANIPULATOR_H
 #define SCENEVIEWER_FPSMANIPULATOR_H
+//
+//  KeyboardManipulator
+//  gepetto-viewer
+//
+//  Alternative CameraManipulator for OSG, use keyboard and mouse
+//  KeyBinding are inspired by the classic system in games
+//
+//  Created by Pierre Fernbach in january 2016
+//
+
 
 #include <osgGA/FirstPersonManipulator>
 #include <osgViewer/Viewer>
