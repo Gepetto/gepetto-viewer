@@ -260,6 +260,7 @@ bool FPSManipulator::handleMousePush( const osgGA::GUIEventAdapter& ea, osgGA::G
 
 bool FPSManipulator::handleMouseRelease( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us ){
   gWindow_->useCursor(true);
+  setAllowThrow(false);// stop all mouse motions
   return inherited::handleMouseRelease(ea,us);
 }
 
