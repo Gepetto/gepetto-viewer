@@ -15,16 +15,16 @@ namespace osgGA {
   const double startSpeed_ = 2.;
   /** FirstPersonManipulator is base class for camera control based on position
       and orientation of camera, like walk, drive, and flight manipulators. */
-  class OSGGA_EXPORT FPSManipulator : public FirstPersonManipulator
+  class OSGGA_EXPORT KeyboardManipulator : public FirstPersonManipulator
   {
           typedef FirstPersonManipulator inherited;
 
   public:
-    FPSManipulator( int flags = DEFAULT_SETTINGS );
-    FPSManipulator( const FPSManipulator& fpm, const osg::CopyOp& copyOp = osg::CopyOp::SHALLOW_COPY );
-    FPSManipulator(osgViewer::Viewer* viewer, int flags = DEFAULT_SETTINGS );
+    KeyboardManipulator( int flags = DEFAULT_SETTINGS );
+    KeyboardManipulator( const KeyboardManipulator& fpm, const osg::CopyOp& copyOp = osg::CopyOp::SHALLOW_COPY );
+    KeyboardManipulator(osgViewer::Viewer* viewer, int flags = DEFAULT_SETTINGS );
 
-    META_Object( osgGA, FPSManipulator );
+    META_Object( osgGA, KeyboardManipulator );
 
   protected :
 

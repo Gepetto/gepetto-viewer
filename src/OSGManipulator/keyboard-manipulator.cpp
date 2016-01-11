@@ -1,5 +1,5 @@
 //
-//  FPSManipulator
+//  KeyboardManipulator
 //  gepetto-viewer
 //
 //  Alternative CameraManipulator for OSG, use keyboard and mouse
@@ -8,7 +8,7 @@
 //  Created by Pierre Fernbach in january 2016
 //
 
-#include <gepetto/viewer/OSGManipulator/FPSManipulator.h>
+#include <gepetto/viewer/OSGManipulator/keyboard-manipulator.h>
 #include <iostream>
 #include <gepetto/viewer/config-osg.h>
 #include <X11/XKBlib.h>
@@ -31,7 +31,7 @@ using namespace osg;
 using namespace osgGA;
 
 /// Constructor.
-FPSManipulator::FPSManipulator( int flags )
+KeyboardManipulator::KeyboardManipulator( int flags )
    : inherited( flags )
 {
   speed_=startSpeed_;
@@ -48,7 +48,7 @@ FPSManipulator::FPSManipulator( int flags )
 }
 
 /// Constructor with reference to the viewer, needed for hidding mouse cursor and changing clipping value
-FPSManipulator::FPSManipulator(osgViewer::Viewer* viewer, int flags)
+KeyboardManipulator::KeyboardManipulator(osgViewer::Viewer* viewer, int flags)
   : inherited( flags ),camera_(viewer->getCamera())
 {
  speed_=startSpeed_;
@@ -69,14 +69,14 @@ FPSManipulator::FPSManipulator(osgViewer::Viewer* viewer, int flags)
 
 
 /// Copy Constructor.
-FPSManipulator::FPSManipulator( const FPSManipulator& fpm, const CopyOp& copyOp )
+KeyboardManipulator::KeyboardManipulator( const KeyboardManipulator& fpm, const CopyOp& copyOp )
    :osg::Object(fpm, copyOp), osg::Callback(fpm, copyOp),inherited( fpm, copyOp )
 {
 }
 
 
 // pressing a key
-bool FPSManipulator::handleKeyDown( const GUIEventAdapter& ea, GUIActionAdapter& us )
+bool KeyboardManipulator::handleKeyDown( const GUIEventAdapter& ea, GUIActionAdapter& us )
 {
 
   keycode_ = XKeysymToKeycode(display_,ea.getUnmodifiedKey());
@@ -199,7 +199,7 @@ bool FPSManipulator::handleKeyDown( const GUIEventAdapter& ea, GUIActionAdapter&
 
 
 /// Releasing the key
-bool FPSManipulator::handleKeyUp( const GUIEventAdapter& ea, GUIActionAdapter& /*us*/ )
+bool KeyboardManipulator::handleKeyUp( const GUIEventAdapter& ea, GUIActionAdapter& /*us*/ )
 {
   //std::cout<<"key : "<<ea.getKey()<<" unmodified code : "<<ea.getUnmodifiedKey()<<" keyMask : "<<ea.getModKeyMask()<<std::endl;
 
@@ -247,7 +247,7 @@ bool FPSManipulator::handleKeyUp( const GUIEventAdapter& ea, GUIActionAdapter& /
 }
 
 
-void FPSManipulator::rotateRoll(const double roll/*,const osg::Vec3d& localUp */)
+void KeyboardManipulator::rotateRoll(const double roll/*,const osg::Vec3d& localUp */)
 {
     //bool verticalAxisFixed = (localUp != Vec3d( 0.,0.,0. ));
 
@@ -259,7 +259,7 @@ void FPSManipulator::rotateRoll(const double roll/*,const osg::Vec3d& localUp */
 }
 
 // free rotation (remove localUp constraint from parent class)
-bool FPSManipulator::performMovementLeftMouseButton( const double /*eventTimeDelta*/, const double dx, const double dy )
+bool KeyboardManipulator::performMovementLeftMouseButton( const double /*eventTimeDelta*/, const double dx, const double dy )
 {
 
   // rotations
@@ -273,7 +273,7 @@ bool FPSManipulator::performMovementLeftMouseButton( const double /*eventTimeDel
 
 
 // called at each refresh, need to check the speed and move camera accordingly
-bool FPSManipulator::handleFrame( const GUIEventAdapter& ea, GUIActionAdapter& us )
+bool KeyboardManipulator::handleFrame( const GUIEventAdapter& ea, GUIActionAdapter& us )
 {
   double current_frame_time = ea.getTime();
 
@@ -295,17 +295,17 @@ bool FPSManipulator::handleFrame( const GUIEventAdapter& ea, GUIActionAdapter& u
 }
 
 // method overrided for hidding the mouse cursor when the view move :
-bool FPSManipulator::handleMousePush( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us ){
+bool KeyboardManipulator::handleMousePush( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us ){
   gWindow_->useCursor(false);
   return inherited::handleMousePush(ea,us);
 }
 
-bool FPSManipulator::handleMouseRelease( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us ){
+bool KeyboardManipulator::handleMouseRelease( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us ){
   gWindow_->useCursor(true);
   return inherited::handleMouseRelease(ea,us);
 }
 
-/*bool FPSManipulator::handleMouseWheel( const GUIEventAdapter& ea, GUIActionAdapter& us ){
+/*bool KeyboardManipulator::handleMouseWheel( const GUIEventAdapter& ea, GUIActionAdapter& us ){
   osgGA::GUIEventAdapter::ScrollingMotion sm = ea.getScrollingMotion();
 
   // handle centering
@@ -369,7 +369,7 @@ bool FPSManipulator::handleMouseRelease( const osgGA::GUIEventAdapter& ea, osgGA
 
 
 // if rightClic is activated, do the same as performLeftMouvement
-/*bool FPSManipulator::performMovement(){
+/*bool KeyboardManipulator::performMovement(){
   if(rightClic_){
     // return if less then two events have been added
     if( _ga_t0.get() == NULL || _ga_t1.get() == NULL )
@@ -400,7 +400,7 @@ bool FPSManipulator::handleMouseRelease( const osgGA::GUIEventAdapter& ea, osgGA
 
 
 
-void FPSManipulator::getUsage(){
+void KeyboardManipulator::getUsage(){
   std::cout<<"###################################################"<<std::endl;
   std::cout<<"#              Usage of FPSManipulator :          #"<<std::endl;
   std::cout<<"# Translation with the keyboard                   #"<<std::endl;
