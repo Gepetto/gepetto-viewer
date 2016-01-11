@@ -40,6 +40,7 @@ SET(${LIBRARY_NAME}_SOURCES
   node-rod.cpp
   node-visitor.cc
   transform-writer.cc
+  OSGManipulator/FPSManipulator.cpp
 )
 
 ADD_LIBRARY(${LIBRARY_NAME} SHARED ${${LIBRARY_NAME}_SOURCES})
