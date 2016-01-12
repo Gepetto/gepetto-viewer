@@ -48,6 +48,7 @@ namespace osgGA {
 
     virtual void rotateRoll( const double roll/*,const osg::Vec3d& localUp */);
     virtual void getUsage();
+    bool initKeyboard();
   private :
 
     double speed_;
@@ -62,7 +63,7 @@ namespace osgGA {
     osg::Quat rotateRoll_;
     osg::Quat rotatePitch_;
     osg::Quat rotateYaw_;
-
+    bool azerty_;
 
     osg::Camera* camera_;
     osgViewer::GraphicsWindow* gWindow_;
@@ -78,16 +79,16 @@ namespace osgGA {
   /*
    * zqsd for azerty keyboard or wasd for qwerty keyboard
    * */
-  enum KeySymbol
+  enum KeyBinding
   {
-    key_forward = 25,
-    key_backward = 39,
-    key_right = 40,
-    key_left = 38,
-    key_roll_right = 26,
-    key_roll_left = 24,
-    key_up = 65,
-    key_down = 54
+    key_forward = GUIEventAdapter::KEY_Z, //depend on qwerty / azerty
+    key_backward = GUIEventAdapter::KEY_S,
+    key_right = GUIEventAdapter::KEY_D,
+    key_left = GUIEventAdapter::KEY_Q,
+    key_roll_right = GUIEventAdapter::KEY_E,
+    key_roll_left = GUIEventAdapter::KEY_A,
+    key_up = GUIEventAdapter::KEY_Space,
+    key_down = GUIEventAdapter::KEY_C
   };
 
 }//namespace osgGA

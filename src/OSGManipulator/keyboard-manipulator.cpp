@@ -7,12 +7,13 @@
 //
 //  Created by Pierre Fernbach in january 2016
 //
-
+#include <stdlib.h>
+#include <stdio.h>
 #include <gepetto/viewer/OSGManipulator/keyboard-manipulator.h>
-#include <iostream>
 #include <gepetto/viewer/config-osg.h>
 #include <X11/XKBlib.h>
-#include <cassert>
+#include <hpp/util/debug.hh>
+
 
 
 /**
@@ -44,27 +45,28 @@ KeyboardManipulator::KeyboardManipulator( int flags )
   rightClic_ = false;
   setAllowThrow(false);// stop all mouse motions when mouse is released
   display_=XOpenDisplay(0);
-
+  initKeyboard();
 }
 
 /// Constructor with reference to the viewer, needed for hidding mouse cursor and changing clipping value
 KeyboardManipulator::KeyboardManipulator(osgViewer::Viewer* viewer, int flags)
   : inherited( flags ),camera_(viewer->getCamera())
 {
- speed_=startSpeed_;
- speedRoll_=0.;
- speedX_=0.;
- speedY_=0.;
- speedZ_=0.;
- ctrl_ = false;
- shift_ = false;
- rightClic_ = false;
- setAllowThrow(false);// stop all mouse motions when mouse is released
- osgViewer::Viewer::Windows windows;
- display_=XOpenDisplay(0);
- viewer->getWindows(windows);
- gWindow_=windows.front();
- camera_->getProjectionMatrixAsPerspective(fovy_,ratio_,zNear_,zFar_);  // initialise value with current setting
+  speed_=startSpeed_;
+  speedRoll_=0.;
+  speedX_=0.;
+  speedY_=0.;
+  speedZ_=0.;
+  ctrl_ = false;
+  shift_ = false;
+  rightClic_ = false;
+  setAllowThrow(false);// stop all mouse motions when mouse is released
+  osgViewer::Viewer::Windows windows;
+  display_=XOpenDisplay(0);
+  viewer->getWindows(windows);
+  gWindow_=windows.front();
+  camera_->getProjectionMatrixAsPerspective(fovy_,ratio_,zNear_,zFar_);  // initialise value with current setting
+  initKeyboard();
 }
 
 
@@ -72,6 +74,7 @@ KeyboardManipulator::KeyboardManipulator(osgViewer::Viewer* viewer, int flags)
 KeyboardManipulator::KeyboardManipulator( const KeyboardManipulator& fpm, const CopyOp& copyOp )
    :osg::Object(fpm, copyOp), osg::Callback(fpm, copyOp),inherited( fpm, copyOp )
 {
+  initKeyboard();
 }
 
 
@@ -79,9 +82,25 @@ KeyboardManipulator::KeyboardManipulator( const KeyboardManipulator& fpm, const 
 bool KeyboardManipulator::handleKeyDown( const GUIEventAdapter& ea, GUIActionAdapter& us )
 {
 
-  keycode_ = XKeysymToKeycode(display_,ea.getUnmodifiedKey());
+  //keycode_ = XKeysymToKeycode(display_,ea.getUnmodifiedKey());
 
-  switch(keycode_){
+  int keySym = ea.getUnmodifiedKey();
+  if(!azerty_){ // adapt to qwerty keyboard
+      switch(keySym){
+        case  osgGA::GUIEventAdapter::KEY_W :
+          keySym = osgGA::key_forward;
+        break;
+        case  osgGA::GUIEventAdapter::KEY_Q :
+          keySym = osgGA::key_roll_left;
+        break;
+        case  osgGA::GUIEventAdapter::KEY_A :
+          keySym = osgGA::key_left;
+        break;
+      }
+  }
+
+  switch(keySym)
+  {
     case osgGA::key_forward :
       // move forward
       if(speedX_ <= 0){
@@ -154,10 +173,6 @@ bool KeyboardManipulator::handleKeyDown( const GUIEventAdapter& ea, GUIActionAda
       else
         return false;
     break;
-    }
-
-  switch(ea.getKey())
-  {
     case osgGA::GUIEventAdapter::KEY_R:
       flushMouseEventStack();
       _thrown = false;
@@ -204,11 +219,25 @@ bool KeyboardManipulator::handleKeyUp( const GUIEventAdapter& ea, GUIActionAdapt
   //std::cout<<"key : "<<ea.getKey()<<" unmodified code : "<<ea.getUnmodifiedKey()<<" keyMask : "<<ea.getModKeyMask()<<std::endl;
 
 
-  keycode_ = XKeysymToKeycode(display_,ea.getUnmodifiedKey());
+ // keycode_ = XKeysymToKeycode(display_,ea.getUnmodifiedKey());
  // std::cout<<"keycode = "<<keycode_<<std::endl;
 
-  switch(keycode_)
-  {
+  int keySym = ea.getUnmodifiedKey();
+  if(!azerty_){ // adapt to qwerty keyboard
+      switch(keySym){
+        case  osgGA::GUIEventAdapter::KEY_W :
+          keySym = osgGA::key_forward;
+        break;
+        case  osgGA::GUIEventAdapter::KEY_Q :
+          keySym = osgGA::key_roll_left;
+        break;
+        case  osgGA::GUIEventAdapter::KEY_A :
+          keySym = osgGA::key_left;
+        break;
+      }
+  }
+
+  switch(keySym){
     case osgGA::key_forward :
     case osgGA::key_backward :
       speedX_ =0.;
@@ -229,7 +258,7 @@ bool KeyboardManipulator::handleKeyUp( const GUIEventAdapter& ea, GUIActionAdapt
       speedRoll_=0.;
       return false;
     break;
-  }
+    }
   switch(ea.getKey()){
     case '2' :
       getUsage();
@@ -397,7 +426,40 @@ bool KeyboardManipulator::handleMouseRelease( const osgGA::GUIEventAdapter& ea, 
   return inherited::performMovement();
 }*/
 
+// check if the current keyboard is azerty or qwerty and adapt the keybinding
+bool KeyboardManipulator::initKeyboard(){
 
+  char buf[128];
+  FILE *fp;
+  // send system command and get the output
+  if ((fp = popen("setxkbmap -print", "r")) == NULL) {
+     hppDout(error,"Error sending terminal command !");
+     return false;
+  }
+
+  fgets(buf, 128, fp);
+  fgets(buf, 128, fp);  // the second line of the output contain either "azerty" or "qwerty"
+  std::string output(buf);
+
+  if(output.find("azerty") != std::string::npos){
+    azerty_=true;
+    std::cout<<"azerty keyboard detected"<<std::endl;
+  }
+  else if(output.find("qwerty") != std::string::npos){
+    azerty_=false;
+    std::cout<<"qwerty keyboard detected"<<std::endl;
+  }
+  else
+    std::cout<<"Unknow keyboard layout"<<std::endl;
+
+
+  if(pclose(fp))  {
+     hppDout(error,"Command not found or exited with error status");
+     return false;
+  }
+
+  return true;
+}
 
 
 void KeyboardManipulator::getUsage(){
