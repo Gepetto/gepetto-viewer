@@ -11,8 +11,6 @@
 #include <stdio.h>
 #include <gepetto/viewer/OSGManipulator/keyboard-manipulator.h>
 #include <gepetto/viewer/config-osg.h>
-#include <X11/XKBlib.h>
-#include <hpp/util/debug.hh>
 
 
 
@@ -433,7 +431,7 @@ bool KeyboardManipulator::initKeyboard(){
   FILE *fp;
   // send system command and get the output
   if ((fp = popen("setxkbmap -print", "r")) == NULL) {
-     hppDout(error,"Error sending terminal command !");
+     std::cout<<"Error sending terminal command !"<<std::endl;
      return false;
   }
 
@@ -454,7 +452,7 @@ bool KeyboardManipulator::initKeyboard(){
 
 
   if(pclose(fp))  {
-     hppDout(error,"Command not found or exited with error status");
+     std::cout<<"Command not found or exited with error status"<<std::endl;
      return false;
   }
 
