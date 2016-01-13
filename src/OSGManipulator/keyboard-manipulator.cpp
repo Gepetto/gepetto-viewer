@@ -42,14 +42,16 @@ KeyboardManipulator::KeyboardManipulator( int flags )
   shift_ = false;
   rightClic_ = false;
   keyLayout_=LAYOUT_unknown;
+  localUp_ = getUpVector( getCoordinateFrame( _eye ) );
+  noRoll_=true;
   setAllowThrow(false);// stop all mouse motions when mouse is released
-  display_=XOpenDisplay(0);
+  //display_=XOpenDisplay(0);
   initKeyboard();
 }
 
-/// Constructor with reference to the viewer, needed for hidding mouse cursor and changing clipping value
-KeyboardManipulator::KeyboardManipulator(osgViewer::Viewer* viewer, int flags)
-  : inherited( flags ),camera_(viewer->getCamera())
+/// Constructor with reference to the graphic window, needed for hidding mouse cursor
+KeyboardManipulator::KeyboardManipulator(osgViewer::GraphicsWindow *window, int flags)
+  : inherited( flags ),gWindow_(window)/*,camera_(viewer->getCamera())*/
 {
   speed_=startSpeed_;
   speedRoll_=0.;
@@ -60,12 +62,13 @@ KeyboardManipulator::KeyboardManipulator(osgViewer::Viewer* viewer, int flags)
   shift_ = false;
   rightClic_ = false;
   keyLayout_=LAYOUT_unknown;
+  localUp_ = getUpVector( getCoordinateFrame( _eye ) );
+  noRoll_=true;
   setAllowThrow(false);// stop all mouse motions when mouse is released
-  osgViewer::Viewer::Windows windows;
-  display_=XOpenDisplay(0);
-  viewer->getWindows(windows);
-  gWindow_=windows.front();
-  camera_->getProjectionMatrixAsPerspective(fovy_,ratio_,zNear_,zFar_);  // initialise value with current setting
+ /* osgViewer::Viewer::Windows windows;
+  window->getWindows(windows);
+  gWindow_=windows.front();*/
+
   initKeyboard();
 }
 
@@ -161,6 +164,7 @@ bool KeyboardManipulator::handleKeyDown( const GUIEventAdapter& ea, GUIActionAda
     break;
     case osgGA::key_roll_left :
       // roll rotation left
+      noRoll_=false;
       if (speedRoll_ >=0){
         speedRoll_ = -1.;
         return true;
@@ -170,6 +174,7 @@ bool KeyboardManipulator::handleKeyDown( const GUIEventAdapter& ea, GUIActionAda
     break;
     case osgGA::key_roll_right :
       // roll rotation right
+      noRoll_=false;
       if(speedRoll_ <=0){
         speedRoll_ = 1.;
         return true;
@@ -180,10 +185,13 @@ bool KeyboardManipulator::handleKeyDown( const GUIEventAdapter& ea, GUIActionAda
     case osgGA::GUIEventAdapter::KEY_R:
       flushMouseEventStack();
       _thrown = false;
+      localUp_ = getUpVector( getCoordinateFrame( _eye ) );
       home(ea,us);
       return true;
     break;
     case osgGA::GUIEventAdapter::KEY_H :
+    case osgGA::GUIEventAdapter::KEY_Comma :
+    case osgGA::GUIEventAdapter::KEY_Question :
       getUsage();
       return false;
     break;
@@ -298,12 +306,7 @@ void KeyboardManipulator::rotateRoll(const double roll/*,const osg::Vec3d& local
 // free rotation (remove localUp constraint from parent class)
 bool KeyboardManipulator::performMovementLeftMouseButton( const double /*eventTimeDelta*/, const double dx, const double dy )
 {
-
-  // rotations
-  rotateYaw_.makeRotate(-dx, _rotation * Vec3d( 0.,1.,0. ) );
-  rotatePitch_.makeRotate(dy, _rotation * Vec3d( 1.,0.,0. ) );
-
-  _rotation = _rotation * rotateYaw_ * rotatePitch_;
+  rotateYawPitch( _rotation, dx, dy, localUp_ );
 
   return true;
 }
@@ -334,11 +337,15 @@ bool KeyboardManipulator::handleFrame( const GUIEventAdapter& ea, GUIActionAdapt
 // method overrided for hidding the mouse cursor when the view move :
 bool KeyboardManipulator::handleMousePush( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us ){
   gWindow_->useCursor(false);
+  if( ! noRoll_)
+    localUp_ = _rotation * Vec3d( 0.,1.,0. );
+
   return inherited::handleMousePush(ea,us);
 }
 
 bool KeyboardManipulator::handleMouseRelease( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us ){
   gWindow_->useCursor(true);
+  noRoll_ = true;
   return inherited::handleMouseRelease(ea,us);
 }
 

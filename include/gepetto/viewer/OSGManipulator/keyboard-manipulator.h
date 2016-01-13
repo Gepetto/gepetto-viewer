@@ -32,7 +32,8 @@ namespace osgGA {
   public:
     KeyboardManipulator( int flags = DEFAULT_SETTINGS );
     KeyboardManipulator( const KeyboardManipulator& fpm, const osg::CopyOp& copyOp = osg::CopyOp::SHALLOW_COPY );
-    KeyboardManipulator(osgViewer::Viewer* viewer, int flags = DEFAULT_SETTINGS );
+    /// Constructor with reference to the graphic window, needed for hidding mouse cursor
+    KeyboardManipulator(osgViewer::GraphicsWindow* window, int flags = DEFAULT_SETTINGS );
 
     META_Object( osgGA, KeyboardManipulator );
 
@@ -56,22 +57,24 @@ namespace osgGA {
     double speedY_;
     double speedZ_;
     double speedRoll_;
-    double zNear_;
+  /*  double zNear_;
     double zFar_;
     double fovy_;
-    double ratio_;
+    double ratio_;*/
     osg::Quat rotateRoll_;
-    osg::Quat rotatePitch_;
-    osg::Quat rotateYaw_;
+   // osg::Quat rotatePitch_;
+   // osg::Quat rotateYaw_;
+    osg::Vec3d localUp_;
     int keyLayout_;
 
-    osg::Camera* camera_;
+   //osg::Camera* camera_;
     osgViewer::GraphicsWindow* gWindow_;
-    Display *display_;
+   // Display *display_;
     int keycode_;
     bool rightClic_;
     bool ctrl_;
     bool shift_;
+    bool noRoll_;
 
 
   };// end class
