@@ -63,7 +63,7 @@ namespace osgGA {
     osg::Quat rotateRoll_;
     osg::Quat rotatePitch_;
     osg::Quat rotateYaw_;
-    bool azerty_;
+    int keyLayout_;
 
     osg::Camera* camera_;
     osgViewer::GraphicsWindow* gWindow_;
@@ -91,5 +91,8 @@ namespace osgGA {
     key_down = GUIEventAdapter::KEY_C
   };
 
+  enum keyLayout{
+    LAYOUT_unknown,LAYOUT_azerty,LAYOUT_qwerty
+  };
 }//namespace osgGA
 #endif // FPSMANIPULATOR_H

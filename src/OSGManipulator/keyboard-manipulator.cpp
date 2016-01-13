@@ -41,7 +41,7 @@ KeyboardManipulator::KeyboardManipulator( int flags )
   ctrl_ = false;
   shift_ = false;
   rightClic_ = false;
-  azerty_=false;
+  keyLayout_=LAYOUT_unknown;
   setAllowThrow(false);// stop all mouse motions when mouse is released
   display_=XOpenDisplay(0);
   initKeyboard();
@@ -59,7 +59,7 @@ KeyboardManipulator::KeyboardManipulator(osgViewer::Viewer* viewer, int flags)
   ctrl_ = false;
   shift_ = false;
   rightClic_ = false;
-  azerty_=false;
+  keyLayout_=LAYOUT_unknown;
   setAllowThrow(false);// stop all mouse motions when mouse is released
   osgViewer::Viewer::Windows windows;
   display_=XOpenDisplay(0);
@@ -85,7 +85,7 @@ bool KeyboardManipulator::handleKeyDown( const GUIEventAdapter& ea, GUIActionAda
   //keycode_ = XKeysymToKeycode(display_,ea.getUnmodifiedKey());
 
   int keySym = ea.getUnmodifiedKey();
-  if(!azerty_){ // adapt to qwerty keyboard
+  if(keyLayout_ == LAYOUT_qwerty){ // adapt to qwerty keyboard
       switch(keySym){
         case  osgGA::GUIEventAdapter::KEY_W :
           keySym = osgGA::key_forward;
@@ -227,7 +227,7 @@ bool KeyboardManipulator::handleKeyUp( const GUIEventAdapter& ea, GUIActionAdapt
  // std::cout<<"keycode = "<<keycode_<<std::endl;
 
   int keySym = ea.getUnmodifiedKey();
-  if(!azerty_){ // adapt to qwerty keyboard
+  if(keyLayout_ == LAYOUT_qwerty) { // adapt to qwerty keyboard
       switch(keySym){
         case  osgGA::GUIEventAdapter::KEY_W :
           keySym = osgGA::key_forward;
@@ -440,7 +440,7 @@ bool KeyboardManipulator::initKeyboard(){
   char buf[128];
   FILE *fp;
   // send system command and get the output
-  if ((fp = popen("setxkbmap -print", "r")) == NULL) {
+  if ((fp = popen("LANG=C LC_ALL=C setxkbmap -print", "r")) == NULL) {
      std::cout<<"Error sending terminal command !"<<std::endl;
      return false;
   }
@@ -450,11 +450,11 @@ bool KeyboardManipulator::initKeyboard(){
   std::string output(buf);
 
   if(output.find("azerty") != std::string::npos){
-    azerty_=true;
+    keyLayout_=LAYOUT_azerty;
     //std::cout<<"azerty keyboard detected"<<std::endl;
   }
   else if(output.find("qwerty") != std::string::npos){
-    azerty_=false;
+    keyLayout_=LAYOUT_qwerty;
     //std::cout<<"qwerty keyboard detected"<<std::endl;
   }
   else
@@ -474,7 +474,7 @@ void KeyboardManipulator::getUsage(){
   std::cout<<"###################################################"<<std::endl;
   std::cout<<"#              Usage of FPSManipulator :          #"<<std::endl;
   std::cout<<"# Translation with the keyboard                   #"<<std::endl;
-  if(azerty_){
+  if(keyLayout_ != LAYOUT_qwerty){
     std::cout<<"# Planar translation with arrow key or zqsd       #"<<std::endl;
     std::cout<<"# z/s  : forward/backward                         #"<<std::endl;
     std::cout<<"# q/d  : left/right                               #"<<std::endl;
