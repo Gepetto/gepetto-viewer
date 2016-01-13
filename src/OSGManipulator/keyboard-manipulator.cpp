@@ -44,13 +44,13 @@ KeyboardManipulator::KeyboardManipulator( int flags )
   keyLayout_=LAYOUT_unknown;
   localUp_ = getUpVector( getCoordinateFrame( _eye ) );
   setAllowThrow(false);// stop all mouse motions when mouse is released
-  display_=XOpenDisplay(0);
+  //display_=XOpenDisplay(0);
   initKeyboard();
 }
 
-/// Constructor with reference to the viewer, needed for hidding mouse cursor and changing clipping value
-KeyboardManipulator::KeyboardManipulator(osgViewer::Viewer* viewer, int flags)
-  : inherited( flags ),camera_(viewer->getCamera())
+/// Constructor with reference to the graphic window, needed for hidding mouse cursor
+KeyboardManipulator::KeyboardManipulator(osgViewer::GraphicsWindow *window, int flags)
+  : inherited( flags ),gWindow_(window)/*,camera_(viewer->getCamera())*/
 {
   speed_=startSpeed_;
   speedRoll_=0.;
@@ -64,11 +64,10 @@ KeyboardManipulator::KeyboardManipulator(osgViewer::Viewer* viewer, int flags)
   localUp_ = getUpVector( getCoordinateFrame( _eye ) );
 
   setAllowThrow(false);// stop all mouse motions when mouse is released
-  osgViewer::Viewer::Windows windows;
-  display_=XOpenDisplay(0);
-  viewer->getWindows(windows);
-  gWindow_=windows.front();
-  camera_->getProjectionMatrixAsPerspective(fovy_,ratio_,zNear_,zFar_);  // initialise value with current setting
+ /* osgViewer::Viewer::Windows windows;
+  window->getWindows(windows);
+  gWindow_=windows.front();*/
+
   initKeyboard();
 }
 
