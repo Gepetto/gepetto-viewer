@@ -77,7 +77,7 @@ namespace osgGA {
   };// end class
 
   /*
-   * zqsd for azerty keyboard or wasd for qwerty keyboard
+   * zqsd for azerty keyboard, if qwerty keyboard is detected, the keySym will be modified
    * */
   enum KeyBinding
   {

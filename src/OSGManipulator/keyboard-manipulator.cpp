@@ -41,6 +41,7 @@ KeyboardManipulator::KeyboardManipulator( int flags )
   ctrl_ = false;
   shift_ = false;
   rightClic_ = false;
+  azerty_=false;
   setAllowThrow(false);// stop all mouse motions when mouse is released
   display_=XOpenDisplay(0);
   initKeyboard();
@@ -58,6 +59,7 @@ KeyboardManipulator::KeyboardManipulator(osgViewer::Viewer* viewer, int flags)
   ctrl_ = false;
   shift_ = false;
   rightClic_ = false;
+  azerty_=false;
   setAllowThrow(false);// stop all mouse motions when mouse is released
   osgViewer::Viewer::Windows windows;
   display_=XOpenDisplay(0);
@@ -100,6 +102,7 @@ bool KeyboardManipulator::handleKeyDown( const GUIEventAdapter& ea, GUIActionAda
   switch(keySym)
   {
     case osgGA::key_forward :
+    case osgGA::GUIEventAdapter::KEY_Up :
       // move forward
       if(speedX_ <= 0){
         speedX_ =1.;
@@ -109,6 +112,7 @@ bool KeyboardManipulator::handleKeyDown( const GUIEventAdapter& ea, GUIActionAda
          return false;
     break;
     case osgGA::key_backward :
+    case osgGA::GUIEventAdapter::KEY_Down :
       // move backward
       if(speedX_ >=0){
         speedX_ =-1.;
@@ -118,6 +122,7 @@ bool KeyboardManipulator::handleKeyDown( const GUIEventAdapter& ea, GUIActionAda
         return false;
     break;
     case osgGA::key_left :
+    case osgGA::GUIEventAdapter::KEY_Left :
       // move left
       if(speedY_ >= 0){
         speedY_ = -1.;
@@ -127,6 +132,7 @@ bool KeyboardManipulator::handleKeyDown( const GUIEventAdapter& ea, GUIActionAda
         return false;
     break;
     case osgGA::key_right :
+    case osgGA::GUIEventAdapter::KEY_Right :
       // move right
       if(speedY_ <= 0){
         speedY_ = 1.;
@@ -238,11 +244,15 @@ bool KeyboardManipulator::handleKeyUp( const GUIEventAdapter& ea, GUIActionAdapt
   switch(keySym){
     case osgGA::key_forward :
     case osgGA::key_backward :
+    case osgGA::GUIEventAdapter::KEY_Up :
+    case osgGA::GUIEventAdapter::KEY_Down :
       speedX_ =0.;
       return false;
     break;
     case osgGA::key_right :
     case osgGA::key_left :
+    case osgGA::GUIEventAdapter::KEY_Right :
+    case osgGA::GUIEventAdapter::KEY_Left :
       speedY_ = 0.;
       return false;
     break;
@@ -441,11 +451,11 @@ bool KeyboardManipulator::initKeyboard(){
 
   if(output.find("azerty") != std::string::npos){
     azerty_=true;
-    std::cout<<"azerty keyboard detected"<<std::endl;
+    //std::cout<<"azerty keyboard detected"<<std::endl;
   }
   else if(output.find("qwerty") != std::string::npos){
     azerty_=false;
-    std::cout<<"qwerty keyboard detected"<<std::endl;
+    //std::cout<<"qwerty keyboard detected"<<std::endl;
   }
   else
     std::cout<<"Unknow keyboard layout"<<std::endl;
@@ -464,11 +474,18 @@ void KeyboardManipulator::getUsage(){
   std::cout<<"###################################################"<<std::endl;
   std::cout<<"#              Usage of FPSManipulator :          #"<<std::endl;
   std::cout<<"# Translation with the keyboard                   #"<<std::endl;
-  std::cout<<"# zqsd for azerty or wasd for qwerty :            #"<<std::endl;
-  std::cout<<"# z/s (w/s) : forward/backward                    #"<<std::endl;
-  std::cout<<"# q/d (a/d) : left/right                          #"<<std::endl;
+  if(azerty_){
+    std::cout<<"# Planar translation with arrow key or zqsd       #"<<std::endl;
+    std::cout<<"# z/s  : forward/backward                         #"<<std::endl;
+    std::cout<<"# q/d  : left/right                               #"<<std::endl;
+    std::cout<<"# a/e  : roll rotation                            #"<<std::endl;
+  }  else {
+    std::cout<<"# Planar translation with arrow key or wasd       #"<<std::endl;
+    std::cout<<"# w/s : forward/backward                          #"<<std::endl;
+    std::cout<<"# a/d : left/right                                #"<<std::endl;
+    std::cout<<"# q/e : roll rotation                             #"<<std::endl;
+  }
   std::cout<<"# space/c : up/down                               #"<<std::endl;
-  std::cout<<"# a/e (q/e) : roll rotation                       #"<<std::endl;
   std::cout<<"# Mouse (left button) : yaw/pitch rotation        #"<<std::endl;
   std::cout<<"#            -------------------------            #"<<std::endl;
   std::cout<<"# r : Reset the view                              #"<<std::endl;
