@@ -63,6 +63,7 @@ namespace osgGA {
     osg::Quat rotateRoll_;
     osg::Quat rotatePitch_;
     osg::Quat rotateYaw_;
+    osg::Vec3d localUp_;
     int keyLayout_;
 
     osg::Camera* camera_;
