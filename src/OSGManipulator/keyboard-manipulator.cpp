@@ -188,6 +188,8 @@ bool KeyboardManipulator::handleKeyDown( const GUIEventAdapter& ea, GUIActionAda
       return true;
     break;
     case osgGA::GUIEventAdapter::KEY_H :
+    case osgGA::GUIEventAdapter::KEY_Comma :
+    case osgGA::GUIEventAdapter::KEY_Question :
       getUsage();
       return false;
     break;
