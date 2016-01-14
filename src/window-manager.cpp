@@ -9,6 +9,8 @@
 #include <gepetto/viewer/window-manager.h>
 
 #include <osg/Camera>
+#include <gepetto/viewer/OSGManipulator/keyboard-manipulator.h>
+#include <osgGA/KeySwitchMatrixManipulator>
 #include <osgGA/TrackballManipulator>
 #include <osgDB/WriteFile>
 
@@ -70,8 +72,14 @@ namespace graphics {
       /* add camera to the viewer */
       viewer_ptr_->setSceneData ( scene_ptr_->asGroup() );
       viewer_ptr_->setKeyEventSetsDone (0);
+      viewer_ptr_->addEventHandler(new osgViewer::HelpHandler);
 
-      viewer_ptr_->setCameraManipulator( new ::osgGA::TrackballManipulator );
+      osgViewer::Viewer::Windows windows;
+      viewer_ptr_->getWindows(windows);
+      osgGA::KeySwitchMatrixManipulator *manipulator_ptr = new ::osgGA::KeySwitchMatrixManipulator;
+      manipulator_ptr->addNumberedMatrixManipulator(new ::osgGA::TrackballManipulator);
+      manipulator_ptr->addNumberedMatrixManipulator(new ::osgGA::KeyboardManipulator(windows.front()));
+      viewer_ptr_->setCameraManipulator( manipulator_ptr);
     }
 
     void WindowManager::init(osgViewer::Viewer* v, osg::GraphicsContext* gc)
