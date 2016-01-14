@@ -48,7 +48,7 @@ namespace osgGA {
     virtual bool performMovementLeftMouseButton( const double eventTimeDelta, const double dx, const double dy );
 
     virtual void rotateRoll( const double roll/*,const osg::Vec3d& localUp */);
-    virtual void getUsage();
+    virtual void getUsage(osg::ApplicationUsage &usage) const;
     bool initKeyboard();
   private :
 
@@ -84,12 +84,12 @@ namespace osgGA {
    * */
   enum KeyBinding
   {
-    key_forward = GUIEventAdapter::KEY_Z, //depend on qwerty / azerty
+    key_forward = GUIEventAdapter::KEY_W, //depend on qwerty / azerty
     key_backward = GUIEventAdapter::KEY_S,
     key_right = GUIEventAdapter::KEY_D,
-    key_left = GUIEventAdapter::KEY_Q,
+    key_left = GUIEventAdapter::KEY_A,
     key_roll_right = GUIEventAdapter::KEY_E,
-    key_roll_left = GUIEventAdapter::KEY_A,
+    key_roll_left = GUIEventAdapter::KEY_Q,
     key_up = GUIEventAdapter::KEY_Space,
     key_down = GUIEventAdapter::KEY_C
   };
