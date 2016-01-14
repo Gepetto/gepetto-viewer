@@ -57,13 +57,13 @@ namespace osgGA {
     double speedY_;
     double speedZ_;
     double speedRoll_;
-    double zNear_;
+  /*  double zNear_;
     double zFar_;
     double fovy_;
-    double ratio_;
+    double ratio_;*/
     osg::Quat rotateRoll_;
-    osg::Quat rotatePitch_;
-    osg::Quat rotateYaw_;
+   // osg::Quat rotatePitch_;
+   // osg::Quat rotateYaw_;
     osg::Vec3d localUp_;
     int keyLayout_;
 
@@ -74,6 +74,7 @@ namespace osgGA {
     bool rightClic_;
     bool ctrl_;
     bool shift_;
+    bool noRoll_;
 
 
   };// end class

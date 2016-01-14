@@ -12,6 +12,7 @@
 #include <gepetto/viewer/OSGManipulator/keyboard-manipulator.h>
 #include <osgGA/KeySwitchMatrixManipulator>
 #include <osgGA/TrackballManipulator>
+#include <osgGA/FirstPersonManipulator>
 #include <osgDB/WriteFile>
 
 namespace graphics {
@@ -78,6 +79,7 @@ namespace graphics {
       osgGA::KeySwitchMatrixManipulator *manipulator_ptr = new ::osgGA::KeySwitchMatrixManipulator;
       manipulator_ptr->addNumberedMatrixManipulator(new ::osgGA::TrackballManipulator);
       manipulator_ptr->addNumberedMatrixManipulator(new ::osgGA::KeyboardManipulator(windows.front()));
+      manipulator_ptr->addNumberedMatrixManipulator(new ::osgGA::FirstPersonManipulator);
       viewer_ptr_->setCameraManipulator( manipulator_ptr);
     }
 

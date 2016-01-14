@@ -43,6 +43,7 @@ KeyboardManipulator::KeyboardManipulator( int flags )
   rightClic_ = false;
   keyLayout_=LAYOUT_unknown;
   localUp_ = getUpVector( getCoordinateFrame( _eye ) );
+  noRoll_=true;
   setAllowThrow(false);// stop all mouse motions when mouse is released
   //display_=XOpenDisplay(0);
   initKeyboard();
@@ -62,7 +63,7 @@ KeyboardManipulator::KeyboardManipulator(osgViewer::GraphicsWindow *window, int 
   rightClic_ = false;
   keyLayout_=LAYOUT_unknown;
   localUp_ = getUpVector( getCoordinateFrame( _eye ) );
-
+  noRoll_=true;
   setAllowThrow(false);// stop all mouse motions when mouse is released
  /* osgViewer::Viewer::Windows windows;
   window->getWindows(windows);
@@ -169,6 +170,7 @@ bool KeyboardManipulator::handleKeyDown( const GUIEventAdapter& ea, GUIActionAda
         }
       else
         return false;
+      noRoll_=false;
     break;
     case osgGA::key_roll_right :
       // roll rotation right
@@ -178,6 +180,7 @@ bool KeyboardManipulator::handleKeyDown( const GUIEventAdapter& ea, GUIActionAda
         }
       else
         return false;
+      noRoll_=false;
     break;
     case osgGA::GUIEventAdapter::KEY_R:
       flushMouseEventStack();
@@ -303,13 +306,7 @@ void KeyboardManipulator::rotateRoll(const double roll/*,const osg::Vec3d& local
 // free rotation (remove localUp constraint from parent class)
 bool KeyboardManipulator::performMovementLeftMouseButton( const double /*eventTimeDelta*/, const double dx, const double dy )
 {
-
-  // rotations
-  rotateYaw_.makeRotate(-dx, _rotation * Vec3d( 0.,1.,0. ) );
-  rotatePitch_.makeRotate(dy, _rotation * Vec3d( 1.,0.,0. ) );
-
-  _rotation = _rotation * rotateYaw_ * rotatePitch_;
-  fixVerticalAxis( _rotation, localUp_, false );  // set roll rotation component to zero (for this movement)
+  rotateYawPitch( _rotation, dx, dy, localUp_ );
 
   return true;
 }
@@ -340,13 +337,15 @@ bool KeyboardManipulator::handleFrame( const GUIEventAdapter& ea, GUIActionAdapt
 // method overrided for hidding the mouse cursor when the view move :
 bool KeyboardManipulator::handleMousePush( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us ){
   gWindow_->useCursor(false);
-  localUp_ = _rotation * Vec3d( 0.,1.,0. );
+  if( ! noRoll_)
+    localUp_ = _rotation * Vec3d( 0.,1.,0. );
 
   return inherited::handleMousePush(ea,us);
 }
 
 bool KeyboardManipulator::handleMouseRelease( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us ){
   gWindow_->useCursor(true);
+  noRoll_ = true;
   return inherited::handleMouseRelease(ea,us);
 }
 
