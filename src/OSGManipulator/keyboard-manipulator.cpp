@@ -88,15 +88,15 @@ bool KeyboardManipulator::handleKeyDown( const GUIEventAdapter& ea, GUIActionAda
   //keycode_ = XKeysymToKeycode(display_,ea.getUnmodifiedKey());
 
   int keySym = ea.getUnmodifiedKey();
-  if(keyLayout_ == LAYOUT_qwerty){ // adapt to qwerty keyboard
+  if(keyLayout_ == LAYOUT_azerty){ // adapt to azerty keyboard
       switch(keySym){
-        case  osgGA::GUIEventAdapter::KEY_W :
+        case  osgGA::GUIEventAdapter::KEY_Z :
           keySym = osgGA::key_forward;
         break;
-        case  osgGA::GUIEventAdapter::KEY_Q :
+        case  osgGA::GUIEventAdapter::KEY_A :
           keySym = osgGA::key_roll_left;
         break;
-        case  osgGA::GUIEventAdapter::KEY_A :
+        case  osgGA::GUIEventAdapter::KEY_Q :
           keySym = osgGA::key_left;
         break;
       }
@@ -189,12 +189,6 @@ bool KeyboardManipulator::handleKeyDown( const GUIEventAdapter& ea, GUIActionAda
       home(ea,us);
       return true;
     break;
-    case osgGA::GUIEventAdapter::KEY_H :
-    case osgGA::GUIEventAdapter::KEY_Comma :
-    case osgGA::GUIEventAdapter::KEY_Question :
-      getUsage();
-      return false;
-    break;
     case osgGA::GUIEventAdapter::KEY_Plus :
     case 65451 :// '+'  numpad
       speed_*=1.2;
@@ -235,15 +229,15 @@ bool KeyboardManipulator::handleKeyUp( const GUIEventAdapter& ea, GUIActionAdapt
  // std::cout<<"keycode = "<<keycode_<<std::endl;
 
   int keySym = ea.getUnmodifiedKey();
-  if(keyLayout_ == LAYOUT_qwerty) { // adapt to qwerty keyboard
+  if(keyLayout_ == LAYOUT_azerty) { // adapt to azerty keyboard
       switch(keySym){
-        case  osgGA::GUIEventAdapter::KEY_W :
+        case  osgGA::GUIEventAdapter::KEY_Z :
           keySym = osgGA::key_forward;
         break;
-        case  osgGA::GUIEventAdapter::KEY_Q :
+        case  osgGA::GUIEventAdapter::KEY_A :
           keySym = osgGA::key_roll_left;
         break;
-        case  osgGA::GUIEventAdapter::KEY_A :
+        case  osgGA::GUIEventAdapter::KEY_Q :
           keySym = osgGA::key_left;
         break;
       }
@@ -277,7 +271,7 @@ bool KeyboardManipulator::handleKeyUp( const GUIEventAdapter& ea, GUIActionAdapt
     }
   switch(ea.getKey()){
     case '2' :
-      getUsage();
+      //getUsage();
     break;
     case osgGA::GUIEventAdapter::KEY_Control_L:
     case osgGA::GUIEventAdapter::KEY_Control_R:
@@ -477,8 +471,36 @@ bool KeyboardManipulator::initKeyboard(){
 }
 
 
-void KeyboardManipulator::getUsage(){
-  std::cout<<"###################################################"<<std::endl;
+void KeyboardManipulator::getUsage(osg::ApplicationUsage &usage) const{
+  if(keyLayout_==LAYOUT_azerty){
+    usage.addKeyboardMouseBinding(" -1. Keyboard : ","Move with keyboard arrow or zqsd and the mouse for rotation");
+    usage.addKeyboardMouseBinding(" -2. Arrow keys  ","Planar translations");
+    usage.addKeyboardMouseBinding(" -3. z/s ", "Forward / backward translation");
+    usage.addKeyboardMouseBinding(" -4. q/d ", "Left / right translation");
+    usage.addKeyboardMouseBinding(" -5. Space/c ", "Up / down translation");
+    usage.addKeyboardMouseBinding(" -6. a/e ", "Roll rotation");
+
+    }
+  else {
+    usage.addKeyboardMouseBinding(" -1. Keyboard manipulator : ","move with keyboard arrow or wasd and the mouse for rotation");
+    usage.addKeyboardMouseBinding(" -2. arrow keys  ","Planar translations");
+    usage.addKeyboardMouseBinding(" -3. w/s ", "Forward / backward translation");
+    usage.addKeyboardMouseBinding(" -4. a/d ", "Left / right translation");
+    usage.addKeyboardMouseBinding(" -5. Space/c ", "Up / down translation");
+    usage.addKeyboardMouseBinding(" -6. q/e ", "Roll rotation");
+  }
+  usage.addKeyboardMouseBinding(" -7. Mouse ", "Left button : Yaw / pitch rotation");
+  usage.addKeyboardMouseBinding(" -8. ","-------- ");
+  usage.addKeyboardMouseBinding(" -9. r","Reset the viewing position to home");
+  usage.addKeyboardMouseBinding("-10. hold Ctrl","Slow movement mode");
+  usage.addKeyboardMouseBinding("-11. + / - ","Change movement speed");
+  usage.addKeyboardMouseBinding("-12. *","Reset movement speed");
+  usage.addKeyboardMouseBinding("-13. ---------","----------------");
+
+
+
+
+  /*std::cout<<"###################################################"<<std::endl;
   std::cout<<"#              Usage of FPSManipulator :          #"<<std::endl;
   std::cout<<"# Translation with the keyboard                   #"<<std::endl;
   if(keyLayout_ != LAYOUT_qwerty){
@@ -504,5 +526,5 @@ void KeyboardManipulator::getUsage(){
   std::cout<<"###################################################"<<std::endl;
 
 
-
+*/
 }
