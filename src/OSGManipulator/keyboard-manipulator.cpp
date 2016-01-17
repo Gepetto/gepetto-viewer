@@ -478,7 +478,7 @@ void KeyboardManipulator::getUsage(osg::ApplicationUsage &usage) const{
     usage.addKeyboardMouseBinding(" -2. Arrow keys  ","Planar translations");
     usage.addKeyboardMouseBinding(" -3. z/s ", "Forward / backward translation");
     usage.addKeyboardMouseBinding(" -4. q/d ", "Left / right translation");
-    usage.addKeyboardMouseBinding(" -5. Space/c ", "Up / down translation");
+    usage.addKeyboardMouseBinding(" -5. Space/v ", "Up / down translation");
     usage.addKeyboardMouseBinding(" -6. a/e ", "Roll rotation");
 
     }
@@ -487,7 +487,7 @@ void KeyboardManipulator::getUsage(osg::ApplicationUsage &usage) const{
     usage.addKeyboardMouseBinding(" -2. arrow keys  ","Planar translations");
     usage.addKeyboardMouseBinding(" -3. w/s ", "Forward / backward translation");
     usage.addKeyboardMouseBinding(" -4. a/d ", "Left / right translation");
-    usage.addKeyboardMouseBinding(" -5. Space/c ", "Up / down translation");
+    usage.addKeyboardMouseBinding(" -5. Space/v ", "Up / down translation");
     usage.addKeyboardMouseBinding(" -6. q/e ", "Roll rotation");
   }
   usage.addKeyboardMouseBinding(" -7. Mouse ", "Left button : Yaw / pitch rotation");
