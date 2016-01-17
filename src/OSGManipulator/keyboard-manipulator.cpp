@@ -9,6 +9,7 @@
 //
 #include <stdlib.h>
 #include <stdio.h>
+#include <iostream>
 #include <gepetto/viewer/OSGManipulator/keyboard-manipulator.h>
 #include <gepetto/viewer/config-osg.h>
 
