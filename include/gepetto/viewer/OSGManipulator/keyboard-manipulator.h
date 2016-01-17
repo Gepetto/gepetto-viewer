@@ -91,7 +91,7 @@ namespace osgGA {
     key_roll_right = GUIEventAdapter::KEY_E,
     key_roll_left = GUIEventAdapter::KEY_Q,
     key_up = GUIEventAdapter::KEY_Space,
-    key_down = GUIEventAdapter::KEY_C
+    key_down = GUIEventAdapter::KEY_V
   };
 
   enum keyLayout{
