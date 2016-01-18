@@ -89,6 +89,11 @@ bool KeyboardManipulator::handleKeyDown( const GUIEventAdapter& ea, GUIActionAda
   //keycode_ = XKeysymToKeycode(display_,ea.getUnmodifiedKey());
 
   int keySym = ea.getUnmodifiedKey();
+  if(keySym == 0){ // issue with getUnmodifiedKey() and hpp-gui (always return 0 because not initialised in osgQT)
+    keySym = ea.getKey();
+    if(keySym < 96 )  // ctrl mask
+      keySym += 96;
+  }
   if(keyLayout_ == LAYOUT_azerty){ // adapt to azerty keyboard
       switch(keySym){
         case  osgGA::GUIEventAdapter::KEY_Z :
@@ -230,6 +235,13 @@ bool KeyboardManipulator::handleKeyUp( const GUIEventAdapter& ea, GUIActionAdapt
  // std::cout<<"keycode = "<<keycode_<<std::endl;
 
   int keySym = ea.getUnmodifiedKey();
+  if(keySym == 0){ // issue with getUnmodifiedKey() and hpp-gui (always return 0 because not initialised in osgQT)
+    keySym = ea.getKey();
+    if(keySym < 96 )  // ctrl mask
+      keySym += 96;
+  }
+
+
   if(keyLayout_ == LAYOUT_azerty) { // adapt to azerty keyboard
       switch(keySym){
         case  osgGA::GUIEventAdapter::KEY_Z :
