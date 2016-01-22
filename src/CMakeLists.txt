@@ -38,6 +38,9 @@ SET(${LIBRARY_NAME}_SOURCES
   leaf-node-arrow.cpp
   roadmap-viewer.cpp
   node-rod.cpp
+  node-visitor.cc
+  transform-writer.cc
+  OSGManipulator/keyboard-manipulator.cpp
 )
 
 ADD_LIBRARY(${LIBRARY_NAME} SHARED ${${LIBRARY_NAME}_SOURCES})

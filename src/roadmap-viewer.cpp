@@ -177,7 +177,21 @@ namespace graphics {
        }
    }
 
+   void RoadmapViewer::setColorNode(const osgVector4& color)
+   {
+     std::list<graphics::LeafNodeXYZAxisPtr_t>::iterator it;
+     for (it = list_nodes_.begin(); it != list_nodes_.end(); ++it) {
+       (*it)->setColor ( color );
+     }
+   }
 
+   void RoadmapViewer::setColorEdge(const osgVector4& color)
+   {
+     std::list<graphics::LeafNodeLinePtr_t>::iterator it;
+     for (it = list_edges_.begin(); it != list_edges_.end(); ++it) {
+       (*it)->setColor ( color );
+     }
+   }
 
     /* End of declaration of public function members */
 

@@ -7,6 +7,10 @@
 //
 
 #include <gepetto/viewer/urdf-parser.h>
+
+#include <iostream>
+#include <sys/stat.h>
+
 #include <gepetto/viewer/leaf-node-cylinder.h>
 #include <gepetto/viewer/leaf-node-box.h>
 #include <gepetto/viewer/leaf-node-sphere.h>
@@ -17,11 +21,17 @@ namespace graphics {
   {
     std::string getFilename (const std::string& input, const std::string& meshDataRootDir)
     {
+      std::string name;
       if (input.substr(0, 10) == "package://") {
-        return meshDataRootDir + "/" + input.substr(10, std::string::npos);
+        name = meshDataRootDir + "/" + input.substr(10, std::string::npos);
       } else {
-        return input;
+        name = input;
       }
+      std::string osgname = name + ".osg";
+      struct stat buffer;
+      if (stat (osgname.c_str(), &buffer) != 0) return name;
+      std::cout << "Using " << osgname << "\n";
+      return osgname;
     }
 
     void getStaticTransform (const boost::shared_ptr < urdf::Link >& link,

@@ -134,6 +134,13 @@ namespace graphics {
             return colorEdge_;
         }
 
+        void setColorNode(const osgVector4& color);
+
+        void setColorEdge(const osgVector4& color);
+
+        void setColor (const osgVector4& color) {
+            setColorEdge (color);
+        }
 
     }; //class
 

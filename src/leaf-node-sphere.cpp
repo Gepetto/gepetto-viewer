@@ -115,7 +115,7 @@ namespace graphics {
         sphere_ptr_->setRadius(radius);
     }
     
-    void LeafNodeSphere::setColor (osgVector4 color)
+    void LeafNodeSphere::setColor (const osgVector4& color)
     {
         shape_drawable_ptr_->setColor(color);
     }
