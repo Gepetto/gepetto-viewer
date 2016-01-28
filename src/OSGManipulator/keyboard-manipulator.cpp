@@ -76,7 +76,7 @@ KeyboardManipulator::KeyboardManipulator(osgViewer::GraphicsWindow *window, int 
 
 /// Copy Constructor.
 KeyboardManipulator::KeyboardManipulator( const KeyboardManipulator& fpm, const CopyOp& copyOp )
-   :osg::Object(fpm, copyOp), osg::Callback(fpm, copyOp),inherited( fpm, copyOp )
+   :inherited( fpm, copyOp )
 {
   initKeyboard();
 }
