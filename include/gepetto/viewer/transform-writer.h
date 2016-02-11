@@ -98,10 +98,23 @@ namespace graphics {
 
         void captureFrame (Node& node);
 
+        template <typename Iterator>
+        void captureFrame (Iterator begin, Iterator end);
+
         virtual void apply (Node& node);
 
         osg::ref_ptr <TransformWriter> writer_;
     }; /* class TransformWriterVisitor */
+
+
+    template <typename Iterator>
+      void TransformWriterVisitor::captureFrame (Iterator begin, Iterator end)
+    {
+      writer_->openFile ();
+      writer_->newFrame ();
+      for (Iterator it = begin; it != end; ++it) apply (**it);
+      writer_->closeFile ();
+    }
 } /* namespace graphics */
 
 #endif /* SCENEVIEWER_TRANSFORM_WRITER_VISITOR_HH */
