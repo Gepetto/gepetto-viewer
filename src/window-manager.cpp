@@ -49,29 +49,43 @@ namespace graphics {
 
     void WindowManager::init(osg::GraphicsContext* gc)
     {
+      std::string name = "root";
+      scene_ptr_ = ::graphics::GroupNode::create(name);
+
+      viewer_ptr_ = new ::osgViewer::Viewer();
+
+      /* init main camera */
+      main_camera_ = viewer_ptr_->getCamera ();
+
+      gc_ = osg::GraphicsContextRefPtr (gc);
+      const osg::GraphicsContext::Traits* traits_ptr = gc->getTraits ();
+      main_camera_->setGraphicsContext(gc);
+      main_camera_->setViewport(new osg::Viewport(0,0, traits_ptr->width, traits_ptr->height));
+      main_camera_->setProjectionMatrixAsPerspective(
+          30.0f, static_cast<double>(traits_ptr->width)/static_cast<double>(traits_ptr->height), 1.0f, 10000.0f );
+      GLenum buffer = traits_ptr->doubleBuffer ? GL_BACK : GL_FRONT;
+      main_camera_->setDrawBuffer(buffer);
+      main_camera_->setReadBuffer(buffer);
+
+      /* add camera to the viewer */
+      viewer_ptr_->setSceneData ( scene_ptr_->asGroup() );
+      viewer_ptr_->setKeyEventSetsDone (0);
+
+      viewer_ptr_->setCameraManipulator( new ::osgGA::TrackballManipulator );
+    }
+
+    void WindowManager::init(osgViewer::Viewer* v, osg::GraphicsContext* gc)
+    {
         std::string name = "root";
         scene_ptr_ = ::graphics::GroupNode::create(name);
 
-        viewer_ptr_ = new ::osgViewer::Viewer();
+        viewer_ptr_ = v;
+        viewer_ptr_->setSceneData ( scene_ptr_->asGroup() );
 
         /* init main camera */
         main_camera_ = viewer_ptr_->getCamera ();
 
         gc_ = osg::GraphicsContextRefPtr (gc);
-        const osg::GraphicsContext::Traits* traits_ptr = gc->getTraits ();
-        main_camera_->setGraphicsContext(gc);
-        main_camera_->setViewport(new osg::Viewport(0,0, traits_ptr->width, traits_ptr->height));
-        main_camera_->setProjectionMatrixAsPerspective(
-            30.0f, static_cast<double>(traits_ptr->width)/static_cast<double>(traits_ptr->height), 1.0f, 10000.0f );
-        GLenum buffer = traits_ptr->doubleBuffer ? GL_BACK : GL_FRONT;
-        main_camera_->setDrawBuffer(buffer);
-        main_camera_->setReadBuffer(buffer);
-
-        /* add camera to the viewer */
-        viewer_ptr_->setSceneData ( scene_ptr_->asGroup() );
-        viewer_ptr_->setKeyEventSetsDone (0);
-
-        viewer_ptr_->setCameraManipulator( new ::osgGA::TrackballManipulator );
     }
 
     WindowManager::WindowManager ()
@@ -82,6 +96,11 @@ namespace graphics {
     WindowManager::WindowManager (osg::GraphicsContext* gc)
     {
         init (gc);
+    }
+
+    WindowManager::WindowManager (osgViewer::Viewer* v, osg::GraphicsContext* gc)
+    {
+        init (v, gc);
     }
 
     WindowManager::WindowManager (const unsigned int& x,
@@ -135,6 +154,16 @@ namespace graphics {
     WindowManagerPtr_t WindowManager::create(osg::GraphicsContext* gc)
     {
         WindowManagerPtr_t shared_ptr(new WindowManager(gc));
+
+        // Add reference to itself
+        shared_ptr->initWeakPtr(shared_ptr);
+
+        return shared_ptr;
+    }
+
+    WindowManagerPtr_t WindowManager::create(osgViewer::Viewer* v, osg::GraphicsContext* gc)
+    {
+        WindowManagerPtr_t shared_ptr(new WindowManager(v, gc));
 
         // Add reference to itself
         shared_ptr->initWeakPtr(shared_ptr);
@@ -265,7 +294,10 @@ namespace graphics {
 
   bool WindowManager::writeNodeFile (const std::string& fn)
   {
-    return osgDB::writeNodeFile (*(viewer_ptr_->getSceneData()), fn);
+    osg::ref_ptr <osgDB::Options> options = new osgDB::Options;
+    options->setOptionString ("NoExtras");
+    return osgDB::writeNodeFile (*(viewer_ptr_->getSceneData()), fn,
+        options.get());
   }
 
     /* End declaration of public function members */

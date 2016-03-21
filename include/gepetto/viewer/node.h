@@ -13,6 +13,7 @@
 #include <gepetto/viewer/config-osg.h>
 
 namespace graphics {
+    class NodeVisitor;
     
     DEF_CLASS_SMART_PTR(Node)
     
@@ -143,6 +144,9 @@ namespace graphics {
         /** Set scales value of the OSG object */
         virtual void setScale (const osg::Vec3d & scale);
 
+        /** Set the color of the object */
+        virtual void setColor (const osgVector4& color) = 0;
+
         /** Select the arrows to be shown around the selected body */
         virtual void selectArrows (
             int arrows = ROT_X | ROT_Y | ROT_Z | TRANS_X | TRANS_Y | TRANS_Z);
@@ -186,7 +190,8 @@ namespace graphics {
             return alpha_;
         }*/
 
-
+        virtual void accept (NodeVisitor& visitor);
+        virtual void traverse (NodeVisitor& visitor);
 
         /* Destructor */
         virtual ~Node ();

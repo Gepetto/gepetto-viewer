@@ -99,6 +99,11 @@ namespace graphics
          */
         LeafNodeGroundPtr_t self(void) const;
 
+        /**
+         * \sa setColor1
+         */
+        void setColor (const osgVector4 &color);
+
         /** inline virtual void setColor1(const ColotSharedPtr &color1_ptr)
          \brief Allow to define color1
          \param color1_ptr : color to apply to first color

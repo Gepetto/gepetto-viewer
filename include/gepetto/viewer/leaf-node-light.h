@@ -81,7 +81,7 @@ namespace graphics {
         }
 
         /** Replace the old color pointer with the new one defined by ColorConstSharedPtr color_ptr */
-        virtual void setColor (const osgVector4 color);
+        virtual void setColor (const osgVector4& color);
 
         osgVector4 getColor() const
         {

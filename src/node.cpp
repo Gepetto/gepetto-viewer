@@ -7,8 +7,12 @@
 //
 
 #include <gepetto/viewer/node.h>
+
+#include <gepetto/viewer/node-visitor.h>
 #include <osg/Material>
 #include <osg/LineWidth>
+#include <osgFX/Outline>
+#include <osgFX/Scribe>
 #include <climits>
 
 namespace graphics {
@@ -85,7 +89,7 @@ namespace graphics {
     ::osg::GroupRefPtr g = setupHighlightState (0);
     hl_switch_node_ptr_->addChild (g, true);
     g->addChild (auto_transform_ptr_);
-    for (unsigned int i = 1; i < 7; ++i) {
+    for (unsigned int i = 1; i < 9; ++i) {
       ::osg::GroupRefPtr g = setupHighlightState (i);
       hl_switch_node_ptr_->addChild (g, false);
       g->addChild (auto_transform_ptr_);
@@ -412,6 +416,24 @@ namespace graphics {
         material_switch_ptr->setSpecular (osg::Material::FRONT_AND_BACK, osgVector4(0.7f,0.04f,0.04f,1.f));
         material_switch_ptr->setShininess(osg::Material::FRONT_AND_BACK, 10.f);
         break;
+      case 7: /// Selection through osgFX::Outline
+        {
+          osgFX::Outline* outline = new osgFX::Outline;
+
+          outline->setWidth(8);
+          outline->setColor(osg::Vec4(1,1,0,1));
+          return outline;
+        }
+        break;
+      case 8: /// Selection through osgFX::Outline
+        {
+          osgFX::Scribe* scribe = new osgFX::Scribe;
+
+          scribe->setWireframeLineWidth(1);
+          scribe->setWireframeColor(osg::Vec4(1,1,0,1));
+          return scribe;
+        }
+        break;
       case 0:
       default:
         break;
@@ -448,6 +470,14 @@ namespace graphics {
   {
     return std::make_pair(auto_transform_ptr_->getPosition(),auto_transform_ptr_->getRotation());
   }
+
+  void Node::accept (NodeVisitor& nv) {
+    nv.apply (*this);
+  }
+
+  void Node::traverse (NodeVisitor& /*visitor*/) {
+  }
+
   /* End of declaration of public function members */
 
 
