@@ -20,6 +20,8 @@ namespace graphics {
     {
         /* Set face Geometry */
         face_ptr_ = new ::osg::Geometry();
+
+	std::cout << "Creating face\n";
         
         /* Create Geode for adding geometry */
         geode_face_ptr_ = new osg::Geode();

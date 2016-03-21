@@ -43,7 +43,8 @@ namespace graphics {
         
         // Add reference to itself
         shared_ptr->initWeakPtr(shared_ptr);
-        
+
+	std::cout << "Init group" << std::endl;
         return shared_ptr;
     }
     
@@ -134,17 +135,18 @@ namespace graphics {
         }
     }
     
-    /*void GroupNode::setAlpha (const float alpha)
+    void GroupNode::setAlpha (const float& alpha)
     {
-        Node::setAlpha (alpha);
-        ::std::list<NodePtr_t>::iterator iter_list_of_objects;
-        for (iter_list_of_objects = list_of_objects_.begin();
-             iter_list_of_objects != list_of_objects_.end();
-             iter_list_of_objects++)
+      std::cout << "Change alpha of " << getID() << " to " << alpha << std::endl;
+      alpha_ = alpha;
+      ::std::list<NodePtr_t>::iterator iter_list_of_objects;
+      for (iter_list_of_objects = list_of_objects_.begin();
+	   iter_list_of_objects != list_of_objects_.end();
+	   iter_list_of_objects++)
         {
-            (*iter_list_of_objects)->setAlpha ( alpha );
-        }
-    }*/
+	  (*iter_list_of_objects)->setAlpha ( alpha );
+	}
+    }
     
     void GroupNode::setScale (const float scale)
     {

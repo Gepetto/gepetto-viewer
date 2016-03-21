@@ -75,6 +75,10 @@ namespace graphics {
         void setColor (const osgVector4& color);
 
         void setTexture(const std::string& image_path);
+	virtual void setAlpha(const float& alpha)
+	{
+	  std::cout << "Je suis dans une face" << std::endl;
+	}
         
         /** Destructor */
         virtual ~LeafNodeFace();

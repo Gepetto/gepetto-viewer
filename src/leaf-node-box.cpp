@@ -7,11 +7,12 @@
 //
 
 #include <gepetto/viewer/leaf-node-box.h>
+#include <stdio.h>
 
 namespace graphics {
     
     /* Declaration of private function members */
-    
+
     void LeafNodeBox::init ()
     {
         /* Create sphere object */
@@ -23,7 +24,7 @@ namespace graphics {
         /* Create Geode for adding ShapeDrawable */
         geode_ptr_ = new ::osg::Geode();
         geode_ptr_->addDrawable(shape_drawable_ptr_);
-        
+	
         /* Create PositionAttitudeTransform */
         this->asQueue()->addChild(geode_ptr_);
         
@@ -131,6 +132,7 @@ namespace graphics {
       } 
       texture->setImage(image);
       geode_ptr_->getStateSet()->setTextureAttributeAndModes(0,texture,osg::StateAttribute::ON);
+      printf("ptr of %s is %p\n", getID().c_str(), (void *)geode_ptr_.get());
     }
 
     LeafNodeBox::~LeafNodeBox()

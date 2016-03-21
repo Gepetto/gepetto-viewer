@@ -134,6 +134,27 @@ namespace graphics {
     if (collada_ptr_->getStateSet())
       collada_ptr_->getStateSet()->setAttribute(mat_ptr.get());    
   }
+
+  void LeafNodeCollada::setAlpha(const float& alpha)
+  {
+    osg::StateSet* ss = getColladaPtr().get()->getStateSet();
+    if (ss)
+      {
+	alpha_ = alpha;
+	osg::Material *mat = new osg::Material();
+	osg::BlendFunc *func = new osg::BlendFunc();
+	func->setFunction(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        ss->setAttributeAndModes(func);
+	if (ss->getAttribute(osg::StateAttribute::MATERIAL))
+	  mat = dynamic_cast<osg::Material*>(ss->getAttribute(osg::StateAttribute::MATERIAL));
+	else
+	  {
+	    mat = new osg::Material;
+	    ss->setAttribute(mat, osg::StateAttribute::ON);
+	  }
+	mat->setTransparency(osg::Material::FRONT_AND_BACK, alpha);
+      }
+  }
  
   void LeafNodeCollada::setTexture(const std::string& image_path)
   {

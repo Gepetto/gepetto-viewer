@@ -108,6 +108,13 @@ namespace graphics {
     wireframe_node_ptr_->getOrCreateStateSet()->setAttributeAndModes(polygon_mode_ptr_, ::osg::StateAttribute::PROTECTED | ::osg::StateAttribute::ON );
     wireframe_node_ptr_->getOrCreateStateSet()->setMode(GL_BLEND, ::osg::StateAttribute::OFF | ::osg::StateAttribute::PROTECTED ); // PROTECTED attribut allows wireframe node to not be influenced by alpha
     wireframe_node_ptr_->getOrCreateStateSet()->setAttributeAndModes(material_wireframe_ptr, ::osg::StateAttribute::ON | ::osg::StateAttribute::PROTECTED );
+    geode_ptr_ = NULL;
+    alpha_ = 0;
+  }
+
+  ::osg::Group* Node::getGroup() const
+  {
+    return normal_node_ptr_.get();
   }
 
   Node::Node (const std::string& name) :
@@ -449,6 +456,37 @@ namespace graphics {
       hl_switch_node_ptr_->setAllChildrenOff ();
       hl_switch_node_ptr_->setSingleChildOn (state);
     }
+  }
+
+  void Node::setAlpha (const float& alpha)
+  {
+    if (geode_ptr_.get() == NULL)
+      {
+	std::cout << "You must initialize a Geode on " << id_name_ << " to use Alpha" << std::endl;
+	return ;
+      }
+    osg::StateSet* ss = geode_ptr_.get()->getStateSet();
+    if (ss)
+      {
+	alpha_ = alpha;
+	osg::Material *mat = new osg::Material();
+	osg::BlendFunc *func = new osg::BlendFunc();
+	func->setFunction(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        ss->setAttributeAndModes(func);
+	if (ss->getAttribute(osg::StateAttribute::MATERIAL))
+	  mat = dynamic_cast<osg::Material*>(ss->getAttribute(osg::StateAttribute::MATERIAL));
+	else
+	  {
+	    mat = new osg::Material;
+	    ss->setAttribute(mat, osg::StateAttribute::ON);
+	  }
+	mat->setTransparency(osg::Material::FRONT_AND_BACK, alpha);
+      }
+  }
+
+  float Node::getAlpha() const
+  {
+    return alpha_;
   }
 
   Node::~Node ()

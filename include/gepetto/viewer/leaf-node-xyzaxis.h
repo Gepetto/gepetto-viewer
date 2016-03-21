@@ -37,7 +37,7 @@ namespace graphics {
         ::osg::ShapeDrawableRefPtr z_cylinder_drawable_;
         ::osg::ShapeDrawableRefPtr z_cone_drawable_;
         /** Associated Geometry (drawable objects)*/
-        ::osg::GeodeRefPtr geode_ptr_;
+        //::osg::GeodeRefPtr geode_ptr_;
         ::osg::Vec4ArrayRefPtr color_ptr_;
 
         void init ();
