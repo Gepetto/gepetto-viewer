@@ -44,7 +44,6 @@ namespace graphics {
         // Add reference to itself
         shared_ptr->initWeakPtr(shared_ptr);
 
-	std::cout << "Init group" << std::endl;
         return shared_ptr;
     }
     
@@ -137,7 +136,6 @@ namespace graphics {
     
     void GroupNode::setAlpha (const float& alpha)
     {
-      std::cout << "Change alpha of " << getID() << " to " << alpha << std::endl;
       alpha_ = alpha;
       ::std::list<NodePtr_t>::iterator iter_list_of_objects;
       for (iter_list_of_objects = list_of_objects_.begin();
