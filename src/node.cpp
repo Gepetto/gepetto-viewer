@@ -472,11 +472,11 @@ namespace graphics {
 	    mat = new osg::Material;
 	    ss->setAttribute(mat, osg::StateAttribute::OFF);
 	  }
-	mat->setAlpha(osg::Material::FRONT_AND_BACK, alpha);
+	mat->setTransparency(osg::Material::FRONT_AND_BACK, alpha);
 	if (alpha_ > 0)
-	  ss->setRenderingHint(2);
+	  ss->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 	else
-	  ss->setRenderingHint(0);
+	  ss->setRenderingHint(osg::StateSet::DEFAULT_BIN);
       }
   }
 

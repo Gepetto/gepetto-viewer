@@ -31,9 +31,7 @@ namespace graphics {
     /* Allow transparency */
     if (collada_ptr_->getOrCreateStateSet())
       {
-	collada_ptr_->getOrCreateStateSet()->setRenderBinDetails(10, "DepthSortedBin");
 	collada_ptr_->getOrCreateStateSet()->setMode(GL_BLEND, ::osg::StateAttribute::ON);
-	collada_ptr_->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
       }
   }
     
@@ -150,9 +148,11 @@ namespace graphics {
 	    mat = new osg::Material;
 	    ss->setAttribute(mat, osg::StateAttribute::OFF | osg::StateAttribute::OVERRIDE);
 	  }
-	if (alpha == 0)
-	  ss->removeAttribute(osg::StateAttribute::MATERIAL);
 	mat->setTransparency(osg::Material::FRONT_AND_BACK, alpha);
+	if (alpha == 0)
+	  ss->setRenderingHint(osg::StateSet::DEFAULT_BIN);
+	else
+	  ss->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
       }
   }
  

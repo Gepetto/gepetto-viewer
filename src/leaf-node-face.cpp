@@ -37,7 +37,6 @@ namespace graphics {
         face_ptr_->setColorBinding(::osg::Geometry::BIND_OVERALL);
         
         /* Allow transparency */
-        geode_ptr_->getOrCreateStateSet()->setRenderBinDetails(10, "DepthSortedBin");
         geode_ptr_->getStateSet()->setMode(GL_BLEND, ::osg::StateAttribute::ON);
 
         /* Add geode to the queue */

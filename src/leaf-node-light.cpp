@@ -39,7 +39,6 @@ namespace graphics {
         this->asQueue()->addChild(light_ptr_);
 
         /* Allow transparency */
-        geode_ptr_->getOrCreateStateSet()->setRenderBinDetails(10, "DepthSortedBin");
         geode_ptr_->getOrCreateStateSet()->setMode(GL_BLEND, ::osg::StateAttribute::ON);
     }
 

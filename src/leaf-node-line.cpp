@@ -40,7 +40,6 @@ namespace graphics {
         this->asQueue()->addChild(geode_ptr_);
         
         /* Allow transparency */
-        geode_ptr_->getOrCreateStateSet()->setRenderBinDetails(8, "DepthSortedBin"); // 8th bin because some problem occures when all object belong to the same bin
         geode_ptr_->getOrCreateStateSet()->setMode(GL_BLEND, ::osg::StateAttribute::ON);
         
         /* No light influence */
