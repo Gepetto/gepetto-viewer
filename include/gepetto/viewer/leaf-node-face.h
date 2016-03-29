@@ -26,7 +26,6 @@ namespace graphics {
         /** Associated Geometry for face*/
         ::osg::GeometryRefPtr face_ptr_;
         ::osg::Vec3ArrayRefPtr vertices_;
-        ::osg::GeodeRefPtr geode_face_ptr_;
         ::osg::Vec4ArrayRefPtr color_ptr_;
 
         void init ();
@@ -75,10 +74,6 @@ namespace graphics {
         void setColor (const osgVector4& color);
 
         void setTexture(const std::string& image_path);
-	virtual void setAlpha(const float& alpha)
-	{
-	  std::cout << "Je suis dans une face" << std::endl;
-	}
         
         /** Destructor */
         virtual ~LeafNodeFace();

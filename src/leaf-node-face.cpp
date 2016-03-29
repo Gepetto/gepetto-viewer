@@ -24,8 +24,8 @@ namespace graphics {
 	std::cout << "Creating face\n";
         
         /* Create Geode for adding geometry */
-        geode_face_ptr_ = new osg::Geode();
-        geode_face_ptr_->addDrawable(face_ptr_);
+        geode_ptr_ = new osg::Geode();
+        geode_ptr_->addDrawable(face_ptr_);
         
         vertices_ = new ::osg::Vec3Array();
         face_ptr_->setVertexArray( vertices_ );
@@ -37,11 +37,11 @@ namespace graphics {
         face_ptr_->setColorBinding(::osg::Geometry::BIND_OVERALL);
         
         /* Allow transparency */
-        geode_face_ptr_->getOrCreateStateSet()->setRenderBinDetails(10, "DepthSortedBin");
-        geode_face_ptr_->getStateSet()->setMode(GL_BLEND, ::osg::StateAttribute::ON);
+        geode_ptr_->getOrCreateStateSet()->setRenderBinDetails(10, "DepthSortedBin");
+        geode_ptr_->getStateSet()->setMode(GL_BLEND, ::osg::StateAttribute::ON);
 
         /* Add geode to the queue */
-        this->asQueue()->addChild(geode_face_ptr_);
+        this->asQueue()->addChild(geode_ptr_);
     }
 
     LeafNodeFace::LeafNodeFace(const std::string& name, const osgVector3& point1, const osgVector3& point2, const osgVector3& point3) :
@@ -190,15 +190,15 @@ namespace graphics {
         return;
       } 
       texture->setImage(image);
-      geode_face_ptr_->getStateSet()->setTextureAttributeAndModes(0,texture,osg::StateAttribute::ON);
+      geode_ptr_->getStateSet()->setTextureAttributeAndModes(0,texture,osg::StateAttribute::ON);
     }
     
     LeafNodeFace::~LeafNodeFace ()
     {
         /* Proper deletion of all tree scene */
-        geode_face_ptr_->removeDrawable(face_ptr_);
+        geode_ptr_->removeDrawable(face_ptr_);
         face_ptr_ = NULL;
-        geode_face_ptr_ = NULL;
+        geode_ptr_ = NULL;
         
         weak_ptr_.reset();
     }
