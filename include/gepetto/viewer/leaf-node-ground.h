@@ -35,7 +35,6 @@ namespace graphics
 
         /** Associated Geometry for LeafNodeGround */
         ::osg::GeometryRefPtr grid_geometry_ptr_;
-        ::osg::GeodeRefPtr grid_geode_ptr_;
       
         /** Init method */
         void init();

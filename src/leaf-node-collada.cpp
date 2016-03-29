@@ -33,6 +33,7 @@ namespace graphics {
       {
 	collada_ptr_->getOrCreateStateSet()->setRenderBinDetails(10, "DepthSortedBin");
 	collada_ptr_->getOrCreateStateSet()->setMode(GL_BLEND, ::osg::StateAttribute::ON);
+	collada_ptr_->getOrCreateStateSet()->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
       }
   }
     
@@ -141,17 +142,16 @@ namespace graphics {
     if (ss)
       {
 	alpha_ = alpha;
-	osg::Material *mat = new osg::Material();
-	osg::BlendFunc *func = new osg::BlendFunc();
-	func->setFunction(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        ss->setAttributeAndModes(func);
+	osg::Material *mat;
 	if (ss->getAttribute(osg::StateAttribute::MATERIAL))
 	  mat = dynamic_cast<osg::Material*>(ss->getAttribute(osg::StateAttribute::MATERIAL));
 	else
 	  {
 	    mat = new osg::Material;
-	    ss->setAttribute(mat, osg::StateAttribute::ON);
+	    ss->setAttribute(mat, osg::StateAttribute::OFF | osg::StateAttribute::OVERRIDE);
 	  }
+	if (alpha == 0)
+	  ss->removeAttribute(osg::StateAttribute::MATERIAL);
 	mat->setTransparency(osg::Material::FRONT_AND_BACK, alpha);
       }
   }

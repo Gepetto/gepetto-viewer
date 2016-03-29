@@ -473,7 +473,7 @@ namespace graphics {
 	    ss->setAttribute(mat, osg::StateAttribute::OFF);
 	  }
 	mat->setAlpha(osg::Material::FRONT_AND_BACK, alpha);
-	if (alpha_ < 1)
+	if (alpha_ > 0)
 	  ss->setRenderingHint(2);
 	else
 	  ss->setRenderingHint(0);

@@ -79,15 +79,15 @@ namespace graphics {
 				(GLsizei) vertices_array_ptr->size ()));
       
       
-        /* Allocating grid_geode_ptr_ */
-        if (~grid_geode_ptr_.valid()) {
-            grid_geode_ptr_ = new ::osg::Geode;
+        /* Allocating geode_ptr_ */
+        if (~geode_ptr_.valid()) {
+            geode_ptr_ = new ::osg::Geode;
         }
         
-        grid_geode_ptr_->addDrawable(grid_geometry_ptr_);
+        geode_ptr_->addDrawable(grid_geometry_ptr_);
       
-        //node_osg_ptr_->asGroup()->addChild(grid_geode_ptr_);
-        asQueue()->addChild(grid_geode_ptr_);
+        //node_osg_ptr_->asGroup()->addChild(geode_ptr_);
+        asQueue()->addChild(geode_ptr_);
         
         /* Apply colors */
         setColors(color1_,color2_);
@@ -231,11 +231,11 @@ namespace graphics {
     {
       
       /* Proper deletion of all tree scene */
-      grid_geode_ptr_->removeDrawable(grid_geometry_ptr_);
+      geode_ptr_->removeDrawable(grid_geometry_ptr_);
       grid_geometry_ptr_ = NULL;
         
-      this->asQueue()->removeChild(grid_geode_ptr_);
-      grid_geode_ptr_ = NULL;
+      this->asQueue()->removeChild(geode_ptr_);
+      geode_ptr_ = NULL;
 
       colors_array_ptr_.release();
 
