@@ -112,11 +112,6 @@ namespace graphics {
     alpha_ = 0;
   }
 
-  ::osg::Group* Node::getGroup() const
-  {
-    return normal_node_ptr_.get();
-  }
-
   Node::Node (const std::string& name) :
     id_name_(name)
   {
@@ -469,18 +464,19 @@ namespace graphics {
     if (ss)
       {
 	alpha_ = alpha;
-	osg::Material *mat = new osg::Material();
-	osg::BlendFunc *func = new osg::BlendFunc();
-	func->setFunction(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        ss->setAttributeAndModes(func);
+	osg::Material *mat;
 	if (ss->getAttribute(osg::StateAttribute::MATERIAL))
 	  mat = dynamic_cast<osg::Material*>(ss->getAttribute(osg::StateAttribute::MATERIAL));
 	else
 	  {
 	    mat = new osg::Material;
-	    ss->setAttribute(mat, osg::StateAttribute::ON);
+	    ss->setAttribute(mat, osg::StateAttribute::OFF);
 	  }
-	mat->setTransparency(osg::Material::FRONT_AND_BACK, alpha);
+	mat->setAlpha(osg::Material::FRONT_AND_BACK, alpha);
+	if (alpha_ < 1)
+	  ss->setRenderingHint(2);
+	else
+	  ss->setRenderingHint(0);
       }
   }
 

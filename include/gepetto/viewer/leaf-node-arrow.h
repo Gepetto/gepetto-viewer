@@ -29,8 +29,7 @@ namespace graphics {
         float size_;
         ::osg::ShapeDrawableRefPtr cylinder_drawable_;
         ::osg::ShapeDrawableRefPtr cone_drawable_;
-        /** Associated Geometry (drawable objects)*/
-        //::osg::GeodeRefPtr geode_ptr_;
+
         osgVector4 color_;
 
         void init ();

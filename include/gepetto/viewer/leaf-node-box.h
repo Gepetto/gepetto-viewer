@@ -27,7 +27,6 @@ namespace graphics {
         
         /** Associated ShapeDrawable */
         ::osg::ShapeDrawableRefPtr shape_drawable_ptr_;
-        //::osg::GeodeRefPtr geode_ptr_;
         
         void init ();
         

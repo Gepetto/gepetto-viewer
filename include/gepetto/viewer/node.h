@@ -11,7 +11,6 @@
 
 #include <iostream>
 #include <gepetto/viewer/config-osg.h>
-#include <stdio.h>
 
 namespace graphics {
     class NodeVisitor;
@@ -147,7 +146,6 @@ namespace graphics {
 
         /** Set the color of the object */
         virtual void setColor (const osgVector4& color) = 0;
-	::osg::Group* getGroup() const;
 
         /** Select the arrows to be shown around the selected body */
         virtual void selectArrows (
@@ -182,12 +180,6 @@ namespace graphics {
 
         virtual void setAlpha (const float& alpha);
 	float getAlpha() const;
-
-        /** Return the alpha value */
-        /*float getAlpha() const
-        {
-            return alpha_;
-        }*/
 
         virtual void accept (NodeVisitor& visitor);
         virtual void traverse (NodeVisitor& visitor);
