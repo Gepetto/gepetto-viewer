@@ -188,6 +188,7 @@ namespace graphics {
     void LeafNodeLine::setColor (const osgVector4& color)
     {      
         color_ptr_->at(0) = color;
+        beam_ptr_->dirtyDisplayList();
     }
     
     LeafNodeLine::~LeafNodeLine()
