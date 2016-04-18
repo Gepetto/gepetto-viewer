@@ -23,7 +23,6 @@ OPTION(DISABLE_SAMPLING "Activate this option if your computer have no graphic c
 
 SET(CXX_DISABLE_WERROR TRUE)
 INCLUDE(cmake/base.cmake)
-INCLUDE(cmake/eigen.cmake)
 INCLUDE(cmake/boost.cmake)
 
 SET(PROJECT_NAME gepetto-viewer)
