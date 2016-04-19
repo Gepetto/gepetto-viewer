@@ -72,7 +72,7 @@ namespace graphics {
         {
             return static_auto_transform_ptr_;
         }
-        
+
         void setID (const std::string& id_name)
         {
             id_name_ = id_name;
@@ -152,6 +152,8 @@ namespace graphics {
             int arrows = ROT_X | ROT_Y | ROT_Z | TRANS_X | TRANS_Y | TRANS_Z);
 
         virtual void setArrowsVisibility (const VisibilityMode& visibility);
+
+	virtual osg::Node* getOsgNode() const;
         
         /**
          \brief Return the root node to include it in the scene

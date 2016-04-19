@@ -173,6 +173,11 @@ namespace graphics {
         }
     }
 
+    osg::Node* GroupNode::getOsgNode() const
+    {
+      return (*(list_of_objects_.begin()))->getOsgNode();
+    }
+
     GroupNode::~GroupNode()
     {
         removeAllChildren();

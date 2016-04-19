@@ -194,6 +194,11 @@ namespace graphics {
     }
   }*/
 
+  osg::Node* LeafNodeCollada::getOsgNode() const
+  {
+    return collada_ptr_.get();
+  }
+
   LeafNodeCollada::~LeafNodeCollada()
   {
     /* Proper deletion of all tree scene */

@@ -118,6 +118,8 @@ namespace graphics {
         void setColor (const osgVector4& color);
 
         void traverse (NodeVisitor& visitor);
+
+	virtual osg::Node* getOsgNode() const;
         
         /* Destructor */
         virtual ~GroupNode();
