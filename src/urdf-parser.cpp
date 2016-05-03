@@ -36,44 +36,40 @@ namespace graphics {
 
     void getStaticTransform (const boost::shared_ptr < urdf::Link >& link,
 			     osgVector3 &static_pos, osgQuat &static_quat,
-			     bool visual, long unsigned int visual_index)
+			     bool visual, long unsigned int index)
     {
-      if (visual || (link->visual_array.size()>1))
-	{
-	  if (link->visual_array.size()>1)
-	    {
-	      // Set staticTransform = transform from link to visual
-	      static_pos = osgVector3((float)link->visual_array[visual_index]->origin.position.x,
-				      (float)link->visual_array[visual_index]->origin.position.y,
-				      (float)link->visual_array[visual_index]->origin.position.z);
-	      
-	      static_quat=osgQuat( (float)link->visual_array[visual_index]->origin.rotation.x,
-				   (float)link->visual_array[visual_index]->origin.rotation.y,
-				   (float)link->visual_array[visual_index]->origin.rotation.z,
-				   (float)link->visual_array[visual_index]->origin.rotation.w);
-	    }
-	  else
-	    {
-	      // Set staticTransform = transform from link to visual
-	      static_pos = osgVector3((float)link->visual->origin.position.x,
-				      (float)link->visual->origin.position.y,
-				      (float)link->visual->origin.position.z);
-	      
-	      static_quat=osgQuat( (float)link->visual->origin.rotation.x,
-				   (float)link->visual->origin.rotation.y,
-				   (float)link->visual->origin.rotation.z,
-				   (float)link->visual->origin.rotation.w);
-	    }
-      } else {
-	// Set staticTransform = transform from link to visual
-	static_pos = osgVector3((float)link->collision->origin.position.x,
-				(float)link->collision->origin.position.y,
-				(float)link->collision->origin.position.z);
+      if (visual) {
+        boost::shared_ptr<urdf::Visual> visual;
+        if (link->visual_array.size()>1)
+          visual = link->visual_array[index];
+        else
+          visual = link->visual;
 
-	static_quat=osgQuat( (float)link->collision->origin.rotation.x,
-			     (float)link->collision->origin.rotation.y,
-			     (float)link->collision->origin.rotation.z,
-			     (float)link->collision->origin.rotation.w);
+        // Set staticTransform = transform from link to visual
+        static_pos = osgVector3((float)visual->origin.position.x,
+            (float)visual->origin.position.y,
+            (float)visual->origin.position.z);
+
+        static_quat=osgQuat( (float)visual->origin.rotation.x,
+            (float)visual->origin.rotation.y,
+            (float)visual->origin.rotation.z,
+            (float)visual->origin.rotation.w);
+      } else {
+        boost::shared_ptr<urdf::Collision> collision;
+        if (link->collision_array.size()>1)
+          collision = link->collision_array[index];
+        else
+          collision = link->collision;
+
+        // Set staticTransform = transform from link to collision
+        static_pos = osgVector3((float)collision->origin.position.x,
+            (float)collision->origin.position.y,
+            (float)collision->origin.position.z);
+
+        static_quat=osgQuat( (float)collision->origin.rotation.x,
+            (float)collision->origin.rotation.y,
+            (float)collision->origin.rotation.z,
+            (float)collision->origin.rotation.w);
       }
     }
 
