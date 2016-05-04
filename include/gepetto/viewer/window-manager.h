@@ -9,6 +9,7 @@
 #ifndef SCENEVIEWER_WINDOWMANAGER_HH
 #define SCENEVIEWER_WINDOWMANAGER_HH
 
+#include <osgGA/KeySwitchMatrixManipulator>
 #include <osgViewer/Viewer>
 #include <osgViewer/ViewerEventHandlers>
 #include <gepetto/viewer/group-node.h>
@@ -21,6 +22,7 @@ namespace graphics {
     class WindowManager
     {
     private:
+        const int nodeTrackerManipulatorIndex;
 
         /** Scene Graphical Group */
         GroupNodePtr_t scene_ptr_;
@@ -38,8 +40,11 @@ namespace graphics {
         osg::ref_ptr < ::osgViewer::ScreenCaptureHandler> screen_capture_ptr_;
         osg::ref_ptr < ::osgViewer::ScreenCaptureHandler::WriteToFile> write_to_file_ptr_;
 
+	osg::ref_ptr<osgGA::KeySwitchMatrixManipulator> manipulator_ptr;
         /** Associated weak pointer */
         WindowManagerWeakPtr weak_ptr_;
+
+	void createManipulator();
 
         void init(osg::GraphicsContext* gc);
 
@@ -134,6 +139,9 @@ namespace graphics {
         void stopCapture ();
 
         bool writeNodeFile (const std::string& filename);
+
+	void attachCameraToNode(Node *node);
+	void detachCamera();
     };
 } /* namespace graphics */
 

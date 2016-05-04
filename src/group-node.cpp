@@ -173,6 +173,11 @@ namespace graphics {
         }
     }
 
+  osg::ref_ptr<osg::Node> GroupNode::getOsgNode() const
+    {
+      return this->asQueue();
+    }
+
     GroupNode::~GroupNode()
     {
         removeAllChildren();

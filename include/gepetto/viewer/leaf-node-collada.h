@@ -74,6 +74,7 @@ namespace graphics {
         void setTexture(const std::string& image_path);     
 
 	virtual void setAlpha(const float& alpha);
+	virtual osg::ref_ptr<osg::Node> getOsgNode() const;
 
         /** Destructor */
         virtual ~LeafNodeCollada();
