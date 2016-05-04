@@ -119,7 +119,7 @@ namespace graphics {
 
         void traverse (NodeVisitor& visitor);
 
-	virtual osg::Node* getOsgNode() const;
+	virtual osg::ref_ptr<osg::Node> getOsgNode() const;
         
         /* Destructor */
         virtual ~GroupNode();

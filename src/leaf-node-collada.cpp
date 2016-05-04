@@ -194,9 +194,9 @@ namespace graphics {
     }
   }*/
 
-  osg::Node* LeafNodeCollada::getOsgNode() const
+  osg::ref_ptr<osg::Node> LeafNodeCollada::getOsgNode() const
   {
-    return collada_ptr_.get();
+    return collada_ptr_;
   }
 
   LeafNodeCollada::~LeafNodeCollada()

@@ -512,7 +512,7 @@ namespace graphics {
   void Node::traverse (NodeVisitor& /*visitor*/) {
   }
 
-  osg::Node* Node::getOsgNode() const
+  osg::ref_ptr<osg::Node> Node::getOsgNode() const
   {
     return geode_ptr_.get();
   }

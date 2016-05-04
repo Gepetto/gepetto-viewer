@@ -173,7 +173,7 @@ namespace graphics {
         }
     }
 
-    osg::Node* GroupNode::getOsgNode() const
+  osg::ref_ptr<osg::Node> GroupNode::getOsgNode() const
     {
       return (*(list_of_objects_.begin()))->getOsgNode();
     }

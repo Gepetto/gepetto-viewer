@@ -153,7 +153,7 @@ namespace graphics {
 
         virtual void setArrowsVisibility (const VisibilityMode& visibility);
 
-	virtual osg::Node* getOsgNode() const;
+	virtual osg::ref_ptr<osg::Node> getOsgNode() const;
         
         /**
          \brief Return the root node to include it in the scene
