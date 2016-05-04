@@ -175,7 +175,7 @@ namespace graphics {
 
   osg::ref_ptr<osg::Node> GroupNode::getOsgNode() const
     {
-      return (*(list_of_objects_.begin()))->getOsgNode();
+      return this->asQueue();
     }
 
     GroupNode::~GroupNode()
