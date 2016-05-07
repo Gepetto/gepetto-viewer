@@ -1,0 +1,20 @@
+Release 1.1.0: on May 7. 2015
+=============================
+new feature since 1.0.0:
+
+    Enable urdf parser to tolerate several geometries for each link.
+    New primitives are supported, like
+      - arrows,
+      - capsules.
+    New feratures have been added, like
+      - camera control,
+      - highlight mode,
+      - lightning control,
+      - transparency mode,
+      - keyboard shortcuts,
+      - roadmap display for path planning.
+    API has been enriched to get better control
+    
+
+Release 1.0.0 on March 3. 2015
+==============================
