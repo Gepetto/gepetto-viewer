@@ -322,9 +322,9 @@ namespace graphics {
 
     if (manip)
       {
-	manip->setTrackerMode(osgGA::NodeTrackerManipulator::NODE_CENTER_AND_AZIM);
-	manip->setRotationMode(osgGA::NodeTrackerManipulator::ELEVATION_AZIM);
 	manip->setTrackNode(node->getOsgNode().get());
+	// manip->setRotationMode(osgGA::NodeTrackerManipulator::TRACKBALL);
+	manip->setTrackerMode(osgGA::NodeTrackerManipulator::NODE_CENTER_AND_ROTATION);
 	manipulator_ptr->selectMatrixManipulator(nodeTrackerManipulatorIndex);
       }
     else
