@@ -335,6 +335,11 @@ namespace graphics {
   {
     manipulator_ptr->selectMatrixManipulator(0);
   }
+  
+  void WindowManager::setBackgroundColor(osg::Vec4 color){
+    viewer_ptr_->getCamera()->setClearColor(color);
+  }
+      
     /* End declaration of public function members */
 
 } /* namespace graphics */

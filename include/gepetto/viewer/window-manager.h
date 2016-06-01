@@ -139,9 +139,12 @@ namespace graphics {
         void stopCapture ();
 
         bool writeNodeFile (const std::string& filename);
+        
+        void setBackgroundColor(osg::Vec4 color);
 
 	void attachCameraToNode(Node *node);
 	void detachCamera();
+
     };
 } /* namespace graphics */
 
