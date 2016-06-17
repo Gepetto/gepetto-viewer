@@ -63,6 +63,7 @@ SET(${PROJECT_NAME}_HEADERS
   include/gepetto/viewer/node-rod.h
   include/gepetto/viewer/node-visitor.h
   include/gepetto/viewer/transform-writer.h
+  include/gepetto/viewer/blender-geom-writer.h
   include/gepetto/viewer/OSGManipulator/keyboard-manipulator.h
 )
 

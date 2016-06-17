@@ -16,6 +16,7 @@
 
 #include <gepetto/viewer/node-visitor.h>
 
+#include <gepetto/viewer/node.h>
 #include <gepetto/viewer/group-node.h>
 #include <gepetto/viewer/leaf-node-arrow.h>
 #include <gepetto/viewer/leaf-node-box.h>
@@ -75,5 +76,8 @@ namespace graphics {
   }
   void NodeVisitor::apply (LeafNodeXYZAxis& node){
     apply(static_cast<Node&>(node));
+  }
+  void NodeVisitor::traverse (Node& node) {
+    node.traverse (*this);
   }
 } // namespace graphics

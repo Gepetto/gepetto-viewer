@@ -91,6 +91,8 @@ namespace graphics {
 
         void setRoot (GroupNodePtr_t root);
 
+        SCENE_VIEWER_ACCEPT_VISITOR;
+
         /** Destructor */
         virtual ~LeafNodeLight();
 

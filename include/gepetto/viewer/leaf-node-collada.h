@@ -22,6 +22,7 @@ namespace graphics {
     private:
 
         std::string collada_file_path_;
+        std::string texture_file_path_;
 
         /** Associated weak pointer */
         LeafNodeColladaWeakPtr weak_ptr_;
@@ -73,8 +74,14 @@ namespace graphics {
 
         void setTexture(const std::string& image_path);     
 
+        const std::string& meshFilePath () const;
+
+        const std::string& textureFilePath () const;
+
 	virtual void setAlpha(const float& alpha);
 	virtual osg::ref_ptr<osg::Node> getOsgNode() const;
+
+        SCENE_VIEWER_ACCEPT_VISITOR;
 
         /** Destructor */
         virtual ~LeafNodeCollada();

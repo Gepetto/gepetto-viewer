@@ -11,7 +11,6 @@
 
 #include <iostream>
 #include <gepetto/viewer/config-osg.h>
-#include <gepetto/viewer/node.h>
 
 namespace graphics {
     class Node;
@@ -54,9 +53,7 @@ namespace graphics {
         virtual void apply (LeafNodeSphere& node);
         virtual void apply (LeafNodeXYZAxis& node);
 
-        inline void traverse (Node& node) {
-          node.traverse (*this);
-        }
+        void traverse (Node& node);
     }; /* class Node */
 } /* namespace graphics */
 

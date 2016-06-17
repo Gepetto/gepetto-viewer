@@ -74,6 +74,8 @@ namespace graphics {
         void setColor (const osgVector4& color);
 
         void setTexture(const std::string& image_path);
+
+        SCENE_VIEWER_ACCEPT_VISITOR;
         
         /** Destructor */
         virtual ~LeafNodeFace();

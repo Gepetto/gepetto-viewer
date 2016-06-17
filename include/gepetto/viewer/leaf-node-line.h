@@ -102,6 +102,8 @@ namespace graphics {
             return color_array_ptr->at(0);
         }
 
+        SCENE_VIEWER_ACCEPT_VISITOR;
+
         /** Destructor */
         virtual ~LeafNodeLine();
         

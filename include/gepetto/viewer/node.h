@@ -10,10 +10,10 @@
 #define SCENEVIEWER_NODE_HH
 
 #include <iostream>
+#include <gepetto/viewer/node-visitor.h>
 #include <gepetto/viewer/config-osg.h>
 
 namespace graphics {
-    class NodeVisitor;
     
     DEF_CLASS_SMART_PTR(Node)
     
@@ -183,7 +183,7 @@ namespace graphics {
         virtual void setAlpha (const float& alpha);
 	float getAlpha() const;
 
-        virtual void accept (NodeVisitor& visitor);
+        SCENE_VIEWER_ACCEPT_VISITOR;
         virtual void traverse (NodeVisitor& visitor);
 
         /* Destructor */

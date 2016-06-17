@@ -52,7 +52,7 @@ namespace graphics {
     {
         setID(name);
         init();
-        setRadius(other.getRaduis());
+        setRadius(other.getRadius());
         setColor(other.getColor());
     }
     

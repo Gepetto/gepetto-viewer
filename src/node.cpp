@@ -505,10 +505,6 @@ namespace graphics {
     return std::make_pair(auto_transform_ptr_->getPosition(),auto_transform_ptr_->getRotation());
   }
 
-  void Node::accept (NodeVisitor& nv) {
-    nv.apply (*this);
-  }
-
   void Node::traverse (NodeVisitor& /*visitor*/) {
   }
 

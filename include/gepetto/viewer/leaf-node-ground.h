@@ -138,6 +138,8 @@ namespace graphics
         //virtual void setShadowMode (const ShadowMode& shadow_state) {
         //    Node::setShadowMode ( shadow_state );
         //}
+
+        SCENE_VIEWER_ACCEPT_VISITOR;
         
         /** Destructor */
         virtual ~LeafNodeGround();

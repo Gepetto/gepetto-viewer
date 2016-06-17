@@ -69,7 +69,7 @@ namespace graphics {
          * Note : radius must be positive vector
          */
         void setRadius (const float& radius);
-        float getRaduis() const
+        float getRadius() const
         {
             return sphere_ptr_->getRadius();
         }
@@ -83,6 +83,8 @@ namespace graphics {
         }
         
         void setTexture(const std::string& image_path);
+
+        SCENE_VIEWER_ACCEPT_VISITOR;
         
         /** Destructor */
         virtual ~LeafNodeSphere();

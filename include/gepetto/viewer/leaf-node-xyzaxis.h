@@ -88,6 +88,8 @@ namespace graphics {
         float getSizeAxis() const;
         void setTexture(const std::string& image_path);
 
+        SCENE_VIEWER_ACCEPT_VISITOR;
+
         /** Destructor */
         virtual ~LeafNodeXYZAxis();
 

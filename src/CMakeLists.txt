@@ -40,6 +40,7 @@ SET(${LIBRARY_NAME}_SOURCES
   node-rod.cpp
   node-visitor.cc
   transform-writer.cc
+  blender-geom-writer.cc
   OSGManipulator/keyboard-manipulator.cpp
 )
 
