@@ -16,6 +16,7 @@
 
 #include <gepetto/viewer/blender-geom-writer.h>
 
+#include <algorithm>
 #include <sys/stat.h>
 
 #include <gepetto/viewer/node.h>
@@ -48,6 +49,13 @@ namespace graphics {
       for (int i = 0; i < Vector::num_components; ++i)
         os << v[i] << ", ";
       os << ")";
+      return os;
+    }
+
+    template <>
+      std::ostream& writeVectorAsList<osg::Quat> (std::ostream& os, const osg::Quat& q)
+    {
+      os << "( " << q.w() << ", " << q.x() << ", " << q.y() << ", " << q.z() << ", )";
       return os;
     }
   }
@@ -135,6 +143,7 @@ namespace graphics {
     const std::string& mesh = node.meshFilePath();
 
     std::string ext = mesh.substr(mesh.find_last_of(".")+1,mesh.size());
+    std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
     if(ext == "obj") {
       out() << "bpy.ops.import_scene.obj (filepath=\"" << mesh << "\")" << end;
     } else if (ext == "dae") {
@@ -145,10 +154,9 @@ namespace graphics {
       std::cout << "Extension of file " << mesh << " with name " << node.getID()
         << " is not known." << end
         << "You can load the file manually and add it to the empty object called " << node.getID() << end
-        << "To fix the issue, upate __FILE__:__LINE__"
-        << std::endl;
+        << "To fix the issue, upate" __FILE__ ":" << __LINE__ << std::endl;
       out() << "# Here goes the content of file " << mesh << end;
-      out() << "# To fix it, upate __FILE__:__LINE__" << end;
+      out() << "# To fix it, upate" __FILE__ ":" << __LINE__ << end;
     }
 
     out ()
@@ -188,8 +196,8 @@ namespace graphics {
   }
   void BlenderGeomWriterVisitor::apply (LeafNodeSphere& node)
   {
-    out () << "bpy.ops.mesh.primitive_ico_sphere_add (size=\""
-      << node.getRadius() << "\")" << end;
+    out () << "bpy.ops.mesh.primitive_ico_sphere_add (size="
+      << node.getRadius() << ")" << end;
     standardApply(node);
   }
   void BlenderGeomWriterVisitor::apply (LeafNodeXYZAxis& node)
@@ -199,8 +207,21 @@ namespace graphics {
 
   void BlenderGeomWriterVisitor::standardApply (Node& node)
   {
+    const std::string& id = node.getID ();
     // Set name
-    out() << "bpy.context.object.name = \"" << node.getID() << '"' << end;
+    out()
+      << "bpy.context.object.name = \"" << id << "__shape\"" << end
+      << "bpy.context.object.location = ";
+    writeVectorAsList(out(), node.getStaticPosition()) << end;
+    out()
+      << "bpy.context.object.rotation_mode = 'QUATERNION'" << end
+      << "bpy.context.object.rotation_quaternion = ";
+    writeVectorAsList(out(), node.getStaticRotation()) << end;
+    out()
+      << "bpy.ops.object.empty_add ()" << end
+      << "bpy.context.object.name = \"" << id << '"' << end
+      << "bpy.data.objects[\"" << id << "__shape\"].parent = "
+      << "bpy.data.objects[\"" << id << "\"]" << end;
     // Set parent group
     if (!groupStack_.empty())
       out() << "bpy.context.object.parent = bpy.data.objects[\""

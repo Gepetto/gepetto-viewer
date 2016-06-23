@@ -9,7 +9,6 @@
 #include <gepetto/viewer/urdf-parser.h>
 
 #include <iostream>
-#include <sys/stat.h>
 
 #include <gepetto/viewer/leaf-node-cylinder.h>
 #include <gepetto/viewer/leaf-node-box.h>
@@ -27,11 +26,7 @@ namespace graphics {
       } else {
         name = input;
       }
-      std::string osgname = name + ".osg";
-      struct stat buffer;
-      if (stat (osgname.c_str(), &buffer) != 0) return name;
-      std::cout << "Using " << osgname << "\n";
-      return osgname;
+      return name;
     }
 
     void getStaticTransform (const boost::shared_ptr < urdf::Link >& link,
