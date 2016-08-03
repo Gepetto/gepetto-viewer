@@ -9,6 +9,11 @@
 #include <gepetto/viewer/urdf-parser.h>
 
 #include <iostream>
+#include <string>
+#include <vector>
+#include <sstream>
+
+#include <sys/stat.h>
 
 #include <gepetto/viewer/leaf-node-cylinder.h>
 #include <gepetto/viewer/leaf-node-box.h>
@@ -18,15 +23,37 @@ namespace graphics {
 
   namespace internal_urdf_parser
   {
-    std::string getFilename (const std::string& input, const std::string& meshDataRootDir)
-    {
-      std::string name;
-      if (input.substr(0, 10) == "package://") {
-        name = meshDataRootDir + "/" + input.substr(10, std::string::npos);
-      } else {
-        name = input;
+    void split(const std::string &s, char delim, std::vector<std::string> &elems) {
+      std::stringstream ss(s);
+      std::string item;
+      while (std::getline(ss, item, delim)) {
+        elems.push_back(item);
       }
-      return name;
+    }
+
+    std::vector<std::string> rosPackagePath()
+    {
+      const std::string rosPathVar (std::getenv("ROS_PACKAGE_PATH"));
+      std::vector<std::string> rosPaths;
+      split(rosPathVar, ':', rosPaths);
+      return rosPaths;
+    }
+
+    std::string getFilename (const std::string& input)
+    {
+      if (input.substr(0, 10) == "package://") {
+        std::vector<std::string> rosPaths = rosPackagePath();
+        struct stat sb;
+        for (std::size_t i = 0; i < rosPaths.size(); ++i) {
+          const std::string name =
+            rosPaths[i] + input.substr(10, std::string::npos); 
+          if (stat(name.c_str(), &sb) == 0 && S_ISREG(sb.st_mode))
+            return name;
+        }
+        std::cerr << "File not found: " << input << std::endl;
+        std::cerr << "Check ROS_PACKAGE_PATH environment variable." << std::endl;
+      }
+      return input;
     }
 
     void getStaticTransform (const boost::shared_ptr < urdf::Link >& link,
@@ -69,7 +96,6 @@ namespace graphics {
     }
 
     void addMesh (const std::string &robotName,
-                  const std::string &meshDataRootDir,
 		  boost::shared_ptr < urdf::Link >& urdfLink,
 		  std::size_t j,
 		  GroupNodePtr_t &linkNode, bool visual, bool linkFrame)
@@ -88,7 +114,7 @@ namespace graphics {
       link_name = urdfLink->name;
       if ( mesh_shared_ptr != 0 )
         {
-          mesh_path = getFilename (mesh_shared_ptr->filename, meshDataRootDir);
+          mesh_path = getFilename (mesh_shared_ptr->filename);
 	  std::ostringstream oss;
 	  oss << robotName << "/" << link_name << "_" << j;
           LeafNodeColladaPtr_t meshNode = LeafNodeCollada::create
@@ -112,7 +138,7 @@ namespace graphics {
             meshNode->setColor(color);
             if (urdfLink->visual_array [j]->material->texture_filename != "") {
               std::string textureFilename = getFilename
-                (urdfLink->visual_array [j]->material->texture_filename, meshDataRootDir);
+                (urdfLink->visual_array [j]->material->texture_filename);
               meshNode->setTexture(textureFilename);
             }
           }
@@ -120,7 +146,6 @@ namespace graphics {
     }
 
     void addCylinder (const std::string &robotName,
-                      const std::string& meshDataRootDir,
 		      boost::shared_ptr < urdf::Link >& urdfLink,
 		      std::size_t j,
 		      GroupNodePtr_t &linkNode, bool visual, bool linkFrame)
@@ -157,7 +182,7 @@ namespace graphics {
             cylinderNode->setColor(color);
             if (urdfLink->visual_array [j]->material->texture_filename != "") {
               std::string textureFilename = getFilename
-                (urdfLink->visual_array [j]->material->texture_filename, meshDataRootDir);
+                (urdfLink->visual_array [j]->material->texture_filename);
               cylinderNode->setTexture(textureFilename);
             }
           }
@@ -168,7 +193,6 @@ namespace graphics {
     }
 
     void addBox (const std::string &robotName,
-                 const std::string& meshDataRootDir,
 		 boost::shared_ptr < urdf::Link >& urdfLink,
 		 std::size_t j,
 		 GroupNodePtr_t &linkNode, bool visual, bool linkFrame)
@@ -205,7 +229,7 @@ namespace graphics {
             boxNode->setColor(color);
             if (urdfLink->visual_array [j]->material->texture_filename != "") {
               std::string textureFilename = getFilename
-                (urdfLink->visual_array [j]->material->texture_filename, meshDataRootDir);
+                (urdfLink->visual_array [j]->material->texture_filename);
               boxNode->setTexture(textureFilename);
             }
           }
@@ -215,7 +239,6 @@ namespace graphics {
     }
 
     void addSphere (const std::string &robotName,
-                    const std::string& meshDataRootDir,
 		    boost::shared_ptr < urdf::Link >& urdfLink,
 		    std::size_t j,
 		    GroupNodePtr_t &linkNode, bool visual, bool linkFrame)
@@ -251,7 +274,7 @@ namespace graphics {
             sphereNode->setColor(color);
             if (urdfLink->visual_array [j]->material->texture_filename != "") {
               std::string textureFilename = getFilename
-                (urdfLink->visual_array [j]->material->texture_filename, meshDataRootDir);
+                (urdfLink->visual_array [j]->material->texture_filename);
               sphereNode->setTexture(textureFilename);
             }
           }
@@ -265,7 +288,6 @@ namespace graphics {
 
   GroupNodePtr_t urdfParser::parse (const std::string& robotName,
 				    const std::string& urdf_file_path,
-				    const std::string& meshDataRootDir,
 				    const std::string& collisionOrVisual,
 				    const std::string& linkOrObjectFrame)
   {
@@ -281,7 +303,7 @@ namespace graphics {
     if (linkOrObjectFrame == "object") linkFrame = false;
 
     boost::shared_ptr< urdf::ModelInterface > model =
-      urdf::parseURDFFile( urdf_file_path );
+      urdf::parseURDFFile( internal_urdf_parser::getFilename(urdf_file_path) );
     // Test that file has correctly been parsed
     if (!model) {
       throw std::runtime_error (std::string ("Failed to parse ") +
@@ -303,22 +325,22 @@ namespace graphics {
 	for (std::size_t j = 0; j < links[i]->visual_array.size (); ++j) {
 	  switch (links[i]->visual_array [j]->geometry->type) {
 	  case urdf::Geometry::MESH:
-	    internal_urdf_parser::addMesh (robotName, meshDataRootDir,
+	    internal_urdf_parser::addMesh (robotName,
 					   links [i], j, linkNode, true,
 					   linkFrame);
 	    break;
 	  case urdf::Geometry::CYLINDER:
-	    internal_urdf_parser::addCylinder (robotName, meshDataRootDir,
+	    internal_urdf_parser::addCylinder (robotName,
                                                links [i], j, linkNode, true,
                                                linkFrame);
             break;
 	  case urdf::Geometry::BOX:
-	    internal_urdf_parser::addBox (robotName, meshDataRootDir,
+	    internal_urdf_parser::addBox (robotName,
                                           links [i], j, linkNode,
 					  true, linkFrame);
 	    break;
 	  case urdf::Geometry::SPHERE:
-	    internal_urdf_parser::addSphere (robotName, meshDataRootDir,
+	    internal_urdf_parser::addSphere (robotName,
                                              links [i], j, linkNode, true,
                                              linkFrame);
 	    break;
@@ -328,22 +350,22 @@ namespace graphics {
 	for (std::size_t j=0; j < links[i]->collision_array.size (); ++j) {
 	  switch (links[i]->collision_array [j]->geometry->type) {
 	  case urdf::Geometry::MESH:
-	    internal_urdf_parser::addMesh (robotName, meshDataRootDir,
+	    internal_urdf_parser::addMesh (robotName,
 					   links [i], j, linkNode, false,
 					   linkFrame);
 	    break;
 	  case urdf::Geometry::CYLINDER:
-	    internal_urdf_parser::addCylinder (robotName, meshDataRootDir,
+	    internal_urdf_parser::addCylinder (robotName,
                                                links [i], j, linkNode, false,
                                                linkFrame);
 	    break;
 	  case urdf::Geometry::BOX:
-	    internal_urdf_parser::addBox (robotName, meshDataRootDir,
+	    internal_urdf_parser::addBox (robotName,
                                           links [i], j, linkNode, false,
                                           linkFrame);
 	    break;
 	  case urdf::Geometry::SPHERE:
-	    internal_urdf_parser::addSphere (robotName, meshDataRootDir,
+	    internal_urdf_parser::addSphere (robotName,
                                              links [i], j, linkNode, false,
                                              linkFrame);
 	    break;
