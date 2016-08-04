@@ -17,6 +17,11 @@
 namespace graphics {
   namespace urdfParser {
 
+    /// If input starts with "package://", read ROS_PACKAGE_PATH environment
+    /// variable and return a suitable file, if possible.
+    /// Returns input on failure (no "package://" or no file found in the packages).
+    std::string getFilename (const std::string& input);
+
     /// Create a node from an urdf file
     /// \param robotName Name of the node that will contain the robot geometry,
     ///                  each geometric part is prefixed by this name,
