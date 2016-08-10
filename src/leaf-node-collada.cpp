@@ -17,22 +17,15 @@ namespace graphics {
 
   void LeafNodeCollada::init()
   {
-    std::string osgname = collada_file_path_ + ".osg";
-    struct stat buffer;
-    if (stat (osgname.c_str(), &buffer) == 0) {
-      std::cout << "Using " << osgname << "\n";
-      collada_ptr_ = osgDB::readNodeFile(osgname);
-    } else {
-      // get the extension of the meshs file
-      std::string ext = collada_file_path_.substr(collada_file_path_.find_last_of(".")+1,collada_file_path_.size());
-      if(ext == "obj"){
-        const osgDB::Options* options = new osgDB::Options("noRotation");
-        collada_ptr_ = osgDB::readNodeFile(collada_file_path_,options);
-      }
-      else
-        collada_ptr_ = osgDB::readNodeFile(collada_file_path_);
+    // get the extension of the meshs file
+    std::string ext = collada_file_path_.substr
+      (collada_file_path_.find_last_of(".")+1,collada_file_path_.size());
+    if(ext == "obj"){
+      const osgDB::Options* options = new osgDB::Options("noRotation");
+      collada_ptr_ = osgDB::readNodeFile(collada_file_path_,options);
     }
-        
+    else
+      collada_ptr_ = osgDB::readNodeFile(collada_file_path_);
     /* Create PositionAttitudeTransform */
     this->asQueue()->addChild(collada_ptr_);
         
