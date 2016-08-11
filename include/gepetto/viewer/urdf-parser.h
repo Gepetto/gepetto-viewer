@@ -17,25 +17,26 @@
 namespace graphics {
   namespace urdfParser {
 
+    /// If input starts with "package://", read ROS_PACKAGE_PATH environment
+    /// variable and return a suitable file, if possible.
+    /// Returns input on failure (no "package://" or no file found in the packages).
+    std::string getFilename (const std::string& input);
+
     /// Create a node from an urdf file
     /// \param robotName Name of the node that will contain the robot geometry,
     ///                  each geometric part is prefixed by this name,
     /// \param urdf_file_path to the package containing the urdf file,
     ///                       i.e. "/opt/ros/hydro/share/pr2_description",
-    /// \param meshDataRootDir path to the package that contains the collada
-    ///                        files,
-    ///                        i.e. "/opt/ros/hydro/share/"
     /// \param collisionOrVisual whether to parse the visual part or the
     ///        collision part of links.
     /// \param linkOrObjectFrame in the urdf kinematic chain, objects are
     ///        rigidly attached to a link. This parameter determines whether
     ///        the node frame corresponds to the link frame or to the object
     ///        frame.
-    /// \note the parser will replace "package://" by meshDataRootDir in the
-    ///       urdf file.
+    /// \note the parser will replace "package://" by a path from the
+    ///       ROS_PACKAGE_PATH environment variable.
     GroupNodePtr_t parse (const std::string& robotName,
 			  const std::string& urdf_file_path,
-			  const std::string& meshDataRootDir,
 			  const std::string& collisionOrVisual = "visual",
 			  const std::string& linkOrObjectFrame = "link");
 
