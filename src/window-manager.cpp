@@ -21,9 +21,9 @@ namespace graphics {
       osgViewer::Viewer::Windows windows;
       viewer_ptr_->getWindows(windows);
       manipulator_ptr = new ::osgGA::KeySwitchMatrixManipulator;
-      manipulator_ptr->addNumberedMatrixManipulator(new ::osgGA::TrackballManipulator);
-      manipulator_ptr->addNumberedMatrixManipulator(new ::osgGA::KeyboardManipulator(windows.front()));
-      manipulator_ptr->addNumberedMatrixManipulator(new ::osgGA::NodeTrackerManipulator);
+      manipulator_ptr->addMatrixManipulator('1',"trackball",new ::osgGA::TrackballManipulator);
+      manipulator_ptr->addMatrixManipulator('2',"keyboard",new ::osgGA::KeyboardManipulator(windows.front()));
+      manipulator_ptr->addMatrixManipulator('3',"tracker",new ::osgGA::NodeTrackerManipulator);
       viewer_ptr_->setCameraManipulator( manipulator_ptr);      
     }
 
