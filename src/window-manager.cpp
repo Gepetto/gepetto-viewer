@@ -26,6 +26,79 @@ namespace graphics {
       manipulator_ptr->addMatrixManipulator('3',"tracker",new ::osgGA::NodeTrackerManipulator);
       viewer_ptr_->setCameraManipulator( manipulator_ptr);      
     }
+  
+  void WindowManager::createBackground()
+  {
+    main_camera_->setClearMask(GL_DEPTH_BUFFER_BIT);
+    main_camera_->setClearColor(osg::Vec4(0.,0.,0.,0.));
+    // Create background camera
+    bg_camera_ = new osg::Camera;
+    
+    osg::ref_ptr <const osg::GraphicsContext::Traits> traits_ptr = gc_->getTraits();
+    
+    // set the projection matrix
+    bg_camera_->setProjectionMatrix(osg::Matrix::ortho2D(traits_ptr->x,traits_ptr->width,traits_ptr->y,traits_ptr->height));
+    
+    bg_camera_->setReferenceFrame(osg::Transform::ABSOLUTE_RF);
+    bg_camera_->setViewMatrix(osg::Matrix::identity());
+    
+    // only clear the depth buffer
+    //      bg_camera_->setClearMask(GL_DEPTH_BUFFER_BIT);
+    bg_camera_->setClearColor(osg::Vec4(0.,0.,0.,0.));
+    
+    // draw subgraph before main camera view.
+    bg_camera_->setRenderOrder(osg::Camera::PRE_RENDER);
+    
+    bg_camera_->setAllowEventFocus(false);
+    
+    bg_color1_ = osg::Vec4(0.4f, 0.4f, 0.6f, 1.0f);
+    bg_color2_ = osg::Vec4(0.6f, 0.6f, 0.6f, 1.0f);
+    
+    // Create the background geometry here
+    {
+      osg::Geode* geode = new osg::Geode();
+      osg::StateSet* stateset = geode->getOrCreateStateSet();
+      stateset->setMode(GL_LIGHTING,osg::StateAttribute::OFF);
+      
+      bg_geom_ = new osg::Geometry;
+      
+      const float depth = (float)-0.1;
+      osg::Vec3Array* vertices = new osg::Vec3Array;
+      vertices->push_back(osg::Vec3(0.,traits_ptr->height,depth));
+      vertices->push_back(osg::Vec3(0.,0.,depth));
+      vertices->push_back(osg::Vec3(traits_ptr->width,0.,depth));
+      vertices->push_back(osg::Vec3(traits_ptr->width,traits_ptr->height,depth));
+      bg_geom_->setVertexArray(vertices);
+      
+      osg::Vec3Array* normals = new osg::Vec3Array;
+      normals->push_back(osg::Vec3(0.0f,0.0f,1.0f));
+      bg_geom_->setNormalArray(normals, osg::Array::BIND_OVERALL);
+      
+      applyBackgroundColor();
+      
+      bg_geom_->addPrimitiveSet(new osg::DrawArrays(GL_QUADS,0,4));
+      
+      stateset = bg_geom_->getOrCreateStateSet();
+      stateset->setMode(GL_BLEND,osg::StateAttribute::ON);
+      stateset->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+      
+      geode->addDrawable(bg_geom_);
+      bg_camera_->addChild(geode);
+      //bg_camera_->setGraphicsContext(camera->getGraphicsContext());
+    }
+    
+    scene_ptr_->asGroup()->addChild(bg_camera_);
+  }
+  
+  void WindowManager::applyBackgroundColor()
+  {
+    osg::Vec4Array* colors = new osg::Vec4Array;
+    colors->push_back(bg_color1_);
+    colors->push_back(bg_color2_);
+    colors->push_back(bg_color2_);
+    colors->push_back(bg_color1_);
+    bg_geom_->setColorArray(colors, osg::Array::BIND_PER_VERTEX);
+  }
 
     /* Declaration of private function members */
     void WindowManager::init(const unsigned int& x,
@@ -46,7 +119,7 @@ namespace graphics {
 
 #ifndef DISABLE_SAMPLING
       traits_ptr->sampleBuffers = 1;
-      traits_ptr->samples = 1;
+      traits_ptr->samples = 4;
 #else
       traits_ptr->sampleBuffers = 0;
       traits_ptr->samples = 0;
@@ -62,7 +135,7 @@ namespace graphics {
 
     void WindowManager::init(osg::GraphicsContext* gc)
     {
-      std::string name = "root";
+      const std::string name = "scene";
       scene_ptr_ = ::graphics::GroupNode::create(name);
 
       viewer_ptr_ = new ::osgViewer::Viewer();
@@ -80,27 +153,33 @@ namespace graphics {
       main_camera_->setDrawBuffer(buffer);
       main_camera_->setReadBuffer(buffer);
 
-      /* add camera to the viewer */
+      /* add scene to the viewer */
       viewer_ptr_->setSceneData ( scene_ptr_->asGroup() );
+      
+      /* avoid ending */
       viewer_ptr_->setKeyEventSetsDone (0);
       viewer_ptr_->addEventHandler(new osgViewer::HelpHandler);
+      createBackground();
       createManipulator();
     }
 
     void WindowManager::init(osgViewer::Viewer* v, osg::GraphicsContext* gc)
     {
-        std::string name = "root";
-        scene_ptr_ = ::graphics::GroupNode::create(name);
-
-        viewer_ptr_ = v;
-        viewer_ptr_->setSceneData ( scene_ptr_->asGroup() );
-
-        /* init main camera */
-        main_camera_ = viewer_ptr_->getCamera ();
-
-        gc_ = osg::GraphicsContextRefPtr (gc);
-	createManipulator();
+      std::string name = "scene";
+      scene_ptr_ = ::graphics::GroupNode::create(name);
+      
+      viewer_ptr_ = v;
+      viewer_ptr_->setSceneData ( scene_ptr_->asGroup() );
+      
+      /* init main camera */
+      main_camera_ = viewer_ptr_->getCamera ();
+      
+      gc_ = osg::GraphicsContextRefPtr (gc);
+      createBackground();
+      createManipulator();
     }
+  
+  
 
     WindowManager::WindowManager () : nodeTrackerManipulatorIndex(2)
     {
@@ -336,10 +415,6 @@ namespace graphics {
     manipulator_ptr->selectMatrixManipulator(0);
   }
   
-  void WindowManager::setBackgroundColor(osg::Vec4 color){
-    viewer_ptr_->getCamera()->setClearColor(color);
-  }
-      
     /* End declaration of public function members */
 
 } /* namespace graphics */
