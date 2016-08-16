@@ -51,6 +51,7 @@ SET(${PROJECT_NAME}_HEADERS
   include/gepetto/viewer/leaf-node-face.h
   include/gepetto/viewer/leaf-node-ground.h
   include/gepetto/viewer/leaf-node-line.h
+  include/gepetto/viewer/leaf-node-mesh.h
   include/gepetto/viewer/leaf-node-sphere.h
   include/gepetto/viewer/leaf-node-light.h
   include/gepetto/viewer/leaf-node-arrow.h
