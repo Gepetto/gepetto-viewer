@@ -33,15 +33,15 @@ namespace graphics {
     if (mesh_geometry_ptr_->getOrCreateStateSet())
       {
 	osg::ref_ptr<osg::StateSet> nodess (mesh_geometry_ptr_->getOrCreateStateSet());
-	nodess->setMode(GL_BLEND, ::osg::StateAttribute::ON);
+	nodess->setMode(GL_BLEND, ::osg::StateAttribute::OFF);
 	// Create Material and assign color.
 
 	// Creating the material object
 	osg::ref_ptr<osg::Material> mat (new osg::Material);
 
 	//Attaching the newly defined state set object to the node state set
-	//mat->setColorMode(osg::Material::AMBIENT_AND_DIFFUSE);
-	mat->setColorMode(osg::Material::SPECULAR);
+	mat->setColorMode(osg::Material::AMBIENT_AND_DIFFUSE);
+	//mat->setColorMode(osg::Material::SPECULAR);
 	nodess->setAttribute(mat.get());
 
       }
@@ -53,11 +53,12 @@ namespace graphics {
     init();
   }
     
-  LeafNodeMesh::LeafNodeMesh(const std::string &name, const osgVector4& color) :
+  LeafNodeMesh::LeafNodeMesh(const std::string &name, 
+			     const osgVector4& color_diffuse) :
     Node(name)
   {
     init();
-    setColor(color);
+    setColor(color_diffuse);
   }
   
   LeafNodeMesh::LeafNodeMesh(const graphics::LeafNodeMesh& other) :
@@ -122,14 +123,29 @@ namespace graphics {
   {
     return weak_ptr_.lock();
   }
+
     
-  void LeafNodeMesh::setColor(const osgVector4& color)
+  void LeafNodeMesh::setColor(const osgVector4& color_diffuse,
+			      const osgVector4& color_specular,
+			      const osgVector4& color_emissive)
   {
     //setColor(collada_ptr_,color);
     osg::ref_ptr<osg::Material> mat_ptr (new osg::Material); 
-    mat_ptr->setDiffuse(osg::Material::FRONT_AND_BACK,color); 
+    osgVector4 color_zero(0.0f,0.0f,0.0f,0.0f);
+    mat_ptr->setDiffuse(osg::Material::FRONT_AND_BACK,color_diffuse); 
+    mat_ptr->setAmbient(osg::Material::FRONT_AND_BACK,color_zero); 
+    mat_ptr->setSpecular(osg::Material::FRONT_AND_BACK,color_specular); 
+    mat_ptr->setEmission(osg::Material::FRONT_AND_BACK,color_emissive); 
+
     if (mesh_geometry_ptr_->getStateSet())
       mesh_geometry_ptr_->getStateSet()->setAttribute(mat_ptr.get());    
+  }
+  void LeafNodeMesh::setColor(const osgVector4& color_diffuse)
+  {
+    osgVector4 color_specular(0.0f,0.0f,0.0f,0.0f),
+      color_emissive(0.0f,0.0f,0.0f,0.0f);
+    setColor(color_diffuse,color_specular,color_emissive);
+
   }
 
   void LeafNodeMesh::setAlpha(const float& alpha)
