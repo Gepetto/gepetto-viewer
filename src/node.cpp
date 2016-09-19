@@ -94,40 +94,50 @@ namespace graphics {
 
   void Node::setStaticTransform(const osgVector3 & position, const osgQuat & quat)
   {
-    /* Update position */
-    static_auto_transform_ptr_->setPosition(position);
-
-    /* Update attitude */
-    static_auto_transform_ptr_->setRotation(quat);
+    Matrix m(quat);
+    m.setTrans(position);
+    static_auto_transform_ptr_->setMatrix(m);
   }
 
   osgQuat Node::getStaticRotation() const
   {
-    return static_auto_transform_ptr_->getRotation();
+    osgQuat q, so; osgVector3 t, s;
+    static_auto_transform_ptr_->getMatrix().decompose(t, q, s, so);
+    return q;
   }
 
   osgVector3 Node::getStaticPosition() const
   {
-    return static_auto_transform_ptr_->getPosition();
+    osgQuat q, so; osgVector3 t, s;
+    static_auto_transform_ptr_->getMatrix().decompose(t, q, s, so);
+    return t;
+  }
+
+  osgVector3 Node::getScale() const
+  {
+    osgQuat q, so; osgVector3 t, s;
+    static_auto_transform_ptr_->getMatrix().decompose(t, q, s, so);
+    return s;
   }
 
   void Node::setScale(float scale)
   {
-    static_auto_transform_ptr_->setScale(scale);
+    osgQuat q, so; osgVector3 t, s;
+    static_auto_transform_ptr_->getMatrix().decompose(t, q, s, so);
+    Matrix m (q);
+    m.setTrans(t);
+
+    static_auto_transform_ptr_->setMatrix(Matrix::scale(scale, scale, scale) * m);
   }
 
  void Node::setScale(const osg::Vec3d &scale)
    {
-     double lmin=scale._v[0];
-     if (lmin>scale._v[1])
-       lmin=scale._v[1];
-     if (lmin>scale._v[2])
-       lmin=scale._v[2];
- 
-     if(lmin<static_auto_transform_ptr_->getMinimumScale())
-       static_auto_transform_ptr_->setMinimumScale(lmin);
-        
-     static_auto_transform_ptr_->setScale(scale);
+    osgQuat q, so; osgVector3 t, s;
+    static_auto_transform_ptr_->getMatrix().decompose(t, q, s, so);
+    Matrix m (q);
+    m.setTrans(t);
+
+    static_auto_transform_ptr_->setMatrix(::osg::Matrix::scale(scale) * m);
    }
 
   void Node::setVisibilityMode (const VisibilityMode& mode)

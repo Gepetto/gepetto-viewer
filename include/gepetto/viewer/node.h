@@ -24,12 +24,7 @@ namespace graphics {
 
         /** PositionAttitudeTransform related to the global configuration */
         osg::AutoTransformRefPtr auto_transform_ptr_;
-        osg::AutoTransformRefPtr static_auto_transform_ptr_;
-
-        /** Associated wireframe node */
-        osg::PolygonModeRefPtr polygon_mode_ptr_;
-        osg::GroupRefPtr wireframe_node_ptr_;
-        osg::GroupRefPtr normal_node_ptr_;
+        osg::MatrixTransformRefPtr static_auto_transform_ptr_;
         
         /** Associated switch node */
         /** TODO: The use of multiswitch may be better */
@@ -126,6 +121,10 @@ namespace graphics {
 
         /** Set scales value of the OSG object */
         virtual void setScale (const osg::Vec3d & scale);
+
+	/** Get scale
+        */
+        osgVector3 getScale() const;
 
         /** Set the color of the object */
         virtual void setColor (const osgVector4& color) = 0;
