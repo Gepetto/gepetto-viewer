@@ -33,6 +33,7 @@ SET(${LIBRARY_NAME}_SOURCES
   leaf-node-ground.cpp
   leaf-node-collada.cpp
   leaf-node-light.cpp
+  leaf-node-mesh.cpp
   urdf-parser.cpp
   leaf-node-xyzaxis.cpp
   leaf-node-arrow.cpp
@@ -49,6 +50,7 @@ ADD_LIBRARY(${LIBRARY_NAME} SHARED ${${LIBRARY_NAME}_SOURCES})
 PKG_CONFIG_USE_DEPENDENCY(${LIBRARY_NAME} openscenegraph)
 PKG_CONFIG_USE_DEPENDENCY(${LIBRARY_NAME} urdfdom)
 TARGET_LINK_LIBRARIES(${LIBRARY_NAME} ${Boost_LIBRARIES})
+TARGET_LINK_LIBRARIES(${LIBRARY_NAME} ${X11_LIBRARIES})
 
 ADD_EXECUTABLE(testing ../tests/test.cpp)
 TARGET_LINK_LIBRARIES(testing ${LIBRARY_NAME})

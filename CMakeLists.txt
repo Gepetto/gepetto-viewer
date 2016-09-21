@@ -51,6 +51,7 @@ SET(${PROJECT_NAME}_HEADERS
   include/gepetto/viewer/leaf-node-face.h
   include/gepetto/viewer/leaf-node-ground.h
   include/gepetto/viewer/leaf-node-line.h
+  include/gepetto/viewer/leaf-node-mesh.h
   include/gepetto/viewer/leaf-node-sphere.h
   include/gepetto/viewer/leaf-node-light.h
   include/gepetto/viewer/leaf-node-arrow.h
@@ -67,11 +68,18 @@ SET(${PROJECT_NAME}_HEADERS
   include/gepetto/viewer/OSGManipulator/keyboard-manipulator.h
 )
 
+FIND_PACKAGE(X11 REQUIRED)
+INCLUDE_DIRECTORIES(${X11_INCLUDE_DIR})
+
 ADD_REQUIRED_DEPENDENCY("openscenegraph >= 3.2")
 ADD_REQUIRED_DEPENDENCY("urdfdom")
 SEARCH_FOR_BOOST()
 
 ADD_SUBDIRECTORY(src)
+FOREACH(lib ${X11_INCLUDE_DIR})
+  PKG_CONFIG_APPEND_CFLAGS("-I${lib}")
+ENDFOREACH(lib ${X11_INCLUDE_DIR})
+PKG_CONFIG_APPEND_LIBS_RAW(${X11_LIBRARIES})
 PKG_CONFIG_APPEND_LIBS(${PROJECT_NAME})
 
 SETUP_PROJECT_FINALIZE()

@@ -35,7 +35,13 @@ namespace graphics {
         ::osg::GraphicsContextRefPtr gc_;
 
         ::osg::CameraRefPtr hud_camera_;
-
+      
+      /** Backgound camera */
+      ::osg::CameraRefPtr bg_camera_;
+      ::osg::Vec4 bg_color1_;
+      ::osg::Vec4 bg_color2_;
+      ::osg::GeometryRefPtr bg_geom_;
+    
         /* OSG Screen capture handler */
         osg::ref_ptr < ::osgViewer::ScreenCaptureHandler> screen_capture_ptr_;
         osg::ref_ptr < ::osgViewer::ScreenCaptureHandler::WriteToFile> write_to_file_ptr_;
@@ -44,7 +50,11 @@ namespace graphics {
         /** Associated weak pointer */
         WindowManagerWeakPtr weak_ptr_;
 
-	void createManipulator();
+      void createManipulator();
+      
+      void createBackground();
+      void applyBackgroundColor();
+      
 
         void init(osg::GraphicsContext* gc);
 
@@ -140,7 +150,11 @@ namespace graphics {
 
         bool writeNodeFile (const std::string& filename);
         
-        void setBackgroundColor(osg::Vec4 color);
+      void setBackgroundColor1(const osg::Vec4 & color)
+      { bg_color1_ = color; applyBackgroundColor(); }
+        
+      void setBackgroundColor2(const osg::Vec4 & color)
+      { bg_color2_ = color; applyBackgroundColor(); }
 
 	void attachCameraToNode(Node *node);
 	void detachCamera();
