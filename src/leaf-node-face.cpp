@@ -181,7 +181,10 @@ namespace graphics {
     void LeafNodeFace::setTexture(const std::string& image_path)
     {
       osg::ref_ptr<osg::Texture2D> texture = new osg::Texture2D;
-      texture->setDataVariance(osg::Object::DYNAMIC); 
+      // Do not resize image to closest power of two values for width and height
+      texture->setResizeNonPowerOfTwoHint (false);
+      // Disable interpolation between pixels.
+      texture->setFilter (osg::Texture::MAG_FILTER, osg::Texture::NEAREST);
       osg::ref_ptr<osg::Image> image = osgDB::readImageFile(image_path);
       if (!image)
       {
