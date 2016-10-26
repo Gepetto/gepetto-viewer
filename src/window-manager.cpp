@@ -276,7 +276,10 @@ namespace graphics {
       GLenum buffer = traits_ptr->doubleBuffer ? GL_BACK : GL_FRONT;
       main_camera_->setDrawBuffer(buffer);
       main_camera_->setReadBuffer(buffer);
-
+      /* Disable small features culling */
+      osg::CullStack::CullingMode cullingMode = main_camera_->getCullingMode();
+      cullingMode &= ~(osg::CullStack::SMALL_FEATURE_CULLING);
+      main_camera_->setCullingMode( cullingMode );
       /* add scene to the viewer */
       viewer_ptr_->setSceneData ( scene_ptr_->asGroup() );
       
