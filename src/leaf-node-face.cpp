@@ -181,7 +181,10 @@ namespace graphics {
     void LeafNodeFace::setTexture(const std::string& image_path)
     {
       osg::ref_ptr<osg::Texture2D> texture = new osg::Texture2D;
-      texture->setDataVariance(osg::Object::DYNAMIC); 
+      // Do not resize image to closest power of two values for width and height
+      texture->setResizeNonPowerOfTwoHint (false);
+      // Disable interpolation between pixels.
+      texture->setFilter (osg::Texture::MAG_FILTER, osg::Texture::NEAREST);
       osg::ref_ptr<osg::Image> image = osgDB::readImageFile(image_path);
       if (!image)
       {
@@ -189,6 +192,13 @@ namespace graphics {
         return;
       } 
       texture->setImage(image);
+      osg::Vec2Array* texcoords = new osg::Vec2Array(4);
+      (*texcoords)[0].set(0.00f,0.0f); // texture coord for vertex 0
+      (*texcoords)[1].set(1.00f,0.0f); // texture coord for vertex 1
+      (*texcoords)[2].set(1.00f,1.0f); // texture coord for vertex 2
+      (*texcoords)[3].set(0.00f,1.0f); // texture coord for vertex 3
+      face_ptr_->setTexCoordArray(0,texcoords);
+
       geode_ptr_->getStateSet()->setTextureAttributeAndModes(0,texture,osg::StateAttribute::ON);
     }
     
