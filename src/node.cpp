@@ -16,6 +16,7 @@
 #include <climits>
 
 namespace graphics {
+  using ::osg::Matrix;
 
   /* Declaration of private function members */
   void Node::init ()
@@ -26,46 +27,46 @@ namespace graphics {
        <- normal_node_ptr_
     */
 
+    switch_node_ptr_ = new ::osg::Group;
+    hl_switch_node_ptr_ = new ::osg::Group;
     auto_transform_ptr_ = new ::osg::AutoTransform;
-    static_auto_transform_ptr_ = new ::osg::AutoTransform;
-    switch_node_ptr_ = new ::osg::Switch;
-    switch_node_ptr_->setName (id_name_);
-    hl_switch_node_ptr_ = new ::osg::Switch;
-
-    wireframe_node_ptr_ = new ::osg::Group;
-    normal_node_ptr_ = new ::osg::Group;
-
-    /* Building hierarchie */
-    switch_node_ptr_->addChild(normal_node_ptr_, true);
-    switch_node_ptr_->addChild(wireframe_node_ptr_, false);
+    static_auto_transform_ptr_ = new ::osg::MatrixTransform;
 
     switch_node_ptr_->getOrCreateStateSet()->setDataVariance(::osg::Object::DYNAMIC);
+    switch_node_ptr_->setName (id_name_);
+    wireframe_modes_.resize(2);
+    wireframe_modes_[FILL]      = new ::osg::Group;
+    wireframe_modes_[WIREFRAME] = new ::osg::Group;
 
-    wireframe_node_ptr_->addChild(hl_switch_node_ptr_);
-    normal_node_ptr_->addChild(hl_switch_node_ptr_);
+    /* Building hierarchie */
+    selected_wireframe_ = FILL;
+    switch_node_ptr_->addChild(wireframe_modes_[selected_wireframe_]);
+    wireframe_modes_[selected_wireframe_]->addChild(hl_switch_node_ptr_);
 
-    ::osg::GroupRefPtr g = setupHighlightState (0);
-    hl_switch_node_ptr_->addChild (g, true);
-    g->addChild (auto_transform_ptr_);
-    for (unsigned int i = 1; i < 9; ++i) {
+    // Setup highlight states
+    highlight_nodes_.resize(9);
+    selected_highlight_ = 0;
+    for (unsigned int i = 0; i < 9; ++i) {
       ::osg::GroupRefPtr g = setupHighlightState (i);
-      hl_switch_node_ptr_->addChild (g, false);
-      g->addChild (auto_transform_ptr_);
+      highlight_nodes_[i] = g;
     }
+    // setHighlightState(0);
+    hl_switch_node_ptr_->addChild(highlight_nodes_[selected_highlight_]);
+    highlight_nodes_[selected_highlight_]->addChild(auto_transform_ptr_);
 
     auto_transform_ptr_->addChild(static_auto_transform_ptr_);
 
     /* Allowing wireframe mode */
-    polygon_mode_ptr_ = new ::osg::PolygonMode;
-    polygon_mode_ptr_->setMode( ::osg::PolygonMode::FRONT_AND_BACK, ::osg::PolygonMode::LINE );
+    osg::PolygonModeRefPtr polygon_mode_ptr = new ::osg::PolygonMode;
+    polygon_mode_ptr->setMode( ::osg::PolygonMode::FRONT_AND_BACK, ::osg::PolygonMode::LINE );
 
     ::osg::MaterialRefPtr material_wireframe_ptr = new osg::Material;
     material_wireframe_ptr->setColorMode(osg::Material::DIFFUSE);
     material_wireframe_ptr->setDiffuse(osg::Material::FRONT_AND_BACK, osgVector4(1.,1.,1.,1.));
 
-    wireframe_node_ptr_->getOrCreateStateSet()->setAttributeAndModes(polygon_mode_ptr_, ::osg::StateAttribute::PROTECTED | ::osg::StateAttribute::ON );
-    wireframe_node_ptr_->getOrCreateStateSet()->setMode(GL_BLEND, ::osg::StateAttribute::OFF | ::osg::StateAttribute::PROTECTED ); // PROTECTED attribut allows wireframe node to not be influenced by alpha
-    wireframe_node_ptr_->getOrCreateStateSet()->setAttributeAndModes(material_wireframe_ptr, ::osg::StateAttribute::ON | ::osg::StateAttribute::PROTECTED );
+    wireframe_modes_[WIREFRAME]->getOrCreateStateSet()->setAttributeAndModes(polygon_mode_ptr, ::osg::StateAttribute::PROTECTED | ::osg::StateAttribute::ON );
+    wireframe_modes_[WIREFRAME]->getOrCreateStateSet()->setMode(GL_BLEND, ::osg::StateAttribute::OFF | ::osg::StateAttribute::PROTECTED ); // PROTECTED attribut allows wireframe node to not be influenced by alpha
+    wireframe_modes_[WIREFRAME]->getOrCreateStateSet()->setAttributeAndModes(material_wireframe_ptr, ::osg::StateAttribute::ON | ::osg::StateAttribute::PROTECTED );
     geode_ptr_ = NULL;
     alpha_ = 0;
   }
@@ -178,26 +179,57 @@ namespace graphics {
 
   void Node::setWireFrameMode (const WireFrameMode& mode)
   {
+    if (mode == selected_wireframe_) return;
+    bool fillSelected = (selected_wireframe_ == FILL     ) || (selected_wireframe_ == FILL_AND_WIREFRAME);
+    bool wireSelected = (selected_wireframe_ == WIREFRAME) || (selected_wireframe_ == FILL_AND_WIREFRAME);
+    // 0: keep as it is
+    // 1: select
+    // 2: deselect
+    int selectFill = 0, selectWire = 0;
     switch (mode) {
     case FILL:
-      switch_node_ptr_->setValue (0, true);
-      switch_node_ptr_->setValue (1, false);
+      if ( wireSelected) selectWire = 2;
+      if (!fillSelected) selectFill = 1;
       break;
-
     case WIREFRAME:
-      switch_node_ptr_->setValue (0, false);
-      switch_node_ptr_->setValue (1, true);
+      if (!wireSelected) selectWire = 1;
+      if ( fillSelected) selectFill = 2;
       break;
-
     case FILL_AND_WIREFRAME:
-      switch_node_ptr_->setValue (0, true);
-      switch_node_ptr_->setValue (1, true);
+      if (!wireSelected) selectWire = 1;
+      if (!fillSelected) selectFill = 1;
       break;
-
     default:
       ASSERT(false, "WireFrameMode set with bad option");
       break;
     }
+    switch (selectFill) {
+      case 0: break;
+      case 1:
+              wireframe_modes_[FILL]->addChild(hl_switch_node_ptr_);
+              switch_node_ptr_->addChild(wireframe_modes_[FILL]);
+              break;
+      case 2:
+              wireframe_modes_[FILL]->removeChild(hl_switch_node_ptr_);
+              switch_node_ptr_->removeChild(wireframe_modes_[FILL]);
+              break;
+      default:
+              assert(false && "Wrong action");
+    };
+    switch (selectWire) {
+      case 0: break;
+      case 1:
+              wireframe_modes_[WIREFRAME]->addChild(hl_switch_node_ptr_);
+              switch_node_ptr_->addChild(wireframe_modes_[WIREFRAME]);
+              break;
+      case 2:
+              wireframe_modes_[WIREFRAME]->removeChild(hl_switch_node_ptr_);
+              switch_node_ptr_->removeChild(wireframe_modes_[WIREFRAME]);
+              break;
+      default:
+              assert(false && "Wrong action");
+    };
+    selected_wireframe_ = mode;
   }
 
   void Node::addLandmark(const float& size)
@@ -334,9 +366,14 @@ namespace graphics {
 
   void Node::setHighlightState (unsigned int state)
   {
-    if (state < hl_switch_node_ptr_->getNumChildren ()) {
-      hl_switch_node_ptr_->setAllChildrenOff ();
-      hl_switch_node_ptr_->setSingleChildOn (state);
+    if (state != selected_highlight_
+        && state < highlight_nodes_.size()) {
+      hl_switch_node_ptr_->replaceChild(highlight_nodes_[selected_highlight_],
+                                        highlight_nodes_[state]);
+      highlight_nodes_[selected_highlight_]->removeChild(auto_transform_ptr_);
+      highlight_nodes_[state]              ->addChild(auto_transform_ptr_);
+      // Update the child
+      selected_highlight_ = state;
     }
   }
 
@@ -375,16 +412,13 @@ namespace graphics {
   Node::~Node ()
   {
     /* Proper deletion */
-    normal_node_ptr_->removeChild (auto_transform_ptr_);
-    wireframe_node_ptr_->removeChild (auto_transform_ptr_);
-    auto_transform_ptr_ = NULL;
-
-    polygon_mode_ptr_ = NULL;
-    switch_node_ptr_->removeChild (wireframe_node_ptr_);
-    wireframe_node_ptr_ = NULL;
-
-    switch_node_ptr_->removeChild (normal_node_ptr_);
-    normal_node_ptr_ = NULL;
+    /* deleting the top most node (switch_node_ptr_) will delete everything else.
+     * Loop over the parents of switch_node_ptr_ and remove references to it.
+     */
+    typedef ::osg::Node::ParentList PL_t;
+    PL_t parents = switch_node_ptr_->getParents();
+    for (PL_t::const_iterator _p = parents.begin(); _p != parents.end(); ++_p)
+      (*_p)->removeChild(switch_node_ptr_);
   }
   
   std::pair<osgVector3, osgQuat> Node::getGlobalTransform() const

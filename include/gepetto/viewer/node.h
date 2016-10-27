@@ -28,8 +28,13 @@ namespace graphics {
         
         /** Associated switch node */
         /** TODO: The use of multiswitch may be better */
-        osg::SwitchRefPtr switch_node_ptr_;
-        osg::SwitchRefPtr hl_switch_node_ptr_;
+        osg::GroupRefPtr switch_node_ptr_;
+        WireFrameMode selected_wireframe_;
+        std::vector< ::osg::GroupRefPtr > wireframe_modes_;
+
+        osg::GroupRefPtr hl_switch_node_ptr_;
+        std::size_t selected_highlight_;
+        std::vector< ::osg::GroupRefPtr > highlight_nodes_;
         
         /** Initialization function */
         void init ();
