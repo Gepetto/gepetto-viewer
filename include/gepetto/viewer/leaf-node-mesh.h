@@ -67,7 +67,11 @@ namespace graphics {
          */
         LeafNodeMeshPtr_t self(void) const;
         
-        void setColor(const osgVector4& color);   
+	void setColor(const osgVector4& color_diffuse);
+
+        void setColor(const osgVector4& color_diffuse,
+		      const osgVector4& color_specular,
+		      const osgVector4& color_emissive);   
 
         void setTexture(const std::string& image_path);     
 

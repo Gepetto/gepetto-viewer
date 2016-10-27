@@ -75,6 +75,9 @@ namespace graphics {
 
         void setTexture(const std::string& image_path);
 
+	/// Get number of vertices
+	std::size_t nbVertices () const { return vertices_->size ();}
+
         SCENE_VIEWER_ACCEPT_VISITOR;
         
         /** Destructor */
