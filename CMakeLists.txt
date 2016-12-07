@@ -19,8 +19,6 @@
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
-OPTION(DISABLE_SAMPLING "Activate this option if your computer have no graphic card or a small one" OFF)
-
 SET(CXX_DISABLE_WERROR TRUE)
 INCLUDE(cmake/base.cmake)
 INCLUDE(cmake/boost.cmake)
@@ -32,10 +30,6 @@ SET(PROJECT_URL "https://github.com/humanoid-path-planner/gepetto-viewer")
 # Where to compile shared objects
 SET(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
 SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
-
-if(DISABLE_SAMPLING)
-  ADD_DEFINITIONS(-DDISABLE_SAMPLING)
-endif()
 
 SETUP_PROJECT()
 
