@@ -8,6 +8,7 @@
 
 #include <gepetto/viewer/window-manager.h>
 
+#include <osg/DisplaySettings>
 #include <osg/Camera>
 #include <gepetto/viewer/OSGManipulator/keyboard-manipulator.h>
 #include <osgGA/TrackballManipulator>
@@ -106,7 +107,8 @@ namespace graphics {
                                   const unsigned int& width,
                                   const unsigned int& height)
     {
-      osg::TraitsRefPtr traits_ptr = new ::osg::GraphicsContext::Traits;
+      osg::DisplaySettings* ds = osg::DisplaySettings::instance().get();
+      osg::TraitsRefPtr traits_ptr = new ::osg::GraphicsContext::Traits(ds);
 
       traits_ptr->windowName = "Gepetto Viewer";
       traits_ptr->x = x;
@@ -117,13 +119,6 @@ namespace graphics {
       traits_ptr->doubleBuffer = true;
       traits_ptr->sharedContext = 0;
 
-#ifndef DISABLE_SAMPLING
-      traits_ptr->sampleBuffers = 1;
-      traits_ptr->samples = 4;
-#else
-      traits_ptr->sampleBuffers = 0;
-      traits_ptr->samples = 0;
-#endif
       traits_ptr->vsync = true;
       traits_ptr->readDISPLAY ();
       traits_ptr->setUndefinedScreenDetailsToDefaultScreen ();
