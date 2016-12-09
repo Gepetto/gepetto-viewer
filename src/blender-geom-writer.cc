@@ -58,6 +58,37 @@ namespace graphics {
       os << "( " << q.w() << ", " << q.x() << ", " << q.y() << ", " << q.z() << ", )";
       return os;
     }
+
+    std::ostream& writeRGB(std::ostream& os, const osgVector4& rgba)
+    {
+      return os << "( " << rgba.r() << ", " << rgba.g() << ", " << rgba.b() << ", )";
+    }
+
+    std::string writeMaterial(std::ostream& os, const std::string& name, const osg::Material* mat,
+        bool diffuse = true, bool ambient = false, bool specular = false) {
+      const std::string var = "material";
+      const osg::Material::Face face = osg::Material::FRONT;
+      os << var << " = bpy.data.materials.new(\"" << name << "\")" << end;
+      if (diffuse)
+        writeRGB (os << var << ".diffuse_color = ", mat->getDiffuse(face)) << end
+          << var << ".diffuse_intensity = " << mat->getDiffuse(face).a() << end;
+      if (ambient)
+        writeRGB (os << var << ".ambient_color = ", mat->getAmbient(face)) << end
+          << var << ".ambient_intensity = " << mat->getAmbient(face).a() << end;
+      if (specular)
+        writeRGB (os << var << ".specular_color = ", mat->getSpecular(face)) << end
+          << var << ".specular_intensity = " << mat->getSpecular(face).a() << end;
+      return var;
+    }
+
+    std::string writeMaterial(std::ostream& os, const std::string& name, const osgVector4& rgbaDiffuse)
+    {
+      const std::string var = "material";
+      os << var << " = bpy.data.materials.new(\"" << name << "\")" << end;
+      writeRGB (os << var << ".diffuse_color = ", rgbaDiffuse) << end
+        << var << ".diffuse_intensity = " << rgbaDiffuse.a() << end;
+      return var;
+    }
   }
 
   BlenderGeomWriterVisitor::BlenderGeomWriterVisitor (const std::string& filename)
@@ -67,6 +98,16 @@ namespace graphics {
     const std::string comment = (isNew ? "" : "# ");
     out() << comment << "import bpy" << end << end
       << comment << "## Start convenient functions" << end
+      << comment << "def checkConf():" << end
+      << comment << "  if bpy.app.version[0:2] != (2, 75):" << end
+      << comment << "    print \"Using blender version\", bpy.app.version" << end
+      << comment << "    print \"Developed under version 2.75.0.\"" << end
+      << comment << "    return False" << end
+      << comment << "  if bpy.context.scene.render.engine != 'CYCLES':" << end
+      << comment << "    print \"Cycles renderer is prefered\"" << end
+      << comment << "    return False" << end
+      << comment << "  return True" << end
+      << comment << end
       << comment << "taggedObjects = list()" << end
       << comment << "def tagObjects ():" << end
       << comment << "  global taggedObjects" << end
@@ -81,6 +122,11 @@ namespace graphics {
       << comment << "def setParent (children, parent):" << end
       << comment << "  for child in children:" << end
       << comment << "    child.parent = parent" << end << end
+      << comment << "" << end
+      << comment << "def setMaterial (children, mat):" << end
+      << comment << "  for child in children:" << end
+      << comment << "    child.data.materials.append(mat)" << end << end
+      << comment << "checkConf()" << end << end
       << comment << "## End of convenient functions" << end;
   }
 
@@ -130,6 +176,10 @@ namespace graphics {
       << "bpy.ops.mesh.primitive_cube_add ()" << end
       << "bpy.context.object.dimensions = ";
     writeVectorAsList(out(), node.getHalfAxis()*2) << end;
+
+    const std::string var_mat = writeMaterial(out(), node.getID() + "__mat", node.getColor());
+    out () << "bpy.context.object.data.materials.append(" << var_mat << ')' << end;
+
     standardApply(static_cast<Node&>(node));
   }
   void BlenderGeomWriterVisitor::apply (LeafNodeCapsule& node)
@@ -164,6 +214,14 @@ namespace graphics {
       << "print(imported_objects)" << end
       << "bpy.ops.object.empty_add ()" << end
       << "setParent (imported_objects, bpy.context.object)" << end;
+
+    osg::Material* mat_ptr = dynamic_cast<osg::Material*> (
+        node.getOsgNode()->getStateSet()->getAttribute(osg::StateAttribute::MATERIAL)); 
+    if (mat_ptr != NULL) { // Color was set by URDF
+      const std::string var_mat = writeMaterial(out(), node.getID() + "__mat", mat_ptr, true, false, false);
+      out () << "setMaterial (imported_objects, " << var_mat << ')' << end;
+    }
+
     standardApply(node);
   }
   void BlenderGeomWriterVisitor::apply (LeafNodeCone& node)
