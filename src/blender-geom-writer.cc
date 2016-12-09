@@ -41,6 +41,7 @@ namespace graphics {
     const char end = '\n';
     const char group[] = "##";
     const char node[] = "#";
+    const char varMat[] = "material";
 
     template <typename Vector>
       std::ostream& writeVectorAsList (std::ostream& os, const Vector& v)
@@ -64,30 +65,40 @@ namespace graphics {
       return os << "( " << rgba.r() << ", " << rgba.g() << ", " << rgba.b() << ", )";
     }
 
-    std::string writeMaterial(std::ostream& os, const std::string& name, const osg::Material* mat,
+    void writeMaterial(std::ostream& os, const std::string& name, const osg::Material* mat,
         bool diffuse = true, bool ambient = false, bool specular = false) {
-      const std::string var = "material";
       const osg::Material::Face face = osg::Material::FRONT;
-      os << var << " = bpy.data.materials.new(\"" << name << "\")" << end;
+      os << varMat << " = bpy.data.materials.new(\"" << name << "\")" << end;
       if (diffuse)
-        writeRGB (os << var << ".diffuse_color = ", mat->getDiffuse(face)) << end
-          << var << ".diffuse_intensity = " << mat->getDiffuse(face).a() << end;
+        writeRGB (os << varMat << ".diffuse_color = ", mat->getDiffuse(face)) << end
+          << varMat << ".diffuse_intensity = " << mat->getDiffuse(face).a() << end;
       if (ambient)
-        writeRGB (os << var << ".ambient_color = ", mat->getAmbient(face)) << end
-          << var << ".ambient_intensity = " << mat->getAmbient(face).a() << end;
+        writeRGB (os << varMat << ".ambient_color = ", mat->getAmbient(face)) << end
+          << varMat << ".ambient_intensity = " << mat->getAmbient(face).a() << end;
       if (specular)
-        writeRGB (os << var << ".specular_color = ", mat->getSpecular(face)) << end
-          << var << ".specular_intensity = " << mat->getSpecular(face).a() << end;
-      return var;
+        writeRGB (os << varMat << ".specular_color = ", mat->getSpecular(face)) << end
+          << varMat << ".specular_intensity = " << mat->getSpecular(face).a() << end;
     }
 
-    std::string writeMaterial(std::ostream& os, const std::string& name, const osgVector4& rgbaDiffuse)
+    void writeMaterial(std::ostream& os, const std::string& name, const osgVector4& rgbaDiffuse)
     {
-      const std::string var = "material";
-      os << var << " = bpy.data.materials.new(\"" << name << "\")" << end;
-      writeRGB (os << var << ".diffuse_color = ", rgbaDiffuse) << end
-        << var << ".diffuse_intensity = " << rgbaDiffuse.a() << end;
-      return var;
+      os << varMat << " = bpy.data.materials.new(\"" << name << "\")" << end;
+      writeRGB (os << varMat << ".diffuse_color = ", rgbaDiffuse) << end
+        << varMat << ".diffuse_intensity = " << rgbaDiffuse.a() << end;
+    }
+
+    template <typename NodeType> void setColor(std::ostream& os, NodeType& node) {
+      writeMaterial(os, node.getID() + "__mat", node.getColor());
+      os << "bpy.context.object.data.materials.append(" << varMat << ')' << end;
+    }
+
+    template <> void setColor(std::ostream& os, LeafNodeCollada& node) {
+      osg::Material* mat_ptr = dynamic_cast<osg::Material*> (
+          node.getOsgNode()->getStateSet()->getAttribute(osg::StateAttribute::MATERIAL)); 
+      if (mat_ptr != NULL) { // Color was set by URDF
+        writeMaterial(os, node.getID() + "__mat", mat_ptr, true, false, false);
+        os << "setMaterial (imported_objects, " << varMat << ')' << end;
+      }
     }
   }
 
@@ -177,10 +188,9 @@ namespace graphics {
       << "bpy.context.object.dimensions = ";
     writeVectorAsList(out(), node.getHalfAxis()*2) << end;
 
-    const std::string var_mat = writeMaterial(out(), node.getID() + "__mat", node.getColor());
-    out () << "bpy.context.object.data.materials.append(" << var_mat << ')' << end;
+    setColor(out(), node);
 
-    standardApply(static_cast<Node&>(node));
+    standardApply(node);
   }
   void BlenderGeomWriterVisitor::apply (LeafNodeCapsule& node)
   {
@@ -215,12 +225,7 @@ namespace graphics {
       << "bpy.ops.object.empty_add ()" << end
       << "setParent (imported_objects, bpy.context.object)" << end;
 
-    osg::Material* mat_ptr = dynamic_cast<osg::Material*> (
-        node.getOsgNode()->getStateSet()->getAttribute(osg::StateAttribute::MATERIAL)); 
-    if (mat_ptr != NULL) { // Color was set by URDF
-      const std::string var_mat = writeMaterial(out(), node.getID() + "__mat", mat_ptr, true, false, false);
-      out () << "setMaterial (imported_objects, " << var_mat << ')' << end;
-    }
+    setColor(out(), node);
 
     standardApply(node);
   }
@@ -228,12 +233,14 @@ namespace graphics {
   {
     out() << "bpy.ops.mesh.primitive_cone_add (radius1="
       << node.getRadius() << ", depth=" << node.getHeight() << ')' << end;
+    setColor(out(), node);
     standardApply(node);
   }
   void BlenderGeomWriterVisitor::apply (LeafNodeCylinder& node)
   {
     out() << "bpy.ops.mesh.primitive_cylinder_add (radius="
       << node.getRadius() << ", depth=" << node.getHeight() << ')' << end;
+    setColor(out(), node);
     standardApply(node);
   }
   void BlenderGeomWriterVisitor::apply (LeafNodeFace& node)
@@ -256,6 +263,7 @@ namespace graphics {
   {
     out () << "bpy.ops.mesh.primitive_ico_sphere_add (size="
       << node.getRadius() << ")" << end;
+    setColor(out(), node);
     standardApply(node);
   }
   void BlenderGeomWriterVisitor::apply (LeafNodeXYZAxis& node)
