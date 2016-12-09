@@ -42,6 +42,7 @@ namespace graphics {
     const char group[] = "##";
     const char node[] = "#";
     const char varMat[] = "material";
+    const char warning[] = "# Warning: ";
 
     template <typename Vector>
       std::ostream& writeVectorAsList (std::ostream& os, const Vector& v)
@@ -257,7 +258,31 @@ namespace graphics {
   }
   void BlenderGeomWriterVisitor::apply (LeafNodeLine& node)
   {
-    unimplemented("LeafNodeLine", node);
+    ::osg::Vec3ArrayRefPtr points = node.getPoints();
+    out() << "points = [";
+    for (std::size_t i = 0; i < points->size(); ++i)
+      writeVectorAsList(out(), points->at(i)) << ',';
+    out() << ']' << end;
+
+    if (node.getMode() != GL_LINE_STRIP) {
+      out() << warning << "Only GL_LINE_STRIP is supported." << end;
+    }
+
+    out()
+      << "curve = bpy.data.curves.new(name=\"" << node.getID() <<  "__curve\", type='CURVE')" << end
+      << "curve.dimensions = '3D'" << end
+      << "curve.fill_mode = 'FULL'" << end
+      << "curve.bevel_depth = 0.01" << end
+      << "curve.bevel_resolution = 10" << end
+      /// define points that make the line
+      << "polyline = curve.splines.new('POLY')" << end
+      << "polyline.points.add(len(points)-1)" << end
+      << "for i in xrange(len(points)):" << end
+      << "  polyline.points[i].co = (points[i])+(1.0,)" << end;
+
+    setColor(out(), node);
+
+    standardApply(node);
   }
   void BlenderGeomWriterVisitor::apply (LeafNodeSphere& node)
   {
