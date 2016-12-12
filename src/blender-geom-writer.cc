@@ -112,11 +112,11 @@ namespace graphics {
       << comment << "## Start convenient functions" << end
       << comment << "def checkConf():" << end
       << comment << "  if bpy.app.version[0:2] != (2, 75):" << end
-      << comment << "    print \"Using blender version\", bpy.app.version" << end
-      << comment << "    print \"Developed under version 2.75.0.\"" << end
+      << comment << "    print(\"Using blender version \" + str(bpy.app.version))" << end
+      << comment << "    print(\"Developed under version 2.75.0.\")" << end
       << comment << "    return False" << end
       << comment << "  if bpy.context.scene.render.engine != 'CYCLES':" << end
-      << comment << "    print \"Cycles renderer is prefered\"" << end
+      << comment << "    print(\"Cycles renderer is prefered\")" << end
       << comment << "    return False" << end
       << comment << "  return True" << end
       << comment << end
