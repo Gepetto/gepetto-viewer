@@ -41,6 +41,8 @@ namespace graphics {
     const char end = '\n';
     const char group[] = "##";
     const char node[] = "#";
+    const char varMat[] = "material";
+    const char warning[] = "# Warning: ";
 
     template <typename Vector>
       std::ostream& writeVectorAsList (std::ostream& os, const Vector& v)
@@ -58,6 +60,47 @@ namespace graphics {
       os << "( " << q.w() << ", " << q.x() << ", " << q.y() << ", " << q.z() << ", )";
       return os;
     }
+
+    std::ostream& writeRGB(std::ostream& os, const osgVector4& rgba)
+    {
+      return os << "( " << rgba.r() << ", " << rgba.g() << ", " << rgba.b() << ", )";
+    }
+
+    void writeMaterial(std::ostream& os, const std::string& name, const osg::Material* mat,
+        bool diffuse = true, bool ambient = false, bool specular = false) {
+      const osg::Material::Face face = osg::Material::FRONT;
+      os << varMat << " = bpy.data.materials.new(\"" << name << "\")" << end;
+      if (diffuse)
+        writeRGB (os << varMat << ".diffuse_color = ", mat->getDiffuse(face)) << end
+          << varMat << ".diffuse_intensity = " << mat->getDiffuse(face).a() << end;
+      if (ambient)
+        writeRGB (os << varMat << ".ambient_color = ", mat->getAmbient(face)) << end
+          << varMat << ".ambient_intensity = " << mat->getAmbient(face).a() << end;
+      if (specular)
+        writeRGB (os << varMat << ".specular_color = ", mat->getSpecular(face)) << end
+          << varMat << ".specular_intensity = " << mat->getSpecular(face).a() << end;
+    }
+
+    void writeMaterial(std::ostream& os, const std::string& name, const osgVector4& rgbaDiffuse)
+    {
+      os << varMat << " = bpy.data.materials.new(\"" << name << "\")" << end;
+      writeRGB (os << varMat << ".diffuse_color = ", rgbaDiffuse) << end
+        << varMat << ".diffuse_intensity = " << rgbaDiffuse.a() << end;
+    }
+
+    template <typename NodeType> void setColor(std::ostream& os, NodeType& node) {
+      writeMaterial(os, node.getID() + "__mat", node.getColor());
+      os << "bpy.context.object.data.materials.append(" << varMat << ')' << end;
+    }
+
+    template <> void setColor(std::ostream& os, LeafNodeCollada& node) {
+      osg::Material* mat_ptr = dynamic_cast<osg::Material*> (
+          node.getOsgNode()->getStateSet()->getAttribute(osg::StateAttribute::MATERIAL)); 
+      if (mat_ptr != NULL) { // Color was set by URDF
+        writeMaterial(os, node.getID() + "__mat", mat_ptr, true, false, false);
+        os << "setMaterial (imported_objects, " << varMat << ')' << end;
+      }
+    }
   }
 
   BlenderGeomWriterVisitor::BlenderGeomWriterVisitor (const std::string& filename)
@@ -67,6 +110,16 @@ namespace graphics {
     const std::string comment = (isNew ? "" : "# ");
     out() << comment << "import bpy" << end << end
       << comment << "## Start convenient functions" << end
+      << comment << "def checkConf():" << end
+      << comment << "  if bpy.app.version[0:2] != (2, 75):" << end
+      << comment << "    print(\"Using blender version \" + str(bpy.app.version))" << end
+      << comment << "    print(\"Developed under version 2.75.0.\")" << end
+      << comment << "    return False" << end
+      << comment << "  if bpy.context.scene.render.engine != 'CYCLES':" << end
+      << comment << "    print(\"Cycles renderer is prefered\")" << end
+      << comment << "    return False" << end
+      << comment << "  return True" << end
+      << comment << end
       << comment << "taggedObjects = list()" << end
       << comment << "def tagObjects ():" << end
       << comment << "  global taggedObjects" << end
@@ -81,6 +134,11 @@ namespace graphics {
       << comment << "def setParent (children, parent):" << end
       << comment << "  for child in children:" << end
       << comment << "    child.parent = parent" << end << end
+      << comment << "" << end
+      << comment << "def setMaterial (children, mat):" << end
+      << comment << "  for child in children:" << end
+      << comment << "    child.data.materials.append(mat)" << end << end
+      << comment << "checkConf()" << end << end
       << comment << "## End of convenient functions" << end;
   }
 
@@ -130,7 +188,10 @@ namespace graphics {
       << "bpy.ops.mesh.primitive_cube_add ()" << end
       << "bpy.context.object.dimensions = ";
     writeVectorAsList(out(), node.getHalfAxis()*2) << end;
-    standardApply(static_cast<Node&>(node));
+
+    setColor(out(), node);
+
+    standardApply(node);
   }
   void BlenderGeomWriterVisitor::apply (LeafNodeCapsule& node)
   {
@@ -164,18 +225,23 @@ namespace graphics {
       << "print(imported_objects)" << end
       << "bpy.ops.object.empty_add ()" << end
       << "setParent (imported_objects, bpy.context.object)" << end;
+
+    setColor(out(), node);
+
     standardApply(node);
   }
   void BlenderGeomWriterVisitor::apply (LeafNodeCone& node)
   {
     out() << "bpy.ops.mesh.primitive_cone_add (radius1="
       << node.getRadius() << ", depth=" << node.getHeight() << ')' << end;
+    setColor(out(), node);
     standardApply(node);
   }
   void BlenderGeomWriterVisitor::apply (LeafNodeCylinder& node)
   {
     out() << "bpy.ops.mesh.primitive_cylinder_add (radius="
       << node.getRadius() << ", depth=" << node.getHeight() << ')' << end;
+    setColor(out(), node);
     standardApply(node);
   }
   void BlenderGeomWriterVisitor::apply (LeafNodeFace& node)
@@ -192,12 +258,37 @@ namespace graphics {
   }
   void BlenderGeomWriterVisitor::apply (LeafNodeLine& node)
   {
-    unimplemented("LeafNodeLine", node);
+    ::osg::Vec3ArrayRefPtr points = node.getPoints();
+    out() << "points = [";
+    for (std::size_t i = 0; i < points->size(); ++i)
+      writeVectorAsList(out(), points->at(i)) << ',';
+    out() << ']' << end;
+
+    if (node.getMode() != GL_LINE_STRIP) {
+      out() << warning << "Only GL_LINE_STRIP is supported." << end;
+    }
+
+    out()
+      << "curve = bpy.data.curves.new(name=\"" << node.getID() <<  "__curve\", type='CURVE')" << end
+      << "curve.dimensions = '3D'" << end
+      << "curve.fill_mode = 'FULL'" << end
+      << "curve.bevel_depth = 0.01" << end
+      << "curve.bevel_resolution = 10" << end
+      /// define points that make the line
+      << "polyline = curve.splines.new('POLY')" << end
+      << "polyline.points.add(len(points)-1)" << end
+      << "for i in xrange(len(points)):" << end
+      << "  polyline.points[i].co = (points[i])+(1.0,)" << end;
+
+    setColor(out(), node);
+
+    standardApply(node);
   }
   void BlenderGeomWriterVisitor::apply (LeafNodeSphere& node)
   {
     out () << "bpy.ops.mesh.primitive_ico_sphere_add (size="
       << node.getRadius() << ")" << end;
+    setColor(out(), node);
     standardApply(node);
   }
   void BlenderGeomWriterVisitor::apply (LeafNodeXYZAxis& node)

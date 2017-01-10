@@ -86,11 +86,18 @@ namespace graphics {
          */
         virtual void setMode (const GLenum mode);
 
+        GLenum getMode () const;
+
         /** Define the start and end point of the line
          */
         virtual void setPoints (const osgVector3& start_point, const osgVector3& end_point);
 
         virtual void setPoints (const ::osg::Vec3ArrayRefPtr& points);
+
+        ::osg::Vec3ArrayRefPtr getPoints()
+        {
+          return points_ptr_;
+        }
 
         void setColor(const osgVector4& color);
 

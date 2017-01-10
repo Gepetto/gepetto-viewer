@@ -172,6 +172,11 @@ namespace graphics {
       drawArray_ptr_->set (mode, 0, points_ptr_->size ());
     }
 
+    GLenum LeafNodeLine::getMode () const
+    {
+      return drawArray_ptr_->getMode();
+    }
+
     void LeafNodeLine::setPoints (const osgVector3& start_point, const osgVector3& end_point)
     {        
         setStartPoint(start_point);
