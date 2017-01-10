@@ -409,6 +409,20 @@ namespace graphics {
   {
     manipulator_ptr->selectMatrixManipulator(0);
   }
+
+  void WindowManager::getCameraTransform(osg::Vec3d& pos,osg::Quat& rot){
+    osg::Matrixd matrix = manipulator_ptr->getMatrix();
+    matrix.get(rot);
+    pos = matrix.getTrans();
+  }
+
+  void WindowManager::setCameraTransform(const osg::Vec3d &pos, const osg::Quat &rot){
+   osg::Matrixd matrix= osg::Matrixd();
+   matrix.setTrans(pos.x(),pos.y(),pos.z());
+   matrix.setRotate(rot);
+   manipulator_ptr->setByMatrix(matrix);
+  }
+
   
     /* End declaration of public function members */
 

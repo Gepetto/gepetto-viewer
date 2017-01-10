@@ -156,6 +156,9 @@ namespace graphics {
       void setBackgroundColor2(const osg::Vec4 & color)
       { bg_color2_ = color; applyBackgroundColor(); }
 
+      void getCameraTransform(osg::Vec3d &pos, osg::Quat &rot);
+      void setCameraTransform(const osg::Vec3d &pos, const osg::Quat &rot);
+
 	void attachCameraToNode(Node *node);
 	void detachCamera();
 
