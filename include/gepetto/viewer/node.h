@@ -16,6 +16,11 @@
 namespace graphics {
     
     DEF_CLASS_SMART_PTR(Node)
+
+    enum {
+      IntersectionBit = 0x1,
+      NodeBit         = 0x2
+    };
     
     class Node
     {

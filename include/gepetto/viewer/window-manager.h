@@ -79,7 +79,6 @@ namespace graphics {
 
 
     public:
-
         /** Create and initialize a graphical engine of type OSG
          */
         static WindowManagerPtr_t create();

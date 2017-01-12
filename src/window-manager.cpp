@@ -34,6 +34,9 @@ namespace graphics {
     main_camera_->setClearColor(osg::Vec4(0.,0.,0.,0.));
     // Create background camera
     bg_camera_ = new osg::Camera;
+    bg_camera_->setName("bg_camera");
+    const osg::Node::NodeMask mask = ~IntersectionBit;
+    bg_camera_->setNodeMask(mask);
     
     osg::ref_ptr <const osg::GraphicsContext::Traits> traits_ptr = gc_->getTraits();
     
@@ -58,6 +61,7 @@ namespace graphics {
     // Create the background geometry here
     {
       osg::Geode* geode = new osg::Geode();
+      geode->setName("background");
       osg::StateSet* stateset = geode->getOrCreateStateSet();
       stateset->setMode(GL_LIGHTING,osg::StateAttribute::OFF);
       
@@ -137,6 +141,7 @@ namespace graphics {
 
       /* init main camera */
       main_camera_ = viewer_ptr_->getCamera ();
+      main_camera_->setName("main_camera");
 
       gc_ = osg::GraphicsContextRefPtr (gc);
       const osg::GraphicsContext::Traits* traits_ptr = gc->getTraits ();

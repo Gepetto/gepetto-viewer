@@ -8,12 +8,15 @@
 
 #include <gepetto/viewer/node.h>
 
-#include <gepetto/viewer/node-visitor.h>
+#include <climits>
+
 #include <osg/Material>
 #include <osg/LineWidth>
 #include <osgFX/Outline>
 #include <osgFX/Scribe>
-#include <climits>
+
+#include <gepetto/viewer/window-manager.h>
+#include <gepetto/viewer/node-visitor.h>
 
 namespace graphics {
   using ::osg::Matrix;
@@ -32,6 +35,7 @@ namespace graphics {
     auto_transform_ptr_ = new ::osg::AutoTransform;
     static_auto_transform_ptr_ = new ::osg::MatrixTransform;
 
+    switch_node_ptr_->setNodeMask(~NodeBit);
     switch_node_ptr_->getOrCreateStateSet()->setDataVariance(::osg::Object::DYNAMIC);
     switch_node_ptr_->setName (id_name_);
     wireframe_modes_.resize(2);
