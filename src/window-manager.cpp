@@ -393,7 +393,7 @@ namespace graphics {
         options.get());
   }
 
-  void WindowManager::attachCameraToNode(Node* node)
+  void WindowManager::attachCameraToNode(NodePtr_t node)
   {
     osgGA::NodeTrackerManipulator* manip
       = dynamic_cast<osgGA::NodeTrackerManipulator*>
