@@ -43,6 +43,7 @@ namespace graphics {
     const char node[] = "#";
     const char varMat[] = "material";
     const char warning[] = "# Warning: ";
+    const std::string varShape = "currentShape";
 
     template <typename Vector>
       std::ostream& writeVectorAsList (std::ostream& os, const Vector& v)
@@ -88,12 +89,12 @@ namespace graphics {
         << varMat << ".diffuse_intensity = " << rgbaDiffuse.a() << end;
     }
 
-    template <typename NodeType> void setColor(std::ostream& os, NodeType& node) {
+    template <typename NodeType> void setColor(std::ostream& os, NodeType& node, const std::string& var) {
       writeMaterial(os, node.getID() + "__mat", node.getColor());
-      os << "bpy.context.object.data.materials.append(" << varMat << ')' << end;
+      os << var << ".materials.append(" << varMat << ')' << end;
     }
 
-    template <> void setColor(std::ostream& os, LeafNodeCollada& node) {
+    void setColor(std::ostream& os, LeafNodeCollada& node) {
       osg::Material* mat_ptr = dynamic_cast<osg::Material*> (
           node.getOsgNode()->getStateSet()->getAttribute(osg::StateAttribute::MATERIAL)); 
       if (mat_ptr != NULL) { // Color was set by URDF
@@ -105,6 +106,7 @@ namespace graphics {
 
   BlenderGeomWriterVisitor::BlenderGeomWriterVisitor (const std::string& filename)
     : filename_ (filename)
+    , groupDepth_ (0)
   {
     bool isNew = !openFile();
     const std::string comment = (isNew ? "" : "# ");
@@ -138,8 +140,39 @@ namespace graphics {
       << comment << "def setMaterial (children, mat):" << end
       << comment << "  for child in children:" << end
       << comment << "    child.data.materials.append(mat)" << end << end
+      << comment << "" << end
+      << comment << "def makeEmpty(objname):" << end
+      << comment << "  bpy.ops.object.empty_add()" << end
+      << comment << "  bpy.context.object.name = objname" << end
+      << comment << "  return bpy.context.object" << end
+      << comment << "" << end
+      << comment << "def setLocQuatSca(obj, loc = (0,0,0), quat=(1,0,0,0), sca=(1,1,1)):" << end
+      << comment << "  obj.location = loc" << end
+      << comment << "  obj.rotation_mode = 'QUATERNION'" << end
+      << comment << "  obj.rotation_quaternion = quat" << end
+      << comment << "  obj.scale = sca" << end
+      << comment << "" << end
+      << comment << "def makePolyLine(objname, curvename, cList):" << end
+      << comment << "  curvedata = bpy.data.curves.new(name=curvename, type='CURVE')" << end
+      << comment << "  curvedata.dimensions = '3D'" << end
+      << comment << "  curvedata.fill_mode = 'FULL'" << end
+      << comment << "  curvedata.bevel_depth = 0.01" << end
+      << comment << "  curvedata.bevel_resolution = 10" << end
+      << comment << "" << end
+      << comment << "  objectdata = bpy.data.objects.new(objname, curvedata)" << end
+      << comment << "  objectdata.location = (0,0,0) #object origin" << end
+      << comment << "  bpy.context.scene.objects.link(objectdata)" << end
+      << comment << "  w = 1.0" << end
+      << comment << "  polyline = curvedata.splines.new('POLY')" << end
+      << comment << "  polyline.points.add(len(cList)-1)" << end
+      << comment << "  for num in range(len(cList)):" << end
+      << comment << "    x, y, z = cList[num]" << end
+      << comment << "    polyline.points[num].co = (x, y, z, w)" << end
+      << comment << "  return objectdata, curvedata" << end
+      << comment << "" << end << end
+      << comment << "## End of convenient functions" << end
       << comment << "checkConf()" << end << end
-      << comment << "## End of convenient functions" << end;
+      << comment << "obj_stack = []" << end;
   }
 
   bool BlenderGeomWriterVisitor::openFile () {
@@ -159,22 +192,22 @@ namespace graphics {
   }
   void BlenderGeomWriterVisitor::apply (GroupNode& node)
   {
-    for (std::size_t i = 0; i < groupStack_.size() + 1; ++i)
+    for (std::size_t i = 0; i < groupDepth_ + 1; ++i)
       out() << group;
     out() << " Group " << node.getID() << end;
 
     out() << "bpy.ops.object.empty_add()" << end
       << "bpy.context.object.name = \"" << node.getID() << '"' << end;
     // Set parent of this group
-    if (!groupStack_.empty())
-      out() << "bpy.context.object.parent = bpy.data.objects[\""
-        << groupStack_.top() << "\"]" << end;
+    out() << "if obj_stack: bpy.context.object.parent = obj_stack[-1]" << end;
 
-    groupStack_.push(node.getID());
+    ++groupDepth_;
+    out() << "obj_stack.append(bpy.context.object)" << end;
     NodeVisitor::apply(static_cast<Node&>(node));
-    groupStack_.pop();
+    --groupDepth_;
+    out() << "obj_stack.pop()" << end;
 
-    for (std::size_t i = 0; i < groupStack_.size() + 1; ++i)
+    for (std::size_t i = 0; i < groupDepth_ + 1; ++i)
       out() << group;
     out() << end;
   }
@@ -186,10 +219,11 @@ namespace graphics {
   {
     out()
       << "bpy.ops.mesh.primitive_cube_add ()" << end
-      << "bpy.context.object.dimensions = ";
+      << varShape << " = bpy.context.object" << end
+      << varShape << ".dimensions = ";
     writeVectorAsList(out(), node.getHalfAxis()*2) << end;
 
-    setColor(out(), node);
+    setColor(out(), node, varShape + ".data");
 
     standardApply(node);
   }
@@ -223,8 +257,9 @@ namespace graphics {
     out ()
       << "imported_objects = getNonTaggedObjects ()" << end
       << "print(imported_objects)" << end
-      << "bpy.ops.object.empty_add ()" << end
-      << "setParent (imported_objects, bpy.context.object)" << end;
+      << varShape << " = makeEmpty(\"" << node.getID() << "__shape\")" << end
+      << "setLocQuatSca(" << varShape << ')' << end
+      << "setParent (imported_objects, " << varShape << ')' << end;
 
     setColor(out(), node);
 
@@ -233,15 +268,17 @@ namespace graphics {
   void BlenderGeomWriterVisitor::apply (LeafNodeCone& node)
   {
     out() << "bpy.ops.mesh.primitive_cone_add (radius1="
-      << node.getRadius() << ", depth=" << node.getHeight() << ')' << end;
-    setColor(out(), node);
+      << node.getRadius() << ", depth=" << node.getHeight() << ')' << end
+      << varShape << " = bpy.context.object" << end;
+    setColor(out(), node, varShape + ".data");
     standardApply(node);
   }
   void BlenderGeomWriterVisitor::apply (LeafNodeCylinder& node)
   {
     out() << "bpy.ops.mesh.primitive_cylinder_add (radius="
-      << node.getRadius() << ", depth=" << node.getHeight() << ')' << end;
-    setColor(out(), node);
+      << node.getRadius() << ", depth=" << node.getHeight() << ')' << end
+      << varShape << " = bpy.context.object" << end;
+    setColor(out(), node, varShape + ".data");
     standardApply(node);
   }
   void BlenderGeomWriterVisitor::apply (LeafNodeFace& node)
@@ -258,6 +295,8 @@ namespace graphics {
   }
   void BlenderGeomWriterVisitor::apply (LeafNodeLine& node)
   {
+    const char varCurve[] = "currentCurve";
+
     ::osg::Vec3ArrayRefPtr points = node.getPoints();
     out() << "points = [";
     for (std::size_t i = 0; i < points->size(); ++i)
@@ -269,26 +308,19 @@ namespace graphics {
     }
 
     out()
-      << "curve = bpy.data.curves.new(name=\"" << node.getID() <<  "__curve\", type='CURVE')" << end
-      << "curve.dimensions = '3D'" << end
-      << "curve.fill_mode = 'FULL'" << end
-      << "curve.bevel_depth = 0.01" << end
-      << "curve.bevel_resolution = 10" << end
-      /// define points that make the line
-      << "polyline = curve.splines.new('POLY')" << end
-      << "polyline.points.add(len(points)-1)" << end
-      << "for i in xrange(len(points)):" << end
-      << "  polyline.points[i].co = (points[i])+(1.0,)" << end;
+      << varShape << ", " << varCurve
+      << " = makePolyLine(\"" << node.getID() <<  "__shape\", \"" << node.getID() <<  "__curve\", points)" << end;
 
-    setColor(out(), node);
+    setColor(out(), node, varCurve);
 
     standardApply(node);
   }
   void BlenderGeomWriterVisitor::apply (LeafNodeSphere& node)
   {
     out () << "bpy.ops.mesh.primitive_ico_sphere_add (size="
-      << node.getRadius() << ")" << end;
-    setColor(out(), node);
+      << node.getRadius() << ")" << end
+      << varShape << " = bpy.context.object" << end;
+    setColor(out(), node, varShape + ".data");
     standardApply(node);
   }
   void BlenderGeomWriterVisitor::apply (LeafNodeXYZAxis& node)
@@ -301,25 +333,17 @@ namespace graphics {
     const std::string& id = node.getID ();
     // Set name
     out()
-      << "bpy.context.object.name = \"" << id << "__shape\"" << end
-      << "bpy.context.object.location = ";
-    writeVectorAsList(out(), node.getStaticPosition()) << end;
+      << varShape << ".name = \"" << id << "__shape\"" << end
+      << "setLocQuatSca(" << varShape << ", ";
+    writeVectorAsList(out() << "loc = " , node.getStaticPosition()) << ", ";
+    writeVectorAsList(out() << "quat = ", node.getStaticRotation()) << ", ";
+    writeVectorAsList(out() << "sca = " , node.getScale()) << ')' << end;
     out()
-      << "bpy.context.object.rotation_mode = 'QUATERNION'" << end
-      << "bpy.context.object.rotation_quaternion = ";
-    writeVectorAsList(out(), node.getStaticRotation()) << end;
-    out()
-      << "bpy.context.object.scale = ";
-    writeVectorAsList(out(), node.getScale()) << end;
-    out()
-      << "bpy.ops.object.empty_add ()" << end
-      << "bpy.context.object.name = \"" << id << '"' << end
-      << "bpy.data.objects[\"" << id << "__shape\"].parent = "
-      << "bpy.data.objects[\"" << id << "\"]" << end;
+      << "obj = makeEmpty(\"" << id << "\")" << end
+      << "setLocQuatSca(obj)" << end
+      << varShape << ".parent = obj" << end;
     // Set parent group
-    if (!groupStack_.empty())
-      out() << "bpy.context.object.parent = bpy.data.objects[\""
-        << groupStack_.top() << "\"]" << end;
+    out() << "if obj_stack: obj.parent = obj_stack[-1]" << end;
 
     NodeVisitor::apply (node);
   }
@@ -328,7 +352,7 @@ namespace graphics {
   {
     std::cout << type << " is not implemented. " << node.getID()
       << " not added" << std::endl;
-    out() << "bpy.ops.object.empty_add()" << end;
+    out() << varShape << " = makeEmpty()" << end;
     standardApply(node);
   }
 } // namespace graphics

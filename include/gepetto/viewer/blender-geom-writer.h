@@ -55,7 +55,7 @@ namespace graphics {
         std::ofstream file_;
         std::string filename_;
         unsigned int frameCount_;
-        std::stack<std::string> groupStack_;
+        std::size_t groupDepth_;
     };
 } /* namespace graphics */
 
