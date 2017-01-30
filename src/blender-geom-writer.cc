@@ -309,6 +309,9 @@ namespace graphics {
       << "bpy.context.object.rotation_quaternion = ";
     writeVectorAsList(out(), node.getStaticRotation()) << end;
     out()
+      << "bpy.context.object.scale = ";
+    writeVectorAsList(out(), node.getScale()) << end;
+    out()
       << "bpy.ops.object.empty_add ()" << end
       << "bpy.context.object.name = \"" << id << '"' << end
       << "bpy.data.objects[\"" << id << "__shape\"].parent = "
