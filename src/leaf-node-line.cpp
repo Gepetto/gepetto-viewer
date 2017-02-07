@@ -170,6 +170,7 @@ namespace graphics {
     void LeafNodeLine::setMode (const GLenum mode)
     {
       drawArray_ptr_->set (mode, 0, points_ptr_->size ());
+      beam_ptr_->dirtyDisplayList();
     }
 
     GLenum LeafNodeLine::getMode () const
@@ -194,8 +195,16 @@ namespace graphics {
     {      
         color_ptr_->at(0) = color;
         beam_ptr_->dirtyDisplayList();
+        Node::setAlpha(color.a());
     }
-    
+
+    void LeafNodeLine::setAlpha (const float& alpha)
+    {
+      color_ptr_->at(0).a() = alpha;
+      beam_ptr_->dirtyDisplayList();
+      Node::setAlpha(alpha);
+    }
+
     LeafNodeLine::~LeafNodeLine()
     {
         /* Proper deletion of all tree scene */

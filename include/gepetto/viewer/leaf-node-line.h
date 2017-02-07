@@ -109,6 +109,8 @@ namespace graphics {
             return color_array_ptr->at(0);
         }
 
+        void setAlpha (const float& alpha);
+
         SCENE_VIEWER_ACCEPT_VISITOR;
 
         /** Destructor */
