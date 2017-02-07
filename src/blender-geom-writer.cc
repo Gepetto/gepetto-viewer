@@ -19,6 +19,8 @@
 #include <algorithm>
 #include <sys/stat.h>
 
+#include <osgDB/WriteFile>
+
 #include <gepetto/viewer/node.h>
 #include <gepetto/viewer/group-node.h>
 #include <gepetto/viewer/leaf-node-arrow.h>
@@ -102,10 +104,41 @@ namespace graphics {
         os << "setMaterial (imported_objects, " << varMat << ')' << end;
       }
     }
+
+
+    void loadMeshFile(std::ostream& os, const std::string& nodeName, const std::string fn)
+    {
+      os << "tagObjects()" << end;
+
+      std::string ext = fn.substr(fn.find_last_of(".")+1,fn.size());
+      std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
+      if(ext == "obj") {
+        os << "bpy.ops.import_scene.obj (filepath=\"" << fn << "\")" << end;
+      } else if (ext == "dae") {
+        os << "bpy.ops.wm.collada_import (filepath=\"" << fn << "\")" << end;
+      } else if (ext == "stl") {
+        os << "bpy.ops.import_mesh.stl (filepath=\"" << fn << "\")" << end;
+      } else {
+        std::cout << "Extension of file " << fn << " with name " << nodeName
+          << " is not known." << end
+          << "You can load the file manually and add it to the empty object called " << nodeName << end
+          << "To fix the issue, upate" __FILE__ ":" << __LINE__ << std::endl;
+        os << "# Here goes the content of file " << fn << end;
+        os << "# To fix it, upate" __FILE__ ":" << __LINE__ << end;
+      }
+
+      os
+        << "imported_objects = getNonTaggedObjects ()" << end
+        << "print(imported_objects)" << end
+        << varShape << " = makeEmpty(\"" << nodeName << "__shape\")" << end
+        << "setLocQuatSca(" << varShape << ')' << end
+        << "setParent (imported_objects, " << varShape << ')' << end;
+    }
   }
 
   BlenderGeomWriterVisitor::BlenderGeomWriterVisitor (const std::string& filename)
     : filename_ (filename)
+    , nodeCount_ (0)
     , groupDepth_ (0)
   {
     bool isNew = !openFile();
@@ -175,7 +208,8 @@ namespace graphics {
       << comment << "obj_stack = []" << end;
   }
 
-  bool BlenderGeomWriterVisitor::openFile () {
+  bool BlenderGeomWriterVisitor::openFile ()
+  {
     struct stat buffer;   
     bool ret = (stat (filename_.c_str(), &buffer) == 0);
     file_.open (filename_.c_str(),
@@ -233,33 +267,7 @@ namespace graphics {
   }
   void BlenderGeomWriterVisitor::apply (LeafNodeCollada& node)
   {
-    out() << "tagObjects()" << end;
-
-    const std::string& mesh = node.meshFilePath();
-
-    std::string ext = mesh.substr(mesh.find_last_of(".")+1,mesh.size());
-    std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
-    if(ext == "obj") {
-      out() << "bpy.ops.import_scene.obj (filepath=\"" << mesh << "\")" << end;
-    } else if (ext == "dae") {
-      out() << "bpy.ops.wm.collada_import (filepath=\"" << mesh << "\")" << end;
-    } else if (ext == "stl") {
-      out() << "bpy.ops.import_mesh.stl (filepath=\"" << mesh << "\")" << end;
-    } else {
-      std::cout << "Extension of file " << mesh << " with name " << node.getID()
-        << " is not known." << end
-        << "You can load the file manually and add it to the empty object called " << node.getID() << end
-        << "To fix the issue, upate" __FILE__ ":" << __LINE__ << std::endl;
-      out() << "# Here goes the content of file " << mesh << end;
-      out() << "# To fix it, upate" __FILE__ ":" << __LINE__ << end;
-    }
-
-    out ()
-      << "imported_objects = getNonTaggedObjects ()" << end
-      << "print(imported_objects)" << end
-      << varShape << " = makeEmpty(\"" << node.getID() << "__shape\")" << end
-      << "setLocQuatSca(" << varShape << ')' << end
-      << "setParent (imported_objects, " << varShape << ')' << end;
+    loadMeshFile (out(), node.getID(), node.meshFilePath());
 
     setColor(out(), node);
 
@@ -295,24 +303,30 @@ namespace graphics {
   }
   void BlenderGeomWriterVisitor::apply (LeafNodeLine& node)
   {
-    const char varCurve[] = "currentCurve";
-
-    ::osg::Vec3ArrayRefPtr points = node.getPoints();
-    out() << "points = [";
-    for (std::size_t i = 0; i < points->size(); ++i)
-      writeVectorAsList(out(), points->at(i)) << ',';
-    out() << ']' << end;
-
     if (node.getMode() != GL_LINE_STRIP) {
-      out() << warning << "Only GL_LINE_STRIP is supported." << end;
+      const char varCurve[] = "currentCurve";
+
+      ::osg::Vec3ArrayRefPtr points = node.getPoints();
+      out() << "points = [";
+      for (std::size_t i = 0; i < points->size(); ++i)
+        writeVectorAsList(out(), points->at(i)) << ',';
+      out() << ']' << end;
+
+      out()
+        << varShape << ", " << varCurve
+        << " = makePolyLine(\"" << node.getID() <<  "__shape\", \"" << node.getID() <<  "__curve\", points)" << end;
+
+      setColor(out(), node, varCurve);
+    } else {
+      std::stringstream ss; ss << filename_ << "_curve" << nodeCount_ << ".dae";
+      std::string fn = ss.str();
+      osg::ref_ptr <osgDB::Options> os = new osgDB::Options;
+      os->setOptionString ("NoExtras");
+      osgDB::writeNodeFile (*node.asGroup(), fn, os.get());
+
+      loadMeshFile (out(), node.getID(), fn);
+      //setColor(out(), node);
     }
-
-    out()
-      << varShape << ", " << varCurve
-      << " = makePolyLine(\"" << node.getID() <<  "__shape\", \"" << node.getID() <<  "__curve\", points)" << end;
-
-    setColor(out(), node, varCurve);
-
     standardApply(node);
   }
   void BlenderGeomWriterVisitor::apply (LeafNodeSphere& node)
@@ -345,6 +359,7 @@ namespace graphics {
     // Set parent group
     out() << "if obj_stack: obj.parent = obj_stack[-1]" << end;
 
+    ++nodeCount_;
     NodeVisitor::apply (node);
   }
 
