@@ -51,8 +51,8 @@ namespace graphics {
             // float radiusCyl = (getRadius()/4.f) * getSizeAxis();
             float radiusCyl = getRadius()/4.f;
             float lengthCyl = getSizeAxis();
-            float labelShift1 = lengthCyl + getRadius();
-            float labelShift2 = 3.f * radiusCyl;
+            float labelShift1 = lengthCyl + getRadius() + 4 * radiusCyl + getRadius();
+            float labelShift2 = 0;
             // float charSize = 3.f * radiusCyl;
             float charSize = 30;
 
