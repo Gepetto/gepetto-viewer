@@ -205,6 +205,14 @@ namespace graphics {
       Node::setAlpha(alpha);
     }
 
+    void LeafNodeLine::setLineWidth (const float& width)
+    {
+      osg::LineWidth* linewidth = static_cast<osg::LineWidth*>(
+        beam_ptr_->getOrCreateStateSet()->getAttribute(osg::StateAttribute::LINEWIDTH));
+      linewidth->setWidth(width);
+      beam_ptr_->dirtyDisplayList();
+    }
+
     LeafNodeLine::~LeafNodeLine()
     {
         /* Proper deletion of all tree scene */

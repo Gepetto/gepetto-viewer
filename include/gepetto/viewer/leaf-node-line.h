@@ -111,6 +111,8 @@ namespace graphics {
 
         void setAlpha (const float& alpha);
 
+        void setLineWidth (const float& width);
+
         SCENE_VIEWER_ACCEPT_VISITOR;
 
         /** Destructor */
