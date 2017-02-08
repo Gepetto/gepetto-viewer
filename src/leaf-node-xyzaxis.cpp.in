@@ -9,14 +9,34 @@
 #include <gepetto/viewer/leaf-node-xyzaxis.h>
 
 #include <osgUtil/SmoothingVisitor>
+#include <osgText/Text>
 #include <osg/CullFace>
 
 namespace graphics {
+    namespace {
+      osg::ref_ptr<osgText::Text> label(const char* text, osg::ref_ptr<osgText::Font> font, const osgVector3& pos, const float& charSize)
+      {
+            osgVector4 black = osgVector4(0.f, 0.f, 0.f, 1.f);
+            osg::ref_ptr<osgText::Text> l = new osgText::Text;
+            l->setText(text);
+            l->setFont(font);
+            l->setCharacterSize(charSize);
+            l->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
+            l->setFontResolution(30,30);
+            l->setAlignment(osgText::Text::CENTER_BOTTOM);
+            l->setAxisAlignment(osgText::Text::SCREEN);
+            l->setColor(black);
+            l->setPosition(pos);
+            return l;
+      }
+    }
 
     /* Declaration of private function members */
 
     void LeafNodeXYZAxis::init ()
     {
+        static osg::ref_ptr<osgText::Font> font = osgText::readFontFile("@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATAROOTDIR@/@PROJECT_NAME@/fonts/arial.ttf");
+
         /* Create sphere object */
         sphere_ptr_ = new ::osg::Sphere();
         sphere_ptr_->setRadius(getRadius());
@@ -28,12 +48,17 @@ namespace graphics {
         geode_ptr_->addDrawable(sphere_drawable_ptr_);
         if(sizeAxis_ > 0){  // optimisation of memory consumption : doesn't create the axis instead of creating axis with size "0"
              /* create the axis : */
-            float radiusCyl = (getRadius()/4.f) * getSizeAxis();
-            float lengthCyl = (getRadius()*3.f) * getSizeAxis();
+            // float radiusCyl = (getRadius()/4.f) * getSizeAxis();
+            float radiusCyl = getRadius()/4.f;
+            float lengthCyl = getSizeAxis();
+            float labelShift1 = lengthCyl + getRadius();
+            float labelShift2 = 3.f * radiusCyl;
+            // float charSize = 3.f * radiusCyl;
+            float charSize = 30;
 
-            osgVector4 blue = osgVector4(0.f, 0.f, 1.f, 1.f);
+            osgVector4 blue  = osgVector4(0.f, 0.f, 1.f, 1.f);
             osgVector4 green = osgVector4(0.f, 1.f, 0.f, 1.f);
-            osgVector4 red = osgVector4(1.f, 0.f, 0.f, 1.f);
+            osgVector4 red   = osgVector4(1.f, 0.f, 0.f, 1.f);
 
 
             /* X_AXIS */
@@ -54,6 +79,7 @@ namespace graphics {
 
             geode_ptr_->addDrawable(x_cylinder_drawable_);
             geode_ptr_->addDrawable(x_cone_drawable_);
+            geode_ptr_->addDrawable(label("X", font, osgVector3(labelShift1, 0., labelShift2), charSize));
 
 
             /* Y_AXIS */
@@ -74,6 +100,7 @@ namespace graphics {
 
             geode_ptr_->addDrawable(y_cylinder_drawable_);
             geode_ptr_->addDrawable(y_cone_drawable_);
+            geode_ptr_->addDrawable(label("Y", font, osgVector3(0., labelShift1, labelShift2), charSize));
 
 
             /* Z_AXIS */
@@ -94,6 +121,7 @@ namespace graphics {
 
             geode_ptr_->addDrawable(z_cylinder_drawable_);
             geode_ptr_->addDrawable(z_cone_drawable_);
+            geode_ptr_->addDrawable(label("Z", font, osgVector3(labelShift2, 0., labelShift1), charSize));
         } // if radius > 0 : create axis
 
 
@@ -103,7 +131,6 @@ namespace graphics {
         /* Allow transparency */
         geode_ptr_->getOrCreateStateSet()->setMode(GL_BLEND, ::osg::StateAttribute::ON);;
     }
-
 
     LeafNodeXYZAxis::LeafNodeXYZAxis(const std::string& name, const osgVector4& color, float radiusCenter, float sizeAxis):
         Node(name)

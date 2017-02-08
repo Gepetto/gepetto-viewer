@@ -19,6 +19,10 @@
 
 SET(LIBRARY_NAME ${PROJECT_NAME})
 
+CONFIG_FILES(
+  leaf-node-xyzaxis.cpp
+)
+
 SET(${LIBRARY_NAME}_SOURCES
   group-node.cpp
   node.cpp
@@ -35,7 +39,7 @@ SET(${LIBRARY_NAME}_SOURCES
   leaf-node-light.cpp
   leaf-node-mesh.cpp
   urdf-parser.cpp
-  leaf-node-xyzaxis.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/leaf-node-xyzaxis.cpp
   leaf-node-arrow.cpp
   roadmap-viewer.cpp
   node-rod.cpp
