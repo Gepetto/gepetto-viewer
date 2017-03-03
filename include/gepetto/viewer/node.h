@@ -84,6 +84,7 @@ namespace graphics {
          */
         std::pair<osgVector3, osgQuat> getGlobalTransform() const;
 
+
         /**
          \brief getID is a public method for getting the id_name of the Object
          */
@@ -171,6 +172,9 @@ namespace graphics {
 
         SCENE_VIEWER_ACCEPT_VISITOR;
         virtual void traverse (NodeVisitor& visitor);
+
+        virtual float getSize() const{return -1.;}
+
 
         /* Destructor */
         virtual ~Node ();

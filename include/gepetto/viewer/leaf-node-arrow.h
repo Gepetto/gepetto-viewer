@@ -78,7 +78,7 @@ namespace graphics {
         float getRadius() const;
         void setRadius (const float& radius);
         void setSize(const float& size);
-        float getSize() const;
+        virtual float getSize() const;
         void resize(float radius,float length);
         void setTexture(const std::string& image_path);
 

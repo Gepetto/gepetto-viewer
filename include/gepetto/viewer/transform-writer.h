@@ -35,7 +35,7 @@ namespace graphics {
 
         void newFrame ();
         virtual void writeTransform (const char* objName,
-            const osgVector3& vec, const osgQuat& quat) = 0;
+            const osgVector3& vec, const osgQuat& quat, const double size=-1) = 0;
 
         std::ofstream& out () { return file_; }
 
@@ -67,7 +67,7 @@ namespace graphics {
         ~BasicTransformWriter () {}
 
         void writeTransform (const char* objName,
-            const osgVector3& vec, const osgQuat& quat);
+            const osgVector3& vec, const osgQuat& quat, const double size=-1);
 
       protected:
         void writeNewFrame ();
@@ -83,7 +83,7 @@ namespace graphics {
         ~YamlTransformWriter () {}
 
         void writeTransform (const char* objName,
-            const osgVector3& vec, const osgQuat& quat);
+            const osgVector3& vec, const osgQuat& quat, const double size=-1);
 
       protected:
         void writeNewFrame ();
@@ -102,6 +102,7 @@ namespace graphics {
         void captureFrame (Iterator begin, Iterator end);
 
         virtual void apply (Node& node);
+
 
         osg::ref_ptr <TransformWriter> writer_;
     }; /* class TransformWriterVisitor */

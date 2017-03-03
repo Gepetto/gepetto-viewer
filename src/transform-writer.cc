@@ -16,6 +16,7 @@
 
 #include <gepetto/viewer/transform-writer.h>
 #include <gepetto/viewer/node.h>
+#include <gepetto/viewer/leaf-node-arrow.h>
 
 namespace graphics {
   namespace {
@@ -34,7 +35,7 @@ namespace graphics {
   }
 
   void BasicTransformWriter::writeTransform (const char* objName,
-      const osgVector3& vec, const osgQuat& quat)
+      const osgVector3& vec, const osgQuat& quat, const double size)
   {
     file_ << objName << "=" <<
       vec[0] << ", " <<
@@ -52,20 +53,28 @@ namespace graphics {
   }
 
   void YamlTransformWriter::writeTransform (const char* objName,
-      const osgVector3& vec, const osgQuat& quat)
+      const osgVector3& vec, const osgQuat& quat, const double size)
   {
-    file_ << indent << objName << ": ["
-      << vec[0] << ", " << vec[1] << ", " << vec[2] << ", " <<
-      quat.w() << ", " << quat.x() << ", " << quat.y() << ", " <<
-      quat.z() << "]\n";
+    if(size<0){
+      file_ << indent << objName << ": ["
+        << vec[0] << ", " << vec[1] << ", " << vec[2] << ", " <<
+        quat.w() << ", " << quat.x() << ", " << quat.y() << ", " <<
+        quat.z() << "]\n";
+    }else{
+      file_ << indent << objName << ": ["
+        << vec[0] << ", " << vec[1] << ", " << vec[2] << ", " <<
+        quat.w() << ", " << quat.x() << ", " << quat.y() << ", " <<
+        quat.z() <<", "<< size<<"]\n";
+    }
   }
 
   void TransformWriterVisitor::apply (Node& node)
   {
     std::pair<osgVector3, osgQuat> pos = node.getGlobalTransform ();
-    writer_->writeTransform (node.getID ().c_str(), pos.first, pos.second);
+    writer_->writeTransform (node.getID ().c_str(), pos.first, pos.second,node.getSize());
     traverse (node);
   }
+
 
   void TransformWriterVisitor::captureFrame (Node& node)
   {
