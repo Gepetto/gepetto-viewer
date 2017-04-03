@@ -23,12 +23,18 @@ namespace graphics {
             l->setCharacterSize(charSize);
             l->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
             l->setFontResolution(30,30);
-            l->setAlignment(osgText::Text::CENTER_BOTTOM);
+            l->setAlignment(osgText::Text::LEFT_CENTER);
             l->setAxisAlignment(osgText::Text::SCREEN);
             l->setColor(black);
             l->setPosition(pos);
             return l;
       }
+
+      std::string labelGetText(const osgText::Text* t) { return t->getText().createUTF8EncodedString(); }
+      void (osgText::Text::*labelSetText) (const std::string&) = &osgText::Text::setText;
+
+      void (osg::ShapeDrawable::*drawableSetColor) (const osgVector4&) = &osg::ShapeDrawable::setColor;
+      const osgVector4& (osg::ShapeDrawable::*drawableGetColor) () const = &osg::ShapeDrawable::getColor;
     }
 
     /* Declaration of private function members */
@@ -54,12 +60,13 @@ namespace graphics {
             float labelShift1 = lengthCyl + getRadius() + 4 * radiusCyl + getRadius();
             float labelShift2 = 0;
             // float charSize = 3.f * radiusCyl;
-            float charSize = 30;
+            float charSize = 60;
 
             osgVector4 blue  = osgVector4(0.f, 0.f, 1.f, 1.f);
             osgVector4 green = osgVector4(0.f, 1.f, 0.f, 1.f);
             osgVector4 red   = osgVector4(1.f, 0.f, 0.f, 1.f);
 
+            osg::ref_ptr<osgText::Text> lbl;
 
             /* X_AXIS */
             /* Create cylinder */
@@ -77,9 +84,14 @@ namespace graphics {
             x_cylinder_drawable_->setColor(red);
             x_cone_drawable_->setColor(red);
 
+            lbl = label("X", font, osgVector3(labelShift1, 0., labelShift2), charSize);
+            addProperty(StringProperty::create("XLabelText",
+                    StringProperty::Getter_t(boost::bind(labelGetText, lbl.get())),
+                    StringProperty::Setter_t(boost::bind(labelSetText, lbl.get(), _1))));
+
             geode_ptr_->addDrawable(x_cylinder_drawable_);
             geode_ptr_->addDrawable(x_cone_drawable_);
-            geode_ptr_->addDrawable(label("X", font, osgVector3(labelShift1, 0., labelShift2), charSize));
+            geode_ptr_->addDrawable(lbl);
 
 
             /* Y_AXIS */
@@ -98,9 +110,14 @@ namespace graphics {
             y_cylinder_drawable_->setColor(green);
             y_cone_drawable_->setColor(green);
 
+            lbl = label("Y", font, osgVector3(0., labelShift1, labelShift2), charSize);
+            addProperty(StringProperty::create("YLabelText",
+                    StringProperty::Getter_t(boost::bind(labelGetText, lbl.get())),
+                    StringProperty::Setter_t(boost::bind(labelSetText, lbl.get(), _1))));
+
             geode_ptr_->addDrawable(y_cylinder_drawable_);
             geode_ptr_->addDrawable(y_cone_drawable_);
-            geode_ptr_->addDrawable(label("Y", font, osgVector3(0., labelShift1, labelShift2), charSize));
+            geode_ptr_->addDrawable(lbl);
 
 
             /* Z_AXIS */
@@ -118,10 +135,18 @@ namespace graphics {
             z_cone_drawable_ = new ::osg::ShapeDrawable( cone_shape_z_ptr );
             z_cylinder_drawable_->setColor(blue);
             z_cone_drawable_->setColor(blue);
+            addProperty(Vector4Property::create("ZAxisColor",
+                    Vector4Property::Getter_t(boost::bind(drawableGetColor, z_cone_drawable_.get())),
+                    Vector4Property::Setter_t(boost::bind(drawableSetColor, z_cone_drawable_.get(), _1))));
+
+            lbl = label("Z", font, osgVector3(labelShift2, 0., labelShift1), charSize);
+            addProperty(StringProperty::create("ZLabelText",
+                    StringProperty::Getter_t(boost::bind(labelGetText, lbl.get())),
+                    StringProperty::Setter_t(boost::bind(labelSetText, lbl.get(), _1))));
 
             geode_ptr_->addDrawable(z_cylinder_drawable_);
             geode_ptr_->addDrawable(z_cone_drawable_);
-            geode_ptr_->addDrawable(label("Z", font, osgVector3(labelShift2, 0., labelShift1), charSize));
+            geode_ptr_->addDrawable(lbl);
         } // if radius > 0 : create axis
 
 

@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include <gepetto/viewer/node-visitor.h>
+#include <gepetto/viewer/node-property.h>
 #include <gepetto/viewer/config-osg.h>
 
 namespace graphics {
@@ -40,6 +41,8 @@ namespace graphics {
         osg::GroupRefPtr hl_switch_node_ptr_;
         std::size_t selected_highlight_;
         std::vector< ::osg::GroupRefPtr > highlight_nodes_;
+
+        PropertyMap_t properties_;
         
         /** Initialization function */
         void init ();
@@ -76,6 +79,13 @@ namespace graphics {
             id_name_ = id_name;
             switch_node_ptr_->setName (id_name_);
         }
+
+        const PropertyPtr_t& property(const std::string& name) const;
+
+        void addProperty(const PropertyPtr_t& prop);
+
+        void addProperty(const std::string& name, const PropertyPtr_t& prop);
+
     public:
 
         /**
@@ -171,6 +181,18 @@ namespace graphics {
 
         SCENE_VIEWER_ACCEPT_VISITOR;
         virtual void traverse (NodeVisitor& visitor);
+
+        template <typename T>
+        bool getProperty(const std::string& name, T& value) const
+        {
+          return property(name)->get(value);
+        }
+
+        template <typename T>
+        bool setProperty(const std::string& name, const T& value)
+        {
+          return property(name)->set(value);
+        }
 
         /* Destructor */
         virtual ~Node ();
