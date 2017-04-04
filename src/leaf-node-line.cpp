@@ -49,6 +49,13 @@ namespace graphics {
         osg::LineWidth* linewidth = new osg::LineWidth();
         linewidth->setWidth(1.0f);
         beam_ptr_->getOrCreateStateSet()->setAttributeAndModes(linewidth, osg::StateAttribute::ON);
+
+        addProperty(FloatProperty::create("LineWidth",
+              FloatProperty::getterFromMemberFunction(linewidth, &osg::LineWidth::getWidth),
+              FloatProperty::setterFromMemberFunction(this, &LeafNodeLine::setLineWidth)));
+        addProperty(GLenumProperty::create("Mode",
+              GLenumProperty::getterFromMemberFunction(this, &LeafNodeLine::getMode),
+              GLenumProperty::setterFromMemberFunction(this, &LeafNodeLine::setMode)));
     }
     
     LeafNodeLine::LeafNodeLine (const std::string& name, const osgVector3& start_point, const osgVector3& end_point) :
@@ -167,7 +174,7 @@ namespace graphics {
         return points_ptr_->at(1);
     }
     
-    void LeafNodeLine::setMode (const GLenum mode)
+    void LeafNodeLine::setMode (const GLenum& mode)
     {
       drawArray_ptr_->set (mode, 0, points_ptr_->size ());
       beam_ptr_->dirtyDisplayList();

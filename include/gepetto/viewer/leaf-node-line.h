@@ -84,7 +84,7 @@ namespace graphics {
          * See http://svn.openscenegraph.org/osg/OpenSceneGraph-Data/trunk/Images/primitives.gif
          * for details about possible values
          */
-        virtual void setMode (const GLenum mode);
+        virtual void setMode (const GLenum& mode);
 
         GLenum getMode () const;
 

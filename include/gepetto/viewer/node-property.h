@@ -30,23 +30,39 @@ namespace graphics {
     DEF_CLASS_SMART_PTR(Property)
     typedef std::map<std::string, PropertyPtr_t> PropertyMap_t;
 
+    namespace details {
+      template <typename T> struct property_type {};
+      template <typename T> struct property_type <const T > : property_type<T> {};
+      template <typename T> struct property_type <     T& > : property_type<T> {};
+      template <> struct property_type<int          > { static inline std::string to_string () { return "int"          ; } };
+      template <> struct property_type<float        > { static inline std::string to_string () { return "float"        ; } };
+      template <> struct property_type<std::string  > { static inline std::string to_string () { return "string"       ; } };
+      template <> struct property_type<unsigned long> { static inline std::string to_string () { return "unsigned long"; } };
+      template <> struct property_type<osgVector2   > { static inline std::string to_string () { return "osgVector2"   ; } };
+      template <> struct property_type<osgVector3   > { static inline std::string to_string () { return "osgVector3"   ; } };
+      template <> struct property_type<osgVector4   > { static inline std::string to_string () { return "osgVector4"   ; } };
+      template <> struct property_type<GLenum       > { static inline std::string to_string () { return "GLenum"       ; } };
+    }
+
     class Property {
       public:
-        virtual bool set(const int              & /*value*/) { invalidType("int"          ); return false; }
-        virtual bool set(const float            & /*value*/) { invalidType("float"        ); return false; }
-        virtual bool set(const std::string      & /*value*/) { invalidType("string"       ); return false; }
-        virtual bool set(const unsigned long    & /*value*/) { invalidType("unsigned long"); return false; }
-        virtual bool set(const osgVector2       & /*value*/) { invalidType("osgVector2"   ); return false; }
-        virtual bool set(const osgVector3       & /*value*/) { invalidType("osgVector3"   ); return false; }
-        virtual bool set(const osgVector4       & /*value*/) { invalidType("osgVector4"   ); return false; }
+        virtual bool set(const int           & v) { invalidType(v); return false; }
+        virtual bool set(const float         & v) { invalidType(v); return false; }
+        virtual bool set(const std::string   & v) { invalidType(v); return false; }
+        virtual bool set(const unsigned long & v) { invalidType(v); return false; }
+        virtual bool set(const osgVector2    & v) { invalidType(v); return false; }
+        virtual bool set(const osgVector3    & v) { invalidType(v); return false; }
+        virtual bool set(const osgVector4    & v) { invalidType(v); return false; }
+        virtual bool set(const GLenum        & v) { invalidType(v); return false; }
 
-        virtual bool get(int              & /*value*/) { invalidType("int"          ); return false; }
-        virtual bool get(float            & /*value*/) { invalidType("float"        ); return false; }
-        virtual bool get(std::string      & /*value*/) { invalidType("string"       ); return false; }
-        virtual bool get(unsigned long    & /*value*/) { invalidType("unsigned long"); return false; }
-        virtual bool get(osgVector2       & /*value*/) { invalidType("osgVector2"   ); return false; }
-        virtual bool get(osgVector3       & /*value*/) { invalidType("osgVector3"   ); return false; }
-        virtual bool get(osgVector4       & /*value*/) { invalidType("osgVector4"   ); return false; }
+        virtual bool get(int           & v) { invalidType(v); return false; }
+        virtual bool get(float         & v) { invalidType(v); return false; }
+        virtual bool get(std::string   & v) { invalidType(v); return false; }
+        virtual bool get(unsigned long & v) { invalidType(v); return false; }
+        virtual bool get(osgVector2    & v) { invalidType(v); return false; }
+        virtual bool get(osgVector3    & v) { invalidType(v); return false; }
+        virtual bool get(osgVector4    & v) { invalidType(v); return false; }
+        virtual bool get(GLenum        & v) { invalidType(v); return false; }
 
         virtual bool hasReadAccess () const = 0;
         virtual bool hasWriteAccess() const = 0;
@@ -60,21 +76,10 @@ namespace graphics {
 
         const std::string name_;
 
-        inline void invalidType(const std::string& t) const { throw std::invalid_argument ("Property " + name_ + " is not of type " + t); }
+        template <typename T> inline void invalidType(T) const { throw std::invalid_argument ("Property " + name_ + " is not of type " + details::property_type<T>::to_string()); }
         inline void invalidGet() const { throw std::logic_error ("Cannot read property "  + name_ + "."); }
         inline void invalidSet() const { throw std::logic_error ("Cannot write property " + name_ + "."); }
     };
-
-    namespace details {
-      template <typename T> inline std::string property_type_to_string () { throw std::invalid_argument("Unknow type"); return std::string(); }
-      template <> inline std::string property_type_to_string<int          > () { return "int"          ; }
-      template <> inline std::string property_type_to_string<float        > () { return "float"        ; }
-      template <> inline std::string property_type_to_string<std::string  > () { return "string"       ; }
-      template <> inline std::string property_type_to_string<unsigned long> () { return "unsigned long"; }
-      template <> inline std::string property_type_to_string<osgVector2   > () { return "osgVector2"   ; }
-      template <> inline std::string property_type_to_string<osgVector3   > () { return "osgVector3"   ; }
-      template <> inline std::string property_type_to_string<osgVector4   > () { return "osgVector4"   ; }
-    }
 
     template <typename T>
     class PropertyTpl : public Property {
@@ -84,7 +89,7 @@ namespace graphics {
         typedef boost::shared_ptr<PropertyTpl> Ptr_t;
 
         static Ptr_t create (const std::string& name, const Getter_t& g, const Setter_t& s) { return Ptr_t(new PropertyTpl(name, g, s)); }
-        std::string type() { return details::property_type_to_string<T>(); }
+        std::string type() { return details::property_type<T>::to_string(); }
 
         template <typename Obj>
         static inline Getter_t getterFromMemberFunction(Obj* obj, const T& (Obj::*mem_func)() const) { return boost::bind(mem_func, obj); }
@@ -116,8 +121,8 @@ namespace graphics {
     typedef PropertyTpl<osgVector2   > Vector2Property;
     typedef PropertyTpl<osgVector3   > Vector3Property;
     typedef PropertyTpl<osgVector4   > Vector4Property;
+    typedef PropertyTpl<GLenum       > GLenumProperty;
 
-    
 } /* namespace graphics */
 
 #endif /* SCENEVIEWER_NODE_PROPERTY_HH */

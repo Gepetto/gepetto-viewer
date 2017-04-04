@@ -24,6 +24,13 @@ namespace graphics {
         geode_ptr_ = new osg::Geode ();
         geode_ptr_->addDrawable (shape_drawable_ptr_);
         
+        addProperty(FloatProperty::create("Radius",
+              FloatProperty::getterFromMemberFunction(this, &LeafNodeCylinder::getRadius),
+              FloatProperty::setterFromMemberFunction(this, &LeafNodeCylinder::setRadius)));
+        addProperty(FloatProperty::create("Height",
+              FloatProperty::getterFromMemberFunction(this, &LeafNodeCylinder::getHeight),
+              FloatProperty::setterFromMemberFunction(this, &LeafNodeCylinder::setHeight)));
+
         /* Create PositionAttitudeTransform */
         this->asQueue()->addChild (geode_ptr_);
         

@@ -34,6 +34,19 @@ namespace graphics {
         geode_ptr_ = new osg::Geode();
         geode_ptr_->addDrawable(shape_drawable_ptr_);
 
+        addProperty(FloatProperty::create("Radius",
+              FloatProperty::getterFromMemberFunction(this, &LeafNodeLight::getRadius),
+              FloatProperty::setterFromMemberFunction(this, &LeafNodeLight::setRadius)));
+        addProperty(Vector4Property::create("ColorSpecular",
+              Vector4Property::getterFromMemberFunction(light.get(), &osg::Light::getSpecular),
+              Vector4Property::setterFromMemberFunction(light.get(), &osg::Light::setSpecular)));
+        addProperty(Vector4Property::create("ColorAmbient",
+              Vector4Property::getterFromMemberFunction(light.get(), &osg::Light::getAmbient),
+              Vector4Property::setterFromMemberFunction(light.get(), &osg::Light::setAmbient)));
+        addProperty(Vector4Property::create("ColorDiffuse",
+              Vector4Property::getterFromMemberFunction(light.get(), &osg::Light::getDiffuse),
+              Vector4Property::setterFromMemberFunction(light.get(), &osg::Light::setDiffuse)));
+
         /* Create PositionAttitudeTransform */
         this->asQueue()->addChild(geode_ptr_);
         this->asQueue()->addChild(light_ptr_);
