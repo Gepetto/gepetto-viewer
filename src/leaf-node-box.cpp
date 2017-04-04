@@ -26,8 +26,8 @@ namespace graphics {
         geode_ptr_->addDrawable(shape_drawable_ptr_);
 
         addProperty(Vector3Property::create("HalfLength",
-              Vector3Property::Getter_t(boost::bind(&osg::Box::getHalfLengths, box_ptr_.get())),
-              Vector3Property::Setter_t(boost::bind(&osg::Box::setHalfLengths, box_ptr_.get(), _1))));
+              Vector3Property::getterFromMemberFunction(box_ptr_.get(), &osg::Box::getHalfLengths),
+              Vector3Property::setterFromMemberFunction(this, &LeafNodeBox::setHalfAxis)));
 	
         /* Create PositionAttitudeTransform */
         this->asQueue()->addChild(geode_ptr_);
@@ -116,6 +116,8 @@ namespace graphics {
     void LeafNodeBox::setHalfAxis (const osgVector3& half_axis)
     {        
         box_ptr_->setHalfLengths(half_axis);
+        shape_drawable_ptr_->dirtyDisplayList();
+        shape_drawable_ptr_->dirtyBound();
     }
     
     void LeafNodeBox::setColor (const osgVector4 &color)
