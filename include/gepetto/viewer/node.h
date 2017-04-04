@@ -194,6 +194,11 @@ namespace graphics {
           return property(name)->set(value);
         }
 
+        const PropertyMap_t& properties () const
+        {
+          return properties_;
+        }
+
         /* Destructor */
         virtual ~Node ();
         

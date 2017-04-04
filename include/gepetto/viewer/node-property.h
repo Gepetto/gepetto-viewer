@@ -51,6 +51,8 @@ namespace graphics {
         virtual bool hasReadAccess () const = 0;
         virtual bool hasWriteAccess() const = 0;
 
+        virtual std::string type() = 0;
+
         const std::string& name () const { return name_; }
 
       protected:
@@ -63,6 +65,17 @@ namespace graphics {
         inline void invalidSet() const { throw std::logic_error ("Cannot write property " + name_ + "."); }
     };
 
+    namespace details {
+      template <typename T> inline std::string property_type_to_string () { throw std::invalid_argument("Unknow type"); return std::string(); }
+      template <> inline std::string property_type_to_string<int          > () { return "int"          ; }
+      template <> inline std::string property_type_to_string<float        > () { return "float"        ; }
+      template <> inline std::string property_type_to_string<std::string  > () { return "string"       ; }
+      template <> inline std::string property_type_to_string<unsigned long> () { return "unsigned long"; }
+      template <> inline std::string property_type_to_string<osgVector2   > () { return "osgVector2"   ; }
+      template <> inline std::string property_type_to_string<osgVector3   > () { return "osgVector3"   ; }
+      template <> inline std::string property_type_to_string<osgVector4   > () { return "osgVector4"   ; }
+    }
+
     template <typename T>
     class PropertyTpl : public Property {
       public:
@@ -71,6 +84,7 @@ namespace graphics {
         typedef boost::shared_ptr<PropertyTpl> Ptr_t;
 
         static Ptr_t create (const std::string& name, const Getter_t& g, const Setter_t& s) { return Ptr_t(new PropertyTpl(name, g, s)); }
+        std::string type() { return details::property_type_to_string<T>(); }
 
         template <typename Obj>
         static Getter_t getterFromMemberFunction(Obj* obj, const T& (mem_func)(Obj*)) { return boost::bind(mem_func, obj); }
