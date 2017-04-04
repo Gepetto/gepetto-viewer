@@ -24,11 +24,11 @@ namespace graphics {
       {
         /* Create cylinder */
         ::osg::CylinderRefPtr cylinder = new ::osg::Cylinder();
-        cylinder->set(osgVector3(lengthCyl/2.f,0.,0.) , radiusCyl ,lengthCyl);
+        cylinder->set(rot * osgVector3(0.,0.,lengthCyl/2.f) , radiusCyl ,lengthCyl);
         cylinder->setRotation(rot);
         /* Create cone */
         ::osg::ConeRefPtr cone = new ::osg::Cone();
-        cone->set(osgVector3(lengthCyl+lengthCon / 2.f,0.,0.) , lengthCyl , radiusCon );
+        cone->set(rot * osgVector3(0.,0.,lengthCyl+lengthCon/2.f) , lengthCon , radiusCon );
         cone->setRotation(rot);
 
         osg::ref_ptr<osg::CompositeShape> shape = new osg::CompositeShape;
@@ -54,11 +54,28 @@ namespace graphics {
             return l;
       }
 
-      std::string labelGetText(const osgText::Text* t) { return t->getText().createUTF8EncodedString(); }
-      void (osgText::Text::*labelSetText) (const std::string&) = &osgText::Text::setText;
+      std::string labelGetText(const osgText::TextBase* t) { return t->getText().createUTF8EncodedString(); }
 
-      void (osg::ShapeDrawable::*drawableSetColor) (const osgVector4&) = &osg::ShapeDrawable::setColor;
-      const osgVector4& (osg::ShapeDrawable::*drawableGetColor) () const = &osg::ShapeDrawable::getColor;
+      inline PropertyPtr_t axisColor(const std::string t, osg::ShapeDrawable* arrow)
+      {
+        return Vector4Property::create(t + "AxisColor",
+                    Vector4Property::getterFromMemberFunction(arrow, &osg::ShapeDrawable::getColor),
+                    Vector4Property::setterFromMemberFunction(arrow, &osg::ShapeDrawable::setColor));
+      }
+
+      inline PropertyPtr_t labelText(const std::string t, osgText::TextBase* text)
+      {
+        return StringProperty::create(t + "LabelText",
+              StringProperty::Getter_t(boost::bind(labelGetText, text)),
+              StringProperty::setterFromMemberFunction(text, &osgText::TextBase::setText));
+      }
+
+      inline PropertyPtr_t labelSize(const std::string t, osgText::TextBase* text)
+      {
+        return FloatProperty::create(t + "LabelSize",
+            FloatProperty::getterFromMemberFunction(text, &osgText::TextBase::getCharacterHeight),
+            FloatProperty::setterFromMemberFunction(text, &osgText::TextBase::setCharacterSize));
+      }
     }
 
     /* Declaration of private function members */
@@ -101,14 +118,11 @@ namespace graphics {
                 osgQuat( 0. , ::osg::X_AXIS , ::osg::PI_2 , ::osg::Y_AXIS , 0. , ::osg::Z_AXIS ));
             arrow->setColor(red);
 
-            addProperty(Vector4Property::create("XAxisColor",
-                    Vector4Property::Getter_t(boost::bind(drawableGetColor, arrow.get())),
-                    Vector4Property::Setter_t(boost::bind(drawableSetColor, arrow.get(), _1))));
-
             lbl = label("X", font, osgVector3(labelShift1, 0., labelShift2), charSize);
-            addProperty(StringProperty::create("XLabelText",
-                    StringProperty::Getter_t(boost::bind(labelGetText, lbl.get())),
-                    StringProperty::Setter_t(boost::bind(labelSetText, lbl.get(), _1))));
+
+            addProperty(axisColor("X", arrow.get()));
+            addProperty(labelText("X", lbl.get()));
+            addProperty(labelSize("X", lbl.get()));
 
             geode_ptr_->addDrawable(arrow);
             geode_ptr_->addDrawable(lbl);
@@ -121,14 +135,11 @@ namespace graphics {
                 osgQuat( -::osg::PI_2 , ::osg::X_AXIS , 0. , ::osg::Y_AXIS , 0. , ::osg::Z_AXIS ));
             arrow->setColor(green);
 
-            addProperty(Vector4Property::create("YAxisColor",
-                    Vector4Property::Getter_t(boost::bind(drawableGetColor, arrow.get())),
-                    Vector4Property::Setter_t(boost::bind(drawableSetColor, arrow.get(), _1))));
-
             lbl = label("Y", font, osgVector3(0., labelShift1, labelShift2), charSize);
-            addProperty(StringProperty::create("YLabelText",
-                    StringProperty::Getter_t(boost::bind(labelGetText, lbl.get())),
-                    StringProperty::Setter_t(boost::bind(labelSetText, lbl.get(), _1))));
+
+            addProperty(axisColor("Y", arrow.get()));
+            addProperty(labelText("Y", lbl.get()));
+            addProperty(labelSize("Y", lbl.get()));
 
             geode_ptr_->addDrawable(arrow);
             geode_ptr_->addDrawable(lbl);
@@ -141,14 +152,11 @@ namespace graphics {
                 osgQuat( 0. , ::osg::X_AXIS , 0. , ::osg::Y_AXIS , 0. , ::osg::Z_AXIS ));
             arrow->setColor(blue);
 
-            addProperty(Vector4Property::create("ZAxisColor",
-                    Vector4Property::Getter_t(boost::bind(drawableGetColor, arrow.get())),
-                    Vector4Property::Setter_t(boost::bind(drawableSetColor, arrow.get(), _1))));
-
             lbl = label("Z", font, osgVector3(labelShift2, 0., labelShift1), charSize);
-            addProperty(StringProperty::create("ZLabelText",
-                    StringProperty::Getter_t(boost::bind(labelGetText, lbl.get())),
-                    StringProperty::Setter_t(boost::bind(labelSetText, lbl.get(), _1))));
+
+            addProperty(axisColor("Z", arrow.get()));
+            addProperty(labelText("Z", lbl.get()));
+            addProperty(labelSize("Z", lbl.get()));
 
             geode_ptr_->addDrawable(arrow);
             geode_ptr_->addDrawable(lbl);
