@@ -20,7 +20,7 @@
 SET(LIBRARY_NAME ${PROJECT_NAME})
 
 CONFIG_FILES(
-  leaf-node-xyzaxis.cpp
+  internal/configuration.cc
 )
 
 SET(${LIBRARY_NAME}_SOURCES
@@ -39,7 +39,7 @@ SET(${LIBRARY_NAME}_SOURCES
   leaf-node-light.cpp
   leaf-node-mesh.cpp
   urdf-parser.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/leaf-node-xyzaxis.cpp
+  leaf-node-xyzaxis.cpp
   leaf-node-arrow.cpp
   roadmap-viewer.cpp
   node-rod.cpp
@@ -47,6 +47,7 @@ SET(${LIBRARY_NAME}_SOURCES
   transform-writer.cc
   blender-geom-writer.cc
   OSGManipulator/keyboard-manipulator.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/internal/configuration.cc
 )
 
 ADD_LIBRARY(${LIBRARY_NAME} SHARED ${${LIBRARY_NAME}_SOURCES})

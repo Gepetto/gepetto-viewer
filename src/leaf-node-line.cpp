@@ -213,6 +213,15 @@ namespace graphics {
       beam_ptr_->dirtyDisplayList();
     }
 
+    // void LeafNodeLine::setLineStipple (const GLint factor, const GLushort pattern)
+    // {
+      // osg::LineStipple* stipple = static_cast<osg::LineStipple*>(
+        // beam_ptr_->getOrCreateStateSet()->getAttribute(osg::StateAttribute::LINESTIPPLE));
+      // stipple->setFactor(factor);
+      // stipple->setPattern(pattern);
+      // beam_ptr_->dirtyDisplayList();
+    // }
+
     LeafNodeLine::~LeafNodeLine()
     {
         /* Proper deletion of all tree scene */

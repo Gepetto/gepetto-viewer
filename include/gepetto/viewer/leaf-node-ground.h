@@ -109,7 +109,7 @@ namespace graphics
          */
         virtual void setColor1(const osgVector4 &color1);
 
-        osgVector4 getColor1() const
+        const osgVector4& getColor1() const
         {
             return color1_;
         }
@@ -120,7 +120,7 @@ namespace graphics
          */
         virtual void setColor2(const osgVector4 &color2);
         
-        osgVector4 getColor2() const
+        const osgVector4& getColor2() const
         {
             return color2_;
         }

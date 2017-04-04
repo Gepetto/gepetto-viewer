@@ -8,6 +8,8 @@
 
 #include <gepetto/viewer/leaf-node-xyzaxis.h>
 
+#include <../src/internal/configuration.hh>
+
 #include <osgUtil/SmoothingVisitor>
 #include <osgText/Text>
 #include <osg/CullFace>
@@ -63,7 +65,7 @@ namespace graphics {
 
     void LeafNodeXYZAxis::init ()
     {
-        static osg::ref_ptr<osgText::Font> font = osgText::readFontFile("@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATAROOTDIR@/@PROJECT_NAME@/fonts/arial.ttf");
+        static osg::ref_ptr<osgText::Font> font = defaultFont();
 
         /* Create sphere object */
         sphere_ptr_ = new ::osg::Sphere();

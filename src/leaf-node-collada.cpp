@@ -41,6 +41,10 @@ namespace graphics {
       {
 	collada_ptr_->getOrCreateStateSet()->setMode(GL_BLEND, ::osg::StateAttribute::ON);
       }
+
+    addProperty(StringProperty::create("Meshfile path",
+          StringProperty::getterFromMemberFunction(this, &LeafNodeCollada::meshFilePath),
+          StringProperty::Setter_t()));
   }
     
   LeafNodeCollada::LeafNodeCollada(const std::string& name, const std::string& collada_file_path) :

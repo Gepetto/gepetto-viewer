@@ -24,6 +24,10 @@ namespace graphics {
         /* Create Geode for adding ShapeDrawable */
         geode_ptr_ = new ::osg::Geode();
         geode_ptr_->addDrawable(shape_drawable_ptr_);
+
+        addProperty(Vector3Property::create("HalfLength",
+              Vector3Property::Getter_t(boost::bind(&osg::Box::getHalfLengths, box_ptr_.get())),
+              Vector3Property::Setter_t(boost::bind(&osg::Box::setHalfLengths, box_ptr_.get(), _1))));
 	
         /* Create PositionAttitudeTransform */
         this->asQueue()->addChild(geode_ptr_);

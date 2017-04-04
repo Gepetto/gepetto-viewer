@@ -87,9 +87,13 @@ namespace graphics {
         std::string type() { return details::property_type_to_string<T>(); }
 
         template <typename Obj>
-        static Getter_t getterFromMemberFunction(Obj* obj, const T& (mem_func)(Obj*)) { return boost::bind(mem_func, obj); }
+        static inline Getter_t getterFromMemberFunction(Obj* obj, const T& (Obj::*mem_func)() const) { return boost::bind(mem_func, obj); }
         template <typename Obj>
-        static Setter_t setterFromMemberFunction(Obj* obj, void (Obj::*mem_func)(const T&)) { return boost::bind(mem_func, obj, _1); }
+        static inline Getter_t getterFromMemberFunction(Obj* obj, T (Obj::*mem_func)() const) { return boost::bind(mem_func, obj); }
+        template <typename Obj>
+        static inline Setter_t setterFromMemberFunction(Obj* obj, void (Obj::*mem_func)(const T&)) { return boost::bind(mem_func, obj, _1); }
+        template <typename Obj>
+        static inline Setter_t setterFromMemberFunction(Obj* obj, void (Obj::*mem_func)(T)) { return boost::bind(mem_func, obj, _1); }
 
         PropertyTpl(const std::string& name, const Getter_t& g, const Setter_t& s)
           : Property(name), getter_(g), setter_(s) {}

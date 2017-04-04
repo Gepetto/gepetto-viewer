@@ -91,6 +91,13 @@ namespace graphics {
         
         /* Apply colors */
         setColors(color1_,color2_);
+
+        addProperty(Vector4Property::create("Color1",
+              Vector4Property::getterFromMemberFunction(this, &LeafNodeGround::getColor1),
+              Vector4Property::setterFromMemberFunction(this, &LeafNodeGround::setColor1)));
+        addProperty(Vector4Property::create("Color2",
+              Vector4Property::getterFromMemberFunction(this, &LeafNodeGround::getColor2),
+              Vector4Property::setterFromMemberFunction(this, &LeafNodeGround::setColor2)));
         
 #ifdef DEBUG
         std::cout << getID() << " created" << std::endl;
