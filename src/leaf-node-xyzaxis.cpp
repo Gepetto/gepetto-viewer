@@ -17,18 +17,18 @@
 namespace graphics {
     namespace {
       // if rot corresponds to identity, the arrow is along Z.
-      inline osg::ShapeDrawableRefPtr arrowDrawable (
+      inline osg::ShapeDrawableRefPtr arrowDrawable (const float& zshift,
           const float& lengthCyl, const float& radiusCyl,
           const float& lengthCon, const float& radiusCon,
           const osgQuat& rot)
       {
         /* Create cylinder */
         ::osg::CylinderRefPtr cylinder = new ::osg::Cylinder();
-        cylinder->set(rot * osgVector3(0.,0.,lengthCyl/2.f) , radiusCyl ,lengthCyl);
+        cylinder->set(rot * osgVector3(0.,0.,zshift + lengthCyl/2.f) , radiusCyl ,lengthCyl);
         cylinder->setRotation(rot);
         /* Create cone */
         ::osg::ConeRefPtr cone = new ::osg::Cone();
-        cone->set(rot * osgVector3(0.,0.,lengthCyl+lengthCon/2.f) , lengthCon , radiusCon );
+        cone->set(rot * osgVector3(0.,0.,zshift + lengthCyl+lengthCon/2.f) , lengthCon , radiusCon );
         cone->setRotation(rot);
 
         osg::ref_ptr<osg::CompositeShape> shape = new osg::CompositeShape;
@@ -113,12 +113,12 @@ namespace graphics {
             /* X_AXIS */
             /* create drawable and add them to geode */
             arrow = arrowDrawable (
-                lengthCyl, radiusCyl,
+                getRadius(), lengthCyl, radiusCyl,
                 2.f * radiusCyl, getRadius(),
                 osgQuat( 0. , ::osg::X_AXIS , ::osg::PI_2 , ::osg::Y_AXIS , 0. , ::osg::Z_AXIS ));
             arrow->setColor(red);
 
-            lbl = label("X", font, osgVector3(labelShift1, 0., labelShift2), charSize);
+            lbl = label("", font, osgVector3(labelShift1, 0., labelShift2), charSize);
 
             addProperty(axisColor("X", arrow.get()));
             addProperty(labelText("X", lbl.get()));
@@ -130,12 +130,12 @@ namespace graphics {
             /* Y_AXIS */
             /* create drawable and add them to geode */
             arrow = arrowDrawable (
-                lengthCyl, radiusCyl,
+                getRadius(), lengthCyl, radiusCyl,
                 2.f * radiusCyl, getRadius(),
                 osgQuat( -::osg::PI_2 , ::osg::X_AXIS , 0. , ::osg::Y_AXIS , 0. , ::osg::Z_AXIS ));
             arrow->setColor(green);
 
-            lbl = label("Y", font, osgVector3(0., labelShift1, labelShift2), charSize);
+            lbl = label("", font, osgVector3(0., labelShift1, labelShift2), charSize);
 
             addProperty(axisColor("Y", arrow.get()));
             addProperty(labelText("Y", lbl.get()));
@@ -147,12 +147,12 @@ namespace graphics {
             /* Z_AXIS */
             /* create drawable and add them to geode */
             arrow = arrowDrawable (
-                lengthCyl, radiusCyl,
+                getRadius(), lengthCyl, radiusCyl,
                 2.f * radiusCyl, getRadius(),
                 osgQuat( 0. , ::osg::X_AXIS , 0. , ::osg::Y_AXIS , 0. , ::osg::Z_AXIS ));
             arrow->setColor(blue);
 
-            lbl = label("Z", font, osgVector3(labelShift2, 0., labelShift1), charSize);
+            lbl = label("", font, osgVector3(labelShift2, 0., labelShift1), charSize);
 
             addProperty(axisColor("Z", arrow.get()));
             addProperty(labelText("Z", lbl.get()));
