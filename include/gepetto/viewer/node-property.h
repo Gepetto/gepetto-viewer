@@ -34,6 +34,7 @@ namespace graphics {
       template <typename T> struct property_type {};
       template <typename T> struct property_type <const T > : property_type<T> {};
       template <typename T> struct property_type <     T& > : property_type<T> {};
+      template <> struct property_type<bool         > { static inline std::string to_string () { return "bool"         ; } };
       template <> struct property_type<int          > { static inline std::string to_string () { return "int"          ; } };
       template <> struct property_type<float        > { static inline std::string to_string () { return "float"        ; } };
       template <> struct property_type<std::string  > { static inline std::string to_string () { return "string"       ; } };
@@ -46,6 +47,7 @@ namespace graphics {
 
     class Property {
       public:
+        virtual bool set(const bool          & v) { invalidType(v); return false; }
         virtual bool set(const int           & v) { invalidType(v); return false; }
         virtual bool set(const float         & v) { invalidType(v); return false; }
         virtual bool set(const std::string   & v) { invalidType(v); return false; }
@@ -55,6 +57,7 @@ namespace graphics {
         virtual bool set(const osgVector4    & v) { invalidType(v); return false; }
         virtual bool set(const GLenum        & v) { invalidType(v); return false; }
 
+        virtual bool get(bool          & v) { invalidType(v); return false; }
         virtual bool get(int           & v) { invalidType(v); return false; }
         virtual bool get(float         & v) { invalidType(v); return false; }
         virtual bool get(std::string   & v) { invalidType(v); return false; }
@@ -114,6 +117,7 @@ namespace graphics {
         const Setter_t setter_;
     };
 
+    typedef PropertyTpl<bool         > BoolProperty;
     typedef PropertyTpl<int          > IntProperty;
     typedef PropertyTpl<float        > FloatProperty;
     typedef PropertyTpl<std::string  > StringProperty;
