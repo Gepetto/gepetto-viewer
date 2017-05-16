@@ -12,15 +12,26 @@
 #include <gepetto/viewer/leaf-node-collada.h>
 
 namespace graphics {
+  std::string getCachedFileName (const std::string& meshfile)
+  {
+    static const std::string exts[3] = { ".osg", ".osg2", ".osgb" };
+    for (int i = 0; i < 3; ++i) {
+      std::string cached = meshfile + exts[i];
+      struct stat buffer;
+      if (stat (cached.c_str(), &buffer) == 0) {
+        return cached;
+      }
+    }
+    return std::string();
+  }
     
   /* Declaration of private function members */
 
   void LeafNodeCollada::init()
   {
-    std::string osgname = collada_file_path_ + ".osg";
-    struct stat buffer;
-    if (stat (osgname.c_str(), &buffer) == 0) {
-      std::cout << "Using " << osgname << "\n";
+    std::string osgname = getCachedFileName(collada_file_path_);
+    if (!osgname.empty()) {
+      std::cout << "Using " << osgname << std::endl;
       collada_ptr_ = osgDB::readNodeFile(osgname);
     } else {
       // get the extension of the meshs file
@@ -66,7 +77,6 @@ namespace graphics {
     init();
   }
     
-
   void LeafNodeCollada::initWeakPtr(LeafNodeColladaWeakPtr other_weak_ptr)
   {
     weak_ptr_ = other_weak_ptr;
