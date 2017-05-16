@@ -139,11 +139,13 @@ namespace graphics {
     
   void LeafNodeCollada::setColor(const osgVector4& color)
   {
-    //setColor(collada_ptr_,color);
     osg::ref_ptr<osg::Material> mat_ptr (new osg::Material); 
-    mat_ptr->setDiffuse(osg::Material::FRONT_AND_BACK,color); 
-    if (collada_ptr_->getStateSet())
-      collada_ptr_->getStateSet()->setAttribute(mat_ptr.get());    
+    osgVector4 ambient (color.r() * 0.5f, color.g() * 0.5f, color.b() * 0.5f, color.a());
+
+    mat_ptr->setDiffuse (osg::Material::FRONT_AND_BACK,color); 
+    mat_ptr->setAmbient (osg::Material::FRONT_AND_BACK,ambient); 
+
+    collada_ptr_->getOrCreateStateSet()->setAttribute(mat_ptr.get());    
   }
 
   void LeafNodeCollada::setAlpha(const float& alpha)
