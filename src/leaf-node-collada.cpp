@@ -12,15 +12,15 @@
 #include <gepetto/viewer/leaf-node-collada.h>
 
 namespace graphics {
+  inline bool fileExists (const char* fn)
+  { struct stat buffer; return (stat (fn, &buffer) == 0); }
+
   std::string getCachedFileName (const std::string& meshfile)
   {
     static const std::string exts[3] = { ".osg", ".osg2", ".osgb" };
     for (int i = 0; i < 3; ++i) {
       std::string cached = meshfile + exts[i];
-      struct stat buffer;
-      if (stat (cached.c_str(), &buffer) == 0) {
-        return cached;
-      }
+      if (fileExists(cached.c_str())) return cached;
     }
     return std::string();
   }
@@ -29,6 +29,9 @@ namespace graphics {
 
   void LeafNodeCollada::init()
   {
+    if (!fileExists(collada_file_path_.c_str()))
+      throw std::invalid_argument(std::string("File ") + collada_file_path_ + std::string(" not found."));
+
     std::string osgname = getCachedFileName(collada_file_path_);
     if (!osgname.empty()) {
       std::cout << "Using " << osgname << std::endl;
@@ -43,6 +46,8 @@ namespace graphics {
       else
         collada_ptr_ = osgDB::readNodeFile(collada_file_path_);
     }
+    if (!collada_ptr_)
+      throw std::invalid_argument(std::string("File ") + collada_file_path_ + std::string(" found but could not be opened. Check that a plugin exist."));
         
     /* Create PositionAttitudeTransform */
     this->asQueue()->addChild(collada_ptr_);
