@@ -12,15 +12,29 @@
 #include <gepetto/viewer/leaf-node-collada.h>
 
 namespace graphics {
+  inline bool fileExists (const char* fn)
+  { struct stat buffer; return (stat (fn, &buffer) == 0); }
+
+  std::string getCachedFileName (const std::string& meshfile)
+  {
+    static const std::string exts[3] = { ".osg", ".osg2", ".osgb" };
+    for (int i = 0; i < 3; ++i) {
+      std::string cached = meshfile + exts[i];
+      if (fileExists(cached.c_str())) return cached;
+    }
+    return std::string();
+  }
     
   /* Declaration of private function members */
 
   void LeafNodeCollada::init()
   {
-    std::string osgname = collada_file_path_ + ".osg";
-    struct stat buffer;
-    if (stat (osgname.c_str(), &buffer) == 0) {
-      std::cout << "Using " << osgname << "\n";
+    if (!fileExists(collada_file_path_.c_str()))
+      throw std::invalid_argument(std::string("File ") + collada_file_path_ + std::string(" not found."));
+
+    std::string osgname = getCachedFileName(collada_file_path_);
+    if (!osgname.empty()) {
+      std::cout << "Using " << osgname << std::endl;
       collada_ptr_ = osgDB::readNodeFile(osgname);
     } else {
       // get the extension of the meshs file
@@ -32,6 +46,8 @@ namespace graphics {
       else
         collada_ptr_ = osgDB::readNodeFile(collada_file_path_);
     }
+    if (!collada_ptr_)
+      throw std::invalid_argument(std::string("File ") + collada_file_path_ + std::string(" found but could not be opened. Check that a plugin exist."));
         
     /* Create PositionAttitudeTransform */
     this->asQueue()->addChild(collada_ptr_);
@@ -41,6 +57,10 @@ namespace graphics {
       {
 	collada_ptr_->getOrCreateStateSet()->setMode(GL_BLEND, ::osg::StateAttribute::ON);
       }
+
+    addProperty(StringProperty::create("Meshfile path",
+          StringProperty::getterFromMemberFunction(this, &LeafNodeCollada::meshFilePath),
+          StringProperty::Setter_t()));
   }
     
   LeafNodeCollada::LeafNodeCollada(const std::string& name, const std::string& collada_file_path) :
@@ -62,7 +82,6 @@ namespace graphics {
     init();
   }
     
-
   void LeafNodeCollada::initWeakPtr(LeafNodeColladaWeakPtr other_weak_ptr)
   {
     weak_ptr_ = other_weak_ptr;
@@ -135,11 +154,13 @@ namespace graphics {
     
   void LeafNodeCollada::setColor(const osgVector4& color)
   {
-    //setColor(collada_ptr_,color);
     osg::ref_ptr<osg::Material> mat_ptr (new osg::Material); 
-    mat_ptr->setDiffuse(osg::Material::FRONT_AND_BACK,color); 
-    if (collada_ptr_->getStateSet())
-      collada_ptr_->getStateSet()->setAttribute(mat_ptr.get());    
+    osgVector4 ambient (color.r() * 0.5f, color.g() * 0.5f, color.b() * 0.5f, color.a());
+
+    mat_ptr->setDiffuse (osg::Material::FRONT_AND_BACK,color); 
+    mat_ptr->setAmbient (osg::Material::FRONT_AND_BACK,ambient); 
+
+    collada_ptr_->getOrCreateStateSet()->setAttribute(mat_ptr.get());    
   }
 
   void LeafNodeCollada::setAlpha(const float& alpha)

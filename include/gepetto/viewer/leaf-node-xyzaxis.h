@@ -30,12 +30,6 @@ namespace graphics {
 
         /** axis components : */
         float sizeAxis_;
-        ::osg::ShapeDrawableRefPtr x_cylinder_drawable_;
-        ::osg::ShapeDrawableRefPtr x_cone_drawable_;
-        ::osg::ShapeDrawableRefPtr y_cylinder_drawable_;
-        ::osg::ShapeDrawableRefPtr y_cone_drawable_;
-        ::osg::ShapeDrawableRefPtr z_cylinder_drawable_;
-        ::osg::ShapeDrawableRefPtr z_cone_drawable_;
         /** Associated Geometry (drawable objects)*/
         ::osg::Vec4ArrayRefPtr color_ptr_;
 
@@ -51,9 +45,6 @@ namespace graphics {
 
         /** Initialize weak_ptr */
         void initWeakPtr(LeafNodeXYZAxisWeakPtr other_weak_ptr);
-
-
-
 
     protected:
     public:

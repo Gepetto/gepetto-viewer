@@ -26,9 +26,6 @@ namespace graphics {
         /** Associated weak pointer */
         GroupNodeWeakPtr weak_ptr_;
         
-        /** Initialize weak_ptr */
-        void initWeakPtr(GroupNodeWeakPtr other_weak_ptr);
-        
     protected:
         /**
          \brief Default constructor
@@ -37,6 +34,9 @@ namespace graphics {
         
         /** Copy constructor */
         GroupNode (const GroupNode& other);
+        
+        /** Initialize weak_ptr */
+        void initWeakPtr(GroupNodeWeakPtr other_weak_ptr);
         
     public:
         /** Static method which create a new box defined by the half_axis vector

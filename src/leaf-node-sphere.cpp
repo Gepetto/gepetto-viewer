@@ -29,6 +29,10 @@ namespace graphics {
         
         /* Allow transparency */
         geode_ptr_->getOrCreateStateSet()->setMode(GL_BLEND, ::osg::StateAttribute::ON);
+
+        addProperty(FloatProperty::create("Radius",
+              FloatProperty::getterFromMemberFunction(sphere_ptr_.get(), &osg::Sphere::getRadius),
+              FloatProperty::setterFromMemberFunction(sphere_ptr_.get(), &osg::Sphere::setRadius)));
     }
     
     LeafNodeSphere::LeafNodeSphere(const std::string& name, const float& radius) :

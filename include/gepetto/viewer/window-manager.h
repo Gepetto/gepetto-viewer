@@ -33,8 +33,6 @@ namespace graphics {
         /** OSG cameras */
         ::osg::CameraRefPtr main_camera_;
         ::osg::GraphicsContextRefPtr gc_;
-
-        ::osg::CameraRefPtr hud_camera_;
       
       /** Backgound camera */
       ::osg::CameraRefPtr bg_camera_;
@@ -54,7 +52,6 @@ namespace graphics {
       
       void createBackground();
       void applyBackgroundColor();
-      
 
         void init(osg::GraphicsContext* gc);
 
@@ -141,6 +138,8 @@ namespace graphics {
         ::osgViewer::ViewerRefPtr getViewerClone();
 
         virtual ~WindowManager();
+
+        void captureFrame (const std::string& filename);
 
         void startCapture (const std::string& filename,
             const std::string& extension);

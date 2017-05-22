@@ -15,6 +15,9 @@
 
 #include <sys/stat.h>
 
+#include <urdf_model/model.h>
+#include <urdf_parser/urdf_parser.h>
+
 #include <gepetto/viewer/leaf-node-cylinder.h>
 #include <gepetto/viewer/leaf-node-box.h>
 #include <gepetto/viewer/leaf-node-sphere.h>
@@ -23,6 +26,56 @@ namespace graphics {
   namespace urdfParser {
 
   namespace {
+    typedef boost::shared_ptr<urdf::Link> LinkPtr;
+    typedef boost::shared_ptr<urdf::Visual   >    VisualPtr;
+    typedef boost::shared_ptr<urdf::Collision> CollisionPtr;
+    DEF_CLASS_SMART_PTR(LinkNode)
+
+    class LinkNode :  public GroupNode
+    {
+      private:
+        bool currentIsVisual_;
+        std::vector<graphics::NodePtr_t> visuals_, collisions_;
+
+      public:
+        virtual ~LinkNode() {}
+
+        LinkNode(const std::string& name) : GroupNode(name)
+        {
+          addProperty(BoolProperty::create("ShowVisual",
+                                           BoolProperty::Getter_t(),
+                                           BoolProperty::setterFromMemberFunction(this, &LinkNode::showVisual)));
+        }
+
+        void showVisual (const bool& visual)
+        {
+          if (currentIsVisual_ == visual) return;
+          VisibilityMode m = (visual ? VISIBILITY_ON : VISIBILITY_OFF);
+          for (std::size_t i = 0; i < visuals_.size(); ++i)
+            visuals_[i]->setVisibilityMode(m);
+          m = (visual ? VISIBILITY_OFF : VISIBILITY_ON);
+          for (std::size_t i = 0; i < collisions_.size(); ++i)
+            collisions_[i]->setVisibilityMode(m);
+          currentIsVisual_ = visual;
+        }
+
+        void add (const NodePtr_t& child_ptr, bool vis)
+        {
+          VisibilityMode m = (currentIsVisual_ == vis ? VISIBILITY_ON : VISIBILITY_OFF);
+          addChild(child_ptr);
+          if (vis) visuals_.push_back(child_ptr);
+          else collisions_.push_back(child_ptr);
+          child_ptr->setVisibilityMode(m);
+        }
+
+        static LinkNodePtr_t create (const std::string& name)
+        {
+          LinkNodePtr_t robot (new LinkNode(name));
+          robot->initWeakPtr(robot);
+          return robot;
+        }
+    };
+
     void split(const std::string &s, char delim, std::vector<std::string> &elems) {
       std::stringstream ss(s);
       std::string item;
@@ -39,7 +92,7 @@ namespace graphics {
       return rosPaths;
     }
 
-    void getStaticTransform (const boost::shared_ptr < urdf::Link >& link,
+    void getStaticTransform (const LinkPtr& link,
 			     osgVector3 &static_pos, osgQuat &static_quat,
 			     bool visual, long unsigned int index)
     {
@@ -79,9 +132,9 @@ namespace graphics {
     }
 
     void addMesh (const std::string &robotName,
-		  boost::shared_ptr < urdf::Link >& urdfLink,
+		  LinkPtr& urdfLink,
 		  std::size_t j,
-		  GroupNodePtr_t &linkNode, bool visual, bool linkFrame)
+		  LinkNodePtr_t &linkNode, bool visual, bool linkFrame)
     {
       std::string link_name;
       std::string mesh_path;
@@ -111,7 +164,7 @@ namespace graphics {
                                     (float)mesh_shared_ptr->scale.y,
                                     (float)mesh_shared_ptr->scale.z));
 
-	  linkNode->addChild (meshNode);
+          linkNode->add(meshNode, visual);
           // Set Color if specified
           if (visual && urdfLink->visual_array [j]->material != NULL) {
             osgVector4 color(urdfLink->visual_array [j]->material->color.r, 
@@ -129,9 +182,9 @@ namespace graphics {
     }
 
     void addCylinder (const std::string &robotName,
-		      boost::shared_ptr < urdf::Link >& urdfLink,
+		      LinkPtr& urdfLink,
 		      std::size_t j,
-		      GroupNodePtr_t &linkNode, bool visual, bool linkFrame)
+		      LinkNodePtr_t &linkNode, bool visual, bool linkFrame)
     {
       std::string link_name;
       ::boost::shared_ptr< ::urdf::Cylinder > cylinder_shared_ptr;
@@ -171,14 +224,14 @@ namespace graphics {
           }
 
           // add object to link node
-          linkNode->addChild(cylinderNode);
+          linkNode->add(cylinderNode, visual);
         }
     }
 
     void addBox (const std::string &robotName,
-		 boost::shared_ptr < urdf::Link >& urdfLink,
+		 LinkPtr& urdfLink,
 		 std::size_t j,
-		 GroupNodePtr_t &linkNode, bool visual, bool linkFrame)
+		 LinkNodePtr_t &linkNode, bool visual, bool linkFrame)
     {
       std::string link_name;
       ::boost::shared_ptr< ::urdf::Box > box_shared_ptr;
@@ -217,14 +270,14 @@ namespace graphics {
             }
           }
           // add object to link node
-          linkNode->addChild(boxNode);
+          linkNode->add(boxNode, visual);
         }
     }
 
     void addSphere (const std::string &robotName,
-		    boost::shared_ptr < urdf::Link >& urdfLink,
+		    LinkPtr& urdfLink,
 		    std::size_t j,
-		    GroupNodePtr_t &linkNode, bool visual, bool linkFrame)
+		    LinkNodePtr_t &linkNode, bool visual, bool linkFrame)
     {
       std::string link_name;
       ::boost::shared_ptr< ::urdf::Sphere > sphere_shared_ptr;
@@ -263,10 +316,39 @@ namespace graphics {
           }
 
           // add links to link node
-          linkNode->addChild(sphereNode);
+          linkNode->add(sphereNode, visual);
         }
     }
 
+    template <typename T> inline const std::vector<T>& getGeomArray (const LinkPtr& link);
+    template <> inline const std::vector<   VisualPtr>& getGeomArray<   VisualPtr> (const LinkPtr& link) { return link->   visual_array; }
+    template <> inline const std::vector<CollisionPtr>& getGeomArray<CollisionPtr> (const LinkPtr& link) { return link->collision_array; }
+    template <bool visual> struct GeomArray { typedef    VisualPtr type; };
+    template <> struct GeomArray <false>    { typedef CollisionPtr type; };
+
+    template <bool visual> void addGeoms(const std::string &robotName,
+		    LinkPtr& link,
+		    LinkNodePtr_t &linkNode, bool linkFrame)
+    {
+      typedef typename GeomArray<visual>::type BodyType;
+      const std::vector<BodyType>& array = getGeomArray<BodyType>(link);
+      for (std::size_t j = 0; j < array.size (); ++j) {
+        switch (array [j]->geometry->type) {
+          case urdf::Geometry::MESH:
+            addMesh     (robotName, link, j, linkNode, visual, linkFrame);
+            break;
+          case urdf::Geometry::CYLINDER:
+            addCylinder (robotName, link, j, linkNode, visual, linkFrame);
+            break;
+          case urdf::Geometry::BOX:
+            addBox      (robotName, link, j, linkNode, visual, linkFrame);
+            break;
+          case urdf::Geometry::SPHERE:
+            addSphere   (robotName, link, j, linkNode, visual, linkFrame);
+            break;
+        }
+      }
+    }
   }
 
   std::string getFilename (const std::string& input)
@@ -287,21 +369,10 @@ namespace graphics {
   }
 
   GroupNodePtr_t parse (const std::string& robotName,
-				    const std::string& urdf_file_path,
-				    const std::string& collisionOrVisual,
-				    const std::string& linkOrObjectFrame)
+			const std::string& urdf_file_path,
+			const bool& visual,
+			const bool& linkFrame)
   {
-    if (collisionOrVisual != "visual" && collisionOrVisual != "collision") {
-      throw std::runtime_error ("parameter collisionOrVisual should be either "
-				"\"collision\" or \"visual\"");
-    }
-    if (linkOrObjectFrame != "link" && linkOrObjectFrame != "object") {
-      throw std::runtime_error ("parameter linkOrObjectFrame should be either "
-				"\"link\" or \"object\"");
-    }
-    bool linkFrame = true;
-    if (linkOrObjectFrame == "object") linkFrame = false;
-
     boost::shared_ptr< urdf::ModelInterface > model =
       urdf::parseURDFFile( getFilename(urdf_file_path) );
     // Test that file has correctly been parsed
@@ -310,68 +381,20 @@ namespace graphics {
 				urdf_file_path);
     }
     GroupNodePtr_t robot = GroupNode::create(robotName);
-    std::vector< boost::shared_ptr < urdf::Link > > links;
+    std::vector< LinkPtr > links;
     model->getLinks(links);
     std::string link_name;
 
     for (unsigned int i = 0 ; i < links.size() ; i++) {
       link_name = links[i]->name;
       std::cout << link_name << std::endl;
-      GroupNodePtr_t linkNode (GroupNode::create (robotName + "/" + link_name));
+      LinkNodePtr_t linkNode (LinkNode::create (robotName + "/" + link_name));
+      linkNode->showVisual(visual);
       // add link to robot node
       robot->addChild (linkNode);
 
-      if (collisionOrVisual == "visual") {
-	for (std::size_t j = 0; j < links[i]->visual_array.size (); ++j) {
-	  switch (links[i]->visual_array [j]->geometry->type) {
-	  case urdf::Geometry::MESH:
-	    addMesh (robotName,
-					   links [i], j, linkNode, true,
-					   linkFrame);
-	    break;
-	  case urdf::Geometry::CYLINDER:
-	    addCylinder (robotName,
-                                               links [i], j, linkNode, true,
-                                               linkFrame);
-            break;
-	  case urdf::Geometry::BOX:
-	    addBox (robotName,
-                                          links [i], j, linkNode,
-					  true, linkFrame);
-	    break;
-	  case urdf::Geometry::SPHERE:
-	    addSphere (robotName,
-                                             links [i], j, linkNode, true,
-                                             linkFrame);
-	    break;
-	  }
-	}
-      } else {
-	for (std::size_t j=0; j < links[i]->collision_array.size (); ++j) {
-	  switch (links[i]->collision_array [j]->geometry->type) {
-	  case urdf::Geometry::MESH:
-	    addMesh (robotName,
-					   links [i], j, linkNode, false,
-					   linkFrame);
-	    break;
-	  case urdf::Geometry::CYLINDER:
-	    addCylinder (robotName,
-                                               links [i], j, linkNode, false,
-                                               linkFrame);
-	    break;
-	  case urdf::Geometry::BOX:
-	    addBox (robotName,
-                                          links [i], j, linkNode, false,
-                                          linkFrame);
-	    break;
-	  case urdf::Geometry::SPHERE:
-	    addSphere (robotName,
-                                             links [i], j, linkNode, false,
-                                             linkFrame);
-	    break;
-	  }
-	}
-      }
+      if (linkFrame ||  visual) addGeoms<true >(robotName, links[i], linkNode, linkFrame);
+      if (linkFrame || !visual) addGeoms<false>(robotName, links[i], linkNode, linkFrame);
     }
     return robot;
   }

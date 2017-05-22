@@ -8,15 +8,82 @@
 
 #include <gepetto/viewer/leaf-node-xyzaxis.h>
 
+#include <../src/internal/configuration.hh>
+
 #include <osgUtil/SmoothingVisitor>
+#include <osgText/Text>
 #include <osg/CullFace>
 
 namespace graphics {
+    namespace {
+      // if rot corresponds to identity, the arrow is along Z.
+      inline osg::ShapeDrawableRefPtr arrowDrawable (const float& zshift,
+          const float& lengthCyl, const float& radiusCyl,
+          const float& lengthCon, const float& radiusCon,
+          const osgQuat& rot)
+      {
+        /* Create cylinder */
+        ::osg::CylinderRefPtr cylinder = new ::osg::Cylinder();
+        cylinder->set(rot * osgVector3(0.,0.,zshift + lengthCyl/2.f) , radiusCyl ,lengthCyl);
+        cylinder->setRotation(rot);
+        /* Create cone */
+        ::osg::ConeRefPtr cone = new ::osg::Cone();
+        cone->set(rot * osgVector3(0.,0.,zshift + lengthCyl+lengthCon/2.f) , lengthCon , radiusCon );
+        cone->setRotation(rot);
+
+        osg::ref_ptr<osg::CompositeShape> shape = new osg::CompositeShape;
+        shape->addChild(cylinder);
+        shape->addChild(cone);
+
+        return new ::osg::ShapeDrawable( shape );
+      }
+
+      osg::ref_ptr<osgText::Text> label(const char* text, osg::ref_ptr<osgText::Font> font, const osgVector3& pos, const float& charSize)
+      {
+            osgVector4 black = osgVector4(0.f, 0.f, 0.f, 1.f);
+            osg::ref_ptr<osgText::Text> l = new osgText::Text;
+            l->setText(text);
+            l->setFont(font);
+            l->setCharacterSize(charSize);
+            l->setCharacterSizeMode(osgText::Text::SCREEN_COORDS);
+            l->setFontResolution(30,30);
+            l->setAlignment(osgText::Text::LEFT_CENTER);
+            l->setAxisAlignment(osgText::Text::SCREEN);
+            l->setColor(black);
+            l->setPosition(pos);
+            return l;
+      }
+
+      std::string labelGetText(const osgText::TextBase* t) { return t->getText().createUTF8EncodedString(); }
+
+      inline PropertyPtr_t axisColor(const std::string t, osg::ShapeDrawable* arrow)
+      {
+        return Vector4Property::create(t + "AxisColor",
+                    Vector4Property::getterFromMemberFunction(arrow, &osg::ShapeDrawable::getColor),
+                    Vector4Property::setterFromMemberFunction(arrow, &osg::ShapeDrawable::setColor));
+      }
+
+      inline PropertyPtr_t labelText(const std::string t, osgText::TextBase* text)
+      {
+        return StringProperty::create(t + "LabelText",
+              StringProperty::Getter_t(boost::bind(labelGetText, text)),
+              StringProperty::setterFromMemberFunction(text, &osgText::TextBase::setText));
+      }
+
+      inline PropertyPtr_t labelSize(const std::string t, osgText::TextBase* text)
+      {
+        return FloatProperty::create(t + "LabelSize",
+            FloatProperty::getterFromMemberFunction(text, &osgText::TextBase::getCharacterHeight),
+            FloatProperty::setterFromMemberFunction(text, &osgText::TextBase::setCharacterSize));
+      }
+    }
 
     /* Declaration of private function members */
 
     void LeafNodeXYZAxis::init ()
     {
+        static osg::ref_ptr<osgText::Font> font = defaultFont();
+
         /* Create sphere object */
         sphere_ptr_ = new ::osg::Sphere();
         sphere_ptr_->setRadius(getRadius());
@@ -28,72 +95,71 @@ namespace graphics {
         geode_ptr_->addDrawable(sphere_drawable_ptr_);
         if(sizeAxis_ > 0){  // optimisation of memory consumption : doesn't create the axis instead of creating axis with size "0"
              /* create the axis : */
-            float radiusCyl = (getRadius()/4.f) * getSizeAxis();
-            float lengthCyl = (getRadius()*3.f) * getSizeAxis();
+            // float radiusCyl = (getRadius()/4.f) * getSizeAxis();
+            float radiusCyl = getRadius()/4.f;
+            float lengthCyl = getSizeAxis();
+            float labelShift1 = lengthCyl + getRadius() + 4 * radiusCyl + getRadius();
+            float labelShift2 = 0;
+            // float charSize = 3.f * radiusCyl;
+            float charSize = 60;
 
-            osgVector4 blue = osgVector4(0.f, 0.f, 1.f, 1.f);
+            osgVector4 blue  = osgVector4(0.f, 0.f, 1.f, 1.f);
             osgVector4 green = osgVector4(0.f, 1.f, 0.f, 1.f);
-            osgVector4 red = osgVector4(1.f, 0.f, 0.f, 1.f);
+            osgVector4 red   = osgVector4(1.f, 0.f, 0.f, 1.f);
 
+            osg::ref_ptr<osgText::Text> lbl;
+            osg::ShapeDrawableRefPtr arrow;
 
             /* X_AXIS */
-            /* Create cylinder */
-            ::osg::CylinderRefPtr cylinder_shape_x_ptr = new ::osg::Cylinder();
-            cylinder_shape_x_ptr->set(osgVector3(lengthCyl/2.f + getRadius(),0.,0.) , radiusCyl ,lengthCyl);
-            cylinder_shape_x_ptr->setRotation(osgQuat( 0. , ::osg::X_AXIS , ::osg::PI_2 , ::osg::Y_AXIS , 0. , ::osg::Z_AXIS ));
-            /* Create cone */
-            ::osg::ConeRefPtr cone_shape_x_ptr = new ::osg::Cone();
-            cone_shape_x_ptr->set(osgVector3(lengthCyl+getRadius(),0.,0.) , 2.f * radiusCyl , 4.f * radiusCyl );
-            cone_shape_x_ptr->setRotation(osgQuat( 0. , ::osg::X_AXIS , ::osg::PI_2 , ::osg::Y_AXIS , 0. , ::osg::Z_AXIS ));
-
             /* create drawable and add them to geode */
-            x_cylinder_drawable_ = new ::osg::ShapeDrawable( cylinder_shape_x_ptr );
-            x_cone_drawable_ = new ::osg::ShapeDrawable( cone_shape_x_ptr );
-            x_cylinder_drawable_->setColor(red);
-            x_cone_drawable_->setColor(red);
+            arrow = arrowDrawable (
+                getRadius(), lengthCyl, radiusCyl,
+                2.f * radiusCyl, getRadius(),
+                osgQuat( 0. , ::osg::X_AXIS , ::osg::PI_2 , ::osg::Y_AXIS , 0. , ::osg::Z_AXIS ));
+            arrow->setColor(red);
 
-            geode_ptr_->addDrawable(x_cylinder_drawable_);
-            geode_ptr_->addDrawable(x_cone_drawable_);
+            lbl = label("", font, osgVector3(labelShift1, 0., labelShift2), charSize);
 
+            addProperty(axisColor("X", arrow.get()));
+            addProperty(labelText("X", lbl.get()));
+            addProperty(labelSize("X", lbl.get()));
+
+            geode_ptr_->addDrawable(arrow);
+            geode_ptr_->addDrawable(lbl);
 
             /* Y_AXIS */
-            /* Create cylinder */
-            ::osg::CylinderRefPtr cylinder_shape_y_ptr = new ::osg::Cylinder();
-            cylinder_shape_y_ptr->set(osgVector3(0.,lengthCyl/2.f + getRadius(),0.) , radiusCyl ,lengthCyl);
-            cylinder_shape_y_ptr->setRotation(osgQuat( -::osg::PI_2 , ::osg::X_AXIS , 0. , ::osg::Y_AXIS , 0. , ::osg::Z_AXIS ));
-            /* Create cone */
-            ::osg::ConeRefPtr cone_shape_y_ptr = new ::osg::Cone();
-            cone_shape_y_ptr->set(osgVector3(0.,lengthCyl + getRadius(),0.) , 2.f * radiusCyl , 4.f * radiusCyl );
-            cone_shape_y_ptr->setRotation(osgQuat( -::osg::PI_2 , ::osg::X_AXIS , 0. , ::osg::Y_AXIS , 0. , ::osg::Z_AXIS ));
-
             /* create drawable and add them to geode */
-            y_cylinder_drawable_ = new ::osg::ShapeDrawable( cylinder_shape_y_ptr );
-            y_cone_drawable_ = new ::osg::ShapeDrawable( cone_shape_y_ptr );
-            y_cylinder_drawable_->setColor(green);
-            y_cone_drawable_->setColor(green);
+            arrow = arrowDrawable (
+                getRadius(), lengthCyl, radiusCyl,
+                2.f * radiusCyl, getRadius(),
+                osgQuat( -::osg::PI_2 , ::osg::X_AXIS , 0. , ::osg::Y_AXIS , 0. , ::osg::Z_AXIS ));
+            arrow->setColor(green);
 
-            geode_ptr_->addDrawable(y_cylinder_drawable_);
-            geode_ptr_->addDrawable(y_cone_drawable_);
+            lbl = label("", font, osgVector3(0., labelShift1, labelShift2), charSize);
 
+            addProperty(axisColor("Y", arrow.get()));
+            addProperty(labelText("Y", lbl.get()));
+            addProperty(labelSize("Y", lbl.get()));
+
+            geode_ptr_->addDrawable(arrow);
+            geode_ptr_->addDrawable(lbl);
 
             /* Z_AXIS */
-            /* Create cylinder */
-            ::osg::CylinderRefPtr cylinder_shape_z_ptr = new ::osg::Cylinder();
-            cylinder_shape_z_ptr->set(osgVector3(0.,0.,lengthCyl/2.f + getRadius()) , radiusCyl ,lengthCyl);
-
-            /* Create cone */
-            ::osg::ConeRefPtr cone_shape_z_ptr = new ::osg::Cone();
-            cone_shape_z_ptr->set(osgVector3(0.,0.,lengthCyl +getRadius()) , 2.f * radiusCyl , 4.f * radiusCyl );
-
-
             /* create drawable and add them to geode */
-            z_cylinder_drawable_ = new ::osg::ShapeDrawable( cylinder_shape_z_ptr );
-            z_cone_drawable_ = new ::osg::ShapeDrawable( cone_shape_z_ptr );
-            z_cylinder_drawable_->setColor(blue);
-            z_cone_drawable_->setColor(blue);
+            arrow = arrowDrawable (
+                getRadius(), lengthCyl, radiusCyl,
+                2.f * radiusCyl, getRadius(),
+                osgQuat( 0. , ::osg::X_AXIS , 0. , ::osg::Y_AXIS , 0. , ::osg::Z_AXIS ));
+            arrow->setColor(blue);
 
-            geode_ptr_->addDrawable(z_cylinder_drawable_);
-            geode_ptr_->addDrawable(z_cone_drawable_);
+            lbl = label("", font, osgVector3(labelShift2, 0., labelShift1), charSize);
+
+            addProperty(axisColor("Z", arrow.get()));
+            addProperty(labelText("Z", lbl.get()));
+            addProperty(labelSize("Z", lbl.get()));
+
+            geode_ptr_->addDrawable(arrow);
+            geode_ptr_->addDrawable(lbl);
         } // if radius > 0 : create axis
 
 
@@ -103,7 +169,6 @@ namespace graphics {
         /* Allow transparency */
         geode_ptr_->getOrCreateStateSet()->setMode(GL_BLEND, ::osg::StateAttribute::ON);;
     }
-
 
     LeafNodeXYZAxis::LeafNodeXYZAxis(const std::string& name, const osgVector4& color, float radiusCenter, float sizeAxis):
         Node(name)
@@ -220,20 +285,8 @@ namespace graphics {
     LeafNodeXYZAxis::~LeafNodeXYZAxis ()
     {
         /* Proper deletion of all tree scene */
-        geode_ptr_->removeDrawable(sphere_drawable_ptr_);
-        geode_ptr_->removeDrawable(x_cylinder_drawable_);
-        geode_ptr_->removeDrawable(x_cone_drawable_);
-        geode_ptr_->removeDrawable(y_cylinder_drawable_);
-        geode_ptr_->removeDrawable(y_cone_drawable_);
-        geode_ptr_->removeDrawable(z_cylinder_drawable_);
-        geode_ptr_->removeDrawable(z_cone_drawable_);
+        geode_ptr_->removeDrawables(0, geode_ptr_->getNumDrawables());
         geode_ptr_ = NULL;
-        x_cylinder_drawable_ = NULL;
-        x_cone_drawable_ = NULL;
-        y_cylinder_drawable_ = NULL;
-        y_cone_drawable_ = NULL;
-        z_cylinder_drawable_ = NULL;
-        z_cone_drawable_ = NULL;
         weak_ptr_.reset();
     }
 

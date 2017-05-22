@@ -84,7 +84,7 @@ namespace graphics {
          * See http://svn.openscenegraph.org/osg/OpenSceneGraph-Data/trunk/Images/primitives.gif
          * for details about possible values
          */
-        virtual void setMode (const GLenum mode);
+        virtual void setMode (const GLenum& mode);
 
         GLenum getMode () const;
 
@@ -108,6 +108,10 @@ namespace graphics {
 
             return color_array_ptr->at(0);
         }
+
+        void setAlpha (const float& alpha);
+
+        void setLineWidth (const float& width);
 
         SCENE_VIEWER_ACCEPT_VISITOR;
 

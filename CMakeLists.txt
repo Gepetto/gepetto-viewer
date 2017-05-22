@@ -57,9 +57,14 @@ SET(${PROJECT_NAME}_HEADERS
   include/gepetto/viewer/roadmap-viewer.h
   include/gepetto/viewer/node-rod.h
   include/gepetto/viewer/node-visitor.h
+  include/gepetto/viewer/node-property.h
   include/gepetto/viewer/transform-writer.h
   include/gepetto/viewer/blender-geom-writer.h
   include/gepetto/viewer/OSGManipulator/keyboard-manipulator.h
+)
+INSTALL(FILES fonts/arial.ttf
+  DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/fonts
+  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
 )
 
 FIND_PACKAGE(X11 REQUIRED)

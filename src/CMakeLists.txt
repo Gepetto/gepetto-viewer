@@ -19,6 +19,10 @@
 
 SET(LIBRARY_NAME ${PROJECT_NAME})
 
+CONFIG_FILES(
+  internal/configuration.cc
+)
+
 SET(${LIBRARY_NAME}_SOURCES
   group-node.cpp
   node.cpp
@@ -43,6 +47,7 @@ SET(${LIBRARY_NAME}_SOURCES
   transform-writer.cc
   blender-geom-writer.cc
   OSGManipulator/keyboard-manipulator.cpp
+  ${CMAKE_CURRENT_BINARY_DIR}/internal/configuration.cc
 )
 
 ADD_LIBRARY(${LIBRARY_NAME} SHARED ${${LIBRARY_NAME}_SOURCES})
