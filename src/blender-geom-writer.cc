@@ -207,6 +207,7 @@ namespace graphics {
       << comment << "" << end << end
       << comment << "## End of convenient functions" << end
       << comment << "checkConf()" << end << end
+      << comment << "bpy.ops.view3d.snap_cursor_to_center()" << end << end
       << comment << "obj_stack = []" << end;
   }
 
