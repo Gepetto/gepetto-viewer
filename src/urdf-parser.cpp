@@ -22,6 +22,9 @@
 #include <gepetto/viewer/leaf-node-box.h>
 #include <gepetto/viewer/leaf-node-sphere.h>
 
+#define OUT(x) std::cout << x << std::endl
+// #define OUT(x) (void)0
+
 namespace graphics {
   namespace urdfParser {
 
@@ -197,7 +200,7 @@ namespace graphics {
 	  ( urdfLink->collision_array [j]->geometry );
       }
       link_name = urdfLink->name;
-      std::cout << "Cylinder" << std::endl;
+      OUT( "Cylinder" );
       if ( cylinder_shared_ptr != 0 )
         {
 	  std::ostringstream oss;
@@ -244,7 +247,7 @@ namespace graphics {
 	  ( urdfLink->collision_array [j]->geometry);
       }
       link_name = urdfLink->name;
-      std::cout << "Box" << std::endl;
+      OUT( "Box" );
       if ( box_shared_ptr != 0 ) {
 	std::ostringstream oss;
 	oss << robotName << "/" << link_name << "_" << j;
@@ -290,7 +293,7 @@ namespace graphics {
 	  ( urdfLink->collision_array [j]->geometry );
       }
       link_name = urdfLink->name;
-      std::cout << "Sphere" << std::endl;
+      OUT( "Sphere" );
       if ( sphere_shared_ptr != 0 )
         {
 	  std::ostringstream oss;
@@ -387,7 +390,7 @@ namespace graphics {
 
     for (unsigned int i = 0 ; i < links.size() ; i++) {
       link_name = links[i]->name;
-      std::cout << link_name << std::endl;
+      OUT( link_name );
       LinkNodePtr_t linkNode (LinkNode::create (robotName + "/" + link_name));
       linkNode->showVisual(visual);
       // add link to robot node
