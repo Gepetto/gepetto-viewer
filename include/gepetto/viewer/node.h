@@ -43,6 +43,7 @@ namespace graphics {
         std::vector< ::osg::GroupRefPtr > highlight_nodes_;
 
         PropertyMap_t properties_;
+        VisibilityMode visibilityMode_;
         
         /** Initialization function */
         void init ();
@@ -123,6 +124,9 @@ namespace graphics {
          \param visibilitymode state
          */
         virtual void setVisibilityMode (const VisibilityMode& visibility_state);
+
+        virtual VisibilityMode getVisibilityMode ()
+        { return visibilityMode_; }
         
         /**
          \brief Virtual method for setting the lighting mode of the object : influence by light or not

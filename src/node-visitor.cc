@@ -77,6 +77,11 @@ namespace graphics {
   void NodeVisitor::apply (LeafNodeXYZAxis& node){
     apply(static_cast<Node&>(node));
   }
+  bool NodeVisitor::valid (Node& node){
+    if (invisibleAreValid_ || node.getVisibilityMode() != VISIBILITY_OFF)
+      return true;
+    return false;
+  }
   void NodeVisitor::traverse (Node& node) {
     node.traverse (*this);
   }

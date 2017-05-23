@@ -93,7 +93,8 @@ namespace graphics {
     {
       public:
         TransformWriterVisitor (TransformWriter* writer)
-          : writer_ (writer)
+          : NodeVisitor (false)
+          , writer_ (writer)
         {}
 
         void captureFrame (Node& node);

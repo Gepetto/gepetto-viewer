@@ -137,7 +137,8 @@ namespace graphics {
   }
 
   BlenderGeomWriterVisitor::BlenderGeomWriterVisitor (const std::string& filename)
-    : filename_ (filename)
+    : NodeVisitor(false)
+    , filename_ (filename)
     , nodeCount_ (0)
     , groupDepth_ (0)
   {

@@ -73,6 +73,8 @@ namespace graphics {
     wireframe_modes_[WIREFRAME]->getOrCreateStateSet()->setAttributeAndModes(material_wireframe_ptr, ::osg::StateAttribute::ON | ::osg::StateAttribute::PROTECTED );
     geode_ptr_ = NULL;
     alpha_ = 0;
+
+    visibilityMode_ = VISIBILITY_ON;
   }
 
   Node::Node (const std::string& name) :
@@ -168,6 +170,7 @@ namespace graphics {
 
   void Node::setVisibilityMode (const VisibilityMode& mode)
   {
+    visibilityMode_ = mode;
     switch (mode) {
     case VISIBILITY_ON:
       auto_transform_ptr_->setNodeMask(0xffffffff);

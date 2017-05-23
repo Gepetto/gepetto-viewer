@@ -37,7 +37,7 @@ typedef boost::weak_ptr<const className> className##ConstWeakPtr; \
     typedef ::osg::observer_ptr< className > className##ObserverPtr;
 
 #define SCENE_VIEWER_ACCEPT_VISITOR \
-  virtual void accept (NodeVisitor& nv) { nv.apply (*this); } \
+  virtual void accept (NodeVisitor& nv) { if (nv.valid(*this)) { nv.apply (*this); } } \
   struct {} __end_with_semicolon__
 
 #endif // SCENEVIEWER_MACROS_HH

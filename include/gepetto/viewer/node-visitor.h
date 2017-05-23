@@ -34,7 +34,7 @@ namespace graphics {
     class NodeVisitor : public osg::Referenced
     {
       public:
-        NodeVisitor () {}
+        NodeVisitor (bool invisibleAreValid = true) : invisibleAreValid_(invisibleAreValid) {}
 
         virtual ~NodeVisitor () {}
 
@@ -53,7 +53,12 @@ namespace graphics {
         virtual void apply (LeafNodeSphere& node);
         virtual void apply (LeafNodeXYZAxis& node);
 
+        virtual bool valid (Node& node);
+
         void traverse (Node& node);
+
+      protected:
+        bool invisibleAreValid_;
     }; /* class Node */
 } /* namespace graphics */
 
