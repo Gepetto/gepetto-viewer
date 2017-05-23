@@ -180,11 +180,12 @@ namespace graphics {
       << comment << "  bpy.context.object.name = objname" << end
       << comment << "  return bpy.context.object" << end
       << comment << "" << end
-      << comment << "def setLocQuatSca(obj, loc = (0,0,0), quat=(1,0,0,0), sca=(1,1,1)):" << end
-      << comment << "  obj.location = loc" << end
-      << comment << "  obj.rotation_mode = 'QUATERNION'" << end
-      << comment << "  obj.rotation_quaternion = quat" << end
-      << comment << "  obj.scale = sca" << end
+      << comment << "def setLocQuatSca(obj, loc = None, quat=None, sca=None):" << end
+      << comment << "  if loc is not None: obj.location = loc" << end
+      << comment << "  if quat is not None: " << end
+      << comment << "    obj.rotation_mode = 'QUATERNION'" << end
+      << comment << "    obj.rotation_quaternion = quat" << end
+      << comment << "  if sca is not None: obj.scale = sca" << end
       << comment << "" << end
       << comment << "def makePolyLine(objname, curvename, cList):" << end
       << comment << "  curvedata = bpy.data.curves.new(name=curvename, type='CURVE')" << end
@@ -254,13 +255,12 @@ namespace graphics {
   {
     out()
       << "bpy.ops.mesh.primitive_cube_add ()" << end
-      << varShape << " = bpy.context.object" << end
-      << varShape << ".dimensions = ";
-    writeVectorAsList(out(), node.getHalfAxis()*2) << end;
+      << varShape << " = bpy.context.object" << end;
 
     setColor(out(), node, varShape + ".data");
 
-    standardApply(node);
+    // scale should use getHalfAxis() * getScale()
+    standardApply(node, node.getHalfAxis());
   }
   void BlenderGeomWriterVisitor::apply (LeafNodeCapsule& node)
   {
@@ -343,8 +343,10 @@ namespace graphics {
     unimplemented("LeafNodeXYZAxis", node);
   }
 
-  void BlenderGeomWriterVisitor::standardApply (Node& node)
+  void BlenderGeomWriterVisitor::standardApply (Node& node, osgVector3 scale)
   {
+    const osgVector3 s = node.getScale();
+    scale[0] *= s[0]; scale[1] *= s[1]; scale[2] *= s[2];
     const std::string& id = node.getID ();
     // Set name
     out()
@@ -352,7 +354,7 @@ namespace graphics {
       << "setLocQuatSca(" << varShape << ", ";
     writeVectorAsList(out() << "loc = " , node.getStaticPosition()) << ", ";
     writeVectorAsList(out() << "quat = ", node.getStaticRotation()) << ", ";
-    writeVectorAsList(out() << "sca = " , node.getScale()) << ')' << end;
+    writeVectorAsList(out() << "sca = " , scale) << ')' << end;
     out()
       << "obj = makeEmpty(\"" << id << "\")" << end
       << "setLocQuatSca(obj)" << end

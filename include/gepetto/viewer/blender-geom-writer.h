@@ -44,7 +44,8 @@ namespace graphics {
       protected:
         std::ofstream& out () { return file_; }
 
-        void standardApply (Node& node);
+        // The scale multiplier is requited for LeafNodeBox
+        void standardApply (Node& node, osgVector3 scaleMultiplier = osgVector3(1,1,1));
 
         bool openFile ();
         void closeFile () {
