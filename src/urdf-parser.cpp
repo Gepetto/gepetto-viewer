@@ -393,8 +393,8 @@ namespace graphics {
       // add link to robot node
       robot->addChild (linkNode);
 
-      if (linkFrame ||  visual) addGeoms<true >(robotName, links[i], linkNode, linkFrame);
-      if (linkFrame || !visual) addGeoms<false>(robotName, links[i], linkNode, linkFrame);
+      if (linkFrame ||  visual) addGeoms<true >((visual ? robotName : robotName + "_viz"), links[i], linkNode, linkFrame);
+      if (linkFrame || !visual) addGeoms<false>((visual ? robotName + "_col" : robotName), links[i], linkNode, linkFrame);
     }
     return robot;
   }
