@@ -413,8 +413,6 @@ namespace graphics {
     bool WindowManager::addNode(NodePtr_t graphical_object_ptr)
     {
         bool result = scene_ptr_->addChild (graphical_object_ptr);
-        viewer_ptr_->home(); // Partie du code à revoir pour inclure juste un nouveau focus
-
         return result;
     }
 
