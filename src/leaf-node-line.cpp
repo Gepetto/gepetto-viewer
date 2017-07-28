@@ -157,6 +157,7 @@ namespace graphics {
     void LeafNodeLine::setStartPoint (const osgVector3& start_point)
     {
         points_ptr_->at(0) = start_point;
+        beam_ptr_->dirtyDisplayList();
     }
     
     osgVector3 LeafNodeLine::getStartPoint() const
@@ -167,6 +168,7 @@ namespace graphics {
     void LeafNodeLine::setEndPoint (const osgVector3& end_point)
     {
         points_ptr_->at(1) = end_point;
+        beam_ptr_->dirtyDisplayList();
     }
     
     osgVector3 LeafNodeLine::getEndPoint() const
@@ -196,6 +198,7 @@ namespace graphics {
         points_ptr_ = points;
         beam_ptr_->setVertexArray (points_ptr_.get ());
         drawArray_ptr_->setCount (points->size());
+        beam_ptr_->dirtyDisplayList();
     }
     
     void LeafNodeLine::setColor (const osgVector4& color)
