@@ -490,10 +490,11 @@ namespace graphics {
       return;
     }
     /* Create an handler to save video */
-    write_to_file_ptr_ = new osgViewer::ScreenCaptureHandler::WriteToFile
-      (filename, extension);
-    screen_capture_ptr_ = new osgViewer::ScreenCaptureHandler
-      (write_to_file_ptr_.get (), -1);
+    typedef osgViewer::ScreenCaptureHandler SCH_t;
+    typedef SCH_t::WriteToFile WriteToFile;
+    osg::ref_ptr<WriteToFile> wtf = 
+        new WriteToFile (filename, extension, WriteToFile::SEQUENTIAL_NUMBER);
+    screen_capture_ptr_ = new SCH_t (wtf.get(), -1);
     /* Screen capture can be stopped with stopCapture */
     screen_capture_ptr_->setKeyEventTakeScreenShot (0);
     screen_capture_ptr_->setKeyEventToggleContinuousCapture (0);
@@ -506,6 +507,15 @@ namespace graphics {
     if (!screen_capture_ptr_) return;
     screen_capture_ptr_->stopCapture ();
     frame ();
+    // Remove event handler
+    typedef osgViewer::View::EventHandlers EventHandlers;
+    EventHandlers& handlers = viewer_ptr_->getEventHandlers();
+    EventHandlers::iterator _handler =
+      std::find (handlers.begin(), handlers.end(), screen_capture_ptr_);
+    if (_handler != handlers.end()) {
+      handlers.erase (_handler);
+      screen_capture_ptr_.release();
+    }
   }
 
   bool WindowManager::writeNodeFile (const std::string& fn)
