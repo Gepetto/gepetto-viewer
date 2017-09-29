@@ -365,23 +365,25 @@ namespace graphics {
         if (stat(name.c_str(), &sb) == 0 && S_ISREG(sb.st_mode))
           return name;
       }
-      std::cerr << "File not found: " << input << std::endl;
-      std::cerr << "Check ROS_PACKAGE_PATH environment variable." << std::endl;
+      throw std::runtime_error ("File not found: " + input
+          + ". Check ROS_PACKAGE_PATH environment variable.");
     }
     return input;
   }
 
   GroupNodePtr_t parse (const std::string& robotName,
-			const std::string& urdf_file_path,
+			const std::string& urdf_file,
 			const bool& visual,
 			const bool& linkFrame)
   {
-    boost::shared_ptr< urdf::ModelInterface > model =
-      urdf::parseURDFFile( getFilename(urdf_file_path) );
-    // Test that file has correctly been parsed
-    if (!model) {
-      throw std::runtime_error (std::string ("Failed to parse ") +
-				urdf_file_path);
+    boost::shared_ptr< urdf::ModelInterface > model;
+    if (urdf_file.compare(urdf_file.length() - 5, 5, ".urdf") == 0) {
+      model = urdf::parseURDFFile( getFilename(urdf_file) );
+      // Test that file has correctly been parsed
+      if (!model) throw std::invalid_argument ("Failed to parse " + urdf_file);
+    } else {
+      model = urdf::parseURDF( urdf_file );
+      if (!model) throw std::invalid_argument ("Failed to parse XML string");
     }
     GroupNodePtr_t robot = GroupNode::create(robotName);
     std::vector< LinkPtr > links;
