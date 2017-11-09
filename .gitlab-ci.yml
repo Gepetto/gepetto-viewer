@@ -1,0 +1,15 @@
+variables:
+  GIT_SSL_NO_VERIFY: "true"
+  GIT_SUBMODULE_STRATEGY: "recursive"
+
+build:
+  image: ubuntu:14.04
+  script:
+    - sudo apt-get update && sudo apt-get -qqy upgrade
+    - sudo apt-get -qqy install cmake g++
+    - sudo apt-get -qqy install libopenscenegraph-dev liburdfdom-dev libboost-filesystem-dev libboost-program-options-dev libboost-test-dev
+    - mkdir build && cd build
+    - cmake ..
+    - make -s
+    - make install
+    - make uninstall
