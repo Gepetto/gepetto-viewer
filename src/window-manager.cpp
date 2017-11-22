@@ -539,7 +539,7 @@ namespace graphics {
 
   void WindowManager::getCameraTransform(osg::Vec3d& pos,osg::Quat& rot){
     osg::Matrixd matrix = manipulator_ptr->getMatrix();
-    matrix.get(rot);
+    rot = matrix.getRotate();
     pos = matrix.getTrans();
   }
 
