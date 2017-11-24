@@ -17,16 +17,26 @@ namespace graphics {
 
     void LeafNodeArrow::init ()
     {
-
-
         /* Create Geode for adding ShapeDrawable */
         geode_ptr_ = new osg::Geode();
+
+        resetGeodeContent ();
+
+        /* Create PositionAttitudeTransform */
+        this->asQueue()->addChild(geode_ptr_);
+
+        /* Allow transparency */
+        geode_ptr_->getOrCreateStateSet()->setMode(GL_BLEND, ::osg::StateAttribute::ON);;
+    }
+
+    void LeafNodeArrow::resetGeodeContent ()
+    {
+        if (cylinder_drawable_) geode_ptr_->removeDrawable(cylinder_drawable_);
+        if (cone_drawable_    ) geode_ptr_->removeDrawable(cone_drawable_);
 
          /* create the axis : */
         float radiusCyl = getRadius();
         float lengthCyl = getSize();
-
-
 
         /* Create cylinder */
         ::osg::CylinderRefPtr cylinder_shape_x_ptr = new ::osg::Cylinder();
@@ -40,29 +50,20 @@ namespace graphics {
         /* create drawable and add them to geode */
         cylinder_drawable_ = new ::osg::ShapeDrawable( cylinder_shape_x_ptr );
         cone_drawable_ = new ::osg::ShapeDrawable( cone_shape_x_ptr );
+        setColor (color_);
 
         geode_ptr_->addDrawable(cylinder_drawable_);
         geode_ptr_->addDrawable(cone_drawable_);
-
-
-
-        /* Create PositionAttitudeTransform */
-        this->asQueue()->addChild(geode_ptr_);
-
-        /* Allow transparency */
-        geode_ptr_->getOrCreateStateSet()->setMode(GL_BLEND, ::osg::StateAttribute::ON);;
     }
 
-
     LeafNodeArrow::LeafNodeArrow(const std::string& name, const osgVector4& color, float radius, float size):
-        Node(name)
+        Node(name),
+        color_(color)
     {
-
         setRadius(radius);
         setSize(size);
 
         init();
-        setColor(color);
     }
 
     LeafNodeArrow::LeafNodeArrow(const LeafNodeArrow& other) :
@@ -168,33 +169,14 @@ namespace graphics {
         color_ = color;
     }
 
-    void LeafNodeArrow::resize(float radius,float length){
-      if(length != getSize() || radius != getRadius()){ // avoid useless resize
-        osgVector4 color = cylinder_drawable_->getColor();
-        geode_ptr_->removeDrawable(cylinder_drawable_);
-        geode_ptr_->removeDrawable(cone_drawable_);
-        setSize(length);
-        setRadius(radius);
+    void LeafNodeArrow::resize(float radius,float length)
+    {
+        if(length != getSize() || radius != getRadius())
+        { // avoid useless resize
+            setSize(length);
+            setRadius(radius);
 
-
-        /* Create cylinder */
-        ::osg::CylinderRefPtr cylinder_shape_x_ptr = new ::osg::Cylinder();
-        cylinder_shape_x_ptr->set(osgVector3(getSize()/2.f + getRadius(),0.f,0.f) , getRadius() ,getSize());
-        cylinder_shape_x_ptr->setRotation(osgQuat( 0.f , ::osg::X_AXIS , M_PI_2 , ::osg::Y_AXIS , 0. , ::osg::Z_AXIS ));
-        /* Create cone */
-        ::osg::ConeRefPtr cone_shape_x_ptr = new ::osg::Cone();
-        cone_shape_x_ptr->set(osgVector3(getSize()+getRadius(),0.f,0.f) , 2.f * getRadius() , 4.f * getRadius() );
-        cone_shape_x_ptr->setRotation(osgQuat( 0.f , ::osg::X_AXIS , M_PI_2 , ::osg::Y_AXIS , 0.f , ::osg::Z_AXIS ));
-
-        /* create drawable and add them to geode */
-        cylinder_drawable_ = new ::osg::ShapeDrawable( cylinder_shape_x_ptr );
-        cone_drawable_ = new ::osg::ShapeDrawable( cone_shape_x_ptr );
-        cylinder_drawable_->setColor(color);
-        cone_drawable_->setColor(color);
-
-        geode_ptr_->addDrawable(cylinder_drawable_);
-        geode_ptr_->addDrawable(cone_drawable_);
-
+            resetGeodeContent ();
         }
     }
 
