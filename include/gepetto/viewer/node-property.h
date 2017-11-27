@@ -89,7 +89,7 @@ namespace graphics {
       public:
         typedef boost::function<void(const T&)> Setter_t;
         typedef boost::function<const T&(void)> Getter_t;
-        typedef boost::shared_ptr<PropertyTpl> Ptr_t;
+        typedef shared_ptr<PropertyTpl> Ptr_t;
 
         static Ptr_t create (const std::string& name, const Getter_t& g, const Setter_t& s) { return Ptr_t(new PropertyTpl(name, g, s)); }
         std::string type() { return details::property_type<T>::to_string(); }
