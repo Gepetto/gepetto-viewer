@@ -94,6 +94,10 @@ namespace graphics {
 
         virtual void setPoints (const ::osg::Vec3ArrayRefPtr& points);
 
+        /** Draw only a subset of the points
+         */
+        void setPointsSubset (const int first, const std::size_t count);
+
         ::osg::Vec3ArrayRefPtr getPoints()
         {
           return points_ptr_;

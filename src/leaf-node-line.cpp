@@ -197,10 +197,19 @@ namespace graphics {
     {        
         points_ptr_ = points;
         beam_ptr_->setVertexArray (points_ptr_.get ());
-        drawArray_ptr_->setCount (points->size());
+        setPointsSubset (0, points->size());
         beam_ptr_->dirtyDisplayList();
     }
-    
+
+    void LeafNodeLine::setPointsSubset (const int first, const std::size_t count)
+    {
+        if (first + count > points_ptr_->size())
+          throw std::invalid_argument ("Invalid range of points in LeafNodeLine::setPointsSubset");
+        drawArray_ptr_->setFirst (first);
+        drawArray_ptr_->setCount (count);
+        beam_ptr_->dirtyDisplayList();
+    }
+
     void LeafNodeLine::setColor (const osgVector4& color)
     {      
         color_ptr_->at(0) = color;
