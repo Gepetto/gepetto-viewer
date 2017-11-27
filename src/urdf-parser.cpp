@@ -151,7 +151,7 @@ namespace graphics {
 	  ( urdfLink->collision_array [j]->geometry );
       }
       link_name = urdfLink->name;
-      if ( mesh_shared_ptr != 0 )
+      if ( mesh_shared_ptr )
         {
           mesh_path = getFilename (mesh_shared_ptr->filename);
 	  std::ostringstream oss;
@@ -201,7 +201,7 @@ namespace graphics {
       }
       link_name = urdfLink->name;
       OUT( "Cylinder" );
-      if ( cylinder_shared_ptr != 0 )
+      if ( cylinder_shared_ptr )
         {
 	  std::ostringstream oss;
 	  oss << robotName << "/" << link_name << "_" << j;
@@ -248,7 +248,7 @@ namespace graphics {
       }
       link_name = urdfLink->name;
       OUT( "Box" );
-      if ( box_shared_ptr != 0 ) {
+      if ( box_shared_ptr ) {
 	std::ostringstream oss;
 	oss << robotName << "/" << link_name << "_" << j;
 	LeafNodeBoxPtr_t boxNode = LeafNodeBox::create
@@ -294,7 +294,7 @@ namespace graphics {
       }
       link_name = urdfLink->name;
       OUT( "Sphere" );
-      if ( sphere_shared_ptr != 0 )
+      if ( sphere_shared_ptr )
         {
 	  std::ostringstream oss;
 	  oss << robotName << "/" << link_name << "_" << j;
