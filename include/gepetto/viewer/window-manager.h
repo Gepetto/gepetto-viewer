@@ -42,7 +42,6 @@ namespace graphics {
     
         /* OSG Screen capture handler */
         osg::ref_ptr < ::osgViewer::ScreenCaptureHandler> screen_capture_ptr_;
-        osg::ref_ptr < ::osgViewer::ScreenCaptureHandler::WriteToFile> write_to_file_ptr_;
 
 	osg::ref_ptr<osgGA::KeySwitchMatrixManipulator> manipulator_ptr;
         /** Associated weak pointer */

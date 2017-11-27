@@ -34,6 +34,8 @@ namespace graphics {
 
         void init ();
 
+        void resetGeodeContent ();
+
 
         /* Default constructor */
         LeafNodeArrow(const std::string& name, const osgVector4& color, float radiusCenter, float sizeAxis);

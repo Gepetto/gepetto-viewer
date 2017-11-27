@@ -23,8 +23,10 @@ namespace graphics {
     /// Create a node from an urdf file
     /// \param robotName Name of the node that will contain the robot geometry,
     ///                  each geometric part is prefixed by this name,
-    /// \param urdf_file_path to the package containing the urdf file,
-    ///                       i.e. "/opt/ros/hydro/share/pr2_description",
+    /// \param urdf_file two possible inputs:
+    ///                  - if it ends with ".urdf", it is interpreted as a filename,
+    ///                    that will be processed with getFilename
+    ///                  - otherwise, it is interpreted as a XML string.
     /// \param visual whether to parse the visual part or the
     ///        collision part of links.
     /// \param linkFrame in the urdf kinematic chain, objects are
@@ -34,7 +36,7 @@ namespace graphics {
     /// \note the parser will replace "package://" by a path from the
     ///       ROS_PACKAGE_PATH environment variable.
     GroupNodePtr_t parse (const std::string& robotName,
-			  const std::string& urdf_file_path,
+			  const std::string& urdf_file,
 			  const bool& visual = true,
 			  const bool& linkFrame = true);
   }
