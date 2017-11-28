@@ -216,10 +216,18 @@ namespace graphics {
         beam_ptr_->dirtyDisplayList();
         Node::setAlpha(color.a());
     }
+  
+    void LeafNodeLine::setColors (const ::osg::Vec4ArrayRefPtr & colors)
+    {
+      color_ptr_ = colors;
+      beam_ptr_->dirtyDisplayList();
+    }
 
     void LeafNodeLine::setAlpha (const float& alpha)
     {
-      color_ptr_->at(0).a() = alpha;
+      for(int k = 0; k < color_ptr_->getNumElements(); ++k)
+        color_ptr_->at(k).a() = alpha;
+      
       beam_ptr_->dirtyDisplayList();
       Node::setAlpha(alpha);
     }

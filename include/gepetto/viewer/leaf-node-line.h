@@ -104,6 +104,7 @@ namespace graphics {
         }
 
         void setColor(const osgVector4& color);
+        void setColors(const ::osg::Vec4ArrayRefPtr& color);
 
         osgVector4 getColor() const
         {
