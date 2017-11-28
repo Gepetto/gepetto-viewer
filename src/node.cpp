@@ -19,6 +19,9 @@
 #include <gepetto/viewer/node-visitor.h>
 
 namespace graphics {
+  namespace {
+    int getNodeVisibilityMode (Node* node) { return node->getVisibilityMode(); }
+  }
   using ::osg::Matrix;
 
   /* Declaration of private function members */
@@ -75,6 +78,12 @@ namespace graphics {
     alpha_ = 0;
 
     visibilityMode_ = VISIBILITY_ON;
+
+    addProperty(
+        IntProperty::create("visibility",
+          IntProperty::Getter_t(boost::bind(getNodeVisibilityMode, this)),
+          IntProperty::Setter_t()
+          ));
   }
 
   Node::Node (const std::string& name) :
