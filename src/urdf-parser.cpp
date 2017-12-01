@@ -29,9 +29,9 @@ namespace graphics {
   namespace urdfParser {
 
   namespace {
-    typedef boost::shared_ptr<urdf::Link> LinkPtr;
-    typedef boost::shared_ptr<urdf::Visual   >    VisualPtr;
-    typedef boost::shared_ptr<urdf::Collision> CollisionPtr;
+    typedef shared_ptr<urdf::Link> LinkPtr;
+    typedef shared_ptr<urdf::Visual   >    VisualPtr;
+    typedef shared_ptr<urdf::Collision> CollisionPtr;
     DEF_CLASS_SMART_PTR(LinkNode)
 
     class LinkNode :  public GroupNode
@@ -100,7 +100,7 @@ namespace graphics {
 			     bool visual, long unsigned int index)
     {
       if (visual) {
-        boost::shared_ptr<urdf::Visual> visual;
+        shared_ptr<urdf::Visual> visual;
         if (link->visual_array.size()>1)
           visual = link->visual_array[index];
         else
@@ -116,7 +116,7 @@ namespace graphics {
             (float)visual->origin.rotation.z,
             (float)visual->origin.rotation.w);
       } else {
-        boost::shared_ptr<urdf::Collision> collision;
+        shared_ptr<urdf::Collision> collision;
         if (link->collision_array.size()>1)
           collision = link->collision_array[index];
         else
@@ -141,13 +141,13 @@ namespace graphics {
     {
       std::string link_name;
       std::string mesh_path;
-      ::boost::shared_ptr< ::urdf::Mesh > mesh_shared_ptr;
+      shared_ptr< ::urdf::Mesh > mesh_shared_ptr;
 
       if (visual) {
-	mesh_shared_ptr = boost::static_pointer_cast< ::urdf::Mesh >
+	mesh_shared_ptr = graphics::static_pointer_cast< ::urdf::Mesh >
 	  ( urdfLink->visual_array [j]->geometry );
       } else {
-	mesh_shared_ptr = boost::static_pointer_cast< ::urdf::Mesh >
+	mesh_shared_ptr = graphics::static_pointer_cast< ::urdf::Mesh >
 	  ( urdfLink->collision_array [j]->geometry );
       }
       link_name = urdfLink->name;
@@ -190,13 +190,13 @@ namespace graphics {
 		      LinkNodePtr_t &linkNode, bool visual, bool linkFrame)
     {
       std::string link_name;
-      ::boost::shared_ptr< ::urdf::Cylinder > cylinder_shared_ptr;
+      shared_ptr< ::urdf::Cylinder > cylinder_shared_ptr;
 
       if (visual) {
-	cylinder_shared_ptr = boost::static_pointer_cast < ::urdf::Cylinder >
+	cylinder_shared_ptr = graphics::static_pointer_cast < ::urdf::Cylinder >
 	  ( urdfLink->visual_array [j]->geometry );
       } else {
-	cylinder_shared_ptr = boost::static_pointer_cast < ::urdf::Cylinder >
+	cylinder_shared_ptr = graphics::static_pointer_cast < ::urdf::Cylinder >
 	  ( urdfLink->collision_array [j]->geometry );
       }
       link_name = urdfLink->name;
@@ -237,13 +237,13 @@ namespace graphics {
 		 LinkNodePtr_t &linkNode, bool visual, bool linkFrame)
     {
       std::string link_name;
-      ::boost::shared_ptr< ::urdf::Box > box_shared_ptr;
+      shared_ptr< ::urdf::Box > box_shared_ptr;
 
       if (visual) {
-	box_shared_ptr = boost::static_pointer_cast< ::urdf::Box >
+	box_shared_ptr = graphics::static_pointer_cast< ::urdf::Box >
 	  ( urdfLink->visual_array [j]->geometry);
       } else {
-	box_shared_ptr = boost::static_pointer_cast< ::urdf::Box >
+	box_shared_ptr = graphics::static_pointer_cast< ::urdf::Box >
 	  ( urdfLink->collision_array [j]->geometry);
       }
       link_name = urdfLink->name;
@@ -283,13 +283,13 @@ namespace graphics {
 		    LinkNodePtr_t &linkNode, bool visual, bool linkFrame)
     {
       std::string link_name;
-      ::boost::shared_ptr< ::urdf::Sphere > sphere_shared_ptr;
+      shared_ptr< ::urdf::Sphere > sphere_shared_ptr;
 
       if (visual) {
-	sphere_shared_ptr = boost::static_pointer_cast < ::urdf::Sphere >
+	sphere_shared_ptr = graphics::static_pointer_cast < ::urdf::Sphere >
 	  ( urdfLink->visual_array [j]->geometry );
       } else {
-	sphere_shared_ptr = boost::static_pointer_cast < ::urdf::Sphere >
+	sphere_shared_ptr = graphics::static_pointer_cast < ::urdf::Sphere >
 	  ( urdfLink->collision_array [j]->geometry );
       }
       link_name = urdfLink->name;
@@ -376,7 +376,7 @@ namespace graphics {
 			const bool& visual,
 			const bool& linkFrame)
   {
-    boost::shared_ptr< urdf::ModelInterface > model;
+    shared_ptr< urdf::ModelInterface > model;
     if (urdf_file.compare(urdf_file.length() - 5, 5, ".urdf") == 0) {
       model = urdf::parseURDFFile( getFilename(urdf_file) );
       // Test that file has correctly been parsed
