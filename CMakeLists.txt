@@ -22,6 +22,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 SET(CXX_DISABLE_WERROR TRUE)
 INCLUDE(cmake/base.cmake)
 INCLUDE(cmake/boost.cmake)
+INCLUDE(cmake/ide.cmake)
 
 SET(PROJECT_NAME gepetto-viewer)
 SET(PROJECT_DESCRIPTION "An user-friendly Graphical Interface")
