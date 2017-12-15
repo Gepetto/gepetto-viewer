@@ -125,11 +125,17 @@ namespace graphics {
     void LeafNodeCapsule::setRadius (const float& radius)
     {
         capsule_ptr_->setRadius(radius);
+#ifdef OSG_3_5_6_OR_LATER
+        shape_drawable_ptr_->build();
+#endif
     }
     
     void LeafNodeCapsule::setHeight (const float& height)
     {
         capsule_ptr_->setHeight(height);
+#ifdef OSG_3_5_6_OR_LATER
+        shape_drawable_ptr_->build();
+#endif
     }
 
     void LeafNodeCapsule::resize(float height){
@@ -140,6 +146,9 @@ namespace graphics {
         shape_drawable_ptr_ = new ::osg::ShapeDrawable(capsule_ptr_);
         shape_drawable_ptr_->setColor(color);
         geode_ptr_->addDrawable(shape_drawable_ptr_);
+#ifdef OSG_3_5_6_OR_LATER
+        shape_drawable_ptr_->build();
+#endif
         }
     }
     

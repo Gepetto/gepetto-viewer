@@ -113,11 +113,17 @@ namespace graphics {
     void LeafNodeCone::setRadius (const float& radius)
     {
         cone_ptr_->setRadius(radius);
+#ifdef OSG_3_5_6_OR_LATER
+        shape_drawable_ptr_->build();
+#endif
     }
     
     void LeafNodeCone::setHeight (const float& height)
     {  
         cone_ptr_->setHeight(height);
+#ifdef OSG_3_5_6_OR_LATER
+        shape_drawable_ptr_->build();
+#endif
     }
     
     void LeafNodeCone::setColor (const osgVector4& color)

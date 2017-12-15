@@ -118,6 +118,9 @@ namespace graphics {
         box_ptr_->setHalfLengths(half_axis);
         shape_drawable_ptr_->dirtyDisplayList();
         shape_drawable_ptr_->dirtyBound();
+#ifdef OSG_3_5_6_OR_LATER
+        shape_drawable_ptr_->build();
+#endif
     }
     
     void LeafNodeBox::setColor (const osgVector4 &color)

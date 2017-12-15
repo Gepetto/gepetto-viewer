@@ -122,6 +122,9 @@ namespace graphics {
     void LeafNodeCylinder::setRadius (const float& radius)
     {        
         cylinder_ptr_->setRadius(radius);
+#ifdef OSG_3_5_6_OR_LATER
+        shape_drawable_ptr_->build();
+#endif
     }
     
     void LeafNodeCylinder::setHeight (const float& height)
@@ -132,6 +135,9 @@ namespace graphics {
     void LeafNodeCylinder::setColor (const osgVector4& color)
     {
         shape_drawable_ptr_->setColor(color);
+#ifdef OSG_3_5_6_OR_LATER
+        shape_drawable_ptr_->build();
+#endif
     }
 
     void LeafNodeCylinder::setTexture(const std::string& image_path)
