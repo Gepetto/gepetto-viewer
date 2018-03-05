@@ -22,6 +22,30 @@
 #include <gepetto/viewer/leaf-node-box.h>
 #include <gepetto/viewer/leaf-node-sphere.h>
 
+#ifndef URDFDOM_BOOST_SHARED_PTR
+#include <memory>
+namespace graphics {
+  namespace urdfParser {
+    using std::shared_ptr;
+    using std::weak_ptr;
+    using std::static_pointer_cast;
+    using std::dynamic_pointer_cast;
+  }
+}
+#else
+#include <boost/shared_ptr.hpp>
+#include <boost/weak_ptr.hpp>
+namespace graphics {
+  namespace urdfParser {
+    using boost::shared_ptr;
+    using boost::weak_ptr;
+    using boost::static_pointer_cast;
+    using boost::dynamic_pointer_cast;
+  }
+}
+#endif
+
+
 #define OUT(x) std::cout << x << std::endl
 // #define OUT(x) (void)0
 
