@@ -19,7 +19,7 @@ namespace graphics {
 
   std::string getCachedFileName (const std::string& meshfile)
   {
-    static const std::string exts[3] = { ".osg", ".osg2", ".osgb" };
+    static const std::string exts[3] = { ".osgb", ".osg2", ".osg" };
     for (int i = 0; i < 3; ++i) {
       std::string cached = meshfile + exts[i];
       if (fileExists(cached.c_str())) return cached;
