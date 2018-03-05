@@ -28,8 +28,6 @@ namespace graphics {
   namespace urdfParser {
     using std::shared_ptr;
     using std::weak_ptr;
-    using std::static_pointer_cast;
-    using std::dynamic_pointer_cast;
   }
 }
 #else
@@ -39,8 +37,6 @@ namespace graphics {
   namespace urdfParser {
     using boost::shared_ptr;
     using boost::weak_ptr;
-    using boost::static_pointer_cast;
-    using boost::dynamic_pointer_cast;
   }
 }
 #endif
@@ -168,10 +164,10 @@ namespace graphics {
       shared_ptr< ::urdf::Mesh > mesh_shared_ptr;
 
       if (visual) {
-	mesh_shared_ptr = graphics::static_pointer_cast< ::urdf::Mesh >
+	mesh_shared_ptr = urdf::static_pointer_cast< ::urdf::Mesh >
 	  ( urdfLink->visual_array [j]->geometry );
       } else {
-	mesh_shared_ptr = graphics::static_pointer_cast< ::urdf::Mesh >
+	mesh_shared_ptr = urdf::static_pointer_cast< ::urdf::Mesh >
 	  ( urdfLink->collision_array [j]->geometry );
       }
       link_name = urdfLink->name;
@@ -217,10 +213,10 @@ namespace graphics {
       shared_ptr< ::urdf::Cylinder > cylinder_shared_ptr;
 
       if (visual) {
-	cylinder_shared_ptr = graphics::static_pointer_cast < ::urdf::Cylinder >
+	cylinder_shared_ptr = urdf::static_pointer_cast < ::urdf::Cylinder >
 	  ( urdfLink->visual_array [j]->geometry );
       } else {
-	cylinder_shared_ptr = graphics::static_pointer_cast < ::urdf::Cylinder >
+	cylinder_shared_ptr = urdf::static_pointer_cast < ::urdf::Cylinder >
 	  ( urdfLink->collision_array [j]->geometry );
       }
       link_name = urdfLink->name;
@@ -264,10 +260,10 @@ namespace graphics {
       shared_ptr< ::urdf::Box > box_shared_ptr;
 
       if (visual) {
-	box_shared_ptr = graphics::static_pointer_cast< ::urdf::Box >
+	box_shared_ptr = urdf::static_pointer_cast< ::urdf::Box >
 	  ( urdfLink->visual_array [j]->geometry);
       } else {
-	box_shared_ptr = graphics::static_pointer_cast< ::urdf::Box >
+	box_shared_ptr = urdf::static_pointer_cast< ::urdf::Box >
 	  ( urdfLink->collision_array [j]->geometry);
       }
       link_name = urdfLink->name;
@@ -310,10 +306,10 @@ namespace graphics {
       shared_ptr< ::urdf::Sphere > sphere_shared_ptr;
 
       if (visual) {
-	sphere_shared_ptr = graphics::static_pointer_cast < ::urdf::Sphere >
+	sphere_shared_ptr = urdf::static_pointer_cast < ::urdf::Sphere >
 	  ( urdfLink->visual_array [j]->geometry );
       } else {
-	sphere_shared_ptr = graphics::static_pointer_cast < ::urdf::Sphere >
+	sphere_shared_ptr = urdf::static_pointer_cast < ::urdf::Sphere >
 	  ( urdfLink->collision_array [j]->geometry );
       }
       link_name = urdfLink->name;
