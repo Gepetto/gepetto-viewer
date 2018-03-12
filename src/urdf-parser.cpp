@@ -39,6 +39,13 @@ namespace graphics {
     using boost::weak_ptr;
   }
 }
+
+#ifdef URDFDOM_POINTER_CAST
+#include <boost/pointer_cast.hpp>
+namespace urdf {
+  using boost::static_pointer_cast;
+}
+#endif
 #endif
 
 
