@@ -22,6 +22,33 @@
 #include <gepetto/viewer/leaf-node-box.h>
 #include <gepetto/viewer/leaf-node-sphere.h>
 
+#ifndef URDFDOM_BOOST_SHARED_PTR
+#include <memory>
+namespace graphics {
+  namespace urdfParser {
+    using std::shared_ptr;
+    using std::weak_ptr;
+  }
+}
+#else
+#include <boost/shared_ptr.hpp>
+#include <boost/weak_ptr.hpp>
+namespace graphics {
+  namespace urdfParser {
+    using boost::shared_ptr;
+    using boost::weak_ptr;
+  }
+}
+
+#ifdef URDFDOM_POINTER_CAST
+#include <boost/pointer_cast.hpp>
+namespace urdf {
+  using boost::static_pointer_cast;
+}
+#endif
+#endif
+
+
 #define OUT(x) std::cout << x << std::endl
 // #define OUT(x) (void)0
 
@@ -144,10 +171,10 @@ namespace graphics {
       shared_ptr< ::urdf::Mesh > mesh_shared_ptr;
 
       if (visual) {
-	mesh_shared_ptr = graphics::static_pointer_cast< ::urdf::Mesh >
+	mesh_shared_ptr = urdf::static_pointer_cast< ::urdf::Mesh >
 	  ( urdfLink->visual_array [j]->geometry );
       } else {
-	mesh_shared_ptr = graphics::static_pointer_cast< ::urdf::Mesh >
+	mesh_shared_ptr = urdf::static_pointer_cast< ::urdf::Mesh >
 	  ( urdfLink->collision_array [j]->geometry );
       }
       link_name = urdfLink->name;
@@ -193,10 +220,10 @@ namespace graphics {
       shared_ptr< ::urdf::Cylinder > cylinder_shared_ptr;
 
       if (visual) {
-	cylinder_shared_ptr = graphics::static_pointer_cast < ::urdf::Cylinder >
+	cylinder_shared_ptr = urdf::static_pointer_cast < ::urdf::Cylinder >
 	  ( urdfLink->visual_array [j]->geometry );
       } else {
-	cylinder_shared_ptr = graphics::static_pointer_cast < ::urdf::Cylinder >
+	cylinder_shared_ptr = urdf::static_pointer_cast < ::urdf::Cylinder >
 	  ( urdfLink->collision_array [j]->geometry );
       }
       link_name = urdfLink->name;
@@ -240,10 +267,10 @@ namespace graphics {
       shared_ptr< ::urdf::Box > box_shared_ptr;
 
       if (visual) {
-	box_shared_ptr = graphics::static_pointer_cast< ::urdf::Box >
+	box_shared_ptr = urdf::static_pointer_cast< ::urdf::Box >
 	  ( urdfLink->visual_array [j]->geometry);
       } else {
-	box_shared_ptr = graphics::static_pointer_cast< ::urdf::Box >
+	box_shared_ptr = urdf::static_pointer_cast< ::urdf::Box >
 	  ( urdfLink->collision_array [j]->geometry);
       }
       link_name = urdfLink->name;
@@ -286,10 +313,10 @@ namespace graphics {
       shared_ptr< ::urdf::Sphere > sphere_shared_ptr;
 
       if (visual) {
-	sphere_shared_ptr = graphics::static_pointer_cast < ::urdf::Sphere >
+	sphere_shared_ptr = urdf::static_pointer_cast < ::urdf::Sphere >
 	  ( urdfLink->visual_array [j]->geometry );
       } else {
-	sphere_shared_ptr = graphics::static_pointer_cast < ::urdf::Sphere >
+	sphere_shared_ptr = urdf::static_pointer_cast < ::urdf::Sphere >
 	  ( urdfLink->collision_array [j]->geometry );
       }
       link_name = urdfLink->name;
