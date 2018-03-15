@@ -8,7 +8,9 @@
 
 #include <sys/stat.h>
 #include <fstream>
+#include <clocale>
 #include <ios>
+#include <osgDB/FileNameUtils>
 #include <gepetto/viewer/leaf-node-collada.h>
 
 namespace graphics {
@@ -38,13 +40,35 @@ namespace graphics {
       collada_ptr_ = osgDB::readNodeFile(osgname);
     } else {
       // get the extension of the meshs file
-      std::string ext = collada_file_path_.substr(collada_file_path_.find_last_of(".")+1,collada_file_path_.size());
+      std::string ext = osgDB::getLowerCaseFileExtension(collada_file_path_);
+      if (ext == "dae" && *localeconv()->decimal_point != '.') {
+        std::cerr << "Warning: your locale convention uses '"
+          << localeconv()->decimal_point << "' as decimal separator while DAE "
+          "expects '.'.\nSet LC_NUMERIC to a locale convetion using '.' as "
+          "decimal separator (e.g. export LC_NUMERIC=\"en_US.utf-8\")."
+          << std::endl;
+      }
       if(ext == "obj"){
         const osgDB::Options* options = new osgDB::Options("noRotation");
         collada_ptr_ = osgDB::readNodeFile(collada_file_path_,options);
       }
       else
         collada_ptr_ = osgDB::readNodeFile(collada_file_path_);
+      if (ext == "dae") {
+        bool error = false;
+        if (!collada_ptr_) {
+          std::cout << "File: " << collada_file_path_ << " could not be loaded\n";
+          error = true;
+        } else if (strncasecmp(collada_ptr_->getName().c_str(), "empty", 5) == 0) {
+          std::cout << "File: " << collada_file_path_ << " could not be loaded:\n"
+            << collada_ptr_->getName() << '\n';
+          error = true;
+        }
+        if (error) {
+          std::cout << "You may try to convert the file with the following command:\n"
+            "osgconv " << collada_file_path_ << ' ' << collada_file_path_ << ".osgb" << std::endl;
+        }
+      }
     }
     if (!collada_ptr_)
       throw std::invalid_argument(std::string("File ") + collada_file_path_ + std::string(" found but could not be opened. Check that a plugin exist."));
