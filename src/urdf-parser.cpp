@@ -196,7 +196,7 @@ namespace graphics {
 
           linkNode->add(meshNode, visual);
           // Set Color if specified
-          if (visual && urdfLink->visual_array [j]->material != NULL) {
+          if (visual && urdfLink->visual_array [j]->material) {
             osgVector4 color(urdfLink->visual_array [j]->material->color.r, 
 			     urdfLink->visual_array [j]->material->color.g, 
 			     urdfLink->visual_array [j]->material->color.b, 
@@ -243,7 +243,7 @@ namespace graphics {
           cylinderNode->setStaticTransform(static_pos,static_quat);
 
           // Set Color if specified
-          if (visual && urdfLink->visual_array [j]->material != NULL) {
+          if (visual && urdfLink->visual_array [j]->material) {
             osgVector4 color(urdfLink->visual_array [j]->material->color.r, urdfLink->visual_array [j]->material->color.g, urdfLink->visual_array [j]->material->color.b, urdfLink->visual_array [j]->material->color.a);
             cylinderNode->setColor(color);
             if (urdfLink->visual_array [j]->material->texture_filename != "") {
@@ -290,7 +290,7 @@ namespace graphics {
           boxNode->setStaticTransform(static_pos,static_quat);
 
           // Set Color if specified
-          if (visual && urdfLink->visual_array [j]->material != NULL) {
+          if (visual && urdfLink->visual_array [j]->material) {
             osgVector4 color(urdfLink->visual_array [j]->material->color.r, urdfLink->visual_array [j]->material->color.g, urdfLink->visual_array [j]->material->color.b, urdfLink->visual_array [j]->material->color.a);
             boxNode->setColor(color);
             if (urdfLink->visual_array [j]->material->texture_filename != "") {
@@ -335,7 +335,7 @@ namespace graphics {
           sphereNode->setStaticTransform(static_pos,static_quat);
 
           // Set Color if specified
-          if (visual && urdfLink->visual_array [j]->material != NULL) {
+          if (visual && urdfLink->visual_array [j]->material) {
             osgVector4 color(urdfLink->visual_array [j]->material->color.r, urdfLink->visual_array [j]->material->color.g, urdfLink->visual_array [j]->material->color.b, urdfLink->visual_array [j]->material->color.a);
             sphereNode->setColor(color);
             if (urdfLink->visual_array [j]->material->texture_filename != "") {
