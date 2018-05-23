@@ -125,7 +125,7 @@ namespace graphics {
          */
         virtual void setVisibilityMode (const VisibilityMode& visibility_state);
 
-        virtual VisibilityMode getVisibilityMode ()
+        virtual const VisibilityMode& getVisibilityMode () const
         { return visibilityMode_; }
         
         /**
@@ -139,6 +139,11 @@ namespace graphics {
          \param wireframemode state
          */
         virtual void setWireFrameMode (const WireFrameMode& wireframe_state);
+
+        virtual const WireFrameMode& getWireFrameMode () const
+        {
+          return selected_wireframe_;
+        }
         
         /** Set scale value of the OSG object */
         virtual void setScale (float scale);

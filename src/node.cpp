@@ -21,6 +21,10 @@
 namespace graphics {
   namespace {
     int getNodeVisibilityMode (Node* node) { return node->getVisibilityMode(); }
+    void setNodeVisibilityMode (Node* node, const int& v) { return node->setVisibilityMode((VisibilityMode)v); }
+
+    int getNodeWrireFrameMode (Node* node) { return node->getWireFrameMode(); }
+    void setNodeWrireFrameMode (Node* node, const int& v) { return node->setWireFrameMode((WireFrameMode)v); }
   }
   using ::osg::Matrix;
 
@@ -80,9 +84,15 @@ namespace graphics {
     visibilityMode_ = VISIBILITY_ON;
 
     addProperty(
-        IntProperty::create("visibility",
-          IntProperty::Getter_t(boost::bind(getNodeVisibilityMode, this)),
-          IntProperty::Setter_t()
+        EnumProperty::create("Visibility", visibilityModeEnum(),
+          EnumProperty::Getter_t(boost::bind(getNodeVisibilityMode, this)),
+          EnumProperty::Setter_t(boost::bind(setNodeVisibilityMode, this, _1))
+          ));
+
+    addProperty(
+        EnumProperty::create("Wireframe", wireFrameModeEnum(),
+          EnumProperty::Getter_t(boost::bind(getNodeWrireFrameMode, this)),
+          EnumProperty::Setter_t(boost::bind(setNodeWrireFrameMode, this, _1))
           ));
   }
 
