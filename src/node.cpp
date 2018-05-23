@@ -94,38 +94,31 @@ namespace graphics {
     addProperty(
         EnumProperty::create("Visibility", visibilityModeEnum(),
           EnumProperty::Getter_t(boost::bind(getNodeVisibilityMode, this)),
-          EnumProperty::Setter_t(boost::bind(setNodeVisibilityMode, this, _1))
-          ));
-
+          EnumProperty::Setter_t(boost::bind(setNodeVisibilityMode, this, _1))));
     addProperty(
         EnumProperty::create("WireframeMode", wireFrameModeEnum(),
           EnumProperty::Getter_t(boost::bind(getNodeWireFrameMode, this)),
-          EnumProperty::Setter_t(boost::bind(setNodeWireFrameMode, this, _1))
-          ));
-
+          EnumProperty::Setter_t(boost::bind(setNodeWireFrameMode, this, _1))));
     addProperty(
         EnumProperty::create("LightingMode", lightingModeEnum(),
           EnumProperty::Getter_t(boost::bind(getNodeLightingMode, this)),
-          EnumProperty::Setter_t(boost::bind(setNodeLightingMode, this, _1))
-          ));
-
+          EnumProperty::Setter_t(boost::bind(setNodeLightingMode, this, _1))));
     addProperty(
         BoolProperty::create("Landmark",
           BoolProperty::getterFromMemberFunction (this, &Node::hasLandmark),
-          BoolProperty::Setter_t(boost::bind(setNodeLandmark, this, _1))
-          ));
-
+          BoolProperty::Setter_t(boost::bind(setNodeLandmark, this, _1))));
     addProperty(
         StringProperty::create("Name",
           StringProperty::getterFromMemberFunction (this, &Node::getID),
-          StringProperty::Setter_t()
-          ));
-
+          StringProperty::Setter_t()));
     addProperty(
         Vector4Property::create("Color",
           Vector4Property::Getter_t(),
-          Vector4Property::setterFromMemberFunction(this, &Node::setColor)
-          ));
+          Vector4Property::setterFromMemberFunction(this, &Node::setColor)));
+    addProperty(
+        FloatProperty::create("Transparency",
+          FloatProperty::getterFromMemberFunction(this, &Node::getAlpha),
+          FloatProperty::setterFromMemberFunction(this, &Node::setAlpha)));
   }
 
   Node::Node (const std::string& name) :

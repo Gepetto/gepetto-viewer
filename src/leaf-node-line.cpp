@@ -13,6 +13,8 @@
 #include <gepetto/viewer/node.h>
 
 namespace graphics {
+    int getNodeMode (LeafNodeLine* node) { return node->getMode(); }
+    void setNodeMode (LeafNodeLine* node, const int& v) { node->setMode((GLenum)v); }
     
     /* Declaration of private function members */
     void LeafNodeLine::init ()
@@ -57,9 +59,9 @@ namespace graphics {
         addProperty(FloatProperty::create("LineWidth",
               FloatProperty::getterFromMemberFunction(linewidth, &osg::LineWidth::getWidth),
               FloatProperty::setterFromMemberFunction(this, &LeafNodeLine::setLineWidth)));
-        addProperty(GLenumProperty::create("Mode",
-              GLenumProperty::getterFromMemberFunction(this, &LeafNodeLine::getMode),
-              GLenumProperty::setterFromMemberFunction(this, &LeafNodeLine::setMode)));
+        addProperty(EnumProperty::create("ImmediateMode", glImmediateModeEnum(),
+              EnumProperty::Getter_t(boost::bind(getNodeMode, this)),
+              EnumProperty::Setter_t(boost::bind(setNodeMode, this, _1))));
     }
     
     LeafNodeLine::LeafNodeLine (const std::string& name, const osgVector3& start_point, const osgVector3& end_point) :

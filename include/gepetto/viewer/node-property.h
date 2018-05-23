@@ -42,7 +42,6 @@ namespace graphics {
       template <> struct property_type<osgVector2   > { static inline std::string to_string () { return "osgVector2"   ; } };
       template <> struct property_type<osgVector3   > { static inline std::string to_string () { return "osgVector3"   ; } };
       template <> struct property_type<osgVector4   > { static inline std::string to_string () { return "osgVector4"   ; } };
-      template <> struct property_type<GLenum       > { static inline std::string to_string () { return "GLenum"       ; } };
     }
 
     class Property {
@@ -55,7 +54,6 @@ namespace graphics {
         virtual bool set(const osgVector2    & v) { invalidType(v); return false; }
         virtual bool set(const osgVector3    & v) { invalidType(v); return false; }
         virtual bool set(const osgVector4    & v) { invalidType(v); return false; }
-        virtual bool set(const GLenum        & v) { invalidType(v); return false; }
 
         virtual bool get(bool          & v) { invalidType(v); return false; }
         virtual bool get(int           & v) { invalidType(v); return false; }
@@ -65,7 +63,6 @@ namespace graphics {
         virtual bool get(osgVector2    & v) { invalidType(v); return false; }
         virtual bool get(osgVector3    & v) { invalidType(v); return false; }
         virtual bool get(osgVector4    & v) { invalidType(v); return false; }
-        virtual bool get(GLenum        & v) { invalidType(v); return false; }
 
         virtual bool hasReadAccess () const = 0;
         virtual bool hasWriteAccess() const = 0;
@@ -125,7 +122,6 @@ namespace graphics {
     typedef PropertyTpl<osgVector2   > Vector2Property;
     typedef PropertyTpl<osgVector3   > Vector3Property;
     typedef PropertyTpl<osgVector4   > Vector4Property;
-    typedef PropertyTpl<GLenum       > GLenumProperty;
 
     struct MetaEnum {
       std::string type;
@@ -139,6 +135,7 @@ namespace graphics {
     MetaEnum* visibilityModeEnum ();
     MetaEnum* wireFrameModeEnum  ();
     MetaEnum* lightingModeEnum  ();
+    MetaEnum* glImmediateModeEnum  ();
 
     class EnumProperty : public IntProperty {
       public:
