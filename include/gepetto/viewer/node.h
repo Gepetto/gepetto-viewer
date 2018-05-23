@@ -42,7 +42,6 @@ namespace graphics {
         std::size_t selected_highlight_;
         std::vector< ::osg::GroupRefPtr > highlight_nodes_;
 
-        PropertyMap_t properties_;
         VisibilityMode visibilityMode_;
         
         /** Initialization function */
@@ -51,6 +50,8 @@ namespace graphics {
         ::osg::Group* setupHighlightState (unsigned int state);
 
     protected:
+        PropertyMap_t properties_;
+
         /** protected because it's used in LeafNodeCapsule */
         ::osg::GeodeRefPtr landmark_geode_ptr_;
 
