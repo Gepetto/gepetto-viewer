@@ -27,6 +27,16 @@ namespace graphics {
 
         /* Allow transparency */
         geode_ptr_->getOrCreateStateSet()->setMode(GL_BLEND, ::osg::StateAttribute::ON);;
+
+        addProperty(Vector4Property::create("Color",
+              Vector4Property::getterFromMemberFunction(this, &LeafNodeArrow::getColor),
+              Vector4Property::setterFromMemberFunction(this, &LeafNodeArrow::setColor)));
+        addProperty(FloatProperty::create("Radius",
+              FloatProperty::getterFromMemberFunction(this, &LeafNodeArrow::getRadius),
+              FloatProperty::setterFromMemberFunction(this, &LeafNodeArrow::setRadius)));
+        addProperty(FloatProperty::create("Size",
+              FloatProperty::getterFromMemberFunction(this, &LeafNodeArrow::getSize),
+              FloatProperty::setterFromMemberFunction(this, &LeafNodeArrow::setSize)));
     }
 
     void LeafNodeArrow::resetGeodeContent ()

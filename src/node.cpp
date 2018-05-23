@@ -120,6 +120,12 @@ namespace graphics {
           StringProperty::getterFromMemberFunction (this, &Node::getID),
           StringProperty::Setter_t()
           ));
+
+    addProperty(
+        Vector4Property::create("Color",
+          Vector4Property::Getter_t(),
+          Vector4Property::setterFromMemberFunction(this, &Node::setColor)
+          ));
   }
 
   Node::Node (const std::string& name) :

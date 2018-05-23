@@ -24,6 +24,10 @@ namespace graphics {
         geode_ptr_ = new osg::Geode ();
         geode_ptr_->addDrawable (shape_drawable_ptr_);
         
+        addProperty(Vector4Property::create("Color",
+              Vector4Property::getterFromMemberFunction(this, &LeafNodeCylinder::getColor),
+              Vector4Property::setterFromMemberFunction(this, &LeafNodeCylinder::setColor)
+              ));
         addProperty(FloatProperty::create("Radius",
               FloatProperty::getterFromMemberFunction(this, &LeafNodeCylinder::getRadius),
               FloatProperty::setterFromMemberFunction(this, &LeafNodeCylinder::setRadius)));

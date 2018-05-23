@@ -33,6 +33,10 @@ namespace graphics {
         addProperty(FloatProperty::create("Radius",
               FloatProperty::getterFromMemberFunction(sphere_ptr_.get(), &osg::Sphere::getRadius),
               FloatProperty::setterFromMemberFunction(sphere_ptr_.get(), &osg::Sphere::setRadius)));
+        addProperty(Vector4Property::create("Color",
+              Vector4Property::getterFromMemberFunction(this, &LeafNodeSphere::getColor),
+              Vector4Property::setterFromMemberFunction(this, &LeafNodeSphere::setColor)
+              ));
     }
     
     LeafNodeSphere::LeafNodeSphere(const std::string& name, const float& radius) :

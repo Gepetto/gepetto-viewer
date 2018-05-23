@@ -77,6 +77,10 @@ namespace graphics {
 
         // set color
         void setColor (const osgVector4& color);
+        const osgVector4& getColor () const
+        {
+          return color_;
+        }
         float getRadius() const;
         void setRadius (const float& radius);
         void setSize(const float& size);

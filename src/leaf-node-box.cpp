@@ -25,9 +25,14 @@ namespace graphics {
         geode_ptr_ = new ::osg::Geode();
         geode_ptr_->addDrawable(shape_drawable_ptr_);
 
+        addProperty(Vector4Property::create("Color",
+            Vector4Property::getterFromMemberFunction(this, &LeafNodeBox::getColor),
+            Vector4Property::setterFromMemberFunction(this, &LeafNodeBox::setColor)
+            ));
         addProperty(Vector3Property::create("HalfLength",
               Vector3Property::getterFromMemberFunction(box_ptr_.get(), &osg::Box::getHalfLengths),
-              Vector3Property::setterFromMemberFunction(this, &LeafNodeBox::setHalfAxis)));
+              Vector3Property::setterFromMemberFunction(this, &LeafNodeBox::setHalfAxis)
+              ));
 	
         /* Create PositionAttitudeTransform */
         this->asQueue()->addChild(geode_ptr_);

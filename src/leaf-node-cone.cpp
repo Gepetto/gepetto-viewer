@@ -29,6 +29,11 @@ namespace graphics {
         
         /* Allow transparency */
         geode_ptr_->getOrCreateStateSet()->setMode(GL_BLEND, ::osg::StateAttribute::ON);
+
+        addProperty(Vector4Property::create("Color",
+              Vector4Property::getterFromMemberFunction(this, &LeafNodeCone::getColor),
+              Vector4Property::setterFromMemberFunction(this, &LeafNodeCone::setColor)
+              ));
     }
     
     LeafNodeCone::LeafNodeCone (const std::string& name, const float& radius, const float &height) :

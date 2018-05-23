@@ -50,6 +50,10 @@ namespace graphics {
         linewidth->setWidth(1.0f);
         beam_ptr_->getOrCreateStateSet()->setAttributeAndModes(linewidth, osg::StateAttribute::ON);
 
+        addProperty(Vector4Property::create("Color",
+              Vector4Property::getterFromMemberFunction(this, &LeafNodeLine::getColor),
+              Vector4Property::setterFromMemberFunction(this, &LeafNodeLine::setColor)
+              ));
         addProperty(FloatProperty::create("LineWidth",
               FloatProperty::getterFromMemberFunction(linewidth, &osg::LineWidth::getWidth),
               FloatProperty::setterFromMemberFunction(this, &LeafNodeLine::setLineWidth)));
