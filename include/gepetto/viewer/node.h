@@ -134,6 +134,8 @@ namespace graphics {
          */
         virtual void setLightingMode (const LightingMode& lighting_state);
         
+        virtual LightingMode getLightingMode () const;
+        
         /**
          \brief Virtual method for setting the wireframe mode of the object : visible or not
          \param wireframemode state

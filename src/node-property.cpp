@@ -52,4 +52,14 @@ namespace graphics {
     }
     return &wm;
   }
+  MetaEnum* lightingModeEnum  ()
+  {
+    static MetaEnum lm;
+    if (lm.type.size() == 0) {
+      lm.type = "LightingMode";
+      lm.names .push_back ("ON" ); lm.values.push_back (LIGHT_INFLUENCE_ON );
+      lm.names .push_back ("OFF"); lm.values.push_back (LIGHT_INFLUENCE_OFF);
+    }
+    return &lm;
+  }
 } /* namespace graphics */

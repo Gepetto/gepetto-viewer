@@ -138,6 +138,7 @@ namespace graphics {
 
     MetaEnum* visibilityModeEnum ();
     MetaEnum* wireFrameModeEnum  ();
+    MetaEnum* lightingModeEnum  ();
 
     class EnumProperty : public IntProperty {
       public:
