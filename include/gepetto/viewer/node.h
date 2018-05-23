@@ -83,10 +83,6 @@ namespace graphics {
 
         const PropertyPtr_t& property(const std::string& name) const;
 
-        void addProperty(const PropertyPtr_t& prop);
-
-        void addProperty(const std::string& name, const PropertyPtr_t& prop);
-
     public:
 
         /**
@@ -207,10 +203,16 @@ namespace graphics {
           return property(name)->set(value);
         }
 
+        bool hasProperty(const std::string& name) const;
+
         const PropertyMap_t& properties () const
         {
           return properties_;
         }
+
+        void addProperty(const PropertyPtr_t& prop);
+
+        void addProperty(const std::string& name, const PropertyPtr_t& prop);
 
         /* Destructor */
         virtual ~Node ();

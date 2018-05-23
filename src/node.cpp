@@ -145,6 +145,12 @@ namespace graphics {
     return prop;
   }
 
+  bool Node::hasProperty(const std::string& name) const
+  {
+    PropertyMap_t::const_iterator _prop = properties_.find(name);
+    return (_prop != properties_.end());
+  }
+
   void Node::addProperty(const PropertyPtr_t& prop)
   {
     addProperty(prop->name(), prop);
