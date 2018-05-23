@@ -170,6 +170,8 @@ namespace graphics {
 
         virtual void addLandmark(const float &size);
 
+        bool hasLandmark () const;
+
         ::osg::StateSetRefPtr getOrCreateRootStateSet ()
         {
           return switch_node_ptr_->getOrCreateStateSet ();

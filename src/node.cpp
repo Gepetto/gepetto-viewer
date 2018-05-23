@@ -21,10 +21,15 @@
 namespace graphics {
   namespace {
     int getNodeVisibilityMode (Node* node) { return node->getVisibilityMode(); }
-    void setNodeVisibilityMode (Node* node, const int& v) { return node->setVisibilityMode((VisibilityMode)v); }
+    void setNodeVisibilityMode (Node* node, const int& v) { node->setVisibilityMode((VisibilityMode)v); }
 
     int getNodeWrireFrameMode (Node* node) { return node->getWireFrameMode(); }
-    void setNodeWrireFrameMode (Node* node, const int& v) { return node->setWireFrameMode((WireFrameMode)v); }
+    void setNodeWrireFrameMode (Node* node, const int& v) { node->setWireFrameMode((WireFrameMode)v); }
+
+    void setNodeLandmark (Node* node, bool enable) {
+      if (enable) node->addLandmark (0.05);
+      else        node->deleteLandmark();
+    }
   }
   using ::osg::Matrix;
 
@@ -93,6 +98,12 @@ namespace graphics {
         EnumProperty::create("Wireframe", wireFrameModeEnum(),
           EnumProperty::Getter_t(boost::bind(getNodeWrireFrameMode, this)),
           EnumProperty::Setter_t(boost::bind(setNodeWrireFrameMode, this, _1))
+          ));
+
+    addProperty(
+        BoolProperty::create("Landmark",
+          BoolProperty::getterFromMemberFunction (this, &Node::hasLandmark),
+          BoolProperty::Setter_t(boost::bind(setNodeLandmark, this, _1))
           ));
   }
 
@@ -306,6 +317,7 @@ namespace graphics {
     geom_ptr->addPrimitiveSet(new osg::DrawArrays(GL_LINES,2,2));
     geom_ptr->addPrimitiveSet(new osg::DrawArrays(GL_LINES,4,2));
 
+    static_auto_transform_ptr_->removeChild(landmark_geode_ptr_);
     landmark_geode_ptr_ = new osg::Geode();
     landmark_geode_ptr_->addDrawable(geom_ptr);
 
@@ -323,6 +335,11 @@ namespace graphics {
 
 
     static_auto_transform_ptr_->addChild(landmark_geode_ptr_);
+  }
+
+  bool Node::hasLandmark() const
+  {
+    return landmark_geode_ptr_;
   }
 
   void Node::deleteLandmark()
