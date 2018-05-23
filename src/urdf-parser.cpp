@@ -111,6 +111,30 @@ namespace graphics {
         }
     };
 
+    bool getShowVisuals (const GroupNode* gn)
+    {
+      bool value = true;
+      for (std::size_t i = 0; i < gn->getNumOfChildren (); ++i)
+      {
+        NodePtr_t n = gn->getChild(i);
+        if (n->hasProperty("ShowVisual")) {
+          bool v;
+          n->getProperty ("ShowVisual", v);
+          value = value && v;
+        }
+      }
+      return value;
+    }
+    void setShowVisuals (GroupNode* gn, bool visual)
+    {
+      for (std::size_t i = 0; i < gn->getNumOfChildren (); ++i)
+      {
+        NodePtr_t n = gn->getChild(i);
+        if (n->hasProperty("ShowVisual"))
+          n->setProperty ("ShowVisual", visual);
+      }
+    }
+
     void split(const std::string &s, char delim, std::vector<std::string> &elems) {
       std::stringstream ss(s);
       std::string item;
@@ -426,6 +450,12 @@ namespace graphics {
     std::vector< LinkPtr > links;
     model->getLinks(links);
     std::string link_name;
+
+    robot->addProperty (
+        BoolProperty::create("ShowVisual",
+          BoolProperty::Getter_t(boost::bind(getShowVisuals, robot.get())),
+          BoolProperty::Setter_t(boost::bind(setShowVisuals, robot.get(), _1))
+          ));
 
     for (unsigned int i = 0 ; i < links.size() ; i++) {
       link_name = links[i]->name;
