@@ -80,13 +80,16 @@ namespace graphics {
     
     bool GroupNode::removeChild (NodePtr_t child_ptr)
     {
-        list_of_objects_.remove(child_ptr);
+        Nodes_t::iterator it =
+            std::find (list_of_objects_.begin(), list_of_objects_.end(), child_ptr);
+        if (it != list_of_objects_.end())
+          list_of_objects_.erase(it);
         return this->asQueue()->removeChild(this->asQueue()->getChildIndex(child_ptr->asGroup()));
     }
 
     bool GroupNode::hasChild (::graphics::NodePtr_t child_ptr)
     {
-        std::list<graphics::NodePtr_t>::const_iterator it =
+        Nodes_t::const_iterator it =
             std::find (list_of_objects_.begin(), list_of_objects_.end(), child_ptr);
         return it != list_of_objects_.end();
     }
@@ -100,7 +103,7 @@ namespace graphics {
     void GroupNode::setVisibilityMode (const VisibilityMode& visibility_state)
     {
         Node::setVisibilityMode (visibility_state);
-        std::list<graphics::NodePtr_t>::iterator iter_list_of_objects;
+        Nodes_t::iterator iter_list_of_objects;
         for (iter_list_of_objects = list_of_objects_.begin();
              iter_list_of_objects != list_of_objects_.end();
              iter_list_of_objects++)
@@ -112,7 +115,7 @@ namespace graphics {
     void GroupNode::setLightingMode (const LightingMode& lighting_state)
     {
         Node::setLightingMode ( lighting_state );
-        ::std::list<NodePtr_t>::iterator iter_list_of_objects;
+        Nodes_t::iterator iter_list_of_objects;
         for (iter_list_of_objects = list_of_objects_.begin();
              iter_list_of_objects != list_of_objects_.end();
              iter_list_of_objects++)
@@ -125,7 +128,7 @@ namespace graphics {
     {
         Node::setWireFrameMode ( wireframe_state );
         
-        ::std::list<NodePtr_t>::iterator iter_list_of_objects;
+        Nodes_t::iterator iter_list_of_objects;
         for (iter_list_of_objects = list_of_objects_.begin();
              iter_list_of_objects != list_of_objects_.end();
              iter_list_of_objects++)
@@ -137,7 +140,7 @@ namespace graphics {
     void GroupNode::setAlpha (const float& alpha)
     {
       alpha_ = alpha;
-      ::std::list<NodePtr_t>::iterator iter_list_of_objects;
+      Nodes_t::iterator iter_list_of_objects;
       for (iter_list_of_objects = list_of_objects_.begin();
 	   iter_list_of_objects != list_of_objects_.end();
 	   iter_list_of_objects++)
@@ -153,7 +156,7 @@ namespace graphics {
     
     void GroupNode::setColor (const osgVector4& color)
     {
-        ::std::list<NodePtr_t>::iterator iter_list_of_objects;
+        Nodes_t::iterator iter_list_of_objects;
         for (iter_list_of_objects = list_of_objects_.begin();
              iter_list_of_objects != list_of_objects_.end();
              iter_list_of_objects++)
@@ -164,7 +167,7 @@ namespace graphics {
 
     void GroupNode::traverse (NodeVisitor& visitor)
     {
-        std::list<graphics::NodePtr_t>::iterator iter_list_of_objects;
+        Nodes_t::iterator iter_list_of_objects;
         for (iter_list_of_objects = list_of_objects_.begin();
              iter_list_of_objects != list_of_objects_.end();
              iter_list_of_objects++)
