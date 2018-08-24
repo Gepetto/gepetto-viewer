@@ -26,7 +26,7 @@
   {
     using namespace graphics;
 
-    LeafNodeBoxPtr_t box = LeafNodeBox::create("box1", osgVector3(0.1,0.2,0.3));
+    LeafNodeBoxPtr_t box = LeafNodeBox::create("box1", osgVector3(0.1f,0.2f,0.3f));
     /*LeafNodeCapsulePtr_t capsule = LeafNodeCapsule::create("capsule1", 1,1);
     LeafNodeConePtr_t cone = LeafNodeCone::create("cone", 1,1);
     LeafNodeCylinderPtr_t cylindre = LeafNodeCylinder::create("cylindre", 1,1);
