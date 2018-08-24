@@ -9,14 +9,13 @@
 #ifndef SCENEVIEWER_LEAFNODECYLINDER_HH
 #define SCENEVIEWER_LEAFNODECYLINDER_HH
 
-#include <gepetto/viewer/node.h>
-#include <osgDB/ReadFile>
+#include <gepetto/viewer/node-drawable.h>
 
 namespace graphics {
     DEF_CLASS_SMART_PTR(LeafNodeCylinder)
     
     /** Implementation of the Cylinder GraphicalObject in OSG render */
-    class LeafNodeCylinder : public Node
+    class LeafNodeCylinder : public NodeDrawable
     {
     private:
         /** Associated weak pointer */

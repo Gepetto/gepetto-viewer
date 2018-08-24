@@ -7,6 +7,7 @@
 //
 #include <gepetto/viewer/node-rod.h>
 
+#include <sstream>
 
 namespace graphics {
 

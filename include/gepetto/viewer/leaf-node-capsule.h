@@ -9,14 +9,13 @@
 #ifndef SCENEVIEWER_LEAFNODECAPSULE_HH
 #define SCENEVIEWER_LEAFNODECAPSULE_HH
 
-#include <gepetto/viewer/node.h>
-#include <osgDB/ReadFile>
+#include <gepetto/viewer/node-drawable.h>
 
 namespace graphics {
     DEF_CLASS_SMART_PTR(LeafNodeCapsule)
     
     /** Implementation of the Capsule GraphicalObject in OSG render */
-    class LeafNodeCapsule : public Node
+    class LeafNodeCapsule : public NodeDrawable
     {
     private:
         /** Associated weak pointer */

@@ -9,14 +9,13 @@
 #ifndef SCENEVIEWER_LEAFNODESPHERE_HH
 #define SCENEVIEWER_LEAFNODESPHERE_HH
 
-#include <gepetto/viewer/node.h>
-#include <osgDB/ReadFile>
+#include <gepetto/viewer/node-drawable.h>
 
 namespace graphics {
     DEF_CLASS_SMART_PTR(LeafNodeSphere)
     
     /** Implementation of the Sphere GraphicalObject in OSG render */
-    class LeafNodeSphere : public Node
+    class LeafNodeSphere : public NodeDrawable
     {
     private:
         /** Associated weak pointer */

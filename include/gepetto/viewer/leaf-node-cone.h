@@ -9,14 +9,13 @@
 #ifndef SCENEVIEWER_LEAFNODECONE_HH
 #define SCENEVIEWER_LEAFNODECONE_HH
 
-#include <gepetto/viewer/node.h>
-#include <osgDB/ReadFile>
+#include <gepetto/viewer/node-drawable.h>
 
 namespace graphics {
     DEF_CLASS_SMART_PTR(LeafNodeCone)
     
     /** Implementation of the Cone GraphicalObject in OSG render */
-    class LeafNodeCone : public Node
+    class LeafNodeCone : public NodeDrawable
     {
     private:
         /** Associated weak pointer */

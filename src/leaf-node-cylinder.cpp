@@ -8,6 +8,8 @@
 
 #include <gepetto/viewer/leaf-node-cylinder.h>
 
+#include <osgDB/ReadFile>
+
 namespace graphics {
     
     /* Declaration of private function members */
@@ -24,10 +26,6 @@ namespace graphics {
         geode_ptr_ = new osg::Geode ();
         geode_ptr_->addDrawable (shape_drawable_ptr_);
         
-        addProperty(Vector4Property::create("Color",
-              Vector4Property::getterFromMemberFunction(this, &LeafNodeCylinder::getColor),
-              Vector4Property::setterFromMemberFunction(this, &LeafNodeCylinder::setColor)
-              ));
         addProperty(FloatProperty::create("Radius",
               FloatProperty::getterFromMemberFunction(this, &LeafNodeCylinder::getRadius),
               FloatProperty::setterFromMemberFunction(this, &LeafNodeCylinder::setRadius)));
@@ -43,7 +41,7 @@ namespace graphics {
     }
     
     LeafNodeCylinder::LeafNodeCylinder (const std::string &name, const float &radius, const float &height) :
-      Node (name)
+      NodeDrawable (name)
     {
         init();
         setRadius(radius);
@@ -52,7 +50,7 @@ namespace graphics {
     }
 
     LeafNodeCylinder::LeafNodeCylinder (const std::string &name, const float &radius, const float &height, const osgVector4 &color) :
-      Node (name)
+      NodeDrawable (name)
     {
         init();
         setRadius(radius);
@@ -61,7 +59,7 @@ namespace graphics {
     }
     
     LeafNodeCylinder::LeafNodeCylinder (const LeafNodeCylinder& other) :
-      Node (other)
+      NodeDrawable (other)
     {
         init();
         setRadius(other.getRadius());

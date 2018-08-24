@@ -8,6 +8,7 @@
 
 #include <gepetto/viewer/leaf-node-capsule.h>
 
+#include <osgDB/ReadFile>
 
 namespace graphics {
     
@@ -43,7 +44,7 @@ namespace graphics {
     }
     
     LeafNodeCapsule::LeafNodeCapsule (const std::string& name, const float& radius, const float &height) :
-        Node(name)
+        NodeDrawable(name)
     {
         init();
         setRadius(radius);
@@ -52,7 +53,7 @@ namespace graphics {
     }
 
     LeafNodeCapsule::LeafNodeCapsule (const std::string& name, const float& radius, const float &height, const osgVector4& color) :
-        Node(name)
+        NodeDrawable(name)
     {
         init();
         setRadius(radius);
@@ -61,7 +62,7 @@ namespace graphics {
     }
 
     LeafNodeCapsule::LeafNodeCapsule (const LeafNodeCapsule& other) :
-        Node(other)
+        NodeDrawable(other)
     {
         init();
         setRadius(other.getRadius());

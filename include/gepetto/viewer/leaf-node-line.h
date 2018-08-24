@@ -9,12 +9,12 @@
 #ifndef SCENEVIEWER_LEAFNODELINE_HH
 #define SCENEVIEWER_LEAFNODELINE_HH
 
-#include <gepetto/viewer/node.h>
+#include <gepetto/viewer/node-drawable.h>
 
 namespace graphics {
     DEF_CLASS_SMART_PTR(LeafNodeLine)
     
-    class LeafNodeLine : public Node
+    class LeafNodeLine : public NodeDrawable
     {
     private:
 
@@ -113,8 +113,6 @@ namespace graphics {
 
             return color_array_ptr->at(0);
         }
-
-        void setAlpha (const float& alpha);
 
         void setLineWidth (const float& width);
 
