@@ -187,7 +187,7 @@ namespace graphics {
         }*/
 
         virtual void setAlpha (const float& alpha);
-	float getAlpha() const;
+	virtual float getAlpha() const;
 
         SCENE_VIEWER_ACCEPT_VISITOR;
         virtual void traverse (NodeVisitor& visitor);
