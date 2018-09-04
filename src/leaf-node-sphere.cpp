@@ -8,6 +8,8 @@
 
 #include <gepetto/viewer/leaf-node-sphere.h>
 
+#include <osgDB/ReadFile>
+
 namespace graphics {
     
     /* Declaration of private function members */
@@ -36,7 +38,7 @@ namespace graphics {
     }
     
     LeafNodeSphere::LeafNodeSphere(const std::string& name, const float& radius) :
-        Node(name)
+        NodeDrawable(name)
     {
         init();
         setRadius(radius);
@@ -44,7 +46,7 @@ namespace graphics {
     }
 
     LeafNodeSphere::LeafNodeSphere(const std::string& name, const float& radius, const osgVector4& color) :
-        Node(name)
+        NodeDrawable(name)
     {
         init();
         setRadius(radius);
@@ -52,7 +54,7 @@ namespace graphics {
     }
 
     LeafNodeSphere::LeafNodeSphere(const std::string& name, const LeafNodeSphere& other) :
-        Node(other)
+        NodeDrawable(other)
     {
         setID(name);
         init();

@@ -8,6 +8,8 @@
 
 #include <gepetto/viewer/leaf-node-cylinder.h>
 
+#include <osgDB/ReadFile>
+
 namespace graphics {
     
     /* Declaration of private function members */
@@ -39,7 +41,7 @@ namespace graphics {
     }
     
     LeafNodeCylinder::LeafNodeCylinder (const std::string &name, const float &radius, const float &height) :
-      Node (name)
+      NodeDrawable (name)
     {
         init();
         setRadius(radius);
@@ -48,7 +50,7 @@ namespace graphics {
     }
 
     LeafNodeCylinder::LeafNodeCylinder (const std::string &name, const float &radius, const float &height, const osgVector4 &color) :
-      Node (name)
+      NodeDrawable (name)
     {
         init();
         setRadius(radius);
@@ -57,7 +59,7 @@ namespace graphics {
     }
     
     LeafNodeCylinder::LeafNodeCylinder (const LeafNodeCylinder& other) :
-      Node (other)
+      NodeDrawable (other)
     {
         init();
         setRadius(other.getRadius());
@@ -124,12 +126,21 @@ namespace graphics {
         cylinder_ptr_->setRadius(radius);
 #ifdef OSG_3_5_6_OR_LATER
         shape_drawable_ptr_->build();
+#else
+        shape_drawable_ptr_->dirtyDisplayList();
+        shape_drawable_ptr_->dirtyBound();
 #endif
     }
     
     void LeafNodeCylinder::setHeight (const float& height)
     {        
         cylinder_ptr_->setHeight(height);
+#ifdef OSG_3_5_6_OR_LATER
+        shape_drawable_ptr_->build();
+#else
+        shape_drawable_ptr_->dirtyDisplayList();
+        shape_drawable_ptr_->dirtyBound();
+#endif
     }
     
     void LeafNodeCylinder::setColor (const osgVector4& color)
@@ -137,6 +148,9 @@ namespace graphics {
         shape_drawable_ptr_->setColor(color);
 #ifdef OSG_3_5_6_OR_LATER
         shape_drawable_ptr_->build();
+#else
+        shape_drawable_ptr_->dirtyDisplayList();
+        shape_drawable_ptr_->dirtyBound();
 #endif
     }
 

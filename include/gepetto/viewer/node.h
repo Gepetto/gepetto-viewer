@@ -42,7 +42,6 @@ namespace graphics {
         std::size_t selected_highlight_;
         std::vector< ::osg::GroupRefPtr > highlight_nodes_;
 
-        PropertyMap_t properties_;
         VisibilityMode visibilityMode_;
         
         /** Initialization function */
@@ -51,6 +50,8 @@ namespace graphics {
         ::osg::Group* setupHighlightState (unsigned int state);
 
     protected:
+        PropertyMap_t properties_;
+
         /** protected because it's used in LeafNodeCapsule */
         ::osg::GeodeRefPtr landmark_geode_ptr_;
 
@@ -82,10 +83,6 @@ namespace graphics {
         }
 
         const PropertyPtr_t& property(const std::string& name) const;
-
-        void addProperty(const PropertyPtr_t& prop);
-
-        void addProperty(const std::string& name, const PropertyPtr_t& prop);
 
     public:
 
@@ -125,7 +122,7 @@ namespace graphics {
          */
         virtual void setVisibilityMode (const VisibilityMode& visibility_state);
 
-        virtual VisibilityMode getVisibilityMode ()
+        virtual const VisibilityMode& getVisibilityMode () const
         { return visibilityMode_; }
         
         /**
@@ -134,11 +131,18 @@ namespace graphics {
          */
         virtual void setLightingMode (const LightingMode& lighting_state);
         
+        virtual LightingMode getLightingMode () const;
+        
         /**
          \brief Virtual method for setting the wireframe mode of the object : visible or not
          \param wireframemode state
          */
         virtual void setWireFrameMode (const WireFrameMode& wireframe_state);
+
+        virtual const WireFrameMode& getWireFrameMode () const
+        {
+          return selected_wireframe_;
+        }
         
         /** Set scale value of the OSG object */
         virtual void setScale (float scale);
@@ -165,6 +169,8 @@ namespace graphics {
 
         virtual void addLandmark(const float &size);
 
+        bool hasLandmark () const;
+
         ::osg::StateSetRefPtr getOrCreateRootStateSet ()
         {
           return switch_node_ptr_->getOrCreateStateSet ();
@@ -181,7 +187,7 @@ namespace graphics {
         }*/
 
         virtual void setAlpha (const float& alpha);
-	float getAlpha() const;
+	virtual float getAlpha() const;
 
         SCENE_VIEWER_ACCEPT_VISITOR;
         virtual void traverse (NodeVisitor& visitor);
@@ -198,10 +204,16 @@ namespace graphics {
           return property(name)->set(value);
         }
 
+        bool hasProperty(const std::string& name) const;
+
         const PropertyMap_t& properties () const
         {
           return properties_;
         }
+
+        void addProperty(const PropertyPtr_t& prop);
+
+        void addProperty(const std::string& name, const PropertyPtr_t& prop);
 
         /* Destructor */
         virtual ~Node ();

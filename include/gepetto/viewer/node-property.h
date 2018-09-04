@@ -42,7 +42,6 @@ namespace graphics {
       template <> struct property_type<osgVector2   > { static inline std::string to_string () { return "osgVector2"   ; } };
       template <> struct property_type<osgVector3   > { static inline std::string to_string () { return "osgVector3"   ; } };
       template <> struct property_type<osgVector4   > { static inline std::string to_string () { return "osgVector4"   ; } };
-      template <> struct property_type<GLenum       > { static inline std::string to_string () { return "GLenum"       ; } };
     }
 
     class Property {
@@ -55,7 +54,6 @@ namespace graphics {
         virtual bool set(const osgVector2    & v) { invalidType(v); return false; }
         virtual bool set(const osgVector3    & v) { invalidType(v); return false; }
         virtual bool set(const osgVector4    & v) { invalidType(v); return false; }
-        virtual bool set(const GLenum        & v) { invalidType(v); return false; }
 
         virtual bool get(bool          & v) { invalidType(v); return false; }
         virtual bool get(int           & v) { invalidType(v); return false; }
@@ -65,7 +63,6 @@ namespace graphics {
         virtual bool get(osgVector2    & v) { invalidType(v); return false; }
         virtual bool get(osgVector3    & v) { invalidType(v); return false; }
         virtual bool get(osgVector4    & v) { invalidType(v); return false; }
-        virtual bool get(GLenum        & v) { invalidType(v); return false; }
 
         virtual bool hasReadAccess () const = 0;
         virtual bool hasWriteAccess() const = 0;
@@ -88,11 +85,11 @@ namespace graphics {
     class PropertyTpl : public Property {
       public:
         typedef boost::function<void(const T&)> Setter_t;
-        typedef boost::function<const T&(void)> Getter_t;
+        typedef boost::function<  T (void)> Getter_t;
         typedef shared_ptr<PropertyTpl> Ptr_t;
 
         static Ptr_t create (const std::string& name, const Getter_t& g, const Setter_t& s) { return Ptr_t(new PropertyTpl(name, g, s)); }
-        std::string type() { return details::property_type<T>::to_string(); }
+        virtual std::string type() { return details::property_type<T>::to_string(); }
 
         template <typename Obj>
         static inline Getter_t getterFromMemberFunction(Obj* obj, const T& (Obj::*mem_func)() const) { return boost::bind(mem_func, obj); }
@@ -125,7 +122,41 @@ namespace graphics {
     typedef PropertyTpl<osgVector2   > Vector2Property;
     typedef PropertyTpl<osgVector3   > Vector3Property;
     typedef PropertyTpl<osgVector4   > Vector4Property;
-    typedef PropertyTpl<GLenum       > GLenumProperty;
+
+    struct MetaEnum {
+      std::string type;
+      std::vector<std::string> names;
+      std::vector<        int> values;
+
+      int from_string (const std::string& s);
+      std::string to_string (const int& v);
+    };
+
+    MetaEnum* visibilityModeEnum ();
+    MetaEnum* wireFrameModeEnum  ();
+    MetaEnum* lightingModeEnum  ();
+    MetaEnum* glImmediateModeEnum  ();
+
+    class EnumProperty : public IntProperty {
+      public:
+        using IntProperty::Getter_t;
+        using IntProperty::Setter_t;
+        typedef shared_ptr<EnumProperty> Ptr_t;
+
+        static Ptr_t create (const std::string& name, const MetaEnum* type, const Getter_t& g, const Setter_t& s) { return Ptr_t(new EnumProperty(name, type, g, s)); }
+        virtual std::string type() { return "enum"; }
+        const MetaEnum* metaEnum () const { return metaEnum_; }
+
+        EnumProperty(const std::string& name, const MetaEnum* type, const Getter_t& g, const Setter_t& s)
+          : IntProperty(name, g, s), metaEnum_ (type) {}
+
+        // TODO: Check that the integer belongs to the enum...
+        // bool set(const int& value) { return IntProperty::set(value); }
+        // bool get(      int& value) { return IntProperty::get(value); }
+
+      private:
+        const MetaEnum* metaEnum_;
+    };
 
 } /* namespace graphics */
 

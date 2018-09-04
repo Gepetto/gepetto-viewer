@@ -9,14 +9,13 @@
 #ifndef SCENEVIEWER_LEAFNODEBOX_HH
 #define SCENEVIEWER_LEAFNODEBOX_HH
 
-#include <gepetto/viewer/node.h>
-#include <osgDB/ReadFile>
+#include <gepetto/viewer/node-drawable.h>
 
 namespace graphics {
     DEF_CLASS_SMART_PTR(LeafNodeBox)
     
     /** Implementation of the Box GraphicalObject in OSG render engine */
-    class LeafNodeBox : public Node
+    class LeafNodeBox : public NodeDrawable
     {
     private:
         /** Associated weak pointer */

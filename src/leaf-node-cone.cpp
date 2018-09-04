@@ -8,6 +8,8 @@
 
 #include <gepetto/viewer/leaf-node-cone.h>
 
+#include <osgDB/ReadFile>
+
 namespace graphics {
     
     /* Declaration of private function members */
@@ -32,7 +34,7 @@ namespace graphics {
     }
     
     LeafNodeCone::LeafNodeCone (const std::string& name, const float& radius, const float &height) :
-        Node (name)
+        NodeDrawable (name)
     {
         init();
         setRadius(radius);
@@ -41,7 +43,7 @@ namespace graphics {
     }
 
     LeafNodeCone::LeafNodeCone (const std::string& name, const float& radius, const float &height, const osgVector4& color) :
-        Node (name)
+        NodeDrawable (name)
     {
         init();
         setRadius(radius);
@@ -49,7 +51,7 @@ namespace graphics {
         setColor(color);
     }
     LeafNodeCone::LeafNodeCone (const LeafNodeCone& other) :
-        Node(other)
+        NodeDrawable(other)
     {
         init();
         setRadius(other.getRadius());

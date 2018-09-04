@@ -7,7 +7,9 @@
 //
 
 #include <gepetto/viewer/leaf-node-box.h>
+
 #include <stdio.h>
+#include <osgDB/ReadFile>
 
 namespace graphics {
     
@@ -27,7 +29,8 @@ namespace graphics {
 
         addProperty(Vector3Property::create("HalfLength",
               Vector3Property::getterFromMemberFunction(box_ptr_.get(), &osg::Box::getHalfLengths),
-              Vector3Property::setterFromMemberFunction(this, &LeafNodeBox::setHalfAxis)));
+              Vector3Property::setterFromMemberFunction(this, &LeafNodeBox::setHalfAxis)
+              ));
 	
         /* Create PositionAttitudeTransform */
         this->asQueue()->addChild(geode_ptr_);
@@ -37,7 +40,7 @@ namespace graphics {
     }
     
     LeafNodeBox::LeafNodeBox (const std::string &name, const osgVector3& half_axis) :
-        Node(name)
+        NodeDrawable(name)
     {
         init();
         setHalfAxis(half_axis);
@@ -45,7 +48,7 @@ namespace graphics {
     }
 
     LeafNodeBox::LeafNodeBox (const std::string &name, const osgVector3& half_axis, const osgVector4 &color) :
-        Node(name)
+        NodeDrawable(name)
     {
         init();
         setHalfAxis(half_axis);
@@ -53,7 +56,7 @@ namespace graphics {
     }
 
     LeafNodeBox::LeafNodeBox (const LeafNodeBox& other) :
-        Node(other)
+        NodeDrawable(other)
     {
         init();
         setHalfAxis(other.getHalfAxis());

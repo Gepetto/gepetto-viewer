@@ -13,6 +13,8 @@
 #include <gepetto/viewer/node.h>
 
 namespace graphics {
+    int getNodeMode (LeafNodeLine* node) { return node->getMode(); }
+    void setNodeMode (LeafNodeLine* node, const int& v) { node->setMode((GLenum)v); }
     
     /* Declaration of private function members */
     void LeafNodeLine::init ()
@@ -53,13 +55,13 @@ namespace graphics {
         addProperty(FloatProperty::create("LineWidth",
               FloatProperty::getterFromMemberFunction(linewidth, &osg::LineWidth::getWidth),
               FloatProperty::setterFromMemberFunction(this, &LeafNodeLine::setLineWidth)));
-        addProperty(GLenumProperty::create("Mode",
-              GLenumProperty::getterFromMemberFunction(this, &LeafNodeLine::getMode),
-              GLenumProperty::setterFromMemberFunction(this, &LeafNodeLine::setMode)));
+        addProperty(EnumProperty::create("ImmediateMode", glImmediateModeEnum(),
+              EnumProperty::Getter_t(boost::bind(getNodeMode, this)),
+              EnumProperty::Setter_t(boost::bind(setNodeMode, this, _1))));
     }
     
     LeafNodeLine::LeafNodeLine (const std::string& name, const osgVector3& start_point, const osgVector3& end_point) :
-        graphics::Node (name)
+        graphics::NodeDrawable (name)
     {
         init ();
         setStartPoint(start_point);
@@ -68,7 +70,7 @@ namespace graphics {
     }
 
     LeafNodeLine::LeafNodeLine (const std::string& name, const osgVector3& start_point, const osgVector3& end_point, const osgVector4& color) :
-        graphics::Node (name)
+        graphics::NodeDrawable (name)
     {
         init ();
         setStartPoint(start_point);
@@ -77,7 +79,7 @@ namespace graphics {
     }
 
     LeafNodeLine::LeafNodeLine (const std::string& name, const ::osg::Vec3ArrayRefPtr& points, const osgVector4& color) :
-        graphics::Node (name)
+        graphics::NodeDrawable (name)
     {
         init ();
         setPoints(points);
@@ -85,7 +87,7 @@ namespace graphics {
     }
 
     LeafNodeLine::LeafNodeLine (const LeafNodeLine& other) :
-        graphics::Node (other)
+        graphics::NodeDrawable (other)
     {
         init();
         setPoints (other.points_ptr_);
@@ -214,22 +216,12 @@ namespace graphics {
     {      
         color_ptr_->at(0) = color;
         beam_ptr_->dirtyDisplayList();
-        Node::setAlpha(color.a());
     }
   
     void LeafNodeLine::setColors (const ::osg::Vec4ArrayRefPtr & colors)
     {
       color_ptr_ = colors;
       beam_ptr_->dirtyDisplayList();
-    }
-
-    void LeafNodeLine::setAlpha (const float& alpha)
-    {
-      for(int k = 0; k < color_ptr_->getNumElements(); ++k)
-        color_ptr_->at(k).a() = alpha;
-      
-      beam_ptr_->dirtyDisplayList();
-      Node::setAlpha(alpha);
     }
 
     void LeafNodeLine::setLineWidth (const float& width)

@@ -9,15 +9,14 @@
 #ifndef SCENEVIEWER_LEAFNODEARROW_HH
 #define SCENEVIEWER_LEAFNODEARROW_HH
 
-#include <gepetto/viewer/node.h>
-#include <osgDB/ReadFile>
+#include <gepetto/viewer/node-drawable.h>
 
 namespace graphics {
 
     DEF_CLASS_SMART_PTR(LeafNodeArrow)
 
     /** Implementation of the XYZAxis GraphicalObject in OSG render */
-    class LeafNodeArrow: public Node
+    class LeafNodeArrow: public NodeDrawable
     {
     private:
         /** Associated weak pointer */
@@ -77,6 +76,10 @@ namespace graphics {
 
         // set color
         void setColor (const osgVector4& color);
+        osgVector4 getColor () const
+        {
+          return color_;
+        }
         float getRadius() const;
         void setRadius (const float& radius);
         void setSize(const float& size);

@@ -73,8 +73,13 @@ namespace graphics {
         LinkNode(const std::string& name) : GroupNode(name)
         {
           addProperty(BoolProperty::create("ShowVisual",
-                                           BoolProperty::Getter_t(),
+                                           BoolProperty::getterFromMemberFunction(this, &LinkNode::showVisual),
                                            BoolProperty::setterFromMemberFunction(this, &LinkNode::showVisual)));
+        }
+
+        const bool& showVisual () const
+        {
+          return currentIsVisual_;
         }
 
         void showVisual (const bool& visual)
@@ -105,6 +110,30 @@ namespace graphics {
           return robot;
         }
     };
+
+    bool getShowVisuals (const GroupNode* gn)
+    {
+      bool value = true;
+      for (std::size_t i = 0; i < gn->getNumOfChildren (); ++i)
+      {
+        NodePtr_t n = gn->getChild(i);
+        if (n->hasProperty("ShowVisual")) {
+          bool v;
+          n->getProperty ("ShowVisual", v);
+          value = value && v;
+        }
+      }
+      return value;
+    }
+    void setShowVisuals (GroupNode* gn, bool visual)
+    {
+      for (std::size_t i = 0; i < gn->getNumOfChildren (); ++i)
+      {
+        NodePtr_t n = gn->getChild(i);
+        if (n->hasProperty("ShowVisual"))
+          n->setProperty ("ShowVisual", visual);
+      }
+    }
 
     void split(const std::string &s, char delim, std::vector<std::string> &elems) {
       std::stringstream ss(s);
@@ -162,6 +191,7 @@ namespace graphics {
     }
 
     void addMesh (const std::string &robotName,
+                  const std::string& namePrefix,
 		  LinkPtr& urdfLink,
 		  std::size_t j,
 		  LinkNodePtr_t &linkNode, bool visual, bool linkFrame)
@@ -182,7 +212,7 @@ namespace graphics {
         {
           mesh_path = getFilename (mesh_shared_ptr->filename);
 	  std::ostringstream oss;
-	  oss << robotName << "/" << link_name << "_" << j;
+	  oss << robotName << "/" << namePrefix << link_name << "_" << j;
           LeafNodeColladaPtr_t meshNode = LeafNodeCollada::create
 	    (oss.str (), mesh_path);
           osgVector3 static_pos; osgQuat static_quat;
@@ -212,6 +242,7 @@ namespace graphics {
     }
 
     void addCylinder (const std::string &robotName,
+                      const std::string& namePrefix,
 		      LinkPtr& urdfLink,
 		      std::size_t j,
 		      LinkNodePtr_t &linkNode, bool visual, bool linkFrame)
@@ -231,7 +262,7 @@ namespace graphics {
       if ( cylinder_shared_ptr )
         {
 	  std::ostringstream oss;
-	  oss << robotName << "/" << link_name << "_" << j;
+	  oss << robotName << "/" << namePrefix << link_name << "_" << j;
           LeafNodeCylinderPtr_t cylinderNode
 	    (LeafNodeCylinder::create
 	     (oss.str (), (float)cylinder_shared_ptr.get()->radius,
@@ -259,6 +290,7 @@ namespace graphics {
     }
 
     void addBox (const std::string &robotName,
+                 const std::string& namePrefix,
 		 LinkPtr& urdfLink,
 		 std::size_t j,
 		 LinkNodePtr_t &linkNode, bool visual, bool linkFrame)
@@ -277,7 +309,7 @@ namespace graphics {
       OUT( "Box" );
       if ( box_shared_ptr ) {
 	std::ostringstream oss;
-	oss << robotName << "/" << link_name << "_" << j;
+	oss << robotName << "/" << namePrefix << link_name << "_" << j;
 	LeafNodeBoxPtr_t boxNode = LeafNodeBox::create
 	  (oss.str (),
 	   osgVector3((float)(.5*box_shared_ptr->dim.x),
@@ -305,6 +337,7 @@ namespace graphics {
     }
 
     void addSphere (const std::string &robotName,
+                    const std::string& namePrefix,
 		    LinkPtr& urdfLink,
 		    std::size_t j,
 		    LinkNodePtr_t &linkNode, bool visual, bool linkFrame)
@@ -324,7 +357,7 @@ namespace graphics {
       if ( sphere_shared_ptr )
         {
 	  std::ostringstream oss;
-	  oss << robotName << "/" << link_name << "_" << j;
+	  oss << robotName << "/" << namePrefix << link_name << "_" << j;
           LeafNodeSpherePtr_t sphereNode
 	    (LeafNodeSphere::create(oss.str (),
 				    (float)sphere_shared_ptr.get()->radius));
@@ -357,6 +390,7 @@ namespace graphics {
     template <> struct GeomArray <false>    { typedef CollisionPtr type; };
 
     template <bool visual> void addGeoms(const std::string &robotName,
+                    const std::string& namePrefix,
 		    LinkPtr& link,
 		    LinkNodePtr_t &linkNode, bool linkFrame)
     {
@@ -365,16 +399,16 @@ namespace graphics {
       for (std::size_t j = 0; j < array.size (); ++j) {
         switch (array [j]->geometry->type) {
           case urdf::Geometry::MESH:
-            addMesh     (robotName, link, j, linkNode, visual, linkFrame);
+            addMesh     (robotName, namePrefix, link, j, linkNode, visual, linkFrame);
             break;
           case urdf::Geometry::CYLINDER:
-            addCylinder (robotName, link, j, linkNode, visual, linkFrame);
+            addCylinder (robotName, namePrefix, link, j, linkNode, visual, linkFrame);
             break;
           case urdf::Geometry::BOX:
-            addBox      (robotName, link, j, linkNode, visual, linkFrame);
+            addBox      (robotName, namePrefix, link, j, linkNode, visual, linkFrame);
             break;
           case urdf::Geometry::SPHERE:
-            addSphere   (robotName, link, j, linkNode, visual, linkFrame);
+            addSphere   (robotName, namePrefix, link, j, linkNode, visual, linkFrame);
             break;
         }
       }
@@ -392,7 +426,7 @@ namespace graphics {
         if (stat(name.c_str(), &sb) == 0 && S_ISREG(sb.st_mode))
           return name;
       }
-      throw std::runtime_error ("File not found: " + input
+      throw std::invalid_argument ("File not found: " + input
           + ". Check ROS_PACKAGE_PATH environment variable.");
     }
     return input;
@@ -417,6 +451,12 @@ namespace graphics {
     model->getLinks(links);
     std::string link_name;
 
+    robot->addProperty (
+        BoolProperty::create("ShowVisual",
+          BoolProperty::Getter_t(boost::bind(getShowVisuals, robot.get())),
+          BoolProperty::Setter_t(boost::bind(setShowVisuals, robot.get(), _1))
+          ));
+
     for (unsigned int i = 0 ; i < links.size() ; i++) {
       link_name = links[i]->name;
       OUT( link_name );
@@ -425,8 +465,27 @@ namespace graphics {
       // add link to robot node
       robot->addChild (linkNode);
 
-      if (linkFrame ||  visual) addGeoms<true >((visual ? robotName : robotName + "_viz"), links[i], linkNode, linkFrame);
-      if (linkFrame || !visual) addGeoms<false>((visual ? robotName + "_col" : robotName), links[i], linkNode, linkFrame);
+      if (visual) {
+        addGeoms<true >(robotName, "", links[i], linkNode, linkFrame);
+        if (linkFrame) {
+          try {
+            addGeoms<false>(robotName, "collision_", links[i], linkNode, linkFrame);
+          } catch (const std::invalid_argument& e) {
+            std::cerr << "Could not load collision geometries of " << robotName << ":"
+              << e.what() << std::endl;
+          }
+        }
+      } else {
+        addGeoms<false >(robotName, "", links[i], linkNode, linkFrame);
+        if (linkFrame) {
+          try {
+            addGeoms<true>(robotName, "visual_", links[i], linkNode, linkFrame);
+          } catch (const std::invalid_argument& e) {
+            std::cerr << "Could not load visual geometries of " << robotName << ":"
+              << e.what() << std::endl;
+          }
+        }
+      }
     }
     return robot;
   }

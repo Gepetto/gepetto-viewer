@@ -8,8 +8,9 @@
 
 #include <gepetto/viewer/leaf-node-arrow.h>
 
-#include <osgUtil/SmoothingVisitor>
 #include <osg/CullFace>
+#include <osgDB/ReadFile>
+#include <osgUtil/SmoothingVisitor>
 
 namespace graphics {
 
@@ -27,6 +28,13 @@ namespace graphics {
 
         /* Allow transparency */
         geode_ptr_->getOrCreateStateSet()->setMode(GL_BLEND, ::osg::StateAttribute::ON);;
+
+        addProperty(FloatProperty::create("Radius",
+              FloatProperty::getterFromMemberFunction(this, &LeafNodeArrow::getRadius),
+              FloatProperty::setterFromMemberFunction(this, &LeafNodeArrow::setRadius)));
+        addProperty(FloatProperty::create("Size",
+              FloatProperty::getterFromMemberFunction(this, &LeafNodeArrow::getSize),
+              FloatProperty::setterFromMemberFunction(this, &LeafNodeArrow::setSize)));
     }
 
     void LeafNodeArrow::resetGeodeContent ()
@@ -57,7 +65,7 @@ namespace graphics {
     }
 
     LeafNodeArrow::LeafNodeArrow(const std::string& name, const osgVector4& color, float radius, float size):
-        Node(name),
+        NodeDrawable(name),
         color_(color)
     {
         setRadius(radius);
@@ -67,7 +75,7 @@ namespace graphics {
     }
 
     LeafNodeArrow::LeafNodeArrow(const LeafNodeArrow& other) :
-        Node(other.getID())
+        NodeDrawable(other.getID())
     {
         init();
       //TODO

@@ -26,6 +26,8 @@ CONFIG_FILES(
 SET(${LIBRARY_NAME}_SOURCES
   group-node.cpp
   node.cpp
+  node-drawable.cpp
+  node-property.cpp
   window-manager.cpp
   leaf-node-line.cpp
   leaf-node-box.cpp

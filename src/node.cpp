@@ -21,6 +21,18 @@
 namespace graphics {
   namespace {
     int getNodeVisibilityMode (Node* node) { return node->getVisibilityMode(); }
+    void setNodeVisibilityMode (Node* node, const int& v) { node->setVisibilityMode((VisibilityMode)v); }
+
+    int getNodeWireFrameMode (Node* node) { return node->getWireFrameMode(); }
+    void setNodeWireFrameMode (Node* node, const int& v) { node->setWireFrameMode((WireFrameMode)v); }
+
+    int getNodeLightingMode (Node* node) { return node->getLightingMode(); }
+    void setNodeLightingMode (Node* node, const int& v) { node->setLightingMode((LightingMode)v); }
+
+    void setNodeLandmark (Node* node, bool enable) {
+      if (enable) node->addLandmark (0.05f);
+      else        node->deleteLandmark();
+    }
   }
   using ::osg::Matrix;
 
@@ -80,10 +92,33 @@ namespace graphics {
     visibilityMode_ = VISIBILITY_ON;
 
     addProperty(
-        IntProperty::create("visibility",
-          IntProperty::Getter_t(boost::bind(getNodeVisibilityMode, this)),
-          IntProperty::Setter_t()
-          ));
+        EnumProperty::create("Visibility", visibilityModeEnum(),
+          EnumProperty::Getter_t(boost::bind(getNodeVisibilityMode, this)),
+          EnumProperty::Setter_t(boost::bind(setNodeVisibilityMode, this, _1))));
+    addProperty(
+        EnumProperty::create("WireframeMode", wireFrameModeEnum(),
+          EnumProperty::Getter_t(boost::bind(getNodeWireFrameMode, this)),
+          EnumProperty::Setter_t(boost::bind(setNodeWireFrameMode, this, _1))));
+    addProperty(
+        EnumProperty::create("LightingMode", lightingModeEnum(),
+          EnumProperty::Getter_t(boost::bind(getNodeLightingMode, this)),
+          EnumProperty::Setter_t(boost::bind(setNodeLightingMode, this, _1))));
+    addProperty(
+        BoolProperty::create("Landmark",
+          BoolProperty::getterFromMemberFunction (this, &Node::hasLandmark),
+          BoolProperty::Setter_t(boost::bind(setNodeLandmark, this, _1))));
+    addProperty(
+        StringProperty::create("Name",
+          StringProperty::getterFromMemberFunction (this, &Node::getID),
+          StringProperty::Setter_t()));
+    addProperty(
+        Vector4Property::create("Color",
+          Vector4Property::Getter_t(),
+          Vector4Property::setterFromMemberFunction(this, &Node::setColor)));
+    addProperty(
+        FloatProperty::create("Transparency",
+          FloatProperty::getterFromMemberFunction(this, &Node::getAlpha),
+          FloatProperty::setterFromMemberFunction(this, &Node::setAlpha)));
   }
 
   Node::Node (const std::string& name) :
@@ -107,6 +142,12 @@ namespace graphics {
     if (!prop)
       throw std::invalid_argument("Unknown property " + name);
     return prop;
+  }
+
+  bool Node::hasProperty(const std::string& name) const
+  {
+    PropertyMap_t::const_iterator _prop = properties_.find(name);
+    return (_prop != properties_.end());
   }
 
   void Node::addProperty(const PropertyPtr_t& prop)
@@ -214,6 +255,14 @@ namespace graphics {
       auto_transform_ptr_->getOrCreateStateSet()->setMode(GL_LIGHTING, ::osg::StateAttribute::OFF | ::osg::StateAttribute::PROTECTED);
   }
 
+  LightingMode Node::getLightingMode () const
+  {
+    bool on =
+      (auto_transform_ptr_->getOrCreateStateSet()->getMode(GL_LIGHTING)
+      & osg::StateAttribute::ON);
+    return (on ? LIGHT_INFLUENCE_ON : LIGHT_INFLUENCE_OFF);
+  }
+
   void Node::setWireFrameMode (const WireFrameMode& mode)
   {
     if (mode == selected_wireframe_) return;
@@ -296,6 +345,7 @@ namespace graphics {
     geom_ptr->addPrimitiveSet(new osg::DrawArrays(GL_LINES,2,2));
     geom_ptr->addPrimitiveSet(new osg::DrawArrays(GL_LINES,4,2));
 
+    static_auto_transform_ptr_->removeChild(landmark_geode_ptr_);
     landmark_geode_ptr_ = new osg::Geode();
     landmark_geode_ptr_->addDrawable(geom_ptr);
 
@@ -313,6 +363,11 @@ namespace graphics {
 
 
     static_auto_transform_ptr_->addChild(landmark_geode_ptr_);
+  }
+
+  bool Node::hasLandmark() const
+  {
+    return landmark_geode_ptr_;
   }
 
   void Node::deleteLandmark()

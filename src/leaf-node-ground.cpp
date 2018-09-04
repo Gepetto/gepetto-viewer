@@ -92,6 +92,8 @@ namespace graphics {
         /* Apply colors */
         setColors(color1_,color2_);
 
+        if (hasProperty("Color"))
+          properties_.erase("Color");
         addProperty(Vector4Property::create("Color1",
               Vector4Property::getterFromMemberFunction(this, &LeafNodeGround::getColor1),
               Vector4Property::setterFromMemberFunction(this, &LeafNodeGround::setColor1)));

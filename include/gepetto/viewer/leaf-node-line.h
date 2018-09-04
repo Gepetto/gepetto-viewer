@@ -9,12 +9,12 @@
 #ifndef SCENEVIEWER_LEAFNODELINE_HH
 #define SCENEVIEWER_LEAFNODELINE_HH
 
-#include <gepetto/viewer/node.h>
+#include <gepetto/viewer/node-drawable.h>
 
 namespace graphics {
     DEF_CLASS_SMART_PTR(LeafNodeLine)
     
-    class LeafNodeLine : public Node
+    class LeafNodeLine : public NodeDrawable
     {
     private:
 
@@ -80,9 +80,9 @@ namespace graphics {
         
         osgVector3 getEndPoint() const;
 
-        /** Define the type of drawings
-         * See http://svn.openscenegraph.org/osg/OpenSceneGraph-Data/trunk/Images/primitives.gif
-         * for details about possible values
+        /** Define the immediate mode of OpenGL used to draw the line.
+         *  Possible values are:
+         *  \image html opengl_primitives.png
          */
         virtual void setMode (const GLenum& mode);
 
@@ -113,8 +113,6 @@ namespace graphics {
 
             return color_array_ptr->at(0);
         }
-
-        void setAlpha (const float& alpha);
 
         void setLineWidth (const float& width);
 

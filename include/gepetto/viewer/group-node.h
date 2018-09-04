@@ -21,8 +21,9 @@ namespace graphics {
         /**
          \brief List of all child graphical object
          */
-        std::list<graphics::NodePtr_t> list_of_objects_;
-        
+        typedef std::vector<graphics::NodePtr_t> Nodes_t;
+        Nodes_t list_of_objects_;
+
         /** Associated weak pointer */
         GroupNodeWeakPtr weak_ptr_;
         
@@ -79,7 +80,7 @@ namespace graphics {
 
         virtual graphics::NodePtr_t getChild(size_t i) const
         {  
-           std::list<graphics::NodePtr_t>::const_iterator it = list_of_objects_.begin();
+           Nodes_t::const_iterator it = list_of_objects_.begin();
            if (list_of_objects_.size() > i)
            {
                std::advance(it, i);
