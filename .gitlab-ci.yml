@@ -20,7 +20,7 @@ cache:
     - cd gepetto-viewer
     - make checkout MASTER_REPOSITORY="dir ${CI_PROJECT_DIR}"
     - make install
-    - cd work.$(hostname)/$(make show-var VARNAME=DISTNAME)
+    - cd work.$(hostname)/$(make show-var VARNAME=DISTNAME)/build
     - make test
 
 robotpkg-gepetto-viewer-14.04-release:
@@ -42,7 +42,7 @@ doc-coverage:
     - echo -e 'CXXFLAGS+= --coverage\nLDFLAGS+= --coverage\nPKG_DEFAULT_OPTIONS= debug' >> /opt/openrobots/etc/robotpkg.conf
   after_script:
     - cd /root/robotpkg/graphics/gepetto-viewer
-    - cd work.$(hostname)/$(make show-var VARNAME=DISTNAME)
+    - cd work.$(hostname)/$(make show-var VARNAME=DISTNAME)/build
     - make doc
     - mv doc/doxygen-html ${CI_PROJECT_DIR}
     - mkdir -p ${CI_PROJECT_DIR}/coverage/
@@ -53,4 +53,3 @@ doc-coverage:
     paths:
       - doxygen-html/
       - coverage/
-
