@@ -1,15 +1,55 @@
-variables:
-  GIT_SSL_NO_VERIFY: "true"
-  GIT_SUBMODULE_STRATEGY: "recursive"
+# Please don't edit this file, and use the version generated at
+# http://rainboard.laas.fr/project/gepetto-viewer/.gitlab-ci.yml
 
-build:
-  image: ubuntu:14.04
+variables:
+  GIT_SUBMODULE_STRATEGY: "recursive"
+  CCACHE_BASEDIR: "${CI_PROJECT_DIR}"
+  CCACHE_DIR: "${CI_PROJECT_DIR}/ccache"
+
+cache:
+  paths:
+    - ccache
+
+.robotpkg-gepetto-viewer: &robotpkg-gepetto-viewer
+  except:
+    - gh-pages
   script:
-    - sudo apt-get update && sudo apt-get -qqy upgrade
-    - sudo apt-get -qqy install cmake g++
-    - sudo apt-get -qqy install libopenscenegraph-dev liburdfdom-dev libboost-filesystem-dev libboost-program-options-dev libboost-test-dev
-    - mkdir build && cd build
-    - cmake ..
-    - make -s
+    - mkdir -p ccache
+    - cd /root/robotpkg/graphics
+    - git pull
+    - cd gepetto-viewer
+    - make checkout MASTER_REPOSITORY="dir ${CI_PROJECT_DIR}"
     - make install
-    - make uninstall
+    - cd work.$(hostname)/$(make show-var VARNAME=DISTNAME)/build
+    - make test
+
+robotpkg-gepetto-viewer-14.04-release:
+  <<: *robotpkg-gepetto-viewer
+  image: eur0c.laas.fr:5000/humanoid-path-planner/gepetto-viewer/gepetto-viewer:14.04
+
+robotpkg-gepetto-viewer-16.04-release:
+  <<: *robotpkg-gepetto-viewer
+  image: eur0c.laas.fr:5000/humanoid-path-planner/gepetto-viewer/gepetto-viewer:16.04
+
+robotpkg-gepetto-viewer-18.04-release:
+  <<: *robotpkg-gepetto-viewer
+  image: eur0c.laas.fr:5000/humanoid-path-planner/gepetto-viewer/gepetto-viewer:18.04
+
+doc-coverage:
+  <<: *robotpkg-gepetto-viewer
+  image: eur0c.laas.fr:5000/humanoid-path-planner/gepetto-viewer/gepetto-viewer:16.04
+  before_script:
+    - echo -e 'CXXFLAGS+= --coverage\nLDFLAGS+= --coverage\nPKG_DEFAULT_OPTIONS= debug' >> /opt/openrobots/etc/robotpkg.conf
+  after_script:
+    - cd /root/robotpkg/graphics/gepetto-viewer
+    - cd work.$(hostname)/$(make show-var VARNAME=DISTNAME)/build
+    - make doc
+    - mv doc/doxygen-html ${CI_PROJECT_DIR}
+    - mkdir -p ${CI_PROJECT_DIR}/coverage/
+    - gcovr -r .
+    - gcovr -r . --html --html-details -o ${CI_PROJECT_DIR}/coverage/index.html
+  artifacts:
+    expire_in: 1 day
+    paths:
+      - doxygen-html/
+      - coverage/
