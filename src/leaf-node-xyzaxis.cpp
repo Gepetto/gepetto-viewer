@@ -95,9 +95,8 @@ namespace graphics {
         geode_ptr_->addDrawable(sphere_drawable_ptr_);
         if(sizeAxis_ > 0){  // optimisation of memory consumption : doesn't create the axis instead of creating axis with size "0"
              /* create the axis : */
-            // float radiusCyl = (getRadius()/4.f) * getSizeAxis();
             float radiusCyl = getRadius()/4.f;
-            float lengthCyl = getSizeAxis();
+            float lengthCyl = (getRadius()*3.f) * getSizeAxis();
             float labelShift1 = lengthCyl + getRadius() + 4 * radiusCyl + getRadius();
             float labelShift2 = 0;
             // float charSize = 3.f * radiusCyl;
