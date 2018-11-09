@@ -60,6 +60,7 @@ SET(${PROJECT_NAME}_HEADERS
   include/gepetto/viewer/node-drawable.h
   include/gepetto/viewer/urdf-parser.h
   include/gepetto/viewer/window-manager.h
+  include/gepetto/viewer/windows-manager.h
   include/gepetto/viewer/leaf-node-xyzaxis.h
   include/gepetto/viewer/roadmap-viewer.h
   include/gepetto/viewer/node-rod.h
