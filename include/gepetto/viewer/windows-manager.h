@@ -20,9 +20,14 @@
 #include <gepetto/viewer/window-manager.h>
 #include <gepetto/viewer/roadmap-viewer.h>
 #include <gepetto/viewer/transform-writer.h>
-#include <boost/thread/mutex.hpp>
+
+#include <OpenThreads/Mutex>
+#include <OpenThreads/ScopedLock>
 
 namespace graphics {
+
+    typedef OpenThreads::Mutex Mutex;
+    typedef OpenThreads::ScopedLock<Mutex> ScopedLock;
 
     struct Configuration {
         osgVector3 position;
@@ -81,7 +86,7 @@ namespace graphics {
             std::map<std::string, NodePtr_t> nodes_;
             std::map<std::string, GroupNodePtr_t> groupNodes_;
             std::map<std::string, RoadmapViewerPtr_t> roadmapNodes_;
-            boost::mutex osgFrameMtx_, configListMtx_;
+            OpenThreads::Mutex osgFrameMtx_, configListMtx_;
             int rate_;
             NodeConfigurations_t newNodeConfigurations_;
             BlenderFrameCapture blenderCapture_;
@@ -94,7 +99,6 @@ namespace graphics {
             static LightingMode getLight(const std::string& lightName);
             NodePtr_t find (const std::string name, GroupNodePtr_t group = GroupNodePtr_t());
             void initParent(NodePtr_t node, GroupNodePtr_t parent);
-            void threadRefreshing(WindowManagerPtr_t window);
             bool loadUDRF(const std::string& urdfName, const std::string& urdfPath,
                 bool visual, bool linkFrame);
 
@@ -126,14 +130,13 @@ namespace graphics {
             virtual std::vector<std::string> getWindowList();
 
             /// Return the mutex to be locked before refreshing
-            boost::mutex& osgFrameMutex () {
+            OpenThreads::Mutex& osgFrameMutex () {
               return osgFrameMtx_;
             }
 
             virtual bool setRate(const int& rate);
             virtual void refresh();
 
-            virtual WindowID createWindow(const std::string& windowName);
             virtual WindowID getWindowID (const std::string& windowName);
 
             virtual void createScene(const std::string& sceneName);

@@ -85,7 +85,7 @@ namespace graphics {
 
    // -------------------------------------------
 
-   bool RoadmapViewer::addNode(osgVector3 position, osgQuat quat, boost::mutex& mtx){
+   bool RoadmapViewer::addNode(osgVector3 position, osgQuat quat, OpenThreads::Mutex& mtx){
        std::stringstream msg;
        msg << getID()<<"_node"<<list_nodes_.size();
 
@@ -100,7 +100,7 @@ namespace graphics {
        return true;
    }
 
-   bool RoadmapViewer::addEdge(osgVector3 from, osgVector3 to, boost::mutex& mtx){
+   bool RoadmapViewer::addEdge(osgVector3 from, osgVector3 to, OpenThreads::Mutex& mtx){
        std::stringstream msg;
        msg << getID()<<"_Edge"<<list_edges_.size();
        LeafNodeLinePtr_t edge = LeafNodeLine::create (msg.str(),from, to, colorEdge_);
