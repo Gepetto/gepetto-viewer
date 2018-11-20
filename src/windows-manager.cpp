@@ -300,16 +300,18 @@ namespace graphics {
 
     void WindowsManager::refresh ()
     {
-        configListMtx_.lock ();
-        osgFrameMutex().lock ();
-        //refresh scene with the new configuration
-        std::for_each(newNodeConfigurations_.begin(),
-            newNodeConfigurations_.end(),
-            ApplyConfigurationFunctor());
-        osgFrameMutex().unlock ();
+      {
+        ScopedLock lock(configListMtx_);
+        {
+          ScopedLock lock(osgFrameMutex());
+          //refresh scene with the new configuration
+          std::for_each(newNodeConfigurations_.begin(),
+              newNodeConfigurations_.end(),
+              ApplyConfigurationFunctor());
+        }
         newNodeConfigurations_.clear ();
-        configListMtx_.unlock ();
-        if (autoCaptureTransform_) captureTransform ();
+      }
+      if (autoCaptureTransform_) captureTransform ();
     }
 
     void WindowsManager::createScene (const std::string& sceneName)
@@ -881,24 +883,25 @@ namespace graphics {
                 std::vector <std::string> names(it->second->getNumOfChildren ());
                 for (std::size_t i = 0; i < names.size(); ++i)
                   names[i] = it->second->getChild (i)->getID();
-                osgFrameMutex().lock ();
-                it->second->removeAllChildren ();
-                osgFrameMutex().unlock ();
+                {
+                  ScopedLock lock(osgFrameMutex());
+                  it->second->removeAllChildren ();
+                }
                 for (std::size_t i = 0; i < names.size(); ++i)
                   deleteNode (names[i], all);
               }
-              osgFrameMutex().lock ();
-              groupNodes_.erase (nodeName);
-              osgFrameMutex().unlock ();
+              {
+                ScopedLock lock(osgFrameMutex());
+                groupNodes_.erase (nodeName);
+              }
             }
             GroupNodeMapConstIt itg;
-            osgFrameMutex().lock ();
+            ScopedLock lock(osgFrameMutex());
             for (itg = groupNodes_.begin (); itg != groupNodes_.end(); ++itg) {
               if (itg->second && itg->second->hasChild (n))
                 itg->second->removeChild(n);
             }
             nodes_.erase (nodeName);
-            osgFrameMutex().unlock ();
             return true;
         }
     }
@@ -914,9 +917,8 @@ namespace graphics {
         newNodeConfiguration.position = configuration.position;
         newNodeConfiguration.quat = configuration.quat;
 
-        configListMtx_.lock();
+        ScopedLock lock(configListMtx_);
         newNodeConfigurations_.push_back (newNodeConfiguration);
-        configListMtx_.unlock();
         return true;
     }
 
@@ -1061,30 +1063,6 @@ namespace graphics {
         return true;
     }
 
-    void WindowsManager::captureFrame (const WindowID wid, const std::string& filename)
-    {
-      WindowManagerPtr_t wm = getWindowManager(wid, true);
-      ScopedLock lock(osgFrameMutex());
-      wm->captureFrame (filename);
-    }
-
-    bool WindowsManager::startCapture (const WindowID windowId, const std::string& filename,
-            const std::string& extension)
-    {
-        WindowManagerPtr_t wm = getWindowManager(windowId, true);
-        ScopedLock lock(osgFrameMutex());
-        wm->startCapture (filename, extension);
-        return true;
-    }
-
-    bool WindowsManager::stopCapture (const WindowID windowId)
-    {
-        WindowManagerPtr_t wm = getWindowManager(windowId, true);
-        ScopedLock lock(osgFrameMutex());
-        wm->stopCapture ();
-        return true;
-    }
-
     bool WindowsManager::setCaptureTransform (const std::string& filename,
         const std::vector<std::string>& nodeNames)
     {
@@ -1103,9 +1081,8 @@ namespace graphics {
 
     void WindowsManager::captureTransform ()
     {
-        osgFrameMutex().lock ();
+	ScopedLock lock(osgFrameMutex());
         blenderCapture_.captureFrame ();
-        osgFrameMutex().unlock ();
     }
 
     bool WindowsManager::writeBlenderScript (const std::string& filename,

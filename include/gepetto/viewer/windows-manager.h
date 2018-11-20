@@ -241,10 +241,6 @@ namespace graphics {
             virtual bool setAlpha(const std::string& nodeName, const float& alpha);
             virtual bool setAlpha(const std::string& nodeName, const int& alphaPercentage);
 
-            virtual void captureFrame (const WindowID windowId, const std::string& filename);
-            virtual bool startCapture (const WindowID windowId, const std::string& filename,
-                    const std::string& extension);
-            virtual bool stopCapture (const WindowID windowId);
             virtual bool setCaptureTransform (const std::string& filename, const std::vector<std::string>& nodename);
             virtual void captureTransformOnRefresh (bool autoCapture);
             virtual void captureTransform ();
