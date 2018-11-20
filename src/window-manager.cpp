@@ -21,116 +21,31 @@ namespace graphics {
   namespace {
     struct ScreenShot : public osg::Camera::DrawCallback
     {
-      ScreenShot(osgViewer::Viewer* v, const std::string& fn);
-
-      ~ScreenShot ();
-
-      void capture(const std::string& fn);
+      ScreenShot(const std::string& fn) : fn_ (fn) {}
 
       virtual void operator () (osg::RenderInfo& renderInfo) const;
 
       std::string fn_;
-      osgViewer::Viewer* viewer_;
-      osg::Camera* camera_;
-      unsigned int slaveIdx_;
     };
-
-    ScreenShot::ScreenShot(osgViewer::Viewer* v, const std::string& fn)
-      : fn_ (fn), viewer_ (v)
-    {
-      osg::Camera* main = v->getCamera();
-      osg::Viewport* viewport = main->getViewport();
-      osg::TraitsRefPtr traits_ptr = new ::osg::GraphicsContext::Traits();
-
-      // traits_ptr->x = (int)viewport->x();
-      // traits_ptr->y = (int)viewport->y();
-      traits_ptr->x = 0;
-      traits_ptr->y = 0;
-      traits_ptr->width =  2*(int)viewport->width();
-      traits_ptr->height = 2*(int)viewport->height();
-      // traits_ptr->red = 8;
-      // traits_ptr->green = 8;
-      // traits_ptr->blue = 8;
-      // traits_ptr->alpha = 8;
-      // traits_ptr->depth = 32;
-      traits_ptr->windowDecoration = false;
-      traits_ptr->useCursor = false;
-
-      traits_ptr->sharedContext = 0;
-
-      traits_ptr->doubleBuffer = true;
-      traits_ptr->pbuffer = true;
-      traits_ptr->samples = 32;
-      traits_ptr->sampleBuffers = 1;
-
-      // traits_ptr->vsync = true;
-
-      osg::ref_ptr<osg::GraphicsContext> gc = osg::GraphicsContext::createGraphicsContext( traits_ptr );
-
-      if (!gc.valid()) {
-        throw std::runtime_error("Could not create a valid GraphicsContext. Maybe your computer is not powerfull enough.");
-      }
-
-      camera_ = new ::osg::Camera;
-      camera_->setGraphicsContext(gc);
-      // capture_cam->setClearColor( bgColor );
-      // capture_cam->setClearMask( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-      // capture_cam->setReferenceFrame( osg::Transform::ABSOLUTE_RF );
-      // capture_cam->setRenderOrder( osg::Camera::PRE_RENDER );
-      camera_->setRenderTargetImplementation( osg::Camera::FRAME_BUFFER );
-      // capture_cam->setRenderOrder(osg::Camera::POST_RENDER);
-      // capture_cam->setAllowEventFocus(false);
-      camera_->setViewport(new osg::Viewport(0, 0, traits_ptr->width, traits_ptr->height));
-      camera_->setViewMatrix(main->getViewMatrix());
-
-      GLenum buffer = traits_ptr->doubleBuffer ? GL_BACK : GL_FRONT;
-      camera_->setDrawBuffer(buffer);
-      camera_->setReadBuffer(buffer);
-      // osg::ref_ptr<osg::Image> image = new osg::Image;
-      // capture_cam->detach(osg::Camera::COLOR_BUFFER);
-      // capture_cam->attach(osg::Camera::COLOR_BUFFER, image.get(), 0, 0);
-
-      viewer_->addSlave(camera_, osg::Matrixd(), osg::Matrixd());
-      viewer_->realize();
-      slaveIdx_ = viewer_->findSlaveIndexForCamera(camera_);
-      camera_->setFinalDrawCallback(this);
-    }
-
-    ScreenShot::~ScreenShot ()
-    {
-      if (camera_)
-        viewer_->removeSlave(slaveIdx_);
-    }
 
     void ScreenShot::operator () (osg::RenderInfo& renderInfo) const
     {
-      // unsigned int frameNumber = renderInfo.getState()->getFrameStamp()->getFrameNumber();
+      osg::Timer_t tick_start = osg::Timer::instance()->tick();
 
-      osg::Camera* camera = renderInfo.getCurrentCamera();
-      if (camera != camera_) {
-        std::cerr << "Wrong camera" << std::endl;
-        return;
-      }
-      osg::Viewport* viewport = camera ? camera->getViewport() : 0;
-      if (viewport)
-      {
-        osg::Timer_t tick_start = osg::Timer::instance()->tick();
-        // OSG_NOTICE<<"Doing read of ="<<viewport->x()<<", "<<viewport->y()<<", "<<viewport->width()<<", "<<viewport->height()<<" with pixelFormat=0x"<<std::hex<<GL_RGBA<<std::dec<<std::endl;
+      osg::ref_ptr<osg::Image> image = new osg::Image;
+      osg::GraphicsContext* gc = renderInfo.getState()->getGraphicsContext();
 
-        glReadBuffer(camera->getDrawBuffer());
-        osg::ref_ptr<osg::Image> image = new osg::Image;
+      glReadBuffer(GL_BACK);
+      //osg::Camera* camera = renderInfo.getCurrentCamera();
+      //osg::Viewport* viewport = camera ? camera->getViewport() : 0;
+      //image->readPixels(viewport->x(),viewport->y(),viewport->width(),viewport->height(),
+      image->readPixels(0, 0, gc->getTraits()->width, gc->getTraits()->height,
+          GL_RGBA, GL_UNSIGNED_BYTE, 1);
 
-        // image->readPixels(viewport->x(),viewport->y(),viewport->width(),viewport->height(),
-        image->readPixels(viewport->x(),viewport->y(),viewport->width(),viewport->height(),
-            GL_RGBA, GL_UNSIGNED_BYTE, 1);
+      osgDB::writeImageFile(*image, fn_);
 
-        osgDB::writeImageFile(*image, fn_);
-
-        osg::Timer_t tick_end = osg::Timer::instance()->tick();
-        std::cout<<"Time to generate image = "<<osg::Timer::instance()->delta_s(tick_start, tick_end)<<" seconds"<<std::endl;
-      }
-      camera->setFinalDrawCallback(0);
-      std::cout << "called" << std::endl;
+      osg::Timer_t tick_end = osg::Timer::instance()->tick();
+      std::cout<<"Time to generate image = "<<osg::Timer::instance()->delta_s(tick_start, tick_end)<<" seconds"<<std::endl;
     }
   }
 
@@ -224,9 +139,10 @@ namespace graphics {
 
   void WindowManager::captureFrame(const std::string& filename)
   {
-    osg::ref_ptr<ScreenShot> screenshot_ = new ScreenShot(viewer_ptr_, filename);
-    viewer_ptr_->frame();
-    std::cout << "captured" << std::endl;
+    osg::ref_ptr<ScreenShot> screenshot_ = new ScreenShot(filename);
+    main_camera_->setFinalDrawCallback (screenshot_);
+    viewer_ptr_->renderingTraversals();
+    main_camera_->setFinalDrawCallback(0);
   }
 
     /* Declaration of private function members */
