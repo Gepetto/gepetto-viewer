@@ -82,9 +82,15 @@ namespace graphics {
 	collada_ptr_->getOrCreateStateSet()->setMode(GL_BLEND, ::osg::StateAttribute::ON);
       }
 
-    addProperty(StringProperty::create("Meshfile path",
+    addProperty(StringProperty::create("Mesh file",
           StringProperty::getterFromMemberFunction(this, &LeafNodeCollada::meshFilePath),
           StringProperty::Setter_t()));
+    addProperty(StringProperty::create("Texture file",
+          StringProperty::getterFromMemberFunction(this, &LeafNodeCollada::textureFilePath),
+          StringProperty::Setter_t()));
+    addProperty(Vector4Property::create("Color",
+          Vector4Property::getterFromMemberFunction(this, &LeafNodeCollada::getColor),
+          Vector4Property::setterFromMemberFunction(this, &LeafNodeCollada::setColor)));
   }
     
   LeafNodeCollada::LeafNodeCollada(const std::string& name, const std::string& collada_file_path) :
@@ -185,6 +191,17 @@ namespace graphics {
     mat_ptr->setAmbient (osg::Material::FRONT_AND_BACK,ambient); 
 
     collada_ptr_->getOrCreateStateSet()->setAttribute(mat_ptr.get());    
+  }
+    
+  osgVector4 LeafNodeCollada::getColor() const
+  {
+    osg::StateSet* ss = collada_ptr_.get()->getStateSet();
+    if (ss) {
+      osg::Material *mat = dynamic_cast<osg::Material*>
+        (ss->getAttribute(osg::StateAttribute::MATERIAL));
+      if (mat) return mat->getDiffuse(osg::Material::FRONT_AND_BACK);
+    }
+    return osgVector4();
   }
 
   void LeafNodeCollada::setAlpha(const float& alpha)
