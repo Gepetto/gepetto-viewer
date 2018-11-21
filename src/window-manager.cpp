@@ -30,10 +30,13 @@ namespace graphics {
 
     void ScreenShot::operator () (osg::RenderInfo& renderInfo) const
     {
-      osg::Timer_t tick_start = osg::Timer::instance()->tick();
+      osg::Timer* timer = osg::Timer::instance();
+      osg::Timer_t tick_start = timer->tick();
 
       osg::ref_ptr<osg::Image> image = new osg::Image;
+      assert(renderInfo.getState());
       osg::GraphicsContext* gc = renderInfo.getState()->getGraphicsContext();
+      assert(gc);
 
       glReadBuffer(GL_BACK);
       //osg::Camera* camera = renderInfo.getCurrentCamera();
@@ -44,8 +47,14 @@ namespace graphics {
 
       osgDB::writeImageFile(*image, fn_);
 
-      osg::Timer_t tick_end = osg::Timer::instance()->tick();
-      std::cout<<"Time to generate image = "<<osg::Timer::instance()->delta_s(tick_start, tick_end)<<" seconds"<<std::endl;
+      bool res = osgDB::writeImageFile(*image, fn_);
+      if (!res) {
+        std::cerr << "Failed to write image " << fn_ << std::endl;
+      } else {
+        osg::Timer_t tick_end = timer->tick();
+        std::cout<<"Time to generate image " << fn_ << " = "
+          << timer->delta_s(tick_start, tick_end) << " seconds"<<std::endl;
+      }
     }
   }
 
