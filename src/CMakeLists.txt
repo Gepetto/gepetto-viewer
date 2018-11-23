@@ -29,6 +29,7 @@ SET(${LIBRARY_NAME}_SOURCES
   node-drawable.cpp
   node-property.cpp
   window-manager.cpp
+  windows-manager.cpp
   leaf-node-line.cpp
   leaf-node-box.cpp
   leaf-node-cylinder.cpp

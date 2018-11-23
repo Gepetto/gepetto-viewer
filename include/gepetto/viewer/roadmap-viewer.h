@@ -9,9 +9,10 @@
 #ifndef SCENEVIEWER_ROADMAPVIEWER_HH
 #define SCENEVIEWER_ROADMAPVIEWER_HH
 
+#include <OpenThreads/Mutex>
+
 #include <gepetto/viewer/node.h>
 #include <gepetto/viewer/group-node.h>
-#include <boost/thread/mutex.hpp>
 #include <gepetto/viewer/leaf-node-xyzaxis.h>
 #include <gepetto/viewer/leaf-node-line.h>
 
@@ -64,9 +65,9 @@ namespace graphics {
          */
         RoadmapViewerPtr_t self(void) const;
 
-        bool addNode(osgVector3 position, osgQuat quat,boost::mutex& mtx);
+        bool addNode(osgVector3 position, osgQuat quat, ::OpenThreads::Mutex& mtx);
 
-        bool addEdge(osgVector3 from, osgVector3 to, boost::mutex& mtx);
+        bool addEdge(osgVector3 from, osgVector3 to, ::OpenThreads::Mutex& mtx);
 
         virtual void removeAllChildren();
 

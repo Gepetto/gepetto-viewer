@@ -72,6 +72,8 @@ namespace graphics {
         
         void setColor(const osgVector4& color);   
 
+        osgVector4 getColor () const;
+
         void setTexture(const std::string& image_path);     
 
         const std::string& meshFilePath () const;

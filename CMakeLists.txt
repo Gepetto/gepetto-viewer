@@ -60,6 +60,7 @@ SET(${PROJECT_NAME}_HEADERS
   include/gepetto/viewer/node-drawable.h
   include/gepetto/viewer/urdf-parser.h
   include/gepetto/viewer/window-manager.h
+  include/gepetto/viewer/windows-manager.h
   include/gepetto/viewer/leaf-node-xyzaxis.h
   include/gepetto/viewer/roadmap-viewer.h
   include/gepetto/viewer/node-rod.h
@@ -96,6 +97,7 @@ IF(${URDFDOM_VERSION} VERSION_LESS "0.4.0")
   PKG_CONFIG_APPEND_CFLAGS("-DURDFDOM_POINTER_CAST")
 ENDIF(${URDFDOM_VERSION} VERSION_LESS "0.4.0")
 
+SET(BOOST_COMPONENTS "")
 SEARCH_FOR_BOOST()
 INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 
