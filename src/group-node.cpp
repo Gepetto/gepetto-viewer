@@ -100,18 +100,6 @@ namespace graphics {
         this->asQueue()->removeChild(0, this->asQueue()->getNumChildren());
     }
     
-    void GroupNode::setVisibilityMode (const VisibilityMode& visibility_state)
-    {
-        Node::setVisibilityMode (visibility_state);
-        Nodes_t::iterator iter_list_of_objects;
-        for (iter_list_of_objects = list_of_objects_.begin();
-             iter_list_of_objects != list_of_objects_.end();
-             iter_list_of_objects++)
-        {
-            (*iter_list_of_objects)->setVisibilityMode ( visibility_state );
-        }
-    }
-    
     void GroupNode::setLightingMode (const LightingMode& lighting_state)
     {
         Node::setLightingMode ( lighting_state );
