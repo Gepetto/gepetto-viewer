@@ -33,6 +33,26 @@ namespace graphics {
       if (enable) node->addLandmark (0.05f);
       else        node->deleteLandmark();
     }
+
+    int getNodeHighlightState (Node* node) { return (int)node->getHighlightState(); }
+    void setNodeHighlightState (Node* node, const int& v) { node->setHighlightState(v); }
+
+    MetaEnum* highlightStateEnum ()
+    {
+      static MetaEnum hs;
+      if (hs.type.size() == 0) {
+        hs.type = "HighlightState";
+        hs.names .push_back ("1"); hs.values.push_back (1);
+        hs.names .push_back ("2"); hs.values.push_back (2);
+        hs.names .push_back ("3"); hs.values.push_back (3);
+        hs.names .push_back ("4"); hs.values.push_back (4);
+        hs.names .push_back ("5"); hs.values.push_back (5);
+        hs.names .push_back ("6"); hs.values.push_back (6);
+        hs.names .push_back ("7"); hs.values.push_back (7);
+        hs.names .push_back ("8"); hs.values.push_back (8);
+      }
+      return &hs;
+    }
   }
   using ::osg::Matrix;
 
@@ -91,6 +111,10 @@ namespace graphics {
 
     visibilityMode_ = VISIBILITY_ON;
 
+    addProperty(
+        EnumProperty::create("Highlight", highlightStateEnum(),
+          EnumProperty::Getter_t(boost::bind(getNodeHighlightState, this)),
+          EnumProperty::Setter_t(boost::bind(setNodeHighlightState, this, _1))));
     addProperty(
         EnumProperty::create("Visibility", visibilityModeEnum(),
           EnumProperty::Getter_t(boost::bind(getNodeVisibilityMode, this)),
