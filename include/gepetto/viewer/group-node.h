@@ -87,11 +87,6 @@ namespace graphics {
            }     
            return *it;    
         }
-        /**
-         \brief Virtual method for setting the visibility mode of the object : visible or not visible
-         \param visibilitymode state
-         */
-        virtual void setVisibilityMode (const VisibilityMode& visibility_state);
         
         /**
          \brief Virtual method for setting the lighting mode of the object : influence by light or not

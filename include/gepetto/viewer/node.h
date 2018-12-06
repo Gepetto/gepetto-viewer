@@ -179,6 +179,11 @@ namespace graphics {
         void deleteLandmark();
 
         void setHighlightState (unsigned int state);
+
+        const std::size_t& getHighlightState () const
+        {
+          return selected_highlight_;
+        }
         
         /*Tools::ConfigurationPtr_t getConfiguration () const
         {
