@@ -25,6 +25,16 @@ namespace graphics {
       point->setSize(size);
       geom->dirtyDisplayList();
     }
+
+    void setNodeLineWidth (LeafNodeLine* node, const float& width)
+    {
+      ::osg::GeometryRefPtr geom = node->geometry ();
+      osg::LineWidth* linewidth = static_cast<osg::LineWidth*>(
+        geom->getOrCreateStateSet()->getAttribute(osg::StateAttribute::LINEWIDTH));
+      linewidth->setWidth(width);
+      geom->dirtyDisplayList();
+    }
+
     
     /* Declaration of private function members */
     void LeafNodeLine::init ()
@@ -69,7 +79,7 @@ namespace graphics {
               FloatProperty::Setter_t(boost::bind(setNodePointSize, this, _1))));
         addProperty(FloatProperty::create("LineWidth",
               FloatProperty::getterFromMemberFunction(linewidth, &osg::LineWidth::getWidth),
-              FloatProperty::setterFromMemberFunction(this, &LeafNodeLine::setLineWidth)));
+              FloatProperty::Setter_t(boost::bind(setNodeLineWidth, this, _1))));
         addProperty(EnumProperty::create("ImmediateMode", glImmediateModeEnum(),
               EnumProperty::Getter_t(boost::bind(getNodeMode, this)),
               EnumProperty::Setter_t(boost::bind(setNodeMode, this, _1))));
@@ -236,14 +246,6 @@ namespace graphics {
     void LeafNodeLine::setColors (const ::osg::Vec4ArrayRefPtr & colors)
     {
       color_ptr_ = colors;
-      beam_ptr_->dirtyDisplayList();
-    }
-
-    void LeafNodeLine::setLineWidth (const float& width)
-    {
-      osg::LineWidth* linewidth = static_cast<osg::LineWidth*>(
-        beam_ptr_->getOrCreateStateSet()->getAttribute(osg::StateAttribute::LINEWIDTH));
-      linewidth->setWidth(width);
       beam_ptr_->dirtyDisplayList();
     }
 

@@ -114,8 +114,6 @@ namespace graphics {
             return color_array_ptr->at(0);
         }
 
-        void setLineWidth (const float& width);
-
         ::osg::GeometryRefPtr geometry () const
         {
           return beam_ptr_;
