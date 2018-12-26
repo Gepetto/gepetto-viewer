@@ -59,6 +59,7 @@ namespace graphics {
     typedef shared_ptr<urdf::Link> LinkPtr;
     typedef shared_ptr<urdf::Visual   >    VisualPtr;
     typedef shared_ptr<urdf::Collision> CollisionPtr;
+    typedef std::map<std::string, ::osg::NodeRefPtr> Cache_t;
     DEF_CLASS_SMART_PTR(LinkNode)
 
     class LinkNode :  public GroupNode
@@ -194,7 +195,8 @@ namespace graphics {
                   const std::string& namePrefix,
 		  LinkPtr& urdfLink,
 		  std::size_t j,
-		  LinkNodePtr_t &linkNode, bool visual, bool linkFrame)
+		  LinkNodePtr_t &linkNode, bool visual, bool linkFrame,
+                  Cache_t& cache)
     {
       std::string link_name;
       std::string mesh_path;
@@ -213,8 +215,13 @@ namespace graphics {
           mesh_path = getFilename (mesh_shared_ptr->filename);
 	  std::ostringstream oss;
 	  oss << robotName << "/" << namePrefix << link_name << "_" << j;
-          LeafNodeColladaPtr_t meshNode = LeafNodeCollada::create
-	    (oss.str (), mesh_path);
+          Cache_t::const_iterator _cache = cache.find (mesh_path);
+          LeafNodeColladaPtr_t meshNode;
+          if (_cache == cache.end()) {
+            meshNode = LeafNodeCollada::create (oss.str (), mesh_path);
+            cache.insert (std::make_pair(mesh_path, meshNode->getColladaPtr()));
+          } else
+            meshNode = LeafNodeCollada::create (oss.str (), _cache->second, mesh_path);
           osgVector3 static_pos; osgQuat static_quat;
 	  if (linkFrame) {
 	    getStaticTransform (urdfLink, static_pos, static_quat, visual,j);
@@ -392,14 +399,15 @@ namespace graphics {
     template <bool visual> void addGeoms(const std::string &robotName,
                     const std::string& namePrefix,
 		    LinkPtr& link,
-		    LinkNodePtr_t &linkNode, bool linkFrame)
+		    LinkNodePtr_t &linkNode, bool linkFrame,
+                    Cache_t& cache)
     {
       typedef typename GeomArray<visual>::type BodyType;
       const std::vector<BodyType>& array = getGeomArray<BodyType>(link);
       for (std::size_t j = 0; j < array.size (); ++j) {
         switch (array [j]->geometry->type) {
           case urdf::Geometry::MESH:
-            addMesh     (robotName, namePrefix, link, j, linkNode, visual, linkFrame);
+            addMesh     (robotName, namePrefix, link, j, linkNode, visual, linkFrame, cache);
             break;
           case urdf::Geometry::CYLINDER:
             addCylinder (robotName, namePrefix, link, j, linkNode, visual, linkFrame);
@@ -465,21 +473,22 @@ namespace graphics {
       // add link to robot node
       robot->addChild (linkNode);
 
+      Cache_t cache;
       if (visual) {
-        addGeoms<true >(robotName, "", links[i], linkNode, linkFrame);
+        addGeoms<true >(robotName, "", links[i], linkNode, linkFrame, cache);
         if (linkFrame) {
           try {
-            addGeoms<false>(robotName, "collision_", links[i], linkNode, linkFrame);
+            addGeoms<false>(robotName, "collision_", links[i], linkNode, linkFrame, cache);
           } catch (const std::invalid_argument& e) {
             std::cerr << "Could not load collision geometries of " << robotName << ":"
               << e.what() << std::endl;
           }
         }
       } else {
-        addGeoms<false >(robotName, "", links[i], linkNode, linkFrame);
+        addGeoms<false >(robotName, "", links[i], linkNode, linkFrame, cache);
         if (linkFrame) {
           try {
-            addGeoms<true>(robotName, "visual_", links[i], linkNode, linkFrame);
+            addGeoms<true>(robotName, "visual_", links[i], linkNode, linkFrame, cache);
           } catch (const std::invalid_argument& e) {
             std::cerr << "Could not load visual geometries of " << robotName << ":"
               << e.what() << std::endl;

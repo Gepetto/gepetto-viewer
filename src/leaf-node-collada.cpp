@@ -31,6 +31,7 @@ namespace graphics {
 
   void LeafNodeCollada::init()
   {
+    if (!collada_ptr_) {
     if (!fileExists(collada_file_path_.c_str()))
       throw std::invalid_argument(std::string("File ") + collada_file_path_ + std::string(" not found."));
 
@@ -72,6 +73,7 @@ namespace graphics {
     }
     if (!collada_ptr_)
       throw std::invalid_argument(std::string("File ") + collada_file_path_ + std::string(" found but could not be opened. Check that a plugin exist."));
+    }
         
     /* Create PositionAttitudeTransform */
     this->asQueue()->addChild(collada_ptr_);
@@ -105,6 +107,13 @@ namespace graphics {
     init();
     setColor(color);
   }
+
+  LeafNodeCollada::LeafNodeCollada(const std::string& name,
+      const ::osg::NodeRefPtr& node, const std::string& collada_file_path) :
+    Node(name), collada_file_path_(collada_file_path), collada_ptr_ (node)
+  {
+    init();
+  }
   
   LeafNodeCollada::LeafNodeCollada(const LeafNodeCollada& other) :
     Node(other.getID()), collada_file_path_(other.collada_file_path_)
@@ -130,6 +139,17 @@ namespace graphics {
     }
     LeafNodeColladaPtr_t shared_ptr(new LeafNodeCollada
                                     (name, collada_file_path));
+    
+    // Add reference to itself
+    shared_ptr->initWeakPtr(shared_ptr);
+    
+    return shared_ptr;
+  }
+
+  LeafNodeColladaPtr_t LeafNodeCollada::create(const std::string& name, ::osg::NodeRefPtr mesh, const std::string& collada_file_path)
+  {
+    LeafNodeColladaPtr_t shared_ptr(new LeafNodeCollada
+                                    (name, mesh, collada_file_path));
     
     // Add reference to itself
     shared_ptr->initWeakPtr(shared_ptr);
