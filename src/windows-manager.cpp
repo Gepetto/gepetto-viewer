@@ -103,7 +103,7 @@ namespace graphics {
 
     WindowsManager::WindowsManager () :
         windowManagers_ (), nodes_ (), groupNodes_ (),roadmapNodes_(),
-        osgFrameMtx_ (), configListMtx_ (), rate_ (20), newNodeConfigurations_ (),
+        osgFrameMtx_ (), configListMtx_ (), newNodeConfigurations_ (),
         autoCaptureTransform_ (false)
     {}
 
@@ -277,18 +277,6 @@ namespace graphics {
     }
 
     //Public functions
-
-    bool WindowsManager::setRate (const int& rate)
-    {
-        if (rate <= 0) {
-            std::cout << "You should specify a positive rate" << std::endl;
-            return false;
-        }
-        else {
-            rate_ = rate;
-            return true;
-        }
-    }
 
     WindowsManager::WindowID WindowsManager::getWindowID (const std::string& wn)
     {

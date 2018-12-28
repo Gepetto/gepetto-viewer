@@ -87,7 +87,6 @@ namespace graphics {
             std::map<std::string, GroupNodePtr_t> groupNodes_;
             std::map<std::string, RoadmapViewerPtr_t> roadmapNodes_;
             OpenThreads::Mutex osgFrameMtx_, configListMtx_;
-            int rate_;
             NodeConfigurations_t newNodeConfigurations_;
             BlenderFrameCapture blenderCapture_;
             bool autoCaptureTransform_;
@@ -134,7 +133,6 @@ namespace graphics {
               return osgFrameMtx_;
             }
 
-            virtual bool setRate(const int& rate);
             virtual void refresh();
 
             virtual WindowID getWindowID (const std::string& windowName);
