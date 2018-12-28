@@ -383,7 +383,7 @@ namespace graphics {
         RETURN_FALSE_IF_NODE_EXISTS(boxName);
 
         LeafNodeBoxPtr_t box = LeafNodeBox::create
-          (boxName, osgVector3 (boxSize1, boxSize2, boxSize3), color);
+          (boxName, osgVector3 (.5*boxSize1, .5*boxSize2, .5*boxSize3), color);
         ScopedLock lock(osgFrameMutex());
         addNode (boxName, box, true);
         return true;
