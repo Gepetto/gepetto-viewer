@@ -111,9 +111,10 @@ namespace graphics {
             WindowManagerPtr_t newWindow)
     {
       WindowID windowId = (WindowID) windowManagers_.size ();
-        windowIDmap_ [winName] = windowId;
-        windowManagers_.push_back (newWindow);
-        return windowId;
+      windowIDmap_ [winName] = windowId;
+      windowManagers_.push_back (newWindow);
+      addGroup (winName, newWindow->getScene(), false);
+      return windowId;
     }
 
     WindowsManagerPtr_t WindowsManager::create ()
