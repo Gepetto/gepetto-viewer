@@ -298,7 +298,7 @@ namespace graphics {
               newNodeConfigurations_.end(),
               ApplyConfigurationFunctor());
         }
-        newNodeConfigurations_.clear ();
+        newNodeConfigurations_.resize (0);
       }
       if (autoCaptureTransform_) captureTransform ();
     }
