@@ -93,7 +93,7 @@ namespace graphics {
     
     // draw subgraph before main camera view.
     bg_camera_->setRenderOrder(osg::Camera::PRE_RENDER);
-    
+    bg_camera_->setCullingActive(false);
     bg_camera_->setAllowEventFocus(false);
     
     bg_color1_ = osg::Vec4(0.4f, 0.4f, 0.6f, 1.0f);
@@ -130,6 +130,10 @@ namespace graphics {
       
       geode->addDrawable(bg_geom_);
       bg_camera_->addChild(geode);
+
+      bg_geom_  ->setDataVariance(osg::Object::STATIC);
+      bg_camera_->setDataVariance(osg::Object::STATIC);
+      geode     ->setDataVariance(osg::Object::STATIC);
       //bg_camera_->setGraphicsContext(camera->getGraphicsContext());
     }
     

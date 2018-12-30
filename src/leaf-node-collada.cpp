@@ -73,16 +73,14 @@ namespace graphics {
       }
       if (!collada_ptr_)
         throw std::invalid_argument(std::string("File ") + collada_file_path_ + std::string(" found but could not be opened. Check that a plugin exist."));
+
+      /* Allow transparency */
+      collada_ptr_->getOrCreateStateSet()->setMode(GL_BLEND, ::osg::StateAttribute::ON);
+      collada_ptr_->setDataVariance(osg::Object::STATIC);
     }
-        
+
     /* Create PositionAttitudeTransform */
     this->asQueue()->addChild(collada_ptr_);
-        
-    /* Allow transparency */
-    if (collada_ptr_->getOrCreateStateSet())
-      {
-	collada_ptr_->getOrCreateStateSet()->setMode(GL_BLEND, ::osg::StateAttribute::ON);
-      }
 
     addProperty(StringProperty::create("Mesh file",
           StringProperty::getterFromMemberFunction(this, &LeafNodeCollada::meshFilePath),
@@ -250,7 +248,7 @@ namespace graphics {
   {
     texture_file_path_ = image_path;
     osg::ref_ptr<osg::Texture2D> texture = new osg::Texture2D;
-    texture->setDataVariance(osg::Object::DYNAMIC); 
+    texture->setDataVariance(osg::Object::STATIC); 
     osg::ref_ptr<osg::Image> image = osgDB::readImageFile(image_path);
     if (!image)
     {
