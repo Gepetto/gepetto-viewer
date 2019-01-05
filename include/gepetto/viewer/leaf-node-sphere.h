@@ -24,11 +24,9 @@ namespace graphics {
         /** Associated Sphere Shape */
         ::osg::SphereRefPtr sphere_ptr_;
         
-        /** Associated ShapeDrawable */
-        ::osg::ShapeDrawableRefPtr shape_drawable_ptr_;
-        
         void init();
         
+    protected:
         /* Default constructor */
         LeafNodeSphere(const std::string& name, const float& radius);
         LeafNodeSphere(const std::string& name, const float& radius, const osgVector4& color);
@@ -39,7 +37,6 @@ namespace graphics {
         /** Initialize weak_ptr */
         void initWeakPtr (LeafNodeSphereWeakPtr other_weak_ptr);
         
-    protected:
     public:
         /** Static method which create a new box defined by the half_axis vector
          */
@@ -52,12 +49,12 @@ namespace graphics {
         
         /** Proceed to a clonage of the current object defined by the copy constructor
          */
-        virtual LeafNodeSpherePtr_t clone(void) const;
+        LeafNodeSpherePtr_t clone(void) const;
         
         /** Copy
          \brief Proceed to a copy of the currend object as clone
          */
-        virtual LeafNodeSpherePtr_t copy() const { return clone(); }
+        LeafNodeSpherePtr_t copy() const { return clone(); }
         
         /** Return a shared pointer of the current object
          */
