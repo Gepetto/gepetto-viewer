@@ -14,7 +14,6 @@ namespace graphics {
     
     void LeafNodeCapsule::init ()
     {
-        auto_transform_ptr_ = new ::osg::AutoTransform;
         /* Create capsule object */
 
         capsule_ptr_ = new ::osg::Capsule ();
@@ -33,9 +32,8 @@ namespace graphics {
               FloatProperty::getterFromMemberFunction(this, &LeafNodeCapsule::getHeight),
               FloatProperty::setterFromMemberFunction(this, &LeafNodeCapsule::setHeight)));
 
-        auto_transform_ptr_->addChild(geode_ptr_);
         /* Create PositionAttitudeTransform */
-        this->asQueue()->addChild (auto_transform_ptr_);
+        this->asQueue()->addChild (geode_ptr_);
         
         /* Allow transparency */
         geode_ptr_->getOrCreateStateSet()->setMode(GL_BLEND, ::osg::StateAttribute::ON);
@@ -137,20 +135,6 @@ namespace graphics {
 #endif
     }
 
-    void LeafNodeCapsule::resize(float height){
-      if(height != getHeight()){ // avoid useless resize
-        osgVector4 color = shape_drawable_ptr_->getColor();
-        geode_ptr_->removeDrawable(shape_drawable_ptr_);
-        setHeight(height);
-        shape_drawable_ptr_ = new ::osg::ShapeDrawable(capsule_ptr_);
-        shape_drawable_ptr_->setColor(color);
-        geode_ptr_->addDrawable(shape_drawable_ptr_);
-#ifdef OSG_3_5_6_OR_LATER
-        shape_drawable_ptr_->build();
-#endif
-        }
-    }
-    
     // reimplmented from Node : use the mathematical representation instead of OSG representation :
     //( origin in the extremity and not in the center, length on the X+ and not Z+)
     // if size <0, display it on the opposite extremity

@@ -20,7 +20,6 @@ namespace graphics {
     private:
         /** Associated weak pointer */
         LeafNodeCapsuleWeakPtr weak_ptr_;
-        osg::AutoTransformRefPtr auto_transform_ptr_;
         /** Associated Capsule Shape */
         ::osg::CapsuleRefPtr capsule_ptr_;
         
@@ -62,7 +61,7 @@ namespace graphics {
         
 
         /** Fix the new radius of the capsule
-         * Note : radius must be positive scalar
+         *  \note radius must be positive scalar
          */
         virtual void setRadius (const float& radius);
 
@@ -73,17 +72,14 @@ namespace graphics {
 
 
         
-        /** Fix the new jeight of the capsule
-         * Note : radius must be positive scalar
+        /** Fix the new height of the capsule
+         *  \note height must be positive scalar
          */
         virtual void setHeight (const float& height);
         float getHeight() const
         {
             return capsule_ptr_->getHeight();
         }
-
-        //re implemented form Node
-        virtual void resize(float height);
 
         virtual void addLandmark(const float &size);
 

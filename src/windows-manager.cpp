@@ -425,7 +425,7 @@ namespace graphics {
     {
         FIND_NODE_OF_TYPE_OR_THROW (LeafNodeCapsule, cap, capsuleName);
         ScopedLock lock(osgFrameMutex());
-        cap->resize(newHeight);
+        cap->setHeight(newHeight);
         return true;
     }
 

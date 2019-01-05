@@ -104,7 +104,7 @@ namespace graphics {
 
       for(size_t i = 0; i < params.size(); i++) {
           if(params.at(i).size() == 8){
-            list_of_capsule_.at(i)->resize(params.at(i)[0]);
+            list_of_capsule_.at(i)->setHeight(params.at(i)[0]);
             ::osg::Quat quat = ::osg::Quat(params.at(i)[5],params.at(i)[6],params.at(i)[7],params.at(i)[4]);
             ::osg::Vec3f pos = ::osg::Vec3f(params.at(i)[1],params.at(i)[2],params.at(i)[3]);
             list_of_capsule_.at(i)->applyConfiguration(pos,quat);
