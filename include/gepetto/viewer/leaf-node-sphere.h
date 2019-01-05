@@ -73,8 +73,6 @@ namespace graphics {
             return sphere_ptr_->getRadius();
         }
         
-        void setTexture(const std::string& image_path);
-
         SCENE_VIEWER_ACCEPT_VISITOR;
         
         /** Destructor */

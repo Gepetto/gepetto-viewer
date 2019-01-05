@@ -3,6 +3,8 @@
 
 #include <gepetto/viewer/node-drawable.h>
 
+#include <osgDB/ReadFile>
+
 namespace graphics {
   void NodeDrawable::init ()
   {
@@ -25,5 +27,19 @@ namespace graphics {
   osgVector4 NodeDrawable::getColor() const
   {
     return shape_drawable_ptr_->getColor();
+  }
+
+  void NodeDrawable::setTexture(const std::string& image_path)
+  {
+    osg::ref_ptr<osg::Texture2D> texture = new osg::Texture2D;
+    texture->setDataVariance(osg::Object::DYNAMIC);
+    osg::ref_ptr<osg::Image> image = osgDB::readImageFile(image_path);
+    if (!image)
+    {
+      std::cerr << " couldn't find texture " << image_path << ", quiting." << std::endl;
+      return;
+    }
+    texture->setImage(image);
+    geode_ptr_->getStateSet()->setTextureAttributeAndModes(0,texture,osg::StateAttribute::ON);
   }
 }

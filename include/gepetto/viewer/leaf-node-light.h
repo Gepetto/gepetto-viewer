@@ -12,8 +12,6 @@
 #include <gepetto/viewer/node.h>
 #include <gepetto/viewer/group-node.h>
 
-#include <osgDB/ReadFile>
-
 namespace graphics {
     DEF_CLASS_SMART_PTR(LeafNodeLight)
 

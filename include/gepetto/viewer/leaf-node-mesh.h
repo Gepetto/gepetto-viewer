@@ -25,11 +25,8 @@ namespace graphics {
         LeafNodeMeshWeakPtr weak_ptr_;
         
         /** Associated mesh geometry */
-	osg::Geometry*  mesh_geometry_ptr_;
+	osg::GeometryRefPtr  mesh_geometry_ptr_;
 
-        /** Associated ShapeDrawable */
-        ::osg::ShapeDrawableRefPtr shape_drawable_ptr_;
-        
         void init();
         
         /* Default constructor */

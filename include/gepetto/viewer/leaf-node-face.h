@@ -10,7 +10,6 @@
 #define SCENEVIEWER_LEAFNODEFACE_HH
 
 #include <gepetto/viewer/node.h>
-#include <osgDB/ReadFile>
 
 namespace graphics {
 

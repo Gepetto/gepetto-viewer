@@ -70,8 +70,6 @@ namespace graphics {
             return box_ptr_->getHalfLengths();
         }
 
-        void setTexture(const std::string& image_path);
-
         SCENE_VIEWER_ACCEPT_VISITOR;
 
         /** Destructor */

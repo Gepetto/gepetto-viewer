@@ -8,9 +8,6 @@
 
 #include <gepetto/viewer/leaf-node-box.h>
 
-#include <stdio.h>
-#include <osgDB/ReadFile>
-
 namespace graphics {
     
     /* Declaration of private function members */
@@ -126,21 +123,6 @@ namespace graphics {
 #endif
     }
     
-    void LeafNodeBox::setTexture(const std::string& image_path)
-    {
-      osg::ref_ptr<osg::Texture2D> texture = new osg::Texture2D;
-      texture->setDataVariance(osg::Object::DYNAMIC); 
-      osg::ref_ptr<osg::Image> image = osgDB::readImageFile(image_path);
-      if (!image)
-      {
-        std::cerr << " couldn't find texture " << image_path << ", quiting." << std::endl;
-        return;
-      } 
-      texture->setImage(image);
-      geode_ptr_->getStateSet()->setTextureAttributeAndModes(0,texture,osg::StateAttribute::ON);
-      printf("ptr of %s is %p\n", getID().c_str(), (void *)geode_ptr_.get());
-    }
-
     LeafNodeBox::~LeafNodeBox()
     {
         /* Proper deletion of all tree scene */

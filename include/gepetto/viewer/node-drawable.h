@@ -45,7 +45,9 @@ namespace graphics {
         virtual void setColor(const osgVector4 &color);
 
         virtual osgVector4 getColor() const;
-        
+
+        virtual void setTexture(const std::string& image_path);
+
         /** Destructor */
         virtual ~NodeDrawable() {}
     };

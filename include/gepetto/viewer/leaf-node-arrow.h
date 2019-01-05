@@ -85,7 +85,6 @@ namespace graphics {
         void setSize(const float& size);
         float getSize() const;
         void resize(float radius,float length);
-        void setTexture(const std::string& image_path);
 
         SCENE_VIEWER_ACCEPT_VISITOR;
 

@@ -81,8 +81,6 @@ namespace graphics {
             return cylinder_ptr_->getHeight();
         }
 
-        void setTexture(const std::string& image_path);
-
         SCENE_VIEWER_ACCEPT_VISITOR;
         
         /** Destructor */

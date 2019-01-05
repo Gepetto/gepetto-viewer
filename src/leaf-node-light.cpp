@@ -8,6 +8,8 @@
 
 #include <gepetto/viewer/leaf-node-light.h>
 
+#include <osgDB/ReadFile>
+
 namespace graphics {
     
     /* Declaration of private function members */
