@@ -16,6 +16,8 @@
 
 #include <gepetto/viewer/node-property.h>
 
+#include <sstream>
+
 namespace graphics {
   int MetaEnum::from_string (const std::string& s)
   {
@@ -79,5 +81,20 @@ namespace graphics {
       lm.names.push_back ("GL_TRIANGLE_FAN"  ); lm.values.push_back (GL_TRIANGLE_FAN  );
     }
     return &lm;
+  }
+
+  bool EnumProperty::set(const int& value)
+  {
+    const MetaEnum& me = *metaEnum();
+    for (std::size_t i = 0; i < me.values.size(); ++i)
+      if (me.values[i] == value)
+        return IntProperty::set(value);
+    std::ostringstream oss;
+    oss << "Invalid value " << value << " for enum " << me.type << ". "
+      "Possible values are ";
+    for (std::size_t i = 0; i < me.values.size(); ++i)
+      oss << me.names[i] << " (" << me.values[i] << "), ";
+    throw std::invalid_argument(oss.str());
+    return false;
   }
 } /* namespace graphics */

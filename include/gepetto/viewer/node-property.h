@@ -30,6 +30,7 @@ namespace graphics {
     DEF_CLASS_SMART_PTR(Property)
     typedef std::map<std::string, PropertyPtr_t> PropertyMap_t;
 
+    /// \cond
     namespace details {
       template <typename T> struct property_type {};
       template <typename T> struct property_type <const T > : property_type<T> {};
@@ -43,7 +44,9 @@ namespace graphics {
       template <> struct property_type<osgVector3   > { static inline std::string to_string () { return "osgVector3"   ; } };
       template <> struct property_type<osgVector4   > { static inline std::string to_string () { return "osgVector4"   ; } };
     }
+    /// \endcond
 
+    /// Abstract base class for runtime properties of an instance.
     class Property {
       public:
         virtual bool set(const bool          & v) { invalidType(v); return false; }
@@ -150,9 +153,9 @@ namespace graphics {
         EnumProperty(const std::string& name, const MetaEnum* type, const Getter_t& g, const Setter_t& s)
           : IntProperty(name, g, s), metaEnum_ (type) {}
 
-        // TODO: Check that the integer belongs to the enum...
-        // bool set(const int& value) { return IntProperty::set(value); }
-        // bool get(      int& value) { return IntProperty::get(value); }
+        /// Set the enum property.
+        /// It also checks that \c value is a valid enum.
+        bool set(const int& value);
 
       private:
         const MetaEnum* metaEnum_;
