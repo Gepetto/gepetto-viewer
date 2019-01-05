@@ -153,11 +153,6 @@ namespace graphics {
         }
     }
     
-    void LeafNodeCapsule::setColor (const osgVector4& color)
-    {
-        shape_drawable_ptr_->setColor(color);
-    }
-
     // reimplmented from Node : use the mathematical representation instead of OSG representation :
     //( origin in the extremity and not in the center, length on the X+ and not Z+)
     // if size <0, display it on the opposite extremity
@@ -205,11 +200,6 @@ namespace graphics {
       landmark_geode_ptr_->getOrCreateStateSet()->setMode(GL_CULL_FACE, ::osg::StateAttribute::ON | ::osg::StateAttribute::PROTECTED );
       landmark_geode_ptr_->getOrCreateStateSet()->setMode(GL_LIGHTING, ::osg::StateAttribute::OFF | ::osg::StateAttribute::PROTECTED);
       this->asQueue()->addChild(landmark_geode_ptr_);
-
-      addProperty(Vector4Property::create("Color",
-            Vector4Property::getterFromMemberFunction(this, &LeafNodeCapsule::getColor),
-            Vector4Property::setterFromMemberFunction(this, &LeafNodeCapsule::setColor)
-            ));
     }
 
     void LeafNodeCapsule::setTexture(const std::string& image_path)

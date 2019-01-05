@@ -143,17 +143,6 @@ namespace graphics {
 #endif
     }
     
-    void LeafNodeCylinder::setColor (const osgVector4& color)
-    {
-        shape_drawable_ptr_->setColor(color);
-#ifdef OSG_3_5_6_OR_LATER
-        shape_drawable_ptr_->build();
-#else
-        shape_drawable_ptr_->dirtyDisplayList();
-        shape_drawable_ptr_->dirtyBound();
-#endif
-    }
-
     void LeafNodeCylinder::setTexture(const std::string& image_path)
     {
       osg::ref_ptr<osg::Texture2D> texture = new osg::Texture2D;

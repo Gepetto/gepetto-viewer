@@ -73,14 +73,6 @@ namespace graphics {
             return sphere_ptr_->getRadius();
         }
         
-        /** Replace the old color pointer with the new one defined by ColorConstSharedPtr color_ptr */
-        virtual void setColor (const osgVector4& color);
-
-        osgVector4 getColor() const
-        {
-            return shape_drawable_ptr_->getColor();
-        }
-        
         void setTexture(const std::string& image_path);
 
         SCENE_VIEWER_ACCEPT_VISITOR;

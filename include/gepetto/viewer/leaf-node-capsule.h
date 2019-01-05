@@ -23,8 +23,6 @@ namespace graphics {
         osg::AutoTransformRefPtr auto_transform_ptr_;
         /** Associated Capsule Shape */
         ::osg::CapsuleRefPtr capsule_ptr_;
-        /** Associated ShapeDrawable */
-        ::osg::ShapeDrawableRefPtr shape_drawable_ptr_;
         
         void init();
         
@@ -86,13 +84,6 @@ namespace graphics {
 
         //re implemented form Node
         virtual void resize(float height);
-
-        /** Replace the old color pointer with the new one defined by ColorConstSharedPtr color_ptr */
-        virtual void setColor (const osgVector4& color);
-        osgVector4 getColor() const
-        {
-            return shape_drawable_ptr_->getColor();
-        }
 
         virtual void addLandmark(const float &size);
 

@@ -126,11 +126,6 @@ namespace graphics {
 #endif
     }
     
-    void LeafNodeBox::setColor (const osgVector4 &color)
-    {
-        shape_drawable_ptr_->setColor(color);
-    }
-
     void LeafNodeBox::setTexture(const std::string& image_path)
     {
       osg::ref_ptr<osg::Texture2D> texture = new osg::Texture2D;

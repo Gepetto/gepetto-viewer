@@ -46,7 +46,7 @@ namespace graphics {
     }
     /// \endcond
 
-    /// Abstract base class for runtime properties of an instance.
+    /// Abstract base class for runtime properties of Node.
     class Property {
       public:
         virtual bool set(const bool          & v) { invalidType(v); return false; }
@@ -126,6 +126,7 @@ namespace graphics {
     typedef PropertyTpl<osgVector3   > Vector3Property;
     typedef PropertyTpl<osgVector4   > Vector4Property;
 
+    /// Conversion between integer and enum name at runtime.
     struct MetaEnum {
       std::string type;
       std::vector<std::string> names;
