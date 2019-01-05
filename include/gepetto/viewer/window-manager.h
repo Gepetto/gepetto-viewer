@@ -20,6 +20,8 @@ namespace viewer {
 
     DEF_CLASS_SMART_PTR(WindowManager)
 
+    /// Manage a window that renders a scene.
+    /// The root of the rendered scene is a \ref GroupNode.
     class WindowManager
     {
     private:

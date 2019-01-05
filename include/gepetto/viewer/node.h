@@ -23,6 +23,7 @@ namespace viewer {
       NodeBit         = 0x2
     };
     
+    /// Abstract base class of 3D objects in a scene.
     class Node
     {
     private:

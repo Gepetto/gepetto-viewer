@@ -44,6 +44,7 @@ namespace viewer {
       void captureFrame ();
     };
 
+    /// Manage a set of windows that may share 3D objects.
     class WindowsManager
     {
         public:
