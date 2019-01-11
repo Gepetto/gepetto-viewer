@@ -42,14 +42,15 @@ namespace graphics {
       static MetaEnum hs;
       if (hs.type.size() == 0) {
         hs.type = "HighlightState";
-        hs.names .push_back ("1"); hs.values.push_back (1);
-        hs.names .push_back ("2"); hs.values.push_back (2);
-        hs.names .push_back ("3"); hs.values.push_back (3);
-        hs.names .push_back ("4"); hs.values.push_back (4);
-        hs.names .push_back ("5"); hs.values.push_back (5);
-        hs.names .push_back ("6"); hs.values.push_back (6);
-        hs.names .push_back ("7"); hs.values.push_back (7);
-        hs.names .push_back ("8"); hs.values.push_back (8);
+        hs.names .push_back ("None"  ); hs.values.push_back (0);
+        hs.names .push_back ("1"     ); hs.values.push_back (1);
+        hs.names .push_back ("2"     ); hs.values.push_back (2);
+        hs.names .push_back ("3"     ); hs.values.push_back (3);
+        hs.names .push_back ("4"     ); hs.values.push_back (4);
+        hs.names .push_back ("5"     ); hs.values.push_back (5);
+        hs.names .push_back ("6"     ); hs.values.push_back (6);
+        hs.names .push_back ("7"     ); hs.values.push_back (7);
+        hs.names .push_back ("8"     ); hs.values.push_back (8);
       }
       return &hs;
     }
@@ -85,6 +86,7 @@ namespace graphics {
     // Setup highlight states
     highlight_nodes_.resize(9);
     selected_highlight_ = 0;
+    highlight_enabled_ = true;
     for (unsigned int i = 0; i < 9; ++i) {
       highlight_nodes_[i] = setupHighlightState (i);
     }
@@ -114,9 +116,13 @@ namespace graphics {
     visibilityMode_ = VISIBILITY_ON;
 
     addProperty(
-        EnumProperty::create("Highlight", highlightStateEnum(),
+        EnumProperty::create("Highlight/State", highlightStateEnum(),
           EnumProperty::Getter_t(boost::bind(getNodeHighlightState, this)),
           EnumProperty::Setter_t(boost::bind(setNodeHighlightState, this, _1))));
+    addProperty(
+        BoolProperty::create("Highlight/Enable",
+          BoolProperty::getterFromMemberFunction (this, &Node::getHighlightEnabled),
+          BoolProperty::setterFromMemberFunction (this, &Node::setHighlightEnabled)));
     addProperty(
         EnumProperty::create("Visibility", visibilityModeEnum(),
           EnumProperty::Getter_t(boost::bind(getNodeVisibilityMode, this)),
@@ -488,6 +494,7 @@ namespace graphics {
 
   void Node::setHighlightState (unsigned int state)
   {
+    if (!highlight_enabled_) return;
     if (state != selected_highlight_
         && state < highlight_nodes_.size()) {
       hl_switch_node_ptr_->replaceChild(highlight_nodes_[selected_highlight_],

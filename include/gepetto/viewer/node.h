@@ -40,6 +40,7 @@ namespace graphics {
 
         osg::GroupRefPtr hl_switch_node_ptr_;
         std::size_t selected_highlight_;
+        bool highlight_enabled_;
         std::vector< ::osg::GroupRefPtr > highlight_nodes_;
 
         VisibilityMode visibilityMode_;
@@ -177,6 +178,17 @@ namespace graphics {
         }
 
         void deleteLandmark();
+
+        bool getHighlightEnabled () const
+        {
+          return highlight_enabled_;
+        }
+
+        void setHighlightEnabled (bool enabled)
+        {
+          setHighlightState (0);
+          highlight_enabled_ = enabled;
+        }
 
         void setHighlightState (unsigned int state);
 
