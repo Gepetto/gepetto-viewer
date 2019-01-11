@@ -26,7 +26,17 @@ namespace graphics {
     }
     return std::string();
   }
-    
+
+  bool getCullFace (LeafNodeCollada* node) {
+    return (bool)(node->getColladaPtr()->getOrCreateStateSet()
+        ->getMode(GL_CULL_FACE) & osg::StateAttribute::ON);
+  }
+  void setCullFace (LeafNodeCollada* node, bool on) {
+    node->getColladaPtr()->getOrCreateStateSet()
+      ->setMode(GL_CULL_FACE,
+          (on ?  osg::StateAttribute::ON : osg::StateAttribute::OFF));
+  }
+
   /* Declaration of private function members */
 
   void LeafNodeCollada::init()
@@ -85,6 +95,9 @@ namespace graphics {
     addProperty(StringProperty::create("Mesh file",
           StringProperty::getterFromMemberFunction(this, &LeafNodeCollada::meshFilePath),
           StringProperty::Setter_t()));
+    addProperty(BoolProperty::create("StateSet/Backface culling",
+          EnumProperty::Getter_t(boost::bind(getCullFace, this)),
+          EnumProperty::Setter_t(boost::bind(setCullFace, this, _1))));
     addProperty(StringProperty::create("Texture file",
           StringProperty::getterFromMemberFunction(this, &LeafNodeCollada::textureFilePath),
           StringProperty::Setter_t()));
