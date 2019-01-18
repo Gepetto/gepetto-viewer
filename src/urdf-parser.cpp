@@ -320,7 +320,7 @@ namespace graphics {
 	LeafNodeBoxPtr_t boxNode = LeafNodeBox::create
 	  (oss.str (),
 	   osgVector3((float)(.5*box_shared_ptr->dim.x),
-		      (float)(.5*box_shared_ptr->dim.y), 
+		      (float)(.5*box_shared_ptr->dim.y),
 		      (float)(.5*box_shared_ptr->dim.z)));
           osgVector3 static_pos; osgQuat static_quat;
 	  if (linkFrame) {

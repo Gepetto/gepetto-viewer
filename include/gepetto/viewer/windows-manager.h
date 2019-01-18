@@ -148,6 +148,11 @@ namespace graphics {
 
             virtual bool addFloor(const std::string& floorName);
 
+            /// Add a box in the scene
+            /// \param boxName name of the box,
+            /// \param boxSize1, boxSize2, boxSize3 lengths of the box along
+            ///        axes x, y, z,
+            /// \param color the color of the box.
             virtual bool addBox(const std::string& boxName, const float& boxSize1, const float& boxSize2, const float& boxSize3, const Color_t& color);
 
             virtual bool addCapsule(const std::string& capsuleName, float radius, float height, const Color_t& color);
