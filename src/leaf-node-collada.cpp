@@ -10,6 +10,7 @@
 #include <fstream>
 #include <clocale>
 #include <ios>
+#include <osg/LightModel>
 #include <osgDB/FileNameUtils>
 #include <gepetto/viewer/leaf-node-collada.h>
 
@@ -27,14 +28,25 @@ namespace graphics {
     return std::string();
   }
 
-  bool getCullFace (LeafNodeCollada* node) {
+  bool getBackfaceDrawing (LeafNodeCollada* node) {
     return (bool)(node->getColladaPtr()->getOrCreateStateSet()
         ->getMode(GL_CULL_FACE) & osg::StateAttribute::ON);
   }
-  void setCullFace (LeafNodeCollada* node, bool on) {
-    node->getColladaPtr()->getOrCreateStateSet()
-      ->setMode(GL_CULL_FACE,
+  void setBackfaceDrawing (LeafNodeCollada* node, bool on) {
+    osg::StateSet* ss = node->getColladaPtr()->getOrCreateStateSet();
+
+    ss->setMode(GL_CULL_FACE,
           (on ?  osg::StateAttribute::ON : osg::StateAttribute::OFF));
+
+    if (on) {
+      osg::LightModel* ltModel = new osg::LightModel;
+      ltModel->setTwoSided(on);
+      ss->setAttribute(ltModel);
+      ss->setMode(GL_CULL_FACE, osg::StateAttribute::OFF);
+    } else {
+      ss->removeAttribute(osg::StateAttribute::LIGHTMODEL);
+      ss->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
+    }
   }
 
   /* Declaration of private function members */
@@ -95,9 +107,9 @@ namespace graphics {
     addProperty(StringProperty::create("Mesh file",
           StringProperty::getterFromMemberFunction(this, &LeafNodeCollada::meshFilePath),
           StringProperty::Setter_t()));
-    addProperty(BoolProperty::create("StateSet/Backface culling",
-          EnumProperty::Getter_t(boost::bind(getCullFace, this)),
-          EnumProperty::Setter_t(boost::bind(setCullFace, this, _1))));
+    addProperty(BoolProperty::create("BackfaceDrawing",
+          EnumProperty::Getter_t(boost::bind(getBackfaceDrawing, this)),
+          EnumProperty::Setter_t(boost::bind(setBackfaceDrawing, this, _1))));
     addProperty(StringProperty::create("Texture file",
           StringProperty::getterFromMemberFunction(this, &LeafNodeCollada::textureFilePath),
           StringProperty::Setter_t()));
