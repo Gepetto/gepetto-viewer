@@ -24,9 +24,6 @@ namespace graphics {
         /** Associated Cylinder Shape */
         ::osg::CylinderRefPtr cylinder_ptr_;
         
-        /** Associated ShapeDrawable */
-        ::osg::ShapeDrawableRefPtr shape_drawable_ptr_;
-        
         void init();
         
         /* Default constructor */
@@ -83,15 +80,6 @@ namespace graphics {
         {
             return cylinder_ptr_->getHeight();
         }
-
-        void setColor (const osgVector4& color);
-
-        osgVector4 getColor() const
-        {
-            return shape_drawable_ptr_->getColor();
-        }
-
-        void setTexture(const std::string& image_path);
 
         SCENE_VIEWER_ACCEPT_VISITOR;
         

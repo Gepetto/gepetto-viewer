@@ -87,7 +87,6 @@ namespace graphics {
             std::map<std::string, GroupNodePtr_t> groupNodes_;
             std::map<std::string, RoadmapViewerPtr_t> roadmapNodes_;
             OpenThreads::Mutex osgFrameMtx_, configListMtx_;
-            int rate_;
             NodeConfigurations_t newNodeConfigurations_;
             BlenderFrameCapture blenderCapture_;
             bool autoCaptureTransform_;
@@ -134,7 +133,6 @@ namespace graphics {
               return osgFrameMtx_;
             }
 
-            virtual bool setRate(const int& rate);
             virtual void refresh();
 
             virtual WindowID getWindowID (const std::string& windowName);
@@ -261,20 +259,20 @@ namespace graphics {
             virtual std::vector<std::string> getPropertyTypes(const std::string& nodeName) const;
 
             template <typename Property_t> Property_t getProperty (const std::string& nodeName, const std::string& propName) const;
-            template <typename Property_t> void setProperty (const std::string& nodeName, const std::string& propName, const Property_t& value) const;
+            template <typename Property_t> void setProperty (const std::string& nodeName, const std::string& propName, const Property_t& value);
 
             virtual std::string getStringProperty(const std::string& nodeName, const std::string& propName) const;
-            virtual void setStringProperty(const std::string& nodeName, const std::string& propName, const std::string& value) const;
+            virtual void setStringProperty(const std::string& nodeName, const std::string& propName, const std::string& value);
             virtual osgVector3 getVector3Property(const std::string& nodeName, const std::string& propName) const;
-            virtual void setVector3Property(const std::string& nodeName, const std::string& propName, const osgVector3& value) const;
+            virtual void setVector3Property(const std::string& nodeName, const std::string& propName, const osgVector3& value);
             virtual osgVector4 getColorProperty(const std::string& nodeName, const std::string& propName) const;
-            virtual void setColorProperty(const std::string& nodeName, const std::string& propName, const osgVector4& value) const;
+            virtual void setColorProperty(const std::string& nodeName, const std::string& propName, const osgVector4& value);
             virtual float getFloatProperty(const std::string& nodeName, const std::string& propName) const;
-            virtual void setFloatProperty(const std::string& nodeName, const std::string& propName, const float& value) const;
+            virtual void setFloatProperty(const std::string& nodeName, const std::string& propName, const float& value);
             virtual bool getBoolProperty(const std::string& nodeName, const std::string& propName) const;
-            virtual void setBoolProperty(const std::string& nodeName, const std::string& propName, const bool& value) const;
+            virtual void setBoolProperty(const std::string& nodeName, const std::string& propName, const bool& value);
             virtual int getIntProperty(const std::string& nodeName, const std::string& propName) const;
-            virtual void setIntProperty(const std::string& nodeName, const std::string& propName, const int& value) const;
+            virtual void setIntProperty(const std::string& nodeName, const std::string& propName, const int& value);
 
             WindowManagerPtr_t getWindowManager (const WindowID wid, bool throwIfDoesntExist = false) const;
             GroupNodePtr_t getGroup (const std::string groupName, bool throwIfDoesntExist = false) const;

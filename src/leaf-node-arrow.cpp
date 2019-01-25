@@ -8,10 +8,6 @@
 
 #include <gepetto/viewer/leaf-node-arrow.h>
 
-#include <osg/CullFace>
-#include <osgDB/ReadFile>
-#include <osgUtil/SmoothingVisitor>
-
 namespace graphics {
 
     /* Declaration of private function members */
@@ -134,21 +130,6 @@ namespace graphics {
     LeafNodeArrowPtr_t LeafNodeArrow::self (void) const
     {
         return weak_ptr_.lock();
-    }
-
-
-    void LeafNodeArrow::setTexture(const std::string& image_path)
-    {
-      osg::ref_ptr<osg::Texture2D> texture = new osg::Texture2D;
-      texture->setDataVariance(osg::Object::DYNAMIC);
-      osg::ref_ptr<osg::Image> image = osgDB::readImageFile(image_path);
-      if (!image)
-      {
-        std::cout << " couldn't find texture, quiting." << std::endl;
-        return;
-      }
-      texture->setImage(image);
-      geode_ptr_->getStateSet()->setTextureAttributeAndModes(0,texture,osg::StateAttribute::ON);
     }
 
     void LeafNodeArrow::setRadius (const float& radius)

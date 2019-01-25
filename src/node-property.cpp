@@ -16,6 +16,8 @@
 
 #include <gepetto/viewer/node-property.h>
 
+#include <sstream>
+
 namespace graphics {
   int MetaEnum::from_string (const std::string& s)
   {
@@ -67,17 +69,32 @@ namespace graphics {
     static MetaEnum lm;
     if (lm.type.size() == 0) {
       lm.type = "GLImmediateMode";
-      lm.names.push_back ("GL_LINES         "); lm.values.push_back (GL_LINES         );
-      lm.names.push_back ("GL_POINTS        "); lm.values.push_back (GL_POINTS        );
-      lm.names.push_back ("GL_LINE_STRIP    "); lm.values.push_back (GL_LINE_STRIP    );
-      lm.names.push_back ("GL_LINE_LOOP     "); lm.values.push_back (GL_LINE_LOOP     );
-      lm.names.push_back ("GL_POLYGON       "); lm.values.push_back (GL_POLYGON       );
-      lm.names.push_back ("GL_QUADS         "); lm.values.push_back (GL_QUADS         );
-      lm.names.push_back ("GL_QUAD_STRIP    "); lm.values.push_back (GL_QUAD_STRIP    );
+      lm.names.push_back ("GL_LINES"         ); lm.values.push_back (GL_LINES         );
+      lm.names.push_back ("GL_POINTS"        ); lm.values.push_back (GL_POINTS        );
+      lm.names.push_back ("GL_LINE_STRIP"    ); lm.values.push_back (GL_LINE_STRIP    );
+      lm.names.push_back ("GL_LINE_LOOP"     ); lm.values.push_back (GL_LINE_LOOP     );
+      lm.names.push_back ("GL_POLYGON"       ); lm.values.push_back (GL_POLYGON       );
+      lm.names.push_back ("GL_QUADS"         ); lm.values.push_back (GL_QUADS         );
+      lm.names.push_back ("GL_QUAD_STRIP"    ); lm.values.push_back (GL_QUAD_STRIP    );
       lm.names.push_back ("GL_TRIANGLE_STRIP"); lm.values.push_back (GL_TRIANGLE_STRIP);
-      lm.names.push_back ("GL_TRIANGLES     "); lm.values.push_back (GL_TRIANGLES     );
-      lm.names.push_back ("GL_TRIANGLE_FAN  "); lm.values.push_back (GL_TRIANGLE_FAN  );
+      lm.names.push_back ("GL_TRIANGLES"     ); lm.values.push_back (GL_TRIANGLES     );
+      lm.names.push_back ("GL_TRIANGLE_FAN"  ); lm.values.push_back (GL_TRIANGLE_FAN  );
     }
     return &lm;
+  }
+
+  bool EnumProperty::set(const int& value)
+  {
+    const MetaEnum& me = *metaEnum();
+    for (std::size_t i = 0; i < me.values.size(); ++i)
+      if (me.values[i] == value)
+        return IntProperty::set(value);
+    std::ostringstream oss;
+    oss << "Invalid value " << value << " for enum " << me.type << ". "
+      "Possible values are ";
+    for (std::size_t i = 0; i < me.values.size(); ++i)
+      oss << me.names[i] << " (" << me.values[i] << "), ";
+    throw std::invalid_argument(oss.str());
+    return false;
   }
 } /* namespace graphics */

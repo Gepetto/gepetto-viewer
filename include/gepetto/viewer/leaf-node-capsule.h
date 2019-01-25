@@ -20,11 +20,8 @@ namespace graphics {
     private:
         /** Associated weak pointer */
         LeafNodeCapsuleWeakPtr weak_ptr_;
-        osg::AutoTransformRefPtr auto_transform_ptr_;
         /** Associated Capsule Shape */
         ::osg::CapsuleRefPtr capsule_ptr_;
-        /** Associated ShapeDrawable */
-        ::osg::ShapeDrawableRefPtr shape_drawable_ptr_;
         
         void init();
         
@@ -64,7 +61,7 @@ namespace graphics {
         
 
         /** Fix the new radius of the capsule
-         * Note : radius must be positive scalar
+         *  \note radius must be positive scalar
          */
         virtual void setRadius (const float& radius);
 
@@ -75,8 +72,8 @@ namespace graphics {
 
 
         
-        /** Fix the new jeight of the capsule
-         * Note : radius must be positive scalar
+        /** Fix the new height of the capsule
+         *  \note height must be positive scalar
          */
         virtual void setHeight (const float& height);
         float getHeight() const
@@ -84,19 +81,7 @@ namespace graphics {
             return capsule_ptr_->getHeight();
         }
 
-        //re implemented form Node
-        virtual void resize(float height);
-
-        /** Replace the old color pointer with the new one defined by ColorConstSharedPtr color_ptr */
-        virtual void setColor (const osgVector4& color);
-        osgVector4 getColor() const
-        {
-            return shape_drawable_ptr_->getColor();
-        }
-
         virtual void addLandmark(const float &size);
-
-        void setTexture(const std::string& image_path);
 
         SCENE_VIEWER_ACCEPT_VISITOR;
 

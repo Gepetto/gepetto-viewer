@@ -24,9 +24,6 @@ namespace graphics {
         /** Associated Cone Shape */
         ::osg::ConeRefPtr cone_ptr_;
         
-        /** Associated ShapeDrawable */
-        ::osg::ShapeDrawableRefPtr shape_drawable_ptr_;
-        
         void init();
         
         /* Default constructor */
@@ -82,16 +79,6 @@ namespace graphics {
         {
             return cone_ptr_->getHeight();
         }
-
-        /** Replace the old color with the new one defined by osgVector4 color_vector */
-        virtual void setColor (const osgVector4& color);
-
-        osgVector4 getColor() const
-        {
-            return shape_drawable_ptr_->getColor();
-        }
- 
-        void setTexture(const std::string& image_path);
 
         SCENE_VIEWER_ACCEPT_VISITOR;
         

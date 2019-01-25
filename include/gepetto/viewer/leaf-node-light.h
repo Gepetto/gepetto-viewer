@@ -9,16 +9,14 @@
 #ifndef SCENEVIEWER_LEAFNODELIGHT_HH
 #define SCENEVIEWER_LEAFNODELIGHT_HH
 
-#include <gepetto/viewer/node.h>
+#include <gepetto/viewer/leaf-node-sphere.h>
 #include <gepetto/viewer/group-node.h>
-
-#include <osgDB/ReadFile>
 
 namespace graphics {
     DEF_CLASS_SMART_PTR(LeafNodeLight)
 
     /** Implementation of the Light GraphicalObject in OSG render */
-    class LeafNodeLight : public Node
+    class LeafNodeLight : public LeafNodeSphere
     {
     private:
         /** Associated weak pointer */
@@ -26,10 +24,6 @@ namespace graphics {
 
         /** Associated Light Shape */
         ::osg::LightSourceRefPtr light_ptr_;
-        ::osg::SphereRefPtr bulb_ptr_;
-
-        /** Associated ShapeDrawable */
-        ::osg::ShapeDrawableRefPtr shape_drawable_ptr_;
 
         void init();
 
@@ -58,36 +52,19 @@ namespace graphics {
 
         /** Proceed to a clonage of the current object defined by the copy constructor
          */
-        virtual LeafNodeLightPtr_t clone(void) const;
+        LeafNodeLightPtr_t clone(void) const;
 
         /** Copy
          \brief Proceed to a copy of the currend object as clone
          */
-        virtual LeafNodeLightPtr_t copy() const { return clone(); }
+        LeafNodeLightPtr_t copy() const { return clone(); }
 
         /** Return a shared pointer of the current object
          */
         LeafNodeLightPtr_t self(void) const;
 
-
-        /** Fix the new radius of the light
-         * Note : radius must be positive vector
-         */
-        void setRadius (const float& radius);
-        float getRadius() const
-        {
-            return bulb_ptr_->getRadius();
-        }
-
         /** Replace the old color pointer with the new one defined by ColorConstSharedPtr color_ptr */
         virtual void setColor (const osgVector4& color);
-
-        osgVector4 getColor() const
-        {
-            return shape_drawable_ptr_->getColor();
-        }
-
-        void setTexture(const std::string& image_path);
 
         void setRoot (GroupNodePtr_t root);
 

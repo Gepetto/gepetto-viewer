@@ -21,6 +21,8 @@ namespace graphics {
         void init ();
 
     protected:
+        ::osg::ShapeDrawableRefPtr shape_drawable_ptr_;
+
         /** Constructor */
         NodeDrawable (const std::string& name) : Node (name) { init (); }
         
@@ -40,10 +42,12 @@ namespace graphics {
           return getColor () [3];
         }
 
-        virtual void setColor(const osgVector4 &color) = 0;
+        virtual void setColor(const osgVector4 &color);
 
-        virtual osgVector4 getColor() const = 0;
-        
+        virtual osgVector4 getColor() const;
+
+        virtual void setTexture(const std::string& image_path);
+
         /** Destructor */
         virtual ~NodeDrawable() {}
     };

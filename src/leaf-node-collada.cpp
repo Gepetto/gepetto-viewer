@@ -10,6 +10,7 @@
 #include <fstream>
 #include <clocale>
 #include <ios>
+#include <osg/LightModel>
 #include <osgDB/FileNameUtils>
 #include <gepetto/viewer/leaf-node-collada.h>
 
@@ -26,65 +27,89 @@ namespace graphics {
     }
     return std::string();
   }
-    
+
+  bool getBackfaceDrawing (LeafNodeCollada* node) {
+    return (bool)(node->getColladaPtr()->getOrCreateStateSet()
+        ->getMode(GL_CULL_FACE) & osg::StateAttribute::ON);
+  }
+  void setBackfaceDrawing (LeafNodeCollada* node, bool on) {
+    osg::StateSet* ss = node->getColladaPtr()->getOrCreateStateSet();
+
+    ss->setMode(GL_CULL_FACE,
+          (on ?  osg::StateAttribute::ON : osg::StateAttribute::OFF));
+
+    if (on) {
+      osg::LightModel* ltModel = new osg::LightModel;
+      ltModel->setTwoSided(on);
+      ss->setAttribute(ltModel);
+      ss->setMode(GL_CULL_FACE, osg::StateAttribute::OFF);
+    } else {
+      ss->removeAttribute(osg::StateAttribute::LIGHTMODEL);
+      ss->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
+    }
+  }
+
   /* Declaration of private function members */
 
   void LeafNodeCollada::init()
   {
-    if (!fileExists(collada_file_path_.c_str()))
-      throw std::invalid_argument(std::string("File ") + collada_file_path_ + std::string(" not found."));
+    if (!collada_ptr_) {
+      if (!fileExists(collada_file_path_.c_str()))
+        throw std::invalid_argument(std::string("File ") + collada_file_path_ + std::string(" not found."));
 
-    std::string osgname = getCachedFileName(collada_file_path_);
-    if (!osgname.empty()) {
-      std::cout << "Using " << osgname << std::endl;
-      collada_ptr_ = osgDB::readNodeFile(osgname);
-    } else {
-      // get the extension of the meshs file
-      std::string ext = osgDB::getLowerCaseFileExtension(collada_file_path_);
-      if (ext == "dae" && *localeconv()->decimal_point != '.') {
-        std::cerr << "Warning: your locale convention uses '"
-          << localeconv()->decimal_point << "' as decimal separator while DAE "
-          "expects '.'.\nSet LC_NUMERIC to a locale convetion using '.' as "
-          "decimal separator (e.g. export LC_NUMERIC=\"en_US.utf-8\")."
-          << std::endl;
-      }
-      if(ext == "obj"){
-        const osgDB::Options* options = new osgDB::Options("noRotation");
-        collada_ptr_ = osgDB::readNodeFile(collada_file_path_,options);
-      }
-      else
-        collada_ptr_ = osgDB::readNodeFile(collada_file_path_);
-      if (ext == "dae") {
-        bool error = false;
-        if (!collada_ptr_) {
-          std::cout << "File: " << collada_file_path_ << " could not be loaded\n";
-          error = true;
-        } else if (strncasecmp(collada_ptr_->getName().c_str(), "empty", 5) == 0) {
-          std::cout << "File: " << collada_file_path_ << " could not be loaded:\n"
-            << collada_ptr_->getName() << '\n';
-          error = true;
+      std::string osgname = getCachedFileName(collada_file_path_);
+      if (!osgname.empty()) {
+        std::cout << "Using " << osgname << std::endl;
+        collada_ptr_ = osgDB::readNodeFile(osgname);
+      } else {
+        // get the extension of the meshs file
+        std::string ext = osgDB::getLowerCaseFileExtension(collada_file_path_);
+        if (ext == "dae" && *localeconv()->decimal_point != '.') {
+          std::cerr << "Warning: your locale convention uses '"
+            << localeconv()->decimal_point << "' as decimal separator while DAE "
+            "expects '.'.\nSet LC_NUMERIC to a locale convetion using '.' as "
+            "decimal separator (e.g. export LC_NUMERIC=\"en_US.utf-8\")."
+            << std::endl;
         }
-        if (error) {
-          std::cout << "You may try to convert the file with the following command:\n"
-            "osgconv " << collada_file_path_ << ' ' << collada_file_path_ << ".osgb" << std::endl;
+        if(ext == "obj"){
+          const osgDB::Options* options = new osgDB::Options("noRotation");
+          collada_ptr_ = osgDB::readNodeFile(collada_file_path_,options);
+        }
+        else
+          collada_ptr_ = osgDB::readNodeFile(collada_file_path_);
+        if (ext == "dae") {
+          bool error = false;
+          if (!collada_ptr_) {
+            std::cout << "File: " << collada_file_path_ << " could not be loaded\n";
+            error = true;
+          } else if (strncasecmp(collada_ptr_->getName().c_str(), "empty", 5) == 0) {
+            std::cout << "File: " << collada_file_path_ << " could not be loaded:\n"
+              << collada_ptr_->getName() << '\n';
+            error = true;
+          }
+          if (error) {
+            std::cout << "You may try to convert the file with the following command:\n"
+              "osgconv " << collada_file_path_ << ' ' << collada_file_path_ << ".osgb" << std::endl;
+          }
         }
       }
+      if (!collada_ptr_)
+        throw std::invalid_argument(std::string("File ") + collada_file_path_ + std::string(" found but could not be opened. Check that a plugin exist."));
+
+      /* Allow transparency */
+      collada_ptr_->getOrCreateStateSet()->setMode(GL_BLEND, ::osg::StateAttribute::ON);
+      collada_ptr_->setDataVariance(osg::Object::STATIC);
     }
-    if (!collada_ptr_)
-      throw std::invalid_argument(std::string("File ") + collada_file_path_ + std::string(" found but could not be opened. Check that a plugin exist."));
-        
+
     /* Create PositionAttitudeTransform */
     this->asQueue()->addChild(collada_ptr_);
-        
-    /* Allow transparency */
-    if (collada_ptr_->getOrCreateStateSet())
-      {
-	collada_ptr_->getOrCreateStateSet()->setMode(GL_BLEND, ::osg::StateAttribute::ON);
-      }
 
     addProperty(StringProperty::create("Mesh file",
           StringProperty::getterFromMemberFunction(this, &LeafNodeCollada::meshFilePath),
           StringProperty::Setter_t()));
+    addProperty(BoolProperty::create("BackfaceDrawing",
+          EnumProperty::Getter_t(boost::bind(getBackfaceDrawing, this)),
+          EnumProperty::Setter_t(boost::bind(setBackfaceDrawing, this, _1))));
     addProperty(StringProperty::create("Texture file",
           StringProperty::getterFromMemberFunction(this, &LeafNodeCollada::textureFilePath),
           StringProperty::Setter_t()));
@@ -104,6 +129,13 @@ namespace graphics {
   {
     init();
     setColor(color);
+  }
+
+  LeafNodeCollada::LeafNodeCollada(const std::string& name,
+      const ::osg::NodeRefPtr& node, const std::string& collada_file_path) :
+    Node(name), collada_file_path_(collada_file_path), collada_ptr_ (node)
+  {
+    init();
   }
   
   LeafNodeCollada::LeafNodeCollada(const LeafNodeCollada& other) :
@@ -130,6 +162,17 @@ namespace graphics {
     }
     LeafNodeColladaPtr_t shared_ptr(new LeafNodeCollada
                                     (name, collada_file_path));
+    
+    // Add reference to itself
+    shared_ptr->initWeakPtr(shared_ptr);
+    
+    return shared_ptr;
+  }
+
+  LeafNodeColladaPtr_t LeafNodeCollada::create(const std::string& name, ::osg::NodeRefPtr mesh, const std::string& collada_file_path)
+  {
+    LeafNodeColladaPtr_t shared_ptr(new LeafNodeCollada
+                                    (name, mesh, collada_file_path));
     
     // Add reference to itself
     shared_ptr->initWeakPtr(shared_ptr);
@@ -230,7 +273,7 @@ namespace graphics {
   {
     texture_file_path_ = image_path;
     osg::ref_ptr<osg::Texture2D> texture = new osg::Texture2D;
-    texture->setDataVariance(osg::Object::DYNAMIC); 
+    texture->setDataVariance(osg::Object::STATIC); 
     osg::ref_ptr<osg::Image> image = osgDB::readImageFile(image_path);
     if (!image)
     {

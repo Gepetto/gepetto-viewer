@@ -42,14 +42,15 @@ namespace graphics {
       static MetaEnum hs;
       if (hs.type.size() == 0) {
         hs.type = "HighlightState";
-        hs.names .push_back ("1"); hs.values.push_back (1);
-        hs.names .push_back ("2"); hs.values.push_back (2);
-        hs.names .push_back ("3"); hs.values.push_back (3);
-        hs.names .push_back ("4"); hs.values.push_back (4);
-        hs.names .push_back ("5"); hs.values.push_back (5);
-        hs.names .push_back ("6"); hs.values.push_back (6);
-        hs.names .push_back ("7"); hs.values.push_back (7);
-        hs.names .push_back ("8"); hs.values.push_back (8);
+        hs.names .push_back ("None"  ); hs.values.push_back (0);
+        hs.names .push_back ("1"     ); hs.values.push_back (1);
+        hs.names .push_back ("2"     ); hs.values.push_back (2);
+        hs.names .push_back ("3"     ); hs.values.push_back (3);
+        hs.names .push_back ("4"     ); hs.values.push_back (4);
+        hs.names .push_back ("5"     ); hs.values.push_back (5);
+        hs.names .push_back ("6"     ); hs.values.push_back (6);
+        hs.names .push_back ("7"     ); hs.values.push_back (7);
+        hs.names .push_back ("8"     ); hs.values.push_back (8);
       }
       return &hs;
     }
@@ -71,7 +72,6 @@ namespace graphics {
     static_auto_transform_ptr_ = new ::osg::MatrixTransform;
 
     switch_node_ptr_->setNodeMask(~NodeBit);
-    switch_node_ptr_->getOrCreateStateSet()->setDataVariance(::osg::Object::DYNAMIC);
     switch_node_ptr_->setName (id_name_);
     wireframe_modes_.resize(2);
     wireframe_modes_[FILL]      = new ::osg::Group;
@@ -79,15 +79,16 @@ namespace graphics {
 
     /* Building hierarchie */
     selected_wireframe_ = FILL;
-    switch_node_ptr_->addChild(wireframe_modes_[selected_wireframe_]);
-    wireframe_modes_[selected_wireframe_]->addChild(hl_switch_node_ptr_);
+    switch_node_ptr_->addChild(wireframe_modes_[FILL]);
+    wireframe_modes_[FILL]->addChild(hl_switch_node_ptr_);
+    wireframe_modes_[FILL]->setDataVariance (osg::Object::STATIC);
 
     // Setup highlight states
     highlight_nodes_.resize(9);
     selected_highlight_ = 0;
+    highlight_enabled_ = true;
     for (unsigned int i = 0; i < 9; ++i) {
-      ::osg::GroupRefPtr g = setupHighlightState (i);
-      highlight_nodes_[i] = g;
+      highlight_nodes_[i] = setupHighlightState (i);
     }
     // setHighlightState(0);
     hl_switch_node_ptr_->addChild(highlight_nodes_[selected_highlight_]);
@@ -98,23 +99,30 @@ namespace graphics {
     /* Allowing wireframe mode */
     osg::PolygonModeRefPtr polygon_mode_ptr = new ::osg::PolygonMode;
     polygon_mode_ptr->setMode( ::osg::PolygonMode::FRONT_AND_BACK, ::osg::PolygonMode::LINE );
+    polygon_mode_ptr->setDataVariance (osg::Object::STATIC);
 
     ::osg::MaterialRefPtr material_wireframe_ptr = new osg::Material;
     material_wireframe_ptr->setColorMode(osg::Material::DIFFUSE);
     material_wireframe_ptr->setDiffuse(osg::Material::FRONT_AND_BACK, osgVector4(1.,1.,1.,1.));
+    material_wireframe_ptr->setDataVariance (osg::Object::STATIC);
 
     wireframe_modes_[WIREFRAME]->getOrCreateStateSet()->setAttributeAndModes(polygon_mode_ptr, ::osg::StateAttribute::PROTECTED | ::osg::StateAttribute::ON );
     wireframe_modes_[WIREFRAME]->getOrCreateStateSet()->setMode(GL_BLEND, ::osg::StateAttribute::OFF | ::osg::StateAttribute::PROTECTED ); // PROTECTED attribut allows wireframe node to not be influenced by alpha
     wireframe_modes_[WIREFRAME]->getOrCreateStateSet()->setAttributeAndModes(material_wireframe_ptr, ::osg::StateAttribute::ON | ::osg::StateAttribute::PROTECTED );
+    wireframe_modes_[WIREFRAME]->setDataVariance (osg::Object::STATIC);
     geode_ptr_ = NULL;
     alpha_ = 0;
 
     visibilityMode_ = VISIBILITY_ON;
 
     addProperty(
-        EnumProperty::create("Highlight", highlightStateEnum(),
+        EnumProperty::create("Highlight/State", highlightStateEnum(),
           EnumProperty::Getter_t(boost::bind(getNodeHighlightState, this)),
           EnumProperty::Setter_t(boost::bind(setNodeHighlightState, this, _1))));
+    addProperty(
+        BoolProperty::create("Highlight/Enable",
+          BoolProperty::getterFromMemberFunction (this, &Node::getHighlightEnabled),
+          BoolProperty::setterFromMemberFunction (this, &Node::setHighlightEnabled)));
     addProperty(
         EnumProperty::create("Visibility", visibilityModeEnum(),
           EnumProperty::Getter_t(boost::bind(getNodeVisibilityMode, this)),
@@ -459,6 +467,7 @@ namespace graphics {
 
           outline->setWidth(8);
           outline->setColor(osg::Vec4(1,1,0,1));
+          outline->setDataVariance(osg::Object::STATIC);
           return outline;
         }
         break;
@@ -468,6 +477,7 @@ namespace graphics {
 
           scribe->setWireframeLineWidth(1);
           scribe->setWireframeColor(osg::Vec4(1,1,0,1));
+          scribe->setDataVariance(osg::Object::STATIC);
           return scribe;
         }
         break;
@@ -476,12 +486,15 @@ namespace graphics {
         break;
     }
     osg::Group* node = new ::osg::Group;
+    material_switch_ptr->setDataVariance(osg::Object::STATIC);
     node->getOrCreateStateSet()->setAttributeAndModes(material_switch_ptr, glModeValue);
+    node->setDataVariance(osg::Object::STATIC);
     return node;
   }
 
   void Node::setHighlightState (unsigned int state)
   {
+    if (!highlight_enabled_) return;
     if (state != selected_highlight_
         && state < highlight_nodes_.size()) {
       hl_switch_node_ptr_->replaceChild(highlight_nodes_[selected_highlight_],

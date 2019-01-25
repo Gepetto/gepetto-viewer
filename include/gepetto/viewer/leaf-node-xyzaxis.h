@@ -9,7 +9,7 @@
 #ifndef SCENEVIEWER_LEAFNODEXYZ_HH
 #define SCENEVIEWER_LEAFNODEXYZ_HH
 
-#include <gepetto/viewer/node.h>
+#include <gepetto/viewer/node-drawable.h>
 #include <osgDB/ReadFile>
 
 namespace graphics {
@@ -17,7 +17,7 @@ namespace graphics {
     DEF_CLASS_SMART_PTR(LeafNodeXYZAxis)
 
     /** Implementation of the XYZAxis GraphicalObject in OSG render */
-    class LeafNodeXYZAxis: public Node
+    class LeafNodeXYZAxis: public NodeDrawable
     {
     private:
         /** Associated weak pointer */
@@ -26,7 +26,6 @@ namespace graphics {
         /** Sphere component */
         float radius_;
         ::osg::SphereRefPtr sphere_ptr_;
-        ::osg::ShapeDrawableRefPtr sphere_drawable_ptr_;
 
         /** axis components : */
         float sizeAxis_;
@@ -72,12 +71,10 @@ namespace graphics {
         LeafNodeXYZAxisPtr_t self(void) const;
 
         // set color
-        void setColor (const osgVector4& color);
         float getRadius() const;
         void setRadius (const float& radius);
         void setSizeAxis(const float& sizeAxis);
         float getSizeAxis() const;
-        void setTexture(const std::string& image_path);
 
         SCENE_VIEWER_ACCEPT_VISITOR;
 

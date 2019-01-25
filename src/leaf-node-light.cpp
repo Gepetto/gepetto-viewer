@@ -8,6 +8,8 @@
 
 #include <gepetto/viewer/leaf-node-light.h>
 
+#include <osgDB/ReadFile>
+
 namespace graphics {
     
     /* Declaration of private function members */
@@ -26,17 +28,6 @@ namespace graphics {
         light_ptr_ = new ::osg::LightSource();
         light_ptr_->setLight (light);
 
-        /* Set ShapeDrawable */
-        bulb_ptr_ = new ::osg::Sphere ();
-        shape_drawable_ptr_ = new ::osg::ShapeDrawable(bulb_ptr_);
-
-        /* Create Geode for adding ShapeDrawable */
-        geode_ptr_ = new osg::Geode();
-        geode_ptr_->addDrawable(shape_drawable_ptr_);
-
-        addProperty(FloatProperty::create("Radius",
-              FloatProperty::getterFromMemberFunction(this, &LeafNodeLight::getRadius),
-              FloatProperty::setterFromMemberFunction(this, &LeafNodeLight::setRadius)));
         addProperty(Vector4Property::create("ColorSpecular",
               Vector4Property::getterFromMemberFunction(light.get(), &osg::Light::getSpecular),
               Vector4Property::setterFromMemberFunction(light.get(), &osg::Light::setSpecular)));
@@ -48,40 +39,33 @@ namespace graphics {
               Vector4Property::setterFromMemberFunction(light.get(), &osg::Light::setDiffuse)));
 
         /* Create PositionAttitudeTransform */
-        this->asQueue()->addChild(geode_ptr_);
         this->asQueue()->addChild(light_ptr_);
-
-        /* Allow transparency */
-        geode_ptr_->getOrCreateStateSet()->setMode(GL_BLEND, ::osg::StateAttribute::ON);
     }
 
     LeafNodeLight::LeafNodeLight(const std::string& name, const float& radius) :
-        Node(name)
+        LeafNodeSphere(name, radius)
     {
         init();
-        setRadius(radius);
         setColor(osgVector4(1.,1.,1.,1.));
     }
 
     LeafNodeLight::LeafNodeLight(const std::string& name, const float& radius, const osgVector4& color) :
-        Node(name)
+        LeafNodeSphere(name, radius, color)
     {
         init();
-        setRadius(radius);
         setColor(color);
     }
 
     LeafNodeLight::LeafNodeLight(const std::string& name, const LeafNodeLight& other) :
-        Node(other)
+        LeafNodeSphere(name, other)
     {
-        setID(name);
         init();
-        setRadius(other.getRadius());
         setColor(other.getColor());
     }
 
     void LeafNodeLight::initWeakPtr(LeafNodeLightWeakPtr other_weak_ptr)
     {
+        LeafNodeSphere::initWeakPtr(other_weak_ptr);
         weak_ptr_ = other_weak_ptr;
     }
 
@@ -133,29 +117,10 @@ namespace graphics {
         return weak_ptr_.lock();
     }
 
-    void LeafNodeLight::setRadius (const float& radius)
-    {
-        bulb_ptr_->setRadius(radius);
-    }
-
     void LeafNodeLight::setColor (const osgVector4& color)
     {
-        shape_drawable_ptr_->setColor(color);
         light_ptr_->getLight ()->setDiffuse (color);
-    }
-
-    void LeafNodeLight::setTexture(const std::string& image_path)
-    {
-      osg::ref_ptr<osg::Texture2D> texture = new osg::Texture2D;
-      texture->setDataVariance(osg::Object::DYNAMIC);
-      osg::ref_ptr<osg::Image> image = osgDB::readImageFile(image_path);
-      if (!image)
-      {
-        std::cout << " couldn't find texture, quiting." << std::endl;
-        return;
-      }
-      texture->setImage(image);
-      geode_ptr_->getStateSet()->setTextureAttributeAndModes(0,texture,osg::StateAttribute::ON);
+        ((LeafNodeSphere*)this)->setColor (color);
     }
 
     void LeafNodeLight::setRoot (GroupNodePtr_t root)
@@ -166,10 +131,6 @@ namespace graphics {
 
     LeafNodeLight::~LeafNodeLight()
     {
-        /* Proper deletion of all tree scene */
-        geode_ptr_->removeDrawable(shape_drawable_ptr_);
-        shape_drawable_ptr_ = NULL;
-
         this->asQueue()->removeChild(geode_ptr_);
         geode_ptr_ = NULL;
 

@@ -88,11 +88,11 @@ namespace graphics {
         sphere_ptr_ = new ::osg::Sphere();
         sphere_ptr_->setRadius(getRadius());
         /* Set ShapeDrawable */
-        sphere_drawable_ptr_ = new ::osg::ShapeDrawable(sphere_ptr_);
+        shape_drawable_ptr_ = new ::osg::ShapeDrawable(sphere_ptr_);
 
         /* Create Geode for adding ShapeDrawable */
         geode_ptr_ = new osg::Geode();
-        geode_ptr_->addDrawable(sphere_drawable_ptr_);
+        geode_ptr_->addDrawable(shape_drawable_ptr_);
         if(sizeAxis_ > 0){  // optimisation of memory consumption : doesn't create the axis instead of creating axis with size "0"
              /* create the axis : */
             // float radiusCyl = (getRadius()/4.f) * getSizeAxis();
@@ -171,7 +171,7 @@ namespace graphics {
     }
 
     LeafNodeXYZAxis::LeafNodeXYZAxis(const std::string& name, const osgVector4& color, float radiusCenter, float sizeAxis):
-        Node(name)
+        NodeDrawable(name)
     {
 
         setRadius(radiusCenter);
@@ -182,7 +182,7 @@ namespace graphics {
     }
 
     LeafNodeXYZAxis::LeafNodeXYZAxis(const LeafNodeXYZAxis& other) :
-        Node(other.getID())
+        NodeDrawable(other)
     {
         init();
       //TODO
@@ -243,21 +243,6 @@ namespace graphics {
         return weak_ptr_.lock();
     }
 
-
-    void LeafNodeXYZAxis::setTexture(const std::string& image_path)
-    {
-      osg::ref_ptr<osg::Texture2D> texture = new osg::Texture2D;
-      texture->setDataVariance(osg::Object::DYNAMIC);
-      osg::ref_ptr<osg::Image> image = osgDB::readImageFile(image_path);
-      if (!image)
-      {
-        std::cout << " couldn't find texture, quiting." << std::endl;
-        return;
-      }
-      texture->setImage(image);
-      geode_ptr_->getStateSet()->setTextureAttributeAndModes(0,texture,osg::StateAttribute::ON);
-    }
-
     void LeafNodeXYZAxis::setRadius (const float& radius)
     {
         radius_=radius;
@@ -275,11 +260,6 @@ namespace graphics {
     float LeafNodeXYZAxis::getSizeAxis() const
     {
         return sizeAxis_;
-    }
-
-    void LeafNodeXYZAxis::setColor (const osgVector4& color)
-    {
-        sphere_drawable_ptr_->setColor(color);
     }
 
     LeafNodeXYZAxis::~LeafNodeXYZAxis ()

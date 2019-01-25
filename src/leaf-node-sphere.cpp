@@ -8,8 +8,6 @@
 
 #include <gepetto/viewer/leaf-node-sphere.h>
 
-#include <osgDB/ReadFile>
-
 namespace graphics {
     
     /* Declaration of private function members */
@@ -123,25 +121,6 @@ namespace graphics {
 #endif
     }
     
-    void LeafNodeSphere::setColor (const osgVector4& color)
-    {
-        shape_drawable_ptr_->setColor(color);
-    }
-    
-    void LeafNodeSphere::setTexture(const std::string& image_path)
-    {
-      osg::ref_ptr<osg::Texture2D> texture = new osg::Texture2D;
-      texture->setDataVariance(osg::Object::DYNAMIC); 
-      osg::ref_ptr<osg::Image> image = osgDB::readImageFile(image_path);
-      if (!image)
-      {
-        std::cout << " couldn't find texture, quiting." << std::endl;
-        return;
-      } 
-      texture->setImage(image);
-      geode_ptr_->getStateSet()->setTextureAttributeAndModes(0,texture,osg::StateAttribute::ON);
-    }
-
     LeafNodeSphere::~LeafNodeSphere()
     {
         /* Proper deletion of all tree scene */

@@ -8,15 +8,12 @@
 
 #include <gepetto/viewer/leaf-node-capsule.h>
 
-#include <osgDB/ReadFile>
-
 namespace graphics {
     
     /* Declaration of private function members */
     
     void LeafNodeCapsule::init ()
     {
-        auto_transform_ptr_ = new ::osg::AutoTransform;
         /* Create capsule object */
 
         capsule_ptr_ = new ::osg::Capsule ();
@@ -35,9 +32,8 @@ namespace graphics {
               FloatProperty::getterFromMemberFunction(this, &LeafNodeCapsule::getHeight),
               FloatProperty::setterFromMemberFunction(this, &LeafNodeCapsule::setHeight)));
 
-        auto_transform_ptr_->addChild(geode_ptr_);
         /* Create PositionAttitudeTransform */
-        this->asQueue()->addChild (auto_transform_ptr_);
+        this->asQueue()->addChild (geode_ptr_);
         
         /* Allow transparency */
         geode_ptr_->getOrCreateStateSet()->setMode(GL_BLEND, ::osg::StateAttribute::ON);
@@ -139,25 +135,6 @@ namespace graphics {
 #endif
     }
 
-    void LeafNodeCapsule::resize(float height){
-      if(height != getHeight()){ // avoid useless resize
-        osgVector4 color = shape_drawable_ptr_->getColor();
-        geode_ptr_->removeDrawable(shape_drawable_ptr_);
-        setHeight(height);
-        shape_drawable_ptr_ = new ::osg::ShapeDrawable(capsule_ptr_);
-        shape_drawable_ptr_->setColor(color);
-        geode_ptr_->addDrawable(shape_drawable_ptr_);
-#ifdef OSG_3_5_6_OR_LATER
-        shape_drawable_ptr_->build();
-#endif
-        }
-    }
-    
-    void LeafNodeCapsule::setColor (const osgVector4& color)
-    {
-        shape_drawable_ptr_->setColor(color);
-    }
-
     // reimplmented from Node : use the mathematical representation instead of OSG representation :
     //( origin in the extremity and not in the center, length on the X+ and not Z+)
     // if size <0, display it on the opposite extremity
@@ -205,25 +182,6 @@ namespace graphics {
       landmark_geode_ptr_->getOrCreateStateSet()->setMode(GL_CULL_FACE, ::osg::StateAttribute::ON | ::osg::StateAttribute::PROTECTED );
       landmark_geode_ptr_->getOrCreateStateSet()->setMode(GL_LIGHTING, ::osg::StateAttribute::OFF | ::osg::StateAttribute::PROTECTED);
       this->asQueue()->addChild(landmark_geode_ptr_);
-
-      addProperty(Vector4Property::create("Color",
-            Vector4Property::getterFromMemberFunction(this, &LeafNodeCapsule::getColor),
-            Vector4Property::setterFromMemberFunction(this, &LeafNodeCapsule::setColor)
-            ));
-    }
-
-    void LeafNodeCapsule::setTexture(const std::string& image_path)
-    {
-      osg::ref_ptr<osg::Texture2D> texture = new osg::Texture2D;
-      texture->setDataVariance(osg::Object::DYNAMIC); 
-      osg::ref_ptr<osg::Image> image = osgDB::readImageFile(image_path);
-      if (!image)
-      {
-        std::cout << " couldn't find texture, quiting." << std::endl;
-        return;
-      } 
-      texture->setImage(image);
-      geode_ptr_->getStateSet()->setTextureAttributeAndModes(0,texture,osg::StateAttribute::ON);
     }
 
     LeafNodeCapsule::~LeafNodeCapsule ()

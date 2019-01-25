@@ -103,7 +103,7 @@ namespace graphics {
 
     WindowsManager::WindowsManager () :
         windowManagers_ (), nodes_ (), groupNodes_ (),roadmapNodes_(),
-        osgFrameMtx_ (), configListMtx_ (), rate_ (20), newNodeConfigurations_ (),
+        osgFrameMtx_ (), configListMtx_ (), newNodeConfigurations_ (),
         autoCaptureTransform_ (false)
     {}
 
@@ -111,9 +111,10 @@ namespace graphics {
             WindowManagerPtr_t newWindow)
     {
       WindowID windowId = (WindowID) windowManagers_.size ();
-        windowIDmap_ [winName] = windowId;
-        windowManagers_.push_back (newWindow);
-        return windowId;
+      windowIDmap_ [winName] = windowId;
+      windowManagers_.push_back (newWindow);
+      addGroup (winName, newWindow->getScene(), false);
+      return windowId;
     }
 
     WindowsManagerPtr_t WindowsManager::create ()
@@ -278,18 +279,6 @@ namespace graphics {
 
     //Public functions
 
-    bool WindowsManager::setRate (const int& rate)
-    {
-        if (rate <= 0) {
-            std::cout << "You should specify a positive rate" << std::endl;
-            return false;
-        }
-        else {
-            rate_ = rate;
-            return true;
-        }
-    }
-
     WindowsManager::WindowID WindowsManager::getWindowID (const std::string& wn)
     {
         WindowIDMap_t::iterator it = windowIDmap_.find (wn);
@@ -309,7 +298,7 @@ namespace graphics {
               newNodeConfigurations_.end(),
               ApplyConfigurationFunctor());
         }
-        newNodeConfigurations_.clear ();
+        newNodeConfigurations_.resize (0);
       }
       if (autoCaptureTransform_) captureTransform ();
     }
@@ -436,7 +425,7 @@ namespace graphics {
     {
         FIND_NODE_OF_TYPE_OR_THROW (LeafNodeCapsule, cap, capsuleName);
         ScopedLock lock(osgFrameMutex());
-        cap->resize(newHeight);
+        cap->setHeight(newHeight);
         return true;
     }
 
@@ -610,8 +599,7 @@ namespace graphics {
     bool WindowsManager::setCurveLineWidth (const std::string& curveName, const float& width)
     {
         FIND_NODE_OF_TYPE_OR_THROW (LeafNodeLine, curve, curveName);
-        ScopedLock lock(osgFrameMutex());
-        curve->setLineWidth (width);
+        setFloatProperty(curveName, "LineWidth", width);
         return true;
     }
 
@@ -1229,8 +1217,9 @@ namespace graphics {
   }
 
   template <typename Property_t>
-  void WindowsManager::setProperty(const std::string& nodeName, const std::string& propName, const Property_t& value) const
+  void WindowsManager::setProperty(const std::string& nodeName, const std::string& propName, const Property_t& value)
   {
+    ScopedLock lock(osgFrameMutex());
     NodePtr_t node = getNode(nodeName, true);
     if (!node->setProperty<Property_t>(propName, value)) {
       throw std::invalid_argument ("Could not set the property");
@@ -1240,12 +1229,12 @@ namespace graphics {
 #define DEFINE_WINDOWS_MANAGER_GET_SET_PROPERTY_FOR_TYPE(Type,Name) \
   Type WindowsManager::get ## Name ## Property(const std::string& nodeName, const std::string& propName) const \
   { return getProperty<Type>(nodeName, propName); } \
-  void WindowsManager::set ## Name ## Property(const std::string& nodeName, const std::string& propName, const Type& value) const \
+  void WindowsManager::set ## Name ## Property(const std::string& nodeName, const std::string& propName, const Type& value) \
   { setProperty<Type>(nodeName, propName, value); }
 
 #define INSTANCIATE_WINDOWS_MANAGER_GET_SET_PROPERTY_FOR_TYPE(Type) \
   template Type WindowsManager::getProperty<Type>(const std::string&, const std::string&) const; \
-  template void WindowsManager::setProperty<Type>(const std::string&, const std::string&, const Type&) const
+  template void WindowsManager::setProperty<Type>(const std::string&, const std::string&, const Type&)
 
   INSTANCIATE_WINDOWS_MANAGER_GET_SET_PROPERTY_FOR_TYPE(std::string);
   INSTANCIATE_WINDOWS_MANAGER_GET_SET_PROPERTY_FOR_TYPE(osgVector3);

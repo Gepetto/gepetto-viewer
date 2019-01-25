@@ -8,8 +8,9 @@
 
 #include <gepetto/viewer/leaf-node-face.h>
 
-#include <osgUtil/SmoothingVisitor>
 #include <osg/CullFace>
+#include <osgDB/ReadFile>
+#include <osgUtil/SmoothingVisitor>
 
 
 namespace graphics {

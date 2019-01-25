@@ -93,7 +93,7 @@ namespace graphics {
     
     // draw subgraph before main camera view.
     bg_camera_->setRenderOrder(osg::Camera::PRE_RENDER);
-    
+    bg_camera_->setCullingActive(false);
     bg_camera_->setAllowEventFocus(false);
     
     bg_color1_ = osg::Vec4(0.4f, 0.4f, 0.6f, 1.0f);
@@ -130,6 +130,10 @@ namespace graphics {
       
       geode->addDrawable(bg_geom_);
       bg_camera_->addChild(geode);
+
+      bg_geom_  ->setDataVariance(osg::Object::STATIC);
+      bg_camera_->setDataVariance(osg::Object::STATIC);
+      geode     ->setDataVariance(osg::Object::STATIC);
       //bg_camera_->setGraphicsContext(camera->getGraphicsContext());
     }
     
@@ -183,42 +187,36 @@ namespace graphics {
 
     void WindowManager::init(osg::GraphicsContext* gc)
     {
-      const std::string name = "scene";
-      scene_ptr_ = ::graphics::GroupNode::create(name);
-
-      viewer_ptr_ = new ::osgViewer::Viewer();
+      ::osgViewer::ViewerRefPtr viewer = new ::osgViewer::Viewer();
 
       /* init main camera */
-      main_camera_ = viewer_ptr_->getCamera ();
-      main_camera_->setName("main_camera");
+      ::osg::CameraRefPtr camera = viewer->getCamera ();
+      camera->setName("main_camera");
 
-      gc_ = osg::GraphicsContextRefPtr (gc);
       const osg::GraphicsContext::Traits* traits_ptr = gc->getTraits ();
-      main_camera_->setGraphicsContext(gc);
-      main_camera_->setViewport(new osg::Viewport(0,0, traits_ptr->width, traits_ptr->height));
-      main_camera_->setProjectionMatrixAsPerspective(
+      camera->setGraphicsContext(gc);
+      camera->setViewport(new osg::Viewport(0,0, traits_ptr->width, traits_ptr->height));
+      camera->setProjectionMatrixAsPerspective(
           30.0f, static_cast<double>(traits_ptr->width)/static_cast<double>(traits_ptr->height), 1.0f, 10000.0f );
       GLenum buffer = traits_ptr->doubleBuffer ? GL_BACK : GL_FRONT;
-      main_camera_->setDrawBuffer(buffer);
-      main_camera_->setReadBuffer(buffer);
+      camera->setDrawBuffer(buffer);
+      camera->setReadBuffer(buffer);
+
       /* Disable small features culling */
-      osg::CullStack::CullingMode cullingMode = main_camera_->getCullingMode();
+      osg::CullStack::CullingMode cullingMode = camera->getCullingMode();
       cullingMode &= ~(osg::CullStack::SMALL_FEATURE_CULLING);
-      main_camera_->setCullingMode( cullingMode );
-      /* add scene to the viewer */
-      viewer_ptr_->setSceneData ( scene_ptr_->asGroup() );
-      
+      camera->setCullingMode( cullingMode );
+
       /* avoid ending */
-      viewer_ptr_->setKeyEventSetsDone (0);
-      viewer_ptr_->addEventHandler(new osgViewer::HelpHandler);
-      createBackground();
-      createManipulator();
+      viewer->setKeyEventSetsDone (0);
+      viewer->addEventHandler(new osgViewer::HelpHandler);
+
+      init (viewer, gc);
     }
 
     void WindowManager::init(osgViewer::Viewer* v, osg::GraphicsContext* gc)
     {
-      std::string name = "scene";
-      scene_ptr_ = ::graphics::GroupNode::create(name);
+      scene_ptr_ = ::graphics::GroupNode::create(gc->getTraits()->windowName);
       
       viewer_ptr_ = v;
       viewer_ptr_->setSceneData ( scene_ptr_->asGroup() );
