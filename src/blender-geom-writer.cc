@@ -371,7 +371,7 @@ namespace graphics {
   {
     std::cout << type << " is not implemented. " << node.getID()
       << " not added" << std::endl;
-    out() << varShape << " = makeEmpty()" << end;
+    out() << varShape << " = makeEmpty(\"" << node.getID() << "\")" << end;
     standardApply(node);
   }
 } // namespace graphics
