@@ -215,8 +215,7 @@ namespace graphics {
 
     switch_node_ptr_ = new ::osg::Group;
     hl_switch_node_ptr_ = new ::osg::Group;
-    auto_transform_ptr_ = new ::osg::AutoTransform;
-    static_auto_transform_ptr_ = new ::osg::MatrixTransform;
+    transform_ptr_ = new ::osg::MatrixTransform;
 
     switch_node_ptr_->setNodeMask(~NodeBit);
     switch_node_ptr_->setName (id_name_);
@@ -241,8 +240,6 @@ namespace graphics {
     }
     // setHighlightState(0);
     hl_switch_node_ptr_->addChild(highlight_nodes_[selected_highlight_]);
-
-    auto_transform_ptr_->addChild(static_auto_transform_ptr_);
 
     wireframe_modes_[WIREFRAME]->setStateSet(getWireframeStateSet());
     wireframe_modes_[WIREFRAME]->setDataVariance (osg::Object::STATIC);
@@ -331,60 +328,59 @@ namespace graphics {
 
   void Node::applyConfiguration (const osgVector3 & position, const osgQuat & quat)
   {
-    /* Update position */
-    auto_transform_ptr_->setPosition(position);
+    M_.setRotate (quat);
+    M_.setTrans (position);
 
-    /* Update attitude */
-    auto_transform_ptr_->setRotation(quat);
-
+    transform_ptr_->setMatrix (M_*Ms_);
   }
 
   void Node::setStaticTransform(const osgVector3 & position, const osgQuat & quat)
   {
-    Matrix m(quat);
+    osgQuat q, so; osgVector3 t, s;
+    Ms_.decompose(t, q, s, so);
+
+    Matrix m (quat);
     m.setTrans(position);
-    static_auto_transform_ptr_->setMatrix(m);
+    Ms_ = Matrix::scale(s) * m;
+
+    transform_ptr_->setMatrix (M_*Ms_);
   }
 
   osgQuat Node::getStaticRotation() const
   {
     osgQuat q, so; osgVector3 t, s;
-    static_auto_transform_ptr_->getMatrix().decompose(t, q, s, so);
+    Ms_.decompose(t, q, s, so);
     return q;
   }
 
   osgVector3 Node::getStaticPosition() const
   {
     osgQuat q, so; osgVector3 t, s;
-    static_auto_transform_ptr_->getMatrix().decompose(t, q, s, so);
+    Ms_.decompose(t, q, s, so);
     return t;
   }
 
   osgVector3 Node::getScale() const
   {
     osgQuat q, so; osgVector3 t, s;
-    static_auto_transform_ptr_->getMatrix().decompose(t, q, s, so);
+    Ms_.decompose(t, q, s, so);
     return s;
   }
 
   void Node::setScale(float scale)
   {
-    osgQuat q, so; osgVector3 t, s;
-    static_auto_transform_ptr_->getMatrix().decompose(t, q, s, so);
-    Matrix m (q);
-    m.setTrans(t);
-
-    static_auto_transform_ptr_->setMatrix(Matrix::scale(scale, scale, scale) * m);
+    setScale (osgVector3(scale,scale,scale));
   }
 
- void Node::setScale(const osg::Vec3d &scale)
+ void Node::setScale(const osgVector3 &scale)
    {
     osgQuat q, so; osgVector3 t, s;
-    static_auto_transform_ptr_->getMatrix().decompose(t, q, s, so);
+    Ms_.decompose(t, q, s, so);
     Matrix m (q);
     m.setTrans(t);
+    Ms_ = ::osg::Matrix::scale(scale) * m;
 
-    static_auto_transform_ptr_->setMatrix(::osg::Matrix::scale(scale) * m);
+    transform_ptr_->setMatrix (M_*Ms_);
    }
 
   void Node::setVisibilityMode (const VisibilityMode& mode)
@@ -514,7 +510,7 @@ namespace graphics {
     geom_ptr->addPrimitiveSet(new osg::DrawArrays(GL_LINES,2,2));
     geom_ptr->addPrimitiveSet(new osg::DrawArrays(GL_LINES,4,2));
 
-    static_auto_transform_ptr_->removeChild(landmark_geode_ptr_);
+    transform_ptr_->removeChild(landmark_geode_ptr_);
     landmark_geode_ptr_ = new osg::Geode();
     landmark_geode_ptr_->addDrawable(geom_ptr);
 
@@ -522,7 +518,7 @@ namespace graphics {
     landmark_geode_ptr_->setNodeMask(0xffffffff);
     landmark_geode_ptr_->setStateSet (getAlwaysOnTopStateSet (LIGHT_INFLUENCE_OFF));
 
-    static_auto_transform_ptr_->addChild(landmark_geode_ptr_);
+    transform_ptr_->addChild(landmark_geode_ptr_);
   }
 
   bool Node::hasLandmark() const
@@ -532,7 +528,7 @@ namespace graphics {
 
   void Node::deleteLandmark()
   {
-    static_auto_transform_ptr_->removeChild(landmark_geode_ptr_);
+    transform_ptr_->removeChild(landmark_geode_ptr_);
     landmark_geode_ptr_.release();
   }
 
@@ -646,7 +642,7 @@ namespace graphics {
   
   std::pair<osgVector3, osgQuat> Node::getGlobalTransform() const
   {
-    return std::make_pair(auto_transform_ptr_->getPosition(),auto_transform_ptr_->getRotation());
+    return std::make_pair(M_.getTrans(), M_.getRotate());
   }
 
   void Node::traverse (NodeVisitor& /*visitor*/) {
