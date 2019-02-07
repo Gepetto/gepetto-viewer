@@ -73,7 +73,8 @@ namespace graphics {
   
   void WindowManager::createBackground()
   {
-    main_camera_->setClearMask(GL_DEPTH_BUFFER_BIT);
+    // Enable Outline highlight state.
+    main_camera_->setClearMask(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     main_camera_->setClearColor(osg::Vec4(0.,0.,0.,0.));
     // Create background camera
     bg_camera_ = new osg::Camera;
@@ -226,6 +227,12 @@ namespace graphics {
       
       /* init main camera */
       main_camera_ = viewer_ptr_->getCamera ();
+
+      // Enable Outline highlight state.
+      main_camera_->setClearStencil(0);
+      osg::DisplaySettings* ds = osg::DisplaySettings::instance().get();
+      if (ds->getMinimumNumStencilBits() == 0)
+        ds->setMinimumNumStencilBits(1);
       
       gc_ = osg::GraphicsContextRefPtr (gc);
       createBackground();
