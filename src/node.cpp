@@ -20,6 +20,153 @@
 
 namespace graphics {
   namespace {
+    const osg::StateSetRefPtr& getVisibleStateSet (const LightingMode& mode)
+    {
+      static osg::StateSetRefPtr ssOn, ssOff;
+      switch (mode) {
+        case LIGHT_INFLUENCE_ON:
+          if (false && !ssOn) { // Disable because this is the default.
+            ssOn = osg::StateSetRefPtr(new osg::StateSet());
+            ssOn->setRenderBinToInherit();
+            ssOn->setMode(GL_DEPTH_TEST, ::osg::StateAttribute::ON  | ::osg::StateAttribute::PROTECTED);
+            ssOn->setMode(GL_CULL_FACE , ::osg::StateAttribute::OFF | ::osg::StateAttribute::PROTECTED);
+            ssOn->setMode(GL_LIGHTING  , ::osg::StateAttribute::ON  | ::osg::StateAttribute::PROTECTED);
+          }
+          return ssOn;
+        case LIGHT_INFLUENCE_OFF:
+          if (!ssOff) {
+            ssOff = osg::StateSetRefPtr(new osg::StateSet());
+            ssOff->setRenderBinToInherit();
+            ssOff->setMode(GL_DEPTH_TEST, ::osg::StateAttribute::ON  | ::osg::StateAttribute::PROTECTED);
+            ssOff->setMode(GL_CULL_FACE , ::osg::StateAttribute::OFF | ::osg::StateAttribute::PROTECTED);
+            ssOff->setMode(GL_LIGHTING  , ::osg::StateAttribute::OFF | ::osg::StateAttribute::PROTECTED);
+          }
+          return ssOff;
+        default:
+          ASSERT(false, "LightingMode is not well defined");
+          break;
+      };
+    }
+
+    const osg::StateSetRefPtr& getAlwaysOnTopStateSet (const LightingMode& mode)
+    {
+      static osg::StateSetRefPtr ssOn, ssOff;
+      switch (mode) {
+        case LIGHT_INFLUENCE_ON:
+          if (!ssOn) { // Disable because this is the default.
+            ssOn = osg::StateSetRefPtr(new osg::StateSet());
+            ssOn->setRenderBinDetails(INT_MAX, "DepthSortedBin");
+            ssOn->setMode(GL_DEPTH_TEST, ::osg::StateAttribute::OFF | ::osg::StateAttribute::PROTECTED);
+            ssOn->setMode(GL_CULL_FACE , ::osg::StateAttribute::ON  | ::osg::StateAttribute::PROTECTED);
+            ssOn->setMode(GL_LIGHTING  , ::osg::StateAttribute::ON  | ::osg::StateAttribute::PROTECTED);
+          }
+          return ssOn;
+        case LIGHT_INFLUENCE_OFF:
+          if (!ssOff) {
+            ssOff = osg::StateSetRefPtr(new osg::StateSet());
+            ssOff->setRenderBinDetails(INT_MAX, "DepthSortedBin");
+            ssOff->setMode(GL_DEPTH_TEST, ::osg::StateAttribute::OFF | ::osg::StateAttribute::PROTECTED);
+            ssOff->setMode(GL_CULL_FACE , ::osg::StateAttribute::ON  | ::osg::StateAttribute::PROTECTED);
+            ssOff->setMode(GL_LIGHTING  , ::osg::StateAttribute::OFF | ::osg::StateAttribute::PROTECTED);
+          }
+          return ssOff;
+        default:
+          ASSERT(false, "LightingMode is not well defined");
+          break;
+      };
+    }
+
+    const osg::StateSetRefPtr& getWireframeStateSet ()
+    {
+      static osg::StateSetRefPtr ss;
+      if (!ss) {
+        ss = osg::StateSetRefPtr(new osg::StateSet());
+
+        /* Allowing wireframe mode */
+        osg::PolygonModeRefPtr polygon_mode_ptr = new ::osg::PolygonMode;
+        polygon_mode_ptr->setMode( ::osg::PolygonMode::FRONT_AND_BACK, ::osg::PolygonMode::LINE );
+        polygon_mode_ptr->setDataVariance (osg::Object::STATIC);
+
+        ::osg::MaterialRefPtr material_wireframe_ptr = new osg::Material;
+        material_wireframe_ptr->setColorMode(osg::Material::DIFFUSE);
+        material_wireframe_ptr->setDiffuse(osg::Material::FRONT_AND_BACK, osgVector4(1.,1.,1.,1.));
+        material_wireframe_ptr->setDataVariance (osg::Object::STATIC);
+
+        ss->setMode(GL_BLEND, ::osg::StateAttribute::OFF | ::osg::StateAttribute::PROTECTED ); // PROTECTED attribut allows wireframe node to not be influenced by alpha
+        ss->setAttributeAndModes(polygon_mode_ptr, ::osg::StateAttribute::PROTECTED | ::osg::StateAttribute::ON );
+        ss->setAttributeAndModes(material_wireframe_ptr, ::osg::StateAttribute::ON | ::osg::StateAttribute::PROTECTED );
+      }
+      return ss;
+    }
+
+    template <unsigned int state>
+    const osg::StateSetRefPtr& getHighlightStateSet ()
+    {
+      static osg::StateSetRefPtr ss;
+      if (state == 0) return ss;
+      if (!ss) {
+        ss = osg::StateSetRefPtr(new osg::StateSet());
+        ::osg::MaterialRefPtr material_switch_ptr = new osg::Material;
+        int glModeValue = ::osg::StateAttribute::INHERIT;
+        /// Some color codes are taken from
+        /// http://devernay.free.fr/cours/opengl/materials.html
+        switch (state) {
+          case 1: /// collision
+            glModeValue = ::osg::StateAttribute::ON | ::osg::StateAttribute::OVERRIDE;
+            material_switch_ptr->setColorMode (osg::Material::AMBIENT);
+            material_switch_ptr->setDiffuse  (osg::Material::FRONT_AND_BACK, osgVector4(1.0f,0.f,0.f,1.f));
+            material_switch_ptr->setTransparency(osg::Material::FRONT_AND_BACK, 0.5f);
+            break;
+          case 2: /// selection
+            glModeValue = ::osg::StateAttribute::ON | ::osg::StateAttribute::OVERRIDE | ::osg::StateAttribute::PROTECTED;
+            /// Blue
+            material_switch_ptr->setAmbient  (osg::Material::FRONT_AND_BACK, osgVector4(0.f,0.f,0.f,1.f));
+            material_switch_ptr->setDiffuse  (osg::Material::FRONT_AND_BACK, osgVector4(0.f,0.f,1.f,1.f));
+            material_switch_ptr->setSpecular (osg::Material::FRONT_AND_BACK, osgVector4(0.6f,0.6f,0.7f,1.f));
+            material_switch_ptr->setShininess(osg::Material::FRONT_AND_BACK, 128.f);
+            break;
+          case 3: /// selection
+            glModeValue = ::osg::StateAttribute::ON | ::osg::StateAttribute::OVERRIDE | ::osg::StateAttribute::PROTECTED;
+            /// Red
+            material_switch_ptr->setAmbient  (osg::Material::FRONT_AND_BACK, osgVector4(0.f,0.f,0.f,1.f));
+            material_switch_ptr->setDiffuse  (osg::Material::FRONT_AND_BACK, osgVector4(1.0f,0.f,0.f,1.f));
+            material_switch_ptr->setSpecular (osg::Material::FRONT_AND_BACK, osgVector4(0.7f,0.6f,0.6f,1.f));
+            material_switch_ptr->setShininess(osg::Material::FRONT_AND_BACK, 96.f);
+            break;
+          case 4: /// selection
+            glModeValue = ::osg::StateAttribute::ON | ::osg::StateAttribute::OVERRIDE | ::osg::StateAttribute::PROTECTED;
+            /// Red plastic
+            material_switch_ptr->setAmbient  (osg::Material::FRONT_AND_BACK, osgVector4(0.f,0.f,0.f,1.f));
+            material_switch_ptr->setDiffuse  (osg::Material::FRONT_AND_BACK, osgVector4(0.5f,0.f,0.f,1.f));
+            material_switch_ptr->setSpecular (osg::Material::FRONT_AND_BACK, osgVector4(0.7f,0.6f,0.6f,1.f));
+            material_switch_ptr->setShininess(osg::Material::FRONT_AND_BACK, 32.f);
+            break;
+          case 5: /// selection
+            glModeValue = ::osg::StateAttribute::ON | ::osg::StateAttribute::OVERRIDE | ::osg::StateAttribute::PROTECTED;
+            /// Bronze
+            material_switch_ptr->setAmbient  (osg::Material::FRONT_AND_BACK, osgVector4(0.2125f,0.1275f,0.054f,1.f));
+            material_switch_ptr->setDiffuse  (osg::Material::FRONT_AND_BACK, osgVector4(0.714f,0.4284f,0.18144f,1.f));
+            material_switch_ptr->setSpecular (osg::Material::FRONT_AND_BACK, osgVector4(0.393548f,0.271906f,0.166721f,1.f));
+            material_switch_ptr->setShininess(osg::Material::FRONT_AND_BACK, 26.f);
+            break;
+          case 6: /// selection
+            glModeValue = ::osg::StateAttribute::ON | ::osg::StateAttribute::OVERRIDE | ::osg::StateAttribute::PROTECTED;
+            /// Red rubber
+            material_switch_ptr->setAmbient  (osg::Material::FRONT_AND_BACK, osgVector4(0.05f,0.f,0.f,1.f));
+            material_switch_ptr->setDiffuse  (osg::Material::FRONT_AND_BACK, osgVector4(0.5f,0.5f,0.4f,1.f));
+            material_switch_ptr->setSpecular (osg::Material::FRONT_AND_BACK, osgVector4(0.7f,0.04f,0.04f,1.f));
+            material_switch_ptr->setShininess(osg::Material::FRONT_AND_BACK, 10.f);
+            break;
+          default:
+            ASSERT(false, "HighlightState is not well defined");
+            break;
+        }
+        material_switch_ptr->setDataVariance(osg::Object::STATIC);
+        ss->setAttributeAndModes(material_switch_ptr, glModeValue);
+      }
+      return ss;
+    }
+
     int getNodeVisibilityMode (Node* node) { return node->getVisibilityMode(); }
     void setNodeVisibilityMode (Node* node, const int& v) { node->setVisibilityMode((VisibilityMode)v); }
 
@@ -97,24 +244,13 @@ namespace graphics {
 
     auto_transform_ptr_->addChild(static_auto_transform_ptr_);
 
-    /* Allowing wireframe mode */
-    osg::PolygonModeRefPtr polygon_mode_ptr = new ::osg::PolygonMode;
-    polygon_mode_ptr->setMode( ::osg::PolygonMode::FRONT_AND_BACK, ::osg::PolygonMode::LINE );
-    polygon_mode_ptr->setDataVariance (osg::Object::STATIC);
-
-    ::osg::MaterialRefPtr material_wireframe_ptr = new osg::Material;
-    material_wireframe_ptr->setColorMode(osg::Material::DIFFUSE);
-    material_wireframe_ptr->setDiffuse(osg::Material::FRONT_AND_BACK, osgVector4(1.,1.,1.,1.));
-    material_wireframe_ptr->setDataVariance (osg::Object::STATIC);
-
-    wireframe_modes_[WIREFRAME]->getOrCreateStateSet()->setAttributeAndModes(polygon_mode_ptr, ::osg::StateAttribute::PROTECTED | ::osg::StateAttribute::ON );
-    wireframe_modes_[WIREFRAME]->getOrCreateStateSet()->setMode(GL_BLEND, ::osg::StateAttribute::OFF | ::osg::StateAttribute::PROTECTED ); // PROTECTED attribut allows wireframe node to not be influenced by alpha
-    wireframe_modes_[WIREFRAME]->getOrCreateStateSet()->setAttributeAndModes(material_wireframe_ptr, ::osg::StateAttribute::ON | ::osg::StateAttribute::PROTECTED );
+    wireframe_modes_[WIREFRAME]->setStateSet(getWireframeStateSet());
     wireframe_modes_[WIREFRAME]->setDataVariance (osg::Object::STATIC);
     geode_ptr_ = NULL;
     alpha_ = 0;
 
     visibilityMode_ = VISIBILITY_ON;
+    lightingMode_   = LIGHT_INFLUENCE_ON;
 
     addProperty(
         EnumProperty::create("Highlight/State", highlightStateEnum(),
@@ -255,45 +391,45 @@ namespace graphics {
   {
     visibilityMode_ = mode;
     switch (mode) {
-    case VISIBILITY_ON:
-      auto_transform_ptr_->setNodeMask(0xffffffff);
-      auto_transform_ptr_->getOrCreateStateSet()->setRenderBinToInherit();
-      auto_transform_ptr_->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, ::osg::StateAttribute::ON | ::osg::StateAttribute::PROTECTED);
-      auto_transform_ptr_->getOrCreateStateSet()->setMode(GL_CULL_FACE,::osg::StateAttribute::OFF | ::osg::StateAttribute::PROTECTED);
-      break;
-    case VISIBILITY_OFF:
-      auto_transform_ptr_->setNodeMask(0x0);
-      auto_transform_ptr_->getOrCreateStateSet()->setRenderBinToInherit();
-      auto_transform_ptr_->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, ::osg::StateAttribute::ON | ::osg::StateAttribute::PROTECTED);
-      auto_transform_ptr_->getOrCreateStateSet()->setMode(GL_CULL_FACE,::osg::StateAttribute::OFF | ::osg::StateAttribute::PROTECTED);
-      break;
-    case ALWAYS_ON_TOP:
-      auto_transform_ptr_->setNodeMask(0xffffffff);
-      auto_transform_ptr_->getOrCreateStateSet()->setRenderBinDetails(INT_MAX, "DepthSortedBin");
-      auto_transform_ptr_->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, ::osg::StateAttribute::OFF | ::osg::StateAttribute::PROTECTED);
-      auto_transform_ptr_->getOrCreateStateSet()->setMode(GL_CULL_FACE, ::osg::StateAttribute::ON | ::osg::StateAttribute::PROTECTED );
-      break;
+      case VISIBILITY_ON:
+        transform_ptr_->setNodeMask(0xffffffff);
+        transform_ptr_->setStateSet (getVisibleStateSet(lightingMode_));
+        break;
+      case VISIBILITY_OFF:
+        transform_ptr_->setNodeMask(0x0);
+        transform_ptr_->setStateSet (getVisibleStateSet(lightingMode_));
+        break;
+      case ALWAYS_ON_TOP:
+        transform_ptr_->setNodeMask(0xffffffff);
+        transform_ptr_->setStateSet (getAlwaysOnTopStateSet(lightingMode_));
+        break;
 
-    default:
-      ASSERT(false, "mode is not well defined");
-      break;
+      default:
+        ASSERT(false, "mode is not well defined");
+        break;
     }
   }
 
   void Node::setLightingMode (const LightingMode& mode)
   {
-    if(mode == LIGHT_INFLUENCE_ON)
-      auto_transform_ptr_->getOrCreateStateSet()->setMode(GL_LIGHTING, ::osg::StateAttribute::ON | ::osg::StateAttribute::PROTECTED);
-    else
-      auto_transform_ptr_->getOrCreateStateSet()->setMode(GL_LIGHTING, ::osg::StateAttribute::OFF | ::osg::StateAttribute::PROTECTED);
+    lightingMode_ = mode;
+    switch (visibilityMode_) {
+      case VISIBILITY_ON:
+      case VISIBILITY_OFF:
+        transform_ptr_->setStateSet (getVisibleStateSet(lightingMode_));
+        break;
+      case ALWAYS_ON_TOP:
+        transform_ptr_->setStateSet (getAlwaysOnTopStateSet(lightingMode_));
+        break;
+      default:
+        ASSERT(false, "mode is not well defined");
+        break;
+    }
   }
 
   LightingMode Node::getLightingMode () const
   {
-    bool on =
-      (auto_transform_ptr_->getOrCreateStateSet()->getMode(GL_LIGHTING)
-      & osg::StateAttribute::ON);
-    return (on ? LIGHT_INFLUENCE_ON : LIGHT_INFLUENCE_OFF);
+    return lightingMode_;
   }
 
   void Node::setWireFrameMode (const WireFrameMode& mode)
@@ -384,16 +520,7 @@ namespace graphics {
 
     //set Landmark as ALWAYS ON TOP
     landmark_geode_ptr_->setNodeMask(0xffffffff);
-    landmark_geode_ptr_->getOrCreateStateSet()->setRenderBinDetails(INT_MAX, "DepthSortedBin");
-    landmark_geode_ptr_->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, ::osg::StateAttribute::OFF | ::osg::StateAttribute::PROTECTED);
-    landmark_geode_ptr_->getOrCreateStateSet()->setMode(GL_CULL_FACE, ::osg::StateAttribute::ON | ::osg::StateAttribute::PROTECTED );
-    landmark_geode_ptr_->getOrCreateStateSet()->setMode(GL_LIGHTING, ::osg::StateAttribute::OFF | ::osg::StateAttribute::PROTECTED);
-    /*auto_transform_ptr_->setNodeMask(0xffffffff);
-    auto_transform_ptr_->getOrCreateStateSet()->setRenderBinToInherit();
-    auto_transform_ptr_->getOrCreateStateSet()->setMode(GL_DEPTH_TEST, ::osg::StateAttribute::ON | ::osg::StateAttribute::PROTECTED);
-    auto_transform_ptr_->getOrCreateStateSet()->setMode(GL_CULL_FACE,::osg::StateAttribute::OFF | ::osg::StateAttribute::PROTECTED);
-    landmark_geode_ptr_->getOrCreateStateSet()->setMode(GL_LIGHTING, ::osg::StateAttribute::OFF | ::osg::StateAttribute::PROTECTED);*/
-
+    landmark_geode_ptr_->setStateSet (getAlwaysOnTopStateSet (LIGHT_INFLUENCE_OFF));
 
     static_auto_transform_ptr_->addChild(landmark_geode_ptr_);
   }
@@ -411,56 +538,25 @@ namespace graphics {
 
   ::osg::Group* Node::setupHighlightState (unsigned int state)
   {
-    ::osg::MaterialRefPtr material_switch_ptr = new osg::Material;
-    int glModeValue = ::osg::StateAttribute::INHERIT;
-    /// Some color codes are taken from
-    /// http://devernay.free.fr/cours/opengl/materials.html
+    osg::StateSetRefPtr ss;
     switch (state) {
       case 1: /// collision
-        glModeValue = ::osg::StateAttribute::ON | ::osg::StateAttribute::OVERRIDE;
-        material_switch_ptr->setColorMode (osg::Material::AMBIENT);
-        material_switch_ptr->setDiffuse  (osg::Material::FRONT_AND_BACK, osgVector4(1.0f,0.f,0.f,1.f));
-        material_switch_ptr->setTransparency(osg::Material::FRONT_AND_BACK, 0.5f);
+        ss = getHighlightStateSet<1> ();
         break;
       case 2: /// selection
-        glModeValue = ::osg::StateAttribute::ON | ::osg::StateAttribute::OVERRIDE | ::osg::StateAttribute::PROTECTED;
-        /// Blue
-        material_switch_ptr->setAmbient  (osg::Material::FRONT_AND_BACK, osgVector4(0.f,0.f,0.f,1.f));
-        material_switch_ptr->setDiffuse  (osg::Material::FRONT_AND_BACK, osgVector4(0.f,0.f,1.f,1.f));
-        material_switch_ptr->setSpecular (osg::Material::FRONT_AND_BACK, osgVector4(0.6f,0.6f,0.7f,1.f));
-        material_switch_ptr->setShininess(osg::Material::FRONT_AND_BACK, 128.f);
+        ss = getHighlightStateSet<2> ();
         break;
       case 3: /// selection
-        glModeValue = ::osg::StateAttribute::ON | ::osg::StateAttribute::OVERRIDE | ::osg::StateAttribute::PROTECTED;
-        /// Red
-        material_switch_ptr->setAmbient  (osg::Material::FRONT_AND_BACK, osgVector4(0.f,0.f,0.f,1.f));
-        material_switch_ptr->setDiffuse  (osg::Material::FRONT_AND_BACK, osgVector4(1.0f,0.f,0.f,1.f));
-        material_switch_ptr->setSpecular (osg::Material::FRONT_AND_BACK, osgVector4(0.7f,0.6f,0.6f,1.f));
-        material_switch_ptr->setShininess(osg::Material::FRONT_AND_BACK, 96.f);
+        ss = getHighlightStateSet<3> ();
         break;
       case 4: /// selection
-        glModeValue = ::osg::StateAttribute::ON | ::osg::StateAttribute::OVERRIDE | ::osg::StateAttribute::PROTECTED;
-        /// Red plastic
-        material_switch_ptr->setAmbient  (osg::Material::FRONT_AND_BACK, osgVector4(0.f,0.f,0.f,1.f));
-        material_switch_ptr->setDiffuse  (osg::Material::FRONT_AND_BACK, osgVector4(0.5f,0.f,0.f,1.f));
-        material_switch_ptr->setSpecular (osg::Material::FRONT_AND_BACK, osgVector4(0.7f,0.6f,0.6f,1.f));
-        material_switch_ptr->setShininess(osg::Material::FRONT_AND_BACK, 32.f);
+        ss = getHighlightStateSet<4> ();
         break;
       case 5: /// selection
-        glModeValue = ::osg::StateAttribute::ON | ::osg::StateAttribute::OVERRIDE | ::osg::StateAttribute::PROTECTED;
-        /// Bronze
-        material_switch_ptr->setAmbient  (osg::Material::FRONT_AND_BACK, osgVector4(0.2125f,0.1275f,0.054f,1.f));
-        material_switch_ptr->setDiffuse  (osg::Material::FRONT_AND_BACK, osgVector4(0.714f,0.4284f,0.18144f,1.f));
-        material_switch_ptr->setSpecular (osg::Material::FRONT_AND_BACK, osgVector4(0.393548f,0.271906f,0.166721f,1.f));
-        material_switch_ptr->setShininess(osg::Material::FRONT_AND_BACK, 26.f);
+        ss = getHighlightStateSet<5> ();
         break;
       case 6: /// selection
-        glModeValue = ::osg::StateAttribute::ON | ::osg::StateAttribute::OVERRIDE | ::osg::StateAttribute::PROTECTED;
-        /// Red rubber
-        material_switch_ptr->setAmbient  (osg::Material::FRONT_AND_BACK, osgVector4(0.05f,0.f,0.f,1.f));
-        material_switch_ptr->setDiffuse  (osg::Material::FRONT_AND_BACK, osgVector4(0.5f,0.5f,0.4f,1.f));
-        material_switch_ptr->setSpecular (osg::Material::FRONT_AND_BACK, osgVector4(0.7f,0.04f,0.04f,1.f));
-        material_switch_ptr->setShininess(osg::Material::FRONT_AND_BACK, 10.f);
+        ss = getHighlightStateSet<6> ();
         break;
       case 7: /// Selection through osgFX::Outline
         {
@@ -487,8 +583,7 @@ namespace graphics {
         break;
     }
     osg::Group* node = new ::osg::Group;
-    material_switch_ptr->setDataVariance(osg::Object::STATIC);
-    node->getOrCreateStateSet()->setAttributeAndModes(material_switch_ptr, glModeValue);
+    node->setStateSet(ss);
     node->setDataVariance(osg::Object::STATIC);
     return node;
   }

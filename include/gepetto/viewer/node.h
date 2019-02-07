@@ -44,6 +44,7 @@ namespace graphics {
         std::vector< ::osg::GroupRefPtr > highlight_nodes_;
 
         VisibilityMode visibilityMode_;
+        LightingMode   lightingMode_;
         
         /** Initialization function */
         void init ();
