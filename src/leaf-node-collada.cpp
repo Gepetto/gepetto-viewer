@@ -234,6 +234,7 @@ namespace graphics {
     mat_ptr->setAmbient (osg::Material::FRONT_AND_BACK,ambient); 
 
     collada_ptr_->getOrCreateStateSet()->setAttribute(mat_ptr.get());    
+    setDirty();
   }
     
   osgVector4 LeafNodeCollada::getColor() const
@@ -249,6 +250,7 @@ namespace graphics {
 
   void LeafNodeCollada::setAlpha(const float& alpha)
   {
+    // TODO this overload is probably not necessary.
     osg::StateSet* ss = getColladaPtr().get()->getStateSet();
     if (ss)
       {
@@ -265,7 +267,8 @@ namespace graphics {
 	if (alpha == 0)
 	  ss->setRenderingHint(osg::StateSet::DEFAULT_BIN);
 	else
-	  ss->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+          ss->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+        setDirty();
       }
   }
  
@@ -282,6 +285,7 @@ namespace graphics {
     } 
     texture->setImage(image);
     collada_ptr_->getStateSet()->setTextureAttributeAndModes(0,texture,osg::StateAttribute::ON);
+    setDirty();
   }
 
   const std::string& LeafNodeCollada::meshFilePath () const

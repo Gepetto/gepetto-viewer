@@ -137,8 +137,10 @@ namespace graphics {
     mat_ptr->setSpecular(osg::Material::FRONT_AND_BACK,color_specular); 
     mat_ptr->setEmission(osg::Material::FRONT_AND_BACK,color_emissive); 
 
-    if (mesh_geometry_ptr_->getStateSet())
+    if (mesh_geometry_ptr_->getStateSet()) {
       mesh_geometry_ptr_->getStateSet()->setAttribute(mat_ptr.get());    
+      setDirty();
+    }
   }
   void LeafNodeMesh::setColor(const osgVector4& color_diffuse)
   {
@@ -166,7 +168,8 @@ namespace graphics {
 	if (alpha == 0)
 	  ss->setRenderingHint(osg::StateSet::DEFAULT_BIN);
 	else
-	  ss->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+          ss->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+        setDirty();
       }
   }
  
@@ -182,6 +185,7 @@ namespace graphics {
     } 
     texture->setImage(image);
     mesh_geometry_ptr_->getStateSet()->setTextureAttributeAndModes(0,texture,osg::StateAttribute::ON);
+    setDirty();
   }
 
   osg::ref_ptr<osg::Node> LeafNodeMesh::getOsgNode() const
@@ -192,31 +196,37 @@ namespace graphics {
   void LeafNodeMesh::setVertexArray(osg::Vec3ArrayRefPtr arrayOfVertices)
   {
     mesh_geometry_ptr_->setVertexArray(arrayOfVertices);
+    setDirty();
   }
 
   void LeafNodeMesh::addPrimitiveSet(osg::DrawElementsUInt * aPrimitiveSet)
   {
     mesh_geometry_ptr_->addPrimitiveSet(aPrimitiveSet);
+    setDirty();
   }
 
   void LeafNodeMesh::setColorArray(osg::Vec4ArrayRefPtr aSetOfColors)
   {
     mesh_geometry_ptr_->setColorArray(aSetOfColors);
+    setDirty();
   }
   
   void LeafNodeMesh::setColorBinding(osg::Geometry::AttributeBinding aColorBinding)
   {
     mesh_geometry_ptr_->setColorBinding(aColorBinding);
+    setDirty();
   }
 
   void LeafNodeMesh::setNormalArray(osg::Vec3ArrayRefPtr normals)
   {
     mesh_geometry_ptr_->setNormalArray(normals);
+    setDirty();
   }
 
   void LeafNodeMesh::setNormalBinding(osg::Geometry::AttributeBinding aNormalBinding)
   {
     mesh_geometry_ptr_->setNormalBinding(aNormalBinding);
+    setDirty();
   }
 
   LeafNodeMesh::~LeafNodeMesh()

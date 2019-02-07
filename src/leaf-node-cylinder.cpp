@@ -128,6 +128,7 @@ namespace graphics {
         shape_drawable_ptr_->dirtyDisplayList();
         shape_drawable_ptr_->dirtyBound();
 #endif
+        setDirty();
     }
     
     void LeafNodeCylinder::setHeight (const float& height)
@@ -139,6 +140,7 @@ namespace graphics {
         shape_drawable_ptr_->dirtyDisplayList();
         shape_drawable_ptr_->dirtyBound();
 #endif
+        setDirty();
     }
     
     LeafNodeCylinder::~LeafNodeCylinder ()

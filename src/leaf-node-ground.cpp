@@ -234,6 +234,7 @@ namespace graphics {
         /* Apply colors */
         grid_geometry_ptr_->setColorArray(colors_array_ptr_);
         grid_geometry_ptr_->setColorBinding(::osg::Geometry::BIND_PER_VERTEX);
+        setDirty();
     }
   
     LeafNodeGround::~LeafNodeGround()
