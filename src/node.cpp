@@ -288,13 +288,15 @@ namespace graphics {
   }
 
   Node::Node (const std::string& name) :
-    id_name_(name)
+    id_name_(name),
+    dirty_ (true)
   {
     init();
   }
 
   Node::Node (const Node &other) :
-    id_name_(other.getID())
+    id_name_(other.getID()),
+    dirty_ (true)
   {
     init();
   }
@@ -332,6 +334,7 @@ namespace graphics {
     M_.setTrans (position);
 
     transform_ptr_->setMatrix (M_*Ms_);
+    dirty_ = true;
   }
 
   void Node::setStaticTransform(const osgVector3 & position, const osgQuat & quat)
@@ -344,6 +347,7 @@ namespace graphics {
     Ms_ = Matrix::scale(s) * m;
 
     transform_ptr_->setMatrix (M_*Ms_);
+    dirty_ = true;
   }
 
   osgQuat Node::getStaticRotation() const
@@ -381,10 +385,12 @@ namespace graphics {
     Ms_ = ::osg::Matrix::scale(scale) * m;
 
     transform_ptr_->setMatrix (M_*Ms_);
+    dirty_ = true;
    }
 
   void Node::setVisibilityMode (const VisibilityMode& mode)
   {
+    if (visibilityMode_ == mode) return;
     visibilityMode_ = mode;
     switch (mode) {
       case VISIBILITY_ON:
@@ -404,10 +410,12 @@ namespace graphics {
         ASSERT(false, "mode is not well defined");
         break;
     }
+    dirty_ = true;
   }
 
   void Node::setLightingMode (const LightingMode& mode)
   {
+    if (mode == lightingMode_) return;
     lightingMode_ = mode;
     switch (visibilityMode_) {
       case VISIBILITY_ON:
@@ -421,6 +429,7 @@ namespace graphics {
         ASSERT(false, "mode is not well defined");
         break;
     }
+    dirty_ = true;
   }
 
   LightingMode Node::getLightingMode () const
@@ -481,6 +490,7 @@ namespace graphics {
               assert(false && "Wrong action");
     };
     selected_wireframe_ = mode;
+    dirty_ = true;
   }
 
   void Node::addLandmark(const float& size)
@@ -519,6 +529,7 @@ namespace graphics {
     landmark_geode_ptr_->setStateSet (getAlwaysOnTopStateSet (LIGHT_INFLUENCE_OFF));
 
     transform_ptr_->addChild(landmark_geode_ptr_);
+    dirty_ = true;
   }
 
   bool Node::hasLandmark() const
@@ -528,8 +539,11 @@ namespace graphics {
 
   void Node::deleteLandmark()
   {
-    transform_ptr_->removeChild(landmark_geode_ptr_);
-    landmark_geode_ptr_.release();
+    if (landmark_geode_ptr_) {
+      transform_ptr_->removeChild(landmark_geode_ptr_);
+      landmark_geode_ptr_.release();
+      dirty_ = true;
+    }
   }
 
   ::osg::Group* Node::setupHighlightState (unsigned int state)
@@ -593,6 +607,7 @@ namespace graphics {
                                         highlight_nodes_[state]);
       // Update the child
       selected_highlight_ = state;
+      dirty_ = true;
     }
   }
 
@@ -619,7 +634,8 @@ namespace graphics {
 	if (alpha_ > 0)
 	  ss->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
 	else
-	  ss->setRenderingHint(osg::StateSet::DEFAULT_BIN);
+          ss->setRenderingHint(osg::StateSet::DEFAULT_BIN);
+        dirty_ = true;
       }
   }
 

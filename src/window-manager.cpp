@@ -17,6 +17,8 @@
 #include <osgGA/NodeTrackerManipulator>
 #include <osgDB/WriteFile>
 
+#include <../src/is-dirty-visitor.h>
+
 namespace graphics {
   namespace {
     struct ScreenShot : public osg::Camera::DrawCallback
@@ -220,6 +222,7 @@ namespace graphics {
       
       viewer_ptr_ = v;
       viewer_ptr_->setSceneData ( scene_ptr_->asGroup() );
+      //viewer_ptr_->requestContinuousUpdate ( false );
       
       /* init main camera */
       main_camera_ = viewer_ptr_->getCamera ();
@@ -349,8 +352,16 @@ namespace graphics {
 
     bool WindowManager::frame ()
     {
-        viewer_ptr_->frame();
-        return true;
+      IsDirtyVisitor isDirtyVisitor;
+      scene_ptr_->accept (isDirtyVisitor);
+      if (!isDirtyVisitor.isDirty()
+          && !viewer_ptr_->checkNeedToDoFrame ())
+        return false;
+      viewer_ptr_->frame();
+
+      SetCleanVisitor setCleanVisitor;
+      scene_ptr_->accept (setCleanVisitor);
+      return true;
     }
 
     bool WindowManager::run ()
