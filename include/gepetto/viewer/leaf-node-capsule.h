@@ -81,8 +81,6 @@ namespace graphics {
             return capsule_ptr_->getHeight();
         }
 
-        virtual void addLandmark(const float &size);
-
         SCENE_VIEWER_ACCEPT_VISITOR;
 
         /** Destructor */
