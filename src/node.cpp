@@ -87,12 +87,13 @@ namespace graphics {
     highlight_nodes_.resize(9);
     selected_highlight_ = 0;
     highlight_enabled_ = true;
-    for (unsigned int i = 0; i < 9; ++i) {
+    highlight_nodes_[0] = transform_ptr_;
+    for (unsigned int i = 1; i < 9; ++i) {
       highlight_nodes_[i] = setupHighlightState (i);
+      highlight_nodes_[i]->addChild(transform_ptr_);
     }
     // setHighlightState(0);
     hl_switch_node_ptr_->addChild(highlight_nodes_[selected_highlight_]);
-    highlight_nodes_[selected_highlight_]->addChild(auto_transform_ptr_);
 
     auto_transform_ptr_->addChild(static_auto_transform_ptr_);
 
@@ -499,8 +500,6 @@ namespace graphics {
         && state < highlight_nodes_.size()) {
       hl_switch_node_ptr_->replaceChild(highlight_nodes_[selected_highlight_],
                                         highlight_nodes_[state]);
-      highlight_nodes_[selected_highlight_]->removeChild(auto_transform_ptr_);
-      highlight_nodes_[state]              ->addChild(auto_transform_ptr_);
       // Update the child
       selected_highlight_ = state;
     }
