@@ -25,6 +25,12 @@ namespace graphics {
 
       ~IsDirtyVisitor () {}
 
+      bool valid (Node& node)
+      {
+        if (isDirty_) return false;
+        return NodeVisitor::valid(node);
+      }
+
       void apply (Node& node)
       {
         isDirty_ = node.isDirty();
