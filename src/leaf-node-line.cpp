@@ -205,7 +205,7 @@ namespace graphics {
     
     void LeafNodeLine::setMode (const GLenum& mode)
     {
-      drawArray_ptr_->set (mode, 0, points_ptr_->size ());
+      drawArray_ptr_->set (mode, 0, (GLsizei)points_ptr_->size ());
       beam_ptr_->dirtyDisplayList();
     }
 
@@ -233,7 +233,7 @@ namespace graphics {
         if (first + count > points_ptr_->size())
           throw std::invalid_argument ("Invalid range of points in LeafNodeLine::setPointsSubset");
         drawArray_ptr_->setFirst (first);
-        drawArray_ptr_->setCount (count);
+        drawArray_ptr_->setCount ((GLsizei)count);
         beam_ptr_->dirtyDisplayList();
     }
 
