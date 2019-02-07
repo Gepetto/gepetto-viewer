@@ -67,7 +67,7 @@ namespace graphics {
         
         /** Return true if this group contains this child
          */
-        virtual bool hasChild (::graphics::NodePtr_t child_ptr);
+        virtual bool hasChild (::graphics::NodePtr_t child_ptr) const;
         
         /** Remove all children
          */
