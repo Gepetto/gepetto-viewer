@@ -21,6 +21,7 @@ namespace graphics {
         maxCapsule_=maxCapsule;
 
         osgVector3 zero;
+        // Z -> -X
         osgQuat y_90(M_PI/2,osgVector3(0,1,0));
         for (size_t i = 0; i< maxCapsule ; i++){
             std::stringstream nameCap;

@@ -14,7 +14,9 @@
 namespace graphics {
     DEF_CLASS_SMART_PTR(LeafNodeCapsule)
     
-    /** Implementation of the Capsule GraphicalObject in OSG render */
+    /** Implementation of the Capsule GraphicalObject in OSG render
+     * The capsule height is along Z.
+     * */
     class LeafNodeCapsule : public NodeDrawable
     {
     private:

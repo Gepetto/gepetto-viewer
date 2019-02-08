@@ -333,7 +333,7 @@ namespace graphics {
     M_.setRotate (quat);
     M_.setTrans (position);
 
-    transform_ptr_->setMatrix (M_*Ms_);
+    transform_ptr_->setMatrix (Ms_*M_);
     dirty_ = true;
   }
 
@@ -346,7 +346,7 @@ namespace graphics {
     m.setTrans(position);
     Ms_ = Matrix::scale(s) * m;
 
-    transform_ptr_->setMatrix (M_*Ms_);
+    transform_ptr_->setMatrix (Ms_*M_);
     dirty_ = true;
   }
 
@@ -384,7 +384,7 @@ namespace graphics {
     m.setTrans(t);
     Ms_ = ::osg::Matrix::scale(scale) * m;
 
-    transform_ptr_->setMatrix (M_*Ms_);
+    transform_ptr_->setMatrix (Ms_*M_);
     dirty_ = true;
    }
 
