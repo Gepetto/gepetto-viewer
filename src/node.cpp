@@ -330,6 +330,7 @@ namespace graphics {
 
   void Node::applyConfiguration (const osgVector3 & position, const osgQuat & quat)
   {
+    if (!position.valid() || !quat.asVec4().valid()) return;
     M_.setRotate (quat);
     M_.setTrans (position);
 
