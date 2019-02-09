@@ -92,13 +92,6 @@ namespace graphics {
       typedef std::map<std::string, GroupNodePtr_t>::const_iterator    GroupNodeMapConstIt;
 
       typedef ScopedLock ScopedLock;
-
-      struct ApplyConfigurationFunctor {
-        void operator() (const NodeConfiguration& nc) const
-        {
-            nc.node->applyConfiguration ( nc.position, nc.quat);
-        }
-      };
     }
 
     BlenderFrameCapture::BlenderFrameCapture () :
@@ -300,22 +293,6 @@ namespace graphics {
         if (it == windowIDmap_.end ())
             throw std::invalid_argument ("There is no windows with that name");
         return it->second;
-    }
-
-    void WindowsManager::refresh ()
-    {
-      {
-        ScopedLock lock(configListMtx_);
-        {
-          ScopedLock lock(osgFrameMutex());
-          //refresh scene with the new configuration
-          std::for_each(newNodeConfigurations_.begin(),
-              newNodeConfigurations_.end(),
-              ApplyConfigurationFunctor());
-        }
-        newNodeConfigurations_.resize (0);
-      }
-      if (autoCaptureTransform_) captureTransform ();
     }
 
     void WindowsManager::createScene (const std::string& sceneName)
@@ -1084,7 +1061,9 @@ namespace graphics {
 
     void WindowsManager::captureTransform ()
     {
-	ScopedLock lock(osgFrameMutex());
+        // This requires only a read access to the scene.
+        // The only requirement is that no node get delete while accessing them.
+	//ScopedLock lock(osgFrameMutex());
         blenderCapture_.captureFrame ();
     }
 

@@ -75,15 +75,12 @@ namespace graphics {
 
         private:
             typedef std::vector <WindowManagerPtr_t> WindowManagerVector_t;
-            typedef std::vector<NodeConfiguration> NodeConfigurations_t;
             WindowManagerVector_t windowManagers_;
             std::map<std::string, NodePtr_t> nodes_;
             std::map<std::string, GroupNodePtr_t> groupNodes_;
             std::map<std::string, RoadmapViewerPtr_t> roadmapNodes_;
-            OpenThreads::Mutex osgFrameMtx_, configListMtx_;
-            NodeConfigurations_t newNodeConfigurations_;
+            Mutex osgFrameMtx_;
             BlenderFrameCapture blenderCapture_;
-            bool autoCaptureTransform_;
 
             static osgVector4 getColor(const std::string& colorName);
             static std::string parentName(const std::string& name);
@@ -101,6 +98,12 @@ namespace graphics {
               */
             WindowsManager ();
             WindowID addWindow (std::string winName, WindowManagerPtr_t newWindow);
+
+            typedef std::vector<NodeConfiguration> NodeConfigurations_t;
+            Mutex configListMtx_;
+            NodeConfigurations_t newNodeConfigurations_;
+            bool autoCaptureTransform_;
+            void refreshConfigs (const NodeConfigurations_t& configs);
 
             template <typename Iterator, typename NodeContainer_t> 
               std::size_t getNodes
@@ -122,12 +125,10 @@ namespace graphics {
             virtual std::vector<std::string> getSceneList();
             virtual std::vector<std::string> getWindowList();
 
-            /// Return the mutex to be locked before refreshing
-            OpenThreads::Mutex& osgFrameMutex () {
+            /// Return the mutex to be locked before modifying the scene.
+            Mutex& osgFrameMutex () {
               return osgFrameMtx_;
             }
-
-            virtual void refresh();
 
             virtual WindowID getWindowID (const std::string& windowName);
 
