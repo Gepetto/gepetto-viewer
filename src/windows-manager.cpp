@@ -448,12 +448,12 @@ namespace graphics {
 
     bool WindowsManager::addCone (const std::string& coneName,
             const float radius, const float height,
-            const Color_t&)
+            const Color_t& color)
     {
         RETURN_FALSE_IF_NODE_EXISTS(coneName);
 
         LeafNodeConePtr_t cone = LeafNodeCone::create
-          (coneName, radius, height);
+          (coneName, radius, height, color);
         ScopedLock lock(osgFrameMutex());
         addNode (coneName, cone, true);
         return true;

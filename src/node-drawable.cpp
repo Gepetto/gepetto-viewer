@@ -22,6 +22,7 @@ namespace graphics {
     shape_drawable_ptr_->dirtyDisplayList();
     shape_drawable_ptr_->dirtyBound();
 #endif
+    setDirty();
   }
 
   osgVector4 NodeDrawable::getColor() const
@@ -41,5 +42,6 @@ namespace graphics {
     }
     texture->setImage(image);
     geode_ptr_->getStateSet()->setTextureAttributeAndModes(0,texture,osg::StateAttribute::ON);
+    setDirty();
   }
 }

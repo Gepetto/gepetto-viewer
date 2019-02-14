@@ -21,7 +21,7 @@ namespace graphics {
   class IsDirtyVisitor : public NodeVisitor
   {
     public:
-      IsDirtyVisitor () : NodeVisitor (false), isDirty_ (false) {}
+      IsDirtyVisitor () : NodeVisitor (true), isDirty_ (false) {}
 
       ~IsDirtyVisitor () {}
 
@@ -35,6 +35,9 @@ namespace graphics {
       {
         isDirty_ = node.isDirty();
         if (isDirty_) return;
+        // Invisible nodes must be considered, otherwise they do not
+        // disappear when they become invisible. Their children can be discarded.
+        if (node.getVisibilityMode() == VISIBILITY_OFF) return;
         NodeVisitor::apply (node);
       }
 
