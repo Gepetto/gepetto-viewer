@@ -3,6 +3,7 @@
 //  gepetto-viewer
 //
 //  Created by Anthony Couret, Mathieu Geisert in November 2014.
+//  Updated by Joseph Mirabel in February 2019.
 //  Copyright (c) 2014 LAAS-CNRS. All rights reserved.
 //
 
@@ -11,42 +12,22 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <sstream>
 
-#include <sys/stat.h>
+#include <QBuffer>
+#include <QDomDocument>
+#include <QDomElement>
+#include <QFile>
+#include <QFileInfo>
+#include <QMap>
+#include <QString>
+#include <QStringList>
+#include <QtGlobal>
 
-#include <urdf_model/model.h>
-#include <urdf_parser/urdf_parser.h>
+#include <osgQt/Version>
 
 #include <gepetto/viewer/leaf-node-cylinder.h>
 #include <gepetto/viewer/leaf-node-box.h>
 #include <gepetto/viewer/leaf-node-sphere.h>
-
-#ifndef URDFDOM_BOOST_SHARED_PTR
-#include <memory>
-namespace graphics {
-  namespace urdfParser {
-    using std::shared_ptr;
-    using std::weak_ptr;
-  }
-}
-#else
-#include <boost/shared_ptr.hpp>
-#include <boost/weak_ptr.hpp>
-namespace graphics {
-  namespace urdfParser {
-    using boost::shared_ptr;
-    using boost::weak_ptr;
-  }
-}
-
-#ifdef URDFDOM_POINTER_CAST
-#include <boost/pointer_cast.hpp>
-namespace urdf {
-  using boost::static_pointer_cast;
-}
-#endif
-#endif
 
 
 #define OUT(x) std::cout << x << std::endl
@@ -55,11 +36,15 @@ namespace urdf {
 namespace graphics {
   namespace urdfParser {
 
-  namespace {
-    typedef shared_ptr<urdf::Link> LinkPtr;
-    typedef shared_ptr<urdf::Visual   >    VisualPtr;
-    typedef shared_ptr<urdf::Collision> CollisionPtr;
+  namespace details {
     typedef std::map<std::string, ::osg::NodeRefPtr> Cache_t;
+    struct Material {
+      bool hasColor, hasTexture;
+      osgVector4 color;
+      std::string texture;
+      Material () : hasColor (false), hasTexture (false) {}
+    };
+    typedef QMap<QString, Material> MaterialMap_t;
     DEF_CLASS_SMART_PTR(LinkNode)
 
     class LinkNode :  public GroupNode
@@ -136,308 +121,264 @@ namespace graphics {
       }
     }
 
-    void split(const std::string &s, char delim, std::vector<std::string> &elems) {
-      std::stringstream ss(s);
-      std::string item;
-      while (std::getline(ss, item, delim)) {
-        elems.push_back(item);
+    QStringList rosPackagePath()
+    {
+      const QString rosPathVar (qgetenv("ROS_PACKAGE_PATH"));
+      return rosPathVar.split(':');
+    }
+
+    std::string getFilename (const QString& input)
+    {
+      if (input.startsWith("package://")) {
+        QStringList rosPaths = rosPackagePath();
+        for (int i = 0; i < rosPaths.size(); ++i) {
+          QFileInfo fileInfo (rosPaths[i] + '/' + input.right (input.size()-10));
+          if (fileInfo.exists() && fileInfo.isFile())
+            return fileInfo.filePath().toStdString();
+        }
+        throw std::invalid_argument (("File not found: " + input
+              + ". Check ROS_PACKAGE_PATH environment variable.").toStdString());
+      }
+      return input.toStdString();
+    }
+
+    template <typename ReturnType>
+    void toDoubles (const QString& s, ReturnType& vect)
+    {
+      QStringList nums = s.split (' ', QString::SkipEmptyParts);
+      if (ReturnType::num_components != nums.size())
+        throw std::logic_error ("Could not parse " + s.toStdString());
+      bool ok;
+      for (int i = 0; i < nums.size(); ++i) {
+        double d = nums[i].toDouble (&ok);
+        if (!ok) throw std::logic_error ("Could not parse " + s.toStdString());
+        vect[i] = d;
       }
     }
 
-    std::vector<std::string> rosPackagePath()
+    template <typename ReturnType>
+    void toFloats (const QString& s, ReturnType& vect)
     {
-      const std::string rosPathVar (std::getenv("ROS_PACKAGE_PATH"));
-      std::vector<std::string> rosPaths;
-      split(rosPathVar, ':', rosPaths);
-      return rosPaths;
-    }
-
-    void getStaticTransform (const LinkPtr& link,
-			     osgVector3 &static_pos, osgQuat &static_quat,
-			     bool visual, long unsigned int index)
-    {
-      if (visual) {
-        shared_ptr<urdf::Visual> visual;
-        if (link->visual_array.size()>1)
-          visual = link->visual_array[index];
-        else
-          visual = link->visual;
-
-        // Set staticTransform = transform from link to visual
-        static_pos = osgVector3((float)visual->origin.position.x,
-            (float)visual->origin.position.y,
-            (float)visual->origin.position.z);
-
-        static_quat=osgQuat( (float)visual->origin.rotation.x,
-            (float)visual->origin.rotation.y,
-            (float)visual->origin.rotation.z,
-            (float)visual->origin.rotation.w);
-      } else {
-        shared_ptr<urdf::Collision> collision;
-        if (link->collision_array.size()>1)
-          collision = link->collision_array[index];
-        else
-          collision = link->collision;
-
-        // Set staticTransform = transform from link to collision
-        static_pos = osgVector3((float)collision->origin.position.x,
-            (float)collision->origin.position.y,
-            (float)collision->origin.position.z);
-
-        static_quat=osgQuat( (float)collision->origin.rotation.x,
-            (float)collision->origin.rotation.y,
-            (float)collision->origin.rotation.z,
-            (float)collision->origin.rotation.w);
+      QStringList nums = s.split (' ', QString::SkipEmptyParts);
+      if (ReturnType::num_components != nums.size())
+        throw std::logic_error ("Could not parse " + s.toStdString());
+      bool ok;
+      for (int i = 0; i < nums.size(); ++i) {
+        float d = nums[i].toFloat (&ok);
+        if (!ok) throw std::logic_error ("Could not parse " + s.toStdString());
+        vect[i] = d;
       }
     }
 
-    void addMesh (const std::string &robotName,
-                  const std::string& namePrefix,
-		  LinkPtr& urdfLink,
-		  std::size_t j,
-		  LinkNodePtr_t &linkNode, bool visual, bool linkFrame,
+    void parseOrigin (const QDomElement element, osgVector3& T, osgQuat& R)
+    {
+      QDomElement origin = element.firstChildElement ("origin");
+      if (!origin.nextSiblingElement ("origin").isNull())
+        throw std::logic_error ("URDF contains two origins.");
+
+      T = osgVector3 (0,0,0);
+      R = osgQuat    (0,0,0,1);
+      if (origin.isNull()) return;
+      QString xyz = origin.attribute ("xyz");
+      if (!xyz.isNull())
+        toFloats (xyz, T);
+      QString rpy = origin.attribute ("rpy");
+      if (!rpy.isNull()) {
+        osgVector3 rpy2;
+        toFloats (rpy, rpy2);
+
+        double phi, the, psi;
+        phi = rpy2[0] / 2.0;
+        the = rpy2[1] / 2.0;
+        psi = rpy2[2] / 2.0;
+
+        R.x() = sin(phi) * cos(the) * cos(psi) - cos(phi) * sin(the) * sin(psi);
+        R.y() = cos(phi) * sin(the) * cos(psi) + sin(phi) * cos(the) * sin(psi);
+        R.z() = cos(phi) * cos(the) * sin(psi) - sin(phi) * sin(the) * cos(psi);
+        R.w() = cos(phi) * cos(the) * cos(psi) + sin(phi) * sin(the) * sin(psi);
+      }
+    }
+
+    NodePtr_t createMesh (const QString& name,
+		  const QDomElement mesh,
                   Cache_t& cache)
     {
-      std::string link_name;
-      std::string mesh_path;
-      shared_ptr< ::urdf::Mesh > mesh_shared_ptr;
+      std::string mesh_path = getFilename (mesh.attribute("filename"));
 
-      if (visual) {
-	mesh_shared_ptr = urdf::static_pointer_cast< ::urdf::Mesh >
-	  ( urdfLink->visual_array [j]->geometry );
-      } else {
-	mesh_shared_ptr = urdf::static_pointer_cast< ::urdf::Mesh >
-	  ( urdfLink->collision_array [j]->geometry );
+      Cache_t::const_iterator _cache = cache.find (mesh_path);
+      LeafNodeColladaPtr_t meshNode;
+      if (_cache == cache.end()) {
+        meshNode = LeafNodeCollada::create (name.toStdString(), mesh_path);
+        cache.insert (std::make_pair(mesh_path, meshNode->getColladaPtr()));
+      } else
+        meshNode = LeafNodeCollada::create (name.toStdString(), _cache->second, mesh_path);
+
+      if (mesh.hasAttribute ("scale")) {
+        osgVector3 scale (1,1,1);
+        toFloats (mesh.attribute("scale"), scale);
+        meshNode->setScale(scale);
       }
-      link_name = urdfLink->name;
-      if ( mesh_shared_ptr )
-        {
-          mesh_path = getFilename (mesh_shared_ptr->filename);
-	  std::ostringstream oss;
-	  oss << robotName << "/" << namePrefix << link_name << "_" << j;
-          Cache_t::const_iterator _cache = cache.find (mesh_path);
-          LeafNodeColladaPtr_t meshNode;
-          if (_cache == cache.end()) {
-            meshNode = LeafNodeCollada::create (oss.str (), mesh_path);
-            cache.insert (std::make_pair(mesh_path, meshNode->getColladaPtr()));
-          } else
-            meshNode = LeafNodeCollada::create (oss.str (), _cache->second, mesh_path);
-          osgVector3 static_pos; osgQuat static_quat;
-	  if (linkFrame) {
-	    getStaticTransform (urdfLink, static_pos, static_quat, visual,j);
-	  }
-          meshNode->setStaticTransform(static_pos,static_quat);
-          meshNode->setScale(osgVector3((float)mesh_shared_ptr->scale.x,
-                                    (float)mesh_shared_ptr->scale.y,
-                                    (float)mesh_shared_ptr->scale.z));
 
-          linkNode->add(meshNode, visual);
-          // Set Color if specified
-          if (visual && urdfLink->visual_array [j]->material) {
-            osgVector4 color(urdfLink->visual_array [j]->material->color.r, 
-			     urdfLink->visual_array [j]->material->color.g, 
-			     urdfLink->visual_array [j]->material->color.b, 
-			     urdfLink->visual_array [j]->material->color.a);
-            meshNode->setColor(color);
-            if (urdfLink->visual_array [j]->material->texture_filename != "") {
-              std::string textureFilename = getFilename
-                (urdfLink->visual_array [j]->material->texture_filename);
-              meshNode->setTexture(textureFilename);
-            }
-          }
-        }
+      return meshNode;
     }
 
-    void addCylinder (const std::string &robotName,
-                      const std::string& namePrefix,
-		      LinkPtr& urdfLink,
-		      std::size_t j,
-		      LinkNodePtr_t &linkNode, bool visual, bool linkFrame)
+    Material parseMaterial (const QDomElement material)
     {
-      std::string link_name;
-      shared_ptr< ::urdf::Cylinder > cylinder_shared_ptr;
+      Material mat;
 
-      if (visual) {
-	cylinder_shared_ptr = urdf::static_pointer_cast < ::urdf::Cylinder >
-	  ( urdfLink->visual_array [j]->geometry );
-      } else {
-	cylinder_shared_ptr = urdf::static_pointer_cast < ::urdf::Cylinder >
-	  ( urdfLink->collision_array [j]->geometry );
+      // Set color
+      QDomElement color = material.firstChildElement ("color");
+      mat.hasColor = !color.isNull();
+      if (mat.hasColor) {
+        toFloats (color.attribute ("rgba"), mat.color);
       }
-      link_name = urdfLink->name;
-      OUT( "Cylinder" );
-      if ( cylinder_shared_ptr )
-        {
-	  std::ostringstream oss;
-	  oss << robotName << "/" << namePrefix << link_name << "_" << j;
-          LeafNodeCylinderPtr_t cylinderNode
-	    (LeafNodeCylinder::create
-	     (oss.str (), (float)cylinder_shared_ptr.get()->radius,
-	      (float)cylinder_shared_ptr.get()->length));
-          osgVector3 static_pos; osgQuat static_quat;
-	  if (linkFrame) {
-	    getStaticTransform (urdfLink, static_pos, static_quat, visual,j);
-	  }
-          cylinderNode->setStaticTransform(static_pos,static_quat);
 
-          // Set Color if specified
-          if (visual && urdfLink->visual_array [j]->material) {
-            osgVector4 color(urdfLink->visual_array [j]->material->color.r, urdfLink->visual_array [j]->material->color.g, urdfLink->visual_array [j]->material->color.b, urdfLink->visual_array [j]->material->color.a);
-            cylinderNode->setColor(color);
-            if (urdfLink->visual_array [j]->material->texture_filename != "") {
-              std::string textureFilename = getFilename
-                (urdfLink->visual_array [j]->material->texture_filename);
-              cylinderNode->setTexture(textureFilename);
-            }
-          }
-
-          // add object to link node
-          linkNode->add(cylinderNode, visual);
-        }
+      // Set texture
+      QDomElement texture = material.firstChildElement ("texture");
+      mat.hasTexture = !texture.isNull();
+      if (mat.hasTexture) {
+        if (!texture.hasAttribute ("filename"))
+          throw std::logic_error ("texture tag must have a filename attribute.");
+        mat.texture = getFilename (texture.attribute("filename"));
+      }
+      return mat;
     }
 
-    void addBox (const std::string &robotName,
-                 const std::string& namePrefix,
-		 LinkPtr& urdfLink,
-		 std::size_t j,
-		 LinkNodePtr_t &linkNode, bool visual, bool linkFrame)
+    void setMaterial (const QDomElement material,
+        NodePtr_t node,
+        const MaterialMap_t& materials)
     {
-      std::string link_name;
-      shared_ptr< ::urdf::Box > box_shared_ptr;
+      if (material.isNull()) return;
+      Material mat;
 
-      if (visual) {
-	box_shared_ptr = urdf::static_pointer_cast< ::urdf::Box >
-	  ( urdfLink->visual_array [j]->geometry);
+      if (!material.hasAttribute ("name"))
+        throw std::logic_error ("material tag must have a name attribute.");
+
+      QString name = material.attribute ("name");
+      if (materials.contains (name)) {
+        mat = materials[name];
       } else {
-	box_shared_ptr = urdf::static_pointer_cast< ::urdf::Box >
-	  ( urdfLink->collision_array [j]->geometry);
+        // Parse material
+        mat = parseMaterial (material);
       }
-      link_name = urdfLink->name;
-      OUT( "Box" );
-      if ( box_shared_ptr ) {
-	std::ostringstream oss;
-	oss << robotName << "/" << namePrefix << link_name << "_" << j;
-	LeafNodeBoxPtr_t boxNode = LeafNodeBox::create
-	  (oss.str (),
-	   osgVector3((float)(.5*box_shared_ptr->dim.x),
-		      (float)(.5*box_shared_ptr->dim.y),
-		      (float)(.5*box_shared_ptr->dim.z)));
-          osgVector3 static_pos; osgQuat static_quat;
-	  if (linkFrame) {
-	    getStaticTransform (urdfLink, static_pos, static_quat, visual,j);
-	  }
-          boxNode->setStaticTransform(static_pos,static_quat);
 
-          // Set Color if specified
-          if (visual && urdfLink->visual_array [j]->material) {
-            osgVector4 color(urdfLink->visual_array [j]->material->color.r, urdfLink->visual_array [j]->material->color.g, urdfLink->visual_array [j]->material->color.b, urdfLink->visual_array [j]->material->color.a);
-            boxNode->setColor(color);
-            if (urdfLink->visual_array [j]->material->texture_filename != "") {
-              std::string textureFilename = getFilename
-                (urdfLink->visual_array [j]->material->texture_filename);
-              boxNode->setTexture(textureFilename);
-            }
-          }
-          // add object to link node
-          linkNode->add(boxNode, visual);
-        }
-    }
+      // Set color
+      if (mat.hasColor)
+        node->setColor (mat.color);
 
-    void addSphere (const std::string &robotName,
-                    const std::string& namePrefix,
-		    LinkPtr& urdfLink,
-		    std::size_t j,
-		    LinkNodePtr_t &linkNode, bool visual, bool linkFrame)
-    {
-      std::string link_name;
-      shared_ptr< ::urdf::Sphere > sphere_shared_ptr;
-
-      if (visual) {
-	sphere_shared_ptr = urdf::static_pointer_cast < ::urdf::Sphere >
-	  ( urdfLink->visual_array [j]->geometry );
-      } else {
-	sphere_shared_ptr = urdf::static_pointer_cast < ::urdf::Sphere >
-	  ( urdfLink->collision_array [j]->geometry );
+      // Set texture
+      if (mat.hasTexture) {
+        NodeDrawablePtr_t    nd = dynamic_pointer_cast<NodeDrawable   > (node);
+        LeafNodeColladaPtr_t lc = dynamic_pointer_cast<LeafNodeCollada> (node);
+        assert (nd || lc);
+        if      (nd) nd->setTexture(mat.texture);
+        else if (lc) lc->setTexture(mat.texture);
       }
-      link_name = urdfLink->name;
-      OUT( "Sphere" );
-      if ( sphere_shared_ptr )
-        {
-	  std::ostringstream oss;
-	  oss << robotName << "/" << namePrefix << link_name << "_" << j;
-          LeafNodeSpherePtr_t sphereNode
-	    (LeafNodeSphere::create(oss.str (),
-				    (float)sphere_shared_ptr.get()->radius));
-          osgVector3 static_pos; osgQuat static_quat;
-	  if (linkFrame) {
-	    getStaticTransform (urdfLink, static_pos, static_quat, visual,j);
-	  }
-          sphereNode->setStaticTransform(static_pos,static_quat);
-
-          // Set Color if specified
-          if (visual && urdfLink->visual_array [j]->material) {
-            osgVector4 color(urdfLink->visual_array [j]->material->color.r, urdfLink->visual_array [j]->material->color.g, urdfLink->visual_array [j]->material->color.b, urdfLink->visual_array [j]->material->color.a);
-            sphereNode->setColor(color);
-            if (urdfLink->visual_array [j]->material->texture_filename != "") {
-              std::string textureFilename = getFilename
-                (urdfLink->visual_array [j]->material->texture_filename);
-              sphereNode->setTexture(textureFilename);
-            }
-          }
-
-          // add links to link node
-          linkNode->add(sphereNode, visual);
-        }
     }
-
-    template <typename T> inline const std::vector<T>& getGeomArray (const LinkPtr& link);
-    template <> inline const std::vector<   VisualPtr>& getGeomArray<   VisualPtr> (const LinkPtr& link) { return link->   visual_array; }
-    template <> inline const std::vector<CollisionPtr>& getGeomArray<CollisionPtr> (const LinkPtr& link) { return link->collision_array; }
-    template <bool visual> struct GeomArray { typedef    VisualPtr type; };
-    template <> struct GeomArray <false>    { typedef CollisionPtr type; };
 
     template <bool visual> void addGeoms(const std::string &robotName,
-                    const std::string& namePrefix,
-		    LinkPtr& link,
+                    const QString& namePrefix,
+		    const QDomElement link,
 		    LinkNodePtr_t &linkNode, bool linkFrame,
-                    Cache_t& cache)
+                    Cache_t& cache,
+                    const MaterialMap_t& materials)
     {
-      typedef typename GeomArray<visual>::type BodyType;
-      const std::vector<BodyType>& array = getGeomArray<BodyType>(link);
-      for (std::size_t j = 0; j < array.size (); ++j) {
-        switch (array [j]->geometry->type) {
-          case urdf::Geometry::MESH:
-            addMesh     (robotName, namePrefix, link, j, linkNode, visual, linkFrame, cache);
-            break;
-          case urdf::Geometry::CYLINDER:
-            addCylinder (robotName, namePrefix, link, j, linkNode, visual, linkFrame);
-            break;
-          case urdf::Geometry::BOX:
-            addBox      (robotName, namePrefix, link, j, linkNode, visual, linkFrame);
-            break;
-          case urdf::Geometry::SPHERE:
-            addSphere   (robotName, namePrefix, link, j, linkNode, visual, linkFrame);
-            break;
+      static const QString tagName (visual ? "visual" : "collision");
+      static const QString nameFormat ("%1/%2_%3");
+      QString name = nameFormat
+        .arg (robotName.c_str())
+        .arg (namePrefix);
+
+      int index = 0;
+      for (QDomElement element = link.firstChildElement (tagName);
+          !element.isNull();
+          element = element.nextSiblingElement (tagName)) {
+        NodePtr_t node;
+        QString name_i = name.arg (index);
+
+        // Parse tag geometry
+        QDomElement geometry = element.firstChildElement("geometry");
+        if (!geometry.nextSiblingElement ("geometry").isNull())
+          throw std::logic_error ("Visual or collision tag contains two geometries.");
+        int N = 0;
+        bool ok;
+        for (QDomElement type = geometry.firstChildElement ();
+            !type.isNull(); type = type.nextSiblingElement ()) {
+          if        (type.tagName() == "box") {
+            // Create box
+            osgVector3 sideLengths;
+            toFloats (type.attribute("size"), sideLengths);
+            node = LeafNodeBox::create (name_i.toStdString (), sideLengths * .5f);
+            ++N;
+          } else if (type.tagName() == "cylinder") {
+            float radius = type.attribute("radius").toFloat (&ok);
+            if (!ok) throw std::logic_error ("Could not parse cylinder radius.");
+            float length = type.attribute("length").toFloat (&ok);
+            if (!ok) throw std::logic_error ("Could not parse cylinder length.");
+	    node = LeafNodeCylinder::create (name_i.toStdString(), radius, length);
+            ++N;
+          } else if (type.tagName() == "sphere") {
+            float radius = type.attribute("radius").toFloat (&ok);
+            if (!ok) throw std::logic_error ("Could not parse sphere radius.");
+            node = LeafNodeSphere::create(name_i.toStdString(), radius);
+            ++N;
+          } else if (type.tagName() == "mesh") {
+            node = createMesh (name_i, type, cache);
+            ++N;
+          }
         }
+        if (N != 1)
+          throw std::logic_error ("geometry tag must contain only one of box, cylinder, sphere or mesh.");
+
+        // Parse tag origin
+        if (linkFrame) {
+          osgVector3 static_pos; osgQuat static_quat;
+          parseOrigin (element, static_pos, static_quat);
+          node->setStaticTransform(static_pos,static_quat);
+        }
+
+        // Parse tag meterial
+        setMaterial (element.firstChildElement ("material"),
+            node, materials);
+
+        linkNode->add(node, visual);
+        ++index;
+      }
+    }
+
+    void parseXML (const std::string& urdf_file, QDomDocument& model)
+    {
+      bool ok;
+      QString errorPrefix, errorMsg;
+      int errorRow, errorCol;
+
+      if (urdf_file.compare(urdf_file.length() - 5, 5, ".urdf") == 0) {
+        QFile file (urdf_file.c_str());
+        ok = model.setContent (&file, false, &errorMsg, &errorRow, &errorCol);
+        errorPrefix = "Failed to parse ";
+        errorPrefix +=  urdf_file.c_str();
+      } else {
+        QBuffer buffer;
+        buffer.setData (urdf_file.c_str(), (int)urdf_file.length());
+        ok = model.setContent (&buffer, false, &errorMsg, &errorRow, &errorCol);
+        errorPrefix = "Failed to parse XML string";
+      }
+
+      if (!ok) {
+        throw std::invalid_argument ( QString ("%1: %2 at %3:%4")
+            .arg (errorPrefix)
+            .arg (errorMsg)
+            .arg (errorRow)
+            .arg (errorCol)
+            .toStdString()
+            );
       }
     }
   }
 
   std::string getFilename (const std::string& input)
   {
-    if (input.substr(0, 10) == "package://") {
-      std::vector<std::string> rosPaths = rosPackagePath();
-      struct stat sb;
-      for (std::size_t i = 0; i < rosPaths.size(); ++i) {
-        const std::string name =
-          rosPaths[i] + '/' + input.substr(10, std::string::npos); 
-        if (stat(name.c_str(), &sb) == 0 && S_ISREG(sb.st_mode))
-          return name;
-      }
-      throw std::invalid_argument ("File not found: " + input
-          + ". Check ROS_PACKAGE_PATH environment variable.");
-    }
-    return input;
+    return details::getFilename (QString::fromStdString(input));
   }
 
   GroupNodePtr_t parse (const std::string& robotName,
@@ -445,50 +386,68 @@ namespace graphics {
 			const bool& visual,
 			const bool& linkFrame)
   {
-    shared_ptr< urdf::ModelInterface > model;
-    if (urdf_file.compare(urdf_file.length() - 5, 5, ".urdf") == 0) {
-      model = urdf::parseURDFFile( getFilename(urdf_file) );
-      // Test that file has correctly been parsed
-      if (!model) throw std::invalid_argument ("Failed to parse " + urdf_file);
-    } else {
-      model = urdf::parseURDF( urdf_file );
-      if (!model) throw std::invalid_argument ("Failed to parse XML string");
+    QDomDocument model;
+
+    // Parse the XML document
+    details::parseXML (urdf_file, model);
+
+    // Parse the materials
+    details::MaterialMap_t materials;
+    for (QDomElement material = model.firstChildElement("robot").firstChildElement("material");
+        !material.isNull();
+        material = material.nextSiblingElement ("material")) {
+      if (!material.hasAttribute ("name"))
+        throw std::logic_error ("material tag must have a name attribute.");
+
+      details::Material mat = details::parseMaterial (material);
+
+      if (!mat.hasColor && !mat.hasTexture)
+        throw std::logic_error ("material tag must have either a color or a texture.");
+      QString name = material.attribute ("name");
+      materials[name] = mat;
     }
+        
+
     GroupNodePtr_t robot = GroupNode::create(robotName);
-    std::vector< LinkPtr > links;
-    model->getLinks(links);
-    std::string link_name;
+    QDomNodeList links = model.elementsByTagName ("link");
 
     robot->addProperty (
         BoolProperty::create("ShowVisual",
-          BoolProperty::Getter_t(boost::bind(getShowVisuals, robot.get())),
-          BoolProperty::Setter_t(boost::bind(setShowVisuals, robot.get(), _1))
+          BoolProperty::Getter_t(boost::bind(details::getShowVisuals, robot.get())),
+          BoolProperty::Setter_t(boost::bind(details::setShowVisuals, robot.get(), _1))
           ));
 
-    for (unsigned int i = 0 ; i < links.size() ; i++) {
-      link_name = links[i]->name;
+    details::Cache_t cache;
+    for (int i = 0 ; i < links.size() ; i++) {
+      QDomElement link = links.at(i).toElement();
+      if (link.isNull()) throw std::logic_error ("link must be a tag.");
+      QString name = link.attribute ("name");
+      if (name.isNull()) throw std::logic_error ("A link has no name attribute.");
+
+      std::string link_name = name.toStdString();
       OUT( link_name );
-      LinkNodePtr_t linkNode (LinkNode::create (robotName + "/" + link_name));
+
+      details::LinkNodePtr_t linkNode (details::LinkNode
+          ::create (robotName + "/" + link_name));
       linkNode->showVisual(visual);
       // add link to robot node
       robot->addChild (linkNode);
 
-      Cache_t cache;
       if (visual) {
-        addGeoms<true >(robotName, "", links[i], linkNode, linkFrame, cache);
+        details::addGeoms<true >(robotName, name, link, linkNode, linkFrame, cache, materials);
         if (linkFrame) {
           try {
-            addGeoms<false>(robotName, "collision_", links[i], linkNode, linkFrame, cache);
+            details::addGeoms<false>(robotName, "collision_"+name, link, linkNode, linkFrame, cache, materials);
           } catch (const std::invalid_argument& e) {
             std::cerr << "Could not load collision geometries of " << robotName << ":"
               << e.what() << std::endl;
           }
         }
       } else {
-        addGeoms<false >(robotName, "", links[i], linkNode, linkFrame, cache);
+        details::addGeoms<false >(robotName, name, link, linkNode, linkFrame, cache, materials);
         if (linkFrame) {
           try {
-            addGeoms<true>(robotName, "visual_", links[i], linkNode, linkFrame, cache);
+            details::addGeoms<true>(robotName, "visual_"+name, link, linkNode, linkFrame, cache, materials);
           } catch (const std::invalid_argument& e) {
             std::cerr << "Could not load visual geometries of " << robotName << ":"
               << e.what() << std::endl;
