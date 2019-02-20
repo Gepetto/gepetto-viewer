@@ -10,8 +10,6 @@
 #ifndef DynAndGraph_config_h
 #define DynAndGraph_config_h
 
-#include <gepetto/viewer/macros.h>
-
 #include <osg/Shape>
 #include <osg/ShapeDrawable>
 #include <osg/Geometry>
@@ -23,8 +21,6 @@
 #include <osg/Node>
 #include <osg/Group>
 #include <osg/Switch>
-#include <osgShadow/ShadowedScene>
-#include <osgShadow/ViewDependentShadowMap>
 #include <osg/ClearNode>
 #include <osg/LineWidth>
 
@@ -47,6 +43,9 @@
 #include <osg/GraphicsContext>
 
 #include <osg/PolygonMode>
+
+#include <gepetto/viewer/fwd.h>
+#include <gepetto/viewer/macros.h>
 
 namespace osg
 {
@@ -97,11 +96,6 @@ namespace osg
     typedef ::osg::ref_ptr< GraphicsContext::Traits > TraitsRefPtr;
   
 } /* namespace osg */
-
-namespace osgShadow {
-    DEF_OSG_CLASS_REF_PTR(ShadowedScene)
-    DEF_OSG_CLASS_REF_PTR(ViewDependentShadowMap)
-} /* namespace osgShadow */
 
 namespace osgViewer
 {

@@ -6,10 +6,9 @@
 //  Copyright (c) 2016 LAAS-CNRS. All rights reserved.
 //
 
-#include <sys/stat.h>
-#include <fstream>
-#include <ios>
 #include <gepetto/viewer/leaf-node-mesh.h>
+
+#include <osg/Texture2D>
 #include <osgDB/ReadFile>
 
 namespace gepetto {

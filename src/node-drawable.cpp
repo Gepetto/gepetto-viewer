@@ -3,6 +3,7 @@
 
 #include <gepetto/viewer/node-drawable.h>
 
+#include <osg/Texture2D>
 #include <osgDB/ReadFile>
 
 namespace gepetto {

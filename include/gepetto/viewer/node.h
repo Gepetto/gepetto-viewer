@@ -10,6 +10,7 @@
 #define SCENEVIEWER_NODE_HH
 
 #include <iostream>
+#include <gepetto/viewer/fwd.h>
 #include <gepetto/viewer/node-visitor.h>
 #include <gepetto/viewer/node-property.h>
 #include <gepetto/viewer/config-osg.h>
@@ -17,8 +18,6 @@
 namespace gepetto {
 namespace viewer {
     
-    DEF_CLASS_SMART_PTR(Node)
-
     enum {
       IntersectionBit = 0x1,
       NodeBit         = 0x2

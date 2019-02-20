@@ -23,12 +23,12 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
+#include <gepetto/viewer/fwd.h>
 #include <gepetto/viewer/config-osg.h>
 
 namespace gepetto {
 namespace viewer {
     
-    DEF_CLASS_SMART_PTR(Property)
     typedef std::map<std::string, PropertyPtr_t> PropertyMap_t;
 
     /// \cond

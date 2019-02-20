@@ -41,6 +41,7 @@ ENDIF(APPLE)
 # Declare Headers
 SET(${PROJECT_NAME}_HEADERS
   include/gepetto/viewer/config-osg.h
+  include/gepetto/viewer/fwd.h
   include/gepetto/viewer/group-node.h
   include/gepetto/viewer/leaf-node-box.h
   include/gepetto/viewer/leaf-node-capsule.h

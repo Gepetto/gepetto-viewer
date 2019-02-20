@@ -11,6 +11,7 @@
 #include <clocale>
 #include <ios>
 #include <osg/LightModel>
+#include <osg/Texture2D>
 #include <osgDB/FileNameUtils>
 #include <gepetto/viewer/leaf-node-collada.h>
 

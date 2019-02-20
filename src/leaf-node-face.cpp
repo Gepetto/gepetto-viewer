@@ -9,6 +9,7 @@
 #include <gepetto/viewer/leaf-node-face.h>
 
 #include <osg/CullFace>
+#include <osg/Texture2D>
 #include <osgDB/ReadFile>
 #include <osgUtil/SmoothingVisitor>
 
