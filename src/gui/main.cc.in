@@ -1,0 +1,92 @@
+#include <QApplication>
+#include <QSettings>
+#include <QStyleFactory>
+#include <QProcessEnvironment>
+#include <QSplashScreen>
+#include <QIcon>
+#include <QtGlobal>
+
+#include <QItemSelection>
+
+#include "gepetto/gui/safeapplication.hh"
+#include "gepetto/gui/mainwindow.hh"
+#include "gepetto/gui/dialog/pluginmanagerdialog.hh"
+#include "gepetto/gui/settings.hh"
+
+using namespace gepetto::gui;
+
+// TODO check what version exactly already includes the metatype declaration.
+// It is not in 5.2.1 and it is in 5.5.1
+#if (QT_VERSION < QT_VERSION_CHECK(5,5,1))
+Q_DECLARE_METATYPE(QItemSelection)
+#endif
+
+void setupApplication ()
+{
+  QCoreApplication::setOrganizationName("gepetto-gui");
+  QCoreApplication::setOrganizationDomain("@PROJECT_URL@");
+  QCoreApplication::setApplicationName("gepetto-gui");
+  QCoreApplication::setApplicationVersion("@PROJECT_VERSION@");
+  
+  QStringList theme_paths = QIcon::themeSearchPaths();
+  if (!theme_paths.contains("/usr/local/share/icons/")) {
+    theme_paths.prepend("/usr/local/share/icons/");
+    QIcon::setThemeSearchPaths(theme_paths);
+  }
+  QIcon::setThemeName("oxygen");
+
+  qRegisterMetaType<std::string>("std::string");
+  qRegisterMetaType<QItemSelection>("QItemSelection");
+}
+
+int main(int argc, char *argv[])
+{
+  QApplication::setAttribute(Qt::AA_X11InitThreads);
+
+  SafeApplication a(argc, argv);
+  a.setStyle(QStyleFactory::create (
+#if (QT_VERSION < QT_VERSION_CHECK(5,0,0))
+        "cleanlooks"
+#else
+        "fusion"
+#endif
+        ));
+  QPixmap pixmap(":/img/gepetto.png");
+  a.setWindowIcon(pixmap);
+
+  setupApplication();
+
+  // Set numeric locale to C so as not to disturb other libraries (like collada
+  // dom) relying on sscanf (locale dependant) to convert string to double.
+  setlocale(LC_NUMERIC, "C");
+
+  Settings settings ("@CMAKE_INSTALL_PREFIX@");
+  settings.setupPaths ();
+  switch (settings.initSettings (argc, argv)) {
+    case 0:
+      break;
+    case 1:
+      return 0;
+    case 2:
+      return 1;
+    default:
+      qDebug () << "Settings.fromArgv returned unknow error code";
+      break;
+  }
+
+  QSplashScreen splash(pixmap);
+  splash.show();
+  a.processEvents ();
+
+  MainWindow w (&settings);
+  w.setWindowIcon (pixmap);
+  settings.setMainWindow (&w);
+  settings.initPlugins ();
+  settings.restoreState ();
+  w.connect (&a, SIGNAL (log(QString)), SLOT (logError(const QString&)));
+  w.show();
+  splash.finish(&w);
+  int retCode = a.exec();
+  settings.saveState ();
+  return retCode;
+}

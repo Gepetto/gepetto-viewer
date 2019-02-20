@@ -22,3 +22,6 @@ TARGET_LINK_LIBRARIES(testing ${PROJECT_NAME})
 
 ADD_UNIT_TEST(nodes nodes)
 TARGET_LINK_LIBRARIES(nodes ${PROJECT_NAME} ${Boost_LIBRARIES})
+
+ADD_UNIT_TEST(safe-application safe-application)
+TARGET_LINK_LIBRARIES(safe-application ${PROJECT_NAME} ${Boost_LIBRARIES})
