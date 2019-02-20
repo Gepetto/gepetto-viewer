@@ -25,6 +25,8 @@ INCLUDE(cmake/boost.cmake)
 INCLUDE(cmake/ide.cmake)
 INCLUDE(cmake/apple.cmake)
 INCLUDE(cmake/test.cmake)
+INCLUDE(cmake-module/qt.cmake)
+INCLUDE(cmake-module/osgqt.cmake)
 
 SET(PROJECT_NAME gepetto-viewer)
 SET(PROJECT_DESCRIPTION "An user-friendly Graphical Interface")
@@ -76,45 +78,9 @@ FIND_PACKAGE(X11 REQUIRED)
 INCLUDE_DIRECTORIES(${X11_INCLUDE_DIR})
 FIND_PACKAGE(OpenGL REQUIRED)
 
-ADD_REQUIRED_DEPENDENCY("openscenegraph >= 3.2")
-IF(${OPENSCENEGRAPH_VERSION} VERSION_GREATER "3.5.5")
-  ADD_DEFINITIONS(-DOSG_3_5_6_OR_LATER)
-  PKG_CONFIG_APPEND_CFLAGS("-DOSG_3_5_6_OR_LATER")
-  ADD_REQUIRED_DEPENDENCY("openscenegraph-osgQt5")
-  SET(USE_QT4 FALSE CACHE BOOL "Use Qt4 instead of Qt5")
-ELSE()
-  ADD_REQUIRED_DEPENDENCY("openscenegraph-osgQt")
-
-  IF(NOT DEFINED USE_QT4)
-    FILE(READ "${OPENSCENEGRAPH_OSGQT_INCLUDEDIR}/osgQt/Version"
-      osgqt_version_content
-      LIMIT 500)
-    STRING(FIND ${osgqt_version_content} "#define OSGQT_QT_VERSION 4" osgqt_qt_version4_idx)
-    STRING(FIND ${osgqt_version_content} "#define OSGQT_QT_VERSION 5" osgqt_qt_version5_idx)
-    IF(osgqt_qt_version4_idx EQUAL -1 AND osgqt_qt_version5_idx EQUAL -1)
-    ELSEIF(osgqt_qt_version4_idx EQUAL -1 )
-      # QT5 only
-      SET(USE_QT4 FALSE CACHE BOOL "Use Qt4 instead of Qt5")
-    ELSEIF(osgqt_qt_version5_idx EQUAL -1 )
-      # QT4 only
-      SET(USE_QT4 TRUE CACHE BOOL "Use Qt4 instead of Qt5")
-    ELSE()
-      # Both found.
-      MESSAGE(FATAL_ERROR "Could not compute Qt version. Please set USE_QT4 variable manually")
-    ENDIF()
-  ENDIF(NOT DEFINED USE_QT4)
-ENDIF()
-
-IF(USE_QT4)
-  FIND_PACKAGE(Qt4 REQUIRED QtXml)
-  SET(PROJECT_QT_LIBS Qt4::QtXml)
-  SET(PKG_CONFIG_EXTRA "qtversion=${QT_VERSION_MAJOR}.${QT_VERSION_MINOR}.${QT_VERSION_PATCH}")
-ELSE()
-  FIND_PACKAGE(Qt5 REQUIRED COMPONENTS Xml)
-  SET(PROJECT_QT_LIBS Qt5::Xml)
-  SET(PKG_CONFIG_EXTRA "qtversion=${Qt5Core_VERSION}")
-ENDIF()
-
+ADD_OSGQT_DEPENDENCY()
+# Must be after ADD_OSGQT_DEPENDENCY
+ADD_QT_DEPENDENCY()
 
 SET(BOOST_COMPONENTS "unit_test_framework")
 SEARCH_FOR_BOOST()
