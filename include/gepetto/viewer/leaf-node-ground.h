@@ -11,8 +11,8 @@
 
 #include <gepetto/viewer/node.h>
 
-namespace graphics
-{
+namespace gepetto {
+namespace viewer {
     DEF_CLASS_SMART_PTR(LeafNodeGround)
     
     class LeafNodeGround : public Node
@@ -144,6 +144,7 @@ namespace graphics
         /** Destructor */
         virtual ~LeafNodeGround();
     };
-}
+} /* namespace viewer */
+} /* namespace gepetto */
 
 #endif /* SCENEVIEWER_LEAFNODEGROUND_HH */

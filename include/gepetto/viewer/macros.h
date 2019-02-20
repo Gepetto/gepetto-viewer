@@ -11,20 +11,24 @@
 
 #if __cplusplus > 199711L
 #include <memory>
-namespace graphics {
+namespace gepetto {
+namespace viewer {
   using std::shared_ptr;
   using std::weak_ptr;
   using std::static_pointer_cast;
   using std::dynamic_pointer_cast;
 }
+}
 #else
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
-namespace graphics {
+namespace gepetto {
+namespace viewer {
   using boost::shared_ptr;
   using boost::weak_ptr;
   using boost::static_pointer_cast;
   using boost::dynamic_pointer_cast;
+}
 }
 #endif
 
@@ -43,10 +47,10 @@ std::exit(EXIT_FAILURE); \
 /** Automatic builder of shared_ptr and weak_ptr for a class defined by its className */
 #define DEF_CLASS_SMART_PTR(className) \
 class className; \
-typedef graphics::shared_ptr<className> className##Ptr_t; \
-typedef graphics::shared_ptr<const className> className##ConstPtr_t; \
-typedef graphics::weak_ptr<className> className##WeakPtr; \
-typedef graphics::weak_ptr<const className> className##ConstWeakPtr; \
+typedef ::gepetto::viewer::shared_ptr<className> className##Ptr_t; \
+typedef ::gepetto::viewer::shared_ptr<const className> className##ConstPtr_t; \
+typedef ::gepetto::viewer::weak_ptr<className> className##WeakPtr; \
+typedef ::gepetto::viewer::weak_ptr<const className> className##ConstWeakPtr; \
 
 #define DEF_OSG_CLASS_REF_PTR(className) \
     /*class className;*/ \

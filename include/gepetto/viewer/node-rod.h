@@ -15,7 +15,8 @@
 #include <gepetto/viewer/config-osg.h>
 #include <vector>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
 
     DEF_CLASS_SMART_PTR(NodeRod)
 
@@ -78,6 +79,7 @@ namespace graphics {
 
             virtual void applyConfiguration(std::vector<std::vector<value_type> > params);
     };
-} //namespace graphics
+} /* namespace viewer */
+} /* namespace gepetto */
 
 #endif // ROD_HH

@@ -17,7 +17,8 @@
 #include <gepetto/viewer/transform-writer.h>
 #include <gepetto/viewer/node.h>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
   namespace {
     const char indent[] = "  ";
   }
@@ -75,4 +76,5 @@ namespace graphics {
     writer_->closeFile ();
   }
 
-} // namespace graphics
+} // namespace viewer
+} // namespace gepetto

@@ -11,7 +11,8 @@
 
 #include <gepetto/viewer/node-drawable.h>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
     DEF_CLASS_SMART_PTR(LeafNodeCone)
     
     /** Implementation of the Cone GraphicalObject in OSG render */
@@ -86,6 +87,7 @@ namespace graphics {
         virtual ~LeafNodeCone();
         
     };
-} /* namespace graphics */
+} /* namespace viewer */
+} /* namespace gepetto */
 
 #endif /* SCENEVIEWER_LEAFNODECONE_HH */

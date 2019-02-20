@@ -83,7 +83,8 @@
     throw std::invalid_argument (oss.str ().c_str ());				       \
   }
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
     namespace {
       typedef std::map<std::string, NodePtr_t>::iterator          NodeMapIt;
       typedef std::map<std::string, NodePtr_t>::const_iterator    NodeMapConstIt;
@@ -1243,4 +1244,6 @@ namespace graphics {
   DEFINE_WINDOWS_MANAGER_GET_SET_PROPERTY_FOR_TYPE(float, Float)
   DEFINE_WINDOWS_MANAGER_GET_SET_PROPERTY_FOR_TYPE(bool, Bool)
   DEFINE_WINDOWS_MANAGER_GET_SET_PROPERTY_FOR_TYPE(int, Int)
-} // namespace graphics
+} /* namespace viewer */
+
+} // namespace gepetto

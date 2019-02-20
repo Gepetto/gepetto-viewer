@@ -13,7 +13,8 @@
 #include <osg/PrimitiveSet>
 #include <osg/Geometry>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
     DEF_CLASS_SMART_PTR(LeafNodeMesh)
     
     /** Implementation of the Mesh GraphicalObject in OSG render */
@@ -95,6 +96,7 @@ namespace graphics {
         virtual ~LeafNodeMesh();
         
     };
-} /* namespace graphics */
+} /* namespace viewer */
+} /* namespace gepetto */
 
 #endif /* SCENEVIEWER_LEAFNODECOLLADA_HH */

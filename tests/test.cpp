@@ -24,7 +24,7 @@
   int main(int, const char**)
 
   {
-    using namespace graphics;
+    using namespace gepetto::viewer;
 
     LeafNodeBoxPtr_t box = LeafNodeBox::create("box1", osgVector3(0.1f,0.2f,0.3f));
     /*LeafNodeCapsulePtr_t capsule = LeafNodeCapsule::create("capsule1", 1,1);

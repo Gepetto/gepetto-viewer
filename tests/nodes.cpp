@@ -37,7 +37,8 @@
         BOOST_CHECK_SMALL (angle, (double)tol);         \
 }
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
   struct NodeTest {
     static void checkAbstractClass (NodePtr_t node)
     {
@@ -83,9 +84,10 @@ namespace graphics {
       node->setStaticTransform (_ts, _qs);
     }
   };
+} /* namespace viewer */
 }
 
-using namespace graphics;
+using namespace gepetto::viewer;
 
 BOOST_AUTO_TEST_SUITE( node )
 

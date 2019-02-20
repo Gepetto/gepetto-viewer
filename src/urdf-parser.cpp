@@ -33,7 +33,8 @@
 #define OUT(x) std::cout << x << std::endl
 // #define OUT(x) (void)0
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
   namespace urdfParser {
 
   namespace details {
@@ -51,7 +52,7 @@ namespace graphics {
     {
       private:
         bool currentIsVisual_;
-        std::vector<graphics::NodePtr_t> visuals_, collisions_;
+        std::vector<NodePtr_t> visuals_, collisions_;
 
       public:
         virtual ~LinkNode() {}
@@ -458,4 +459,6 @@ namespace graphics {
     return robot;
   }
   } // namespace urdfParser
+} /* namespace viewer */
+
 }

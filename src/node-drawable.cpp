@@ -5,7 +5,8 @@
 
 #include <osgDB/ReadFile>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
   void NodeDrawable::init ()
   {
     addProperty(Vector4Property::create("Color",
@@ -44,4 +45,5 @@ namespace graphics {
     geode_ptr_->getStateSet()->setTextureAttributeAndModes(0,texture,osg::StateAttribute::ON);
     setDirty();
   }
+} /* namespace viewer */
 }

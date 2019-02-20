@@ -14,7 +14,8 @@
 #include <osgText/Text>
 #include <osg/CullFace>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
     namespace {
       // if rot corresponds to identity, the arrow is along Z.
       inline osg::ShapeDrawableRefPtr arrowDrawable (const float& zshift,
@@ -272,5 +273,6 @@ namespace graphics {
 
     /* End of declaration of public function members */
 
-} /* namespace graphics */
+} /* namespace viewer */
+} /* namespace gepetto */
 

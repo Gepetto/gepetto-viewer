@@ -12,7 +12,8 @@
 #include <iostream>
 #include <gepetto/viewer/config-osg.h>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
     class Node;
     class GroupNode;
     class LeafNodeArrow;
@@ -60,6 +61,7 @@ namespace graphics {
       protected:
         bool invisibleAreValid_;
     }; /* class Node */
-} /* namespace graphics */
+} /* namespace viewer */
+} /* namespace gepetto */
 
 #endif /* SCENEVIEWER_NODE_VISITOR_HH */

@@ -37,7 +37,8 @@
 #include <gepetto/viewer/leaf-node-xyzaxis.h>
 //#include <gepetto/viewer/node-rod.h>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
   namespace {
     const char indent[] = "  ";
     const char end = '\n';
@@ -374,5 +375,6 @@ namespace graphics {
     out() << varShape << " = makeEmpty(\"" << node.getID() << "\")" << end;
     standardApply(node);
   }
-} // namespace graphics
+} // namespace viewer
+} // namespace gepetto
 

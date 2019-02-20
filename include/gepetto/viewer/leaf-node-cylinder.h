@@ -11,7 +11,8 @@
 
 #include <gepetto/viewer/node-drawable.h>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
     DEF_CLASS_SMART_PTR(LeafNodeCylinder)
     
     /** Implementation of the Cylinder GraphicalObject in OSG render */
@@ -87,6 +88,7 @@ namespace graphics {
         virtual ~LeafNodeCylinder();
         
     };
-} /* namespace graphics */
+} /* namespace viewer */
+} /* namespace gepetto */
 
 #endif /* SCENEVIEWER_LEAFNODECYLINDER_HH */

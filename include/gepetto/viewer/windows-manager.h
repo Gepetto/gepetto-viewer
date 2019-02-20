@@ -23,7 +23,8 @@
 #include <gepetto/viewer/config-osg.h>
 #include <gepetto/viewer/transform-writer.h>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
 
     typedef OpenThreads::Mutex Mutex;
     typedef OpenThreads::ScopedLock<Mutex> ScopedLock;
@@ -274,6 +275,7 @@ namespace graphics {
             NodePtr_t getNode (const std::string& nodeName, bool throwIfDoesntExist = false) const;
             Configuration getNodeGlobalTransform(const std::string nodeName) const;
     };
-} /* namespace graphics */
+} /* namespace viewer */
+} /* namespace gepetto */
 
 #endif /* SCENEVIEWER_WINDOWMANAGERS_HH */

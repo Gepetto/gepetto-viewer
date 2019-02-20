@@ -12,7 +12,8 @@
 #include <gepetto/viewer/group-node.h>
 #include <gepetto/viewer/leaf-node-collada.h>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
   namespace urdfParser {
 
     /// If input starts with "package://", read ROS_PACKAGE_PATH environment
@@ -40,6 +41,7 @@ namespace graphics {
 			  const bool& visual = true,
 			  const bool& linkFrame = true);
   }
-}
+} /* namespace viewer */
+} /* namespace gepetto */
 
 #endif // SCENEVIEWER_URDFPARSER_HH

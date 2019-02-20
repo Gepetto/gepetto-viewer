@@ -18,7 +18,8 @@
 #include <gepetto/viewer/window-manager.h>
 #include <gepetto/viewer/node-visitor.h>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
   namespace {
     const osg::StateSetRefPtr& getVisibleStateSet (const LightingMode& mode)
     {
@@ -673,4 +674,6 @@ namespace graphics {
   /* End of declaration of public function members */
 
 
-} /* namespace graphics */
+} /* namespace viewer */
+
+} /* namespace gepetto */

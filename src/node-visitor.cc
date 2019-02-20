@@ -34,7 +34,9 @@
 #include <gepetto/viewer/node-visitor.h>
 #include <gepetto/viewer/roadmap-viewer.h>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
+
   void NodeVisitor::apply (Node& node){
     traverse (node);
   }
@@ -85,4 +87,5 @@ namespace graphics {
   void NodeVisitor::traverse (Node& node) {
     node.traverse (*this);
   }
-} // namespace graphics
+} // namespace viewer
+} // namespace gepetto

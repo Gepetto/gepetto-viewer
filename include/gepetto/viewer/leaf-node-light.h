@@ -12,7 +12,8 @@
 #include <gepetto/viewer/leaf-node-sphere.h>
 #include <gepetto/viewer/group-node.h>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
     DEF_CLASS_SMART_PTR(LeafNodeLight)
 
     /** Implementation of the Light GraphicalObject in OSG render */
@@ -74,6 +75,7 @@ namespace graphics {
         virtual ~LeafNodeLight();
 
     };
-} /* namespace graphics */
+} /* namespace viewer */
+} /* namespace gepetto */
 
 #endif /* SCENEVIEWER_LEAFNODELIGHT_HH */

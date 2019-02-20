@@ -11,7 +11,8 @@
 
 #include <gepetto/viewer/node.h>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
 
     DEF_CLASS_SMART_PTR(LeafNodeFace)
     
@@ -83,6 +84,7 @@ namespace graphics {
         virtual ~LeafNodeFace();
         
     };
-} /* namespace graphics */
+} /* namespace viewer */
+} /* namespace gepetto */
 
 #endif /* SCENEVIEWER_LEAFNODEFACE_HH */

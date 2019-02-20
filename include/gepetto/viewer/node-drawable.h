@@ -11,7 +11,8 @@
 
 #include <gepetto/viewer/node.h>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
     DEF_CLASS_SMART_PTR(NodeDrawable)
     
     /** Implementation of the drawable object in OSG render engine */
@@ -51,6 +52,7 @@ namespace graphics {
         /** Destructor */
         virtual ~NodeDrawable() {}
     };
-} /* namespace graphics */
+} /* namespace viewer */
+} /* namespace gepetto */
 
 #endif /* SCENEVIEWER_NODEDRAWABLE_HH */

@@ -11,7 +11,8 @@
 
 #include <gepetto/viewer/node.h>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
     
     DEF_CLASS_SMART_PTR(GroupNode)
     
@@ -21,7 +22,7 @@ namespace graphics {
         /**
          \brief List of all child graphical object
          */
-        typedef std::vector<graphics::NodePtr_t> Nodes_t;
+        typedef std::vector<NodePtr_t> Nodes_t;
         Nodes_t list_of_objects_;
 
         /** Associated weak pointer */
@@ -59,15 +60,15 @@ namespace graphics {
         
         /** Add a GraphicalObject to the list
          */
-        virtual bool addChild (::graphics::NodePtr_t child_ptr);
+        virtual bool addChild (NodePtr_t child_ptr);
         
         /** Remove a GraphicalObject from the list
          */
-        virtual bool removeChild (::graphics::NodePtr_t child_ptr);
+        virtual bool removeChild (NodePtr_t child_ptr);
         
         /** Return true if this group contains this child
          */
-        virtual bool hasChild (::graphics::NodePtr_t child_ptr) const;
+        virtual bool hasChild (NodePtr_t child_ptr) const;
         
         /** Remove all children
          */
@@ -78,7 +79,7 @@ namespace graphics {
           return list_of_objects_.size();
         }
 
-        virtual graphics::NodePtr_t getChild(size_t i) const
+        virtual NodePtr_t getChild(size_t i) const
         {  
            Nodes_t::const_iterator it = list_of_objects_.begin();
            if (list_of_objects_.size() > i)
@@ -124,6 +125,7 @@ namespace graphics {
         
     }; /* class GraphicalGroupOSG */
 
-} /* namespace graphics */
+} /* namespace viewer */
+} /* namespace gepetto */
 
 #endif /* SCENEVIEWER_GROUPNODE_HH */

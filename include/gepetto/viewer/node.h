@@ -14,7 +14,8 @@
 #include <gepetto/viewer/node-property.h>
 #include <gepetto/viewer/config-osg.h>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
     
     DEF_CLASS_SMART_PTR(Node)
 
@@ -253,6 +254,7 @@ namespace graphics {
         
     }; /* class Node */
     
-} /* namespace graphics */
+} /* namespace viewer */
+} /* namespace gepetto */
 
 #endif /* dSCENEVIEWER_NODE_HH */

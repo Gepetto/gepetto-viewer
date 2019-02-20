@@ -18,7 +18,8 @@
 
 #include <sstream>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
   int MetaEnum::from_string (const std::string& s)
   {
     for (std::size_t i = 0; i < names.size(); ++i)
@@ -97,4 +98,6 @@ namespace graphics {
     throw std::invalid_argument(oss.str());
     return false;
   }
-} /* namespace graphics */
+} /* namespace viewer */
+
+} /* namespace gepetto */

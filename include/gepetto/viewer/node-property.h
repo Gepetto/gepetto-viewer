@@ -25,7 +25,8 @@
 
 #include <gepetto/viewer/config-osg.h>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
     
     DEF_CLASS_SMART_PTR(Property)
     typedef std::map<std::string, PropertyPtr_t> PropertyMap_t;
@@ -162,6 +163,7 @@ namespace graphics {
         const MetaEnum* metaEnum_;
     };
 
-} /* namespace graphics */
+} /* namespace viewer */
+} /* namespace gepetto */
 
 #endif /* SCENEVIEWER_NODE_PROPERTY_HH */

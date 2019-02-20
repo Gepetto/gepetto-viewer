@@ -8,17 +8,18 @@
 
 #include <gepetto/viewer/group-node.h>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
     
     /* Declaration of private function members */
     
     GroupNode::GroupNode (const std::string& name):
-        graphics::Node (name), list_of_objects_()
+        Node (name), list_of_objects_()
     {
     }
     
     GroupNode::GroupNode (const GroupNode& other):
-        graphics::Node (other), list_of_objects_()
+        Node (other), list_of_objects_()
     {        
         size_t i;
         for (i=0;
@@ -90,7 +91,7 @@ namespace graphics {
         return removed;
     }
 
-    bool GroupNode::hasChild (::graphics::NodePtr_t child_ptr) const
+    bool GroupNode::hasChild (NodePtr_t child_ptr) const
     {
         Nodes_t::const_iterator it =
             std::find (list_of_objects_.begin(), list_of_objects_.end(), child_ptr);
@@ -180,4 +181,5 @@ namespace graphics {
     
     /* End of declaration of public function members */
     
-} /* namespace graphics */
+} /* namespace viewer */
+} /* namespace gepetto */

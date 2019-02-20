@@ -17,7 +17,8 @@
 #include <gepetto/viewer/node-visitor.h>
 #include <gepetto/viewer/node.h>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
   class IsDirtyVisitor : public NodeVisitor
   {
     public:
@@ -65,4 +66,5 @@ namespace graphics {
   }; /* class Node */
   typedef SetDirtyVisitorTpl<true > SetDirtyVisitor;
   typedef SetDirtyVisitorTpl<false> SetCleanVisitor;
-} // namespace graphics
+} /* namespace viewer */
+} // namespace gepetto

@@ -19,7 +19,8 @@
 
 #include <../src/is-dirty-visitor.h>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
   namespace {
     struct ScreenShot : public osg::Camera::DrawCallback
     {
@@ -219,7 +220,7 @@ namespace graphics {
 
     void WindowManager::init(osgViewer::Viewer* v, osg::GraphicsContext* gc)
     {
-      scene_ptr_ = ::graphics::GroupNode::create(gc->getTraits()->windowName);
+      scene_ptr_ = GroupNode::create(gc->getTraits()->windowName);
       
       viewer_ptr_ = v;
       viewer_ptr_->setSceneData ( scene_ptr_->asGroup() );
@@ -515,4 +516,6 @@ namespace graphics {
   
     /* End declaration of public function members */
 
-} /* namespace graphics */
+} /* namespace viewer */
+
+} /* namespace gepetto */

@@ -16,7 +16,8 @@
 #include <gepetto/viewer/leaf-node-xyzaxis.h>
 #include <gepetto/viewer/leaf-node-line.h>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
 
     DEF_CLASS_SMART_PTR(RoadmapViewer)
 
@@ -26,8 +27,8 @@ namespace graphics {
         /**
          \brief List of all child graphical object
          */
-        std::list<graphics::LeafNodeXYZAxisPtr_t> list_nodes_;
-        std::list<graphics::LeafNodeLinePtr_t> list_edges_;
+        std::list<LeafNodeXYZAxisPtr_t> list_nodes_;
+        std::list<LeafNodeLinePtr_t> list_edges_;
 
         /** Associated weak pointer */
         RoadmapViewerWeakPtr weak_ptr_;
@@ -99,9 +100,9 @@ namespace graphics {
           return list_edges_.size();
         }
 
-        virtual graphics::LeafNodeXYZAxisPtr_t getNode(size_t i) const
+        virtual LeafNodeXYZAxisPtr_t getNode(size_t i) const
         {
-           std::list<graphics::LeafNodeXYZAxisPtr_t>::const_iterator it = list_nodes_.begin();
+           std::list<LeafNodeXYZAxisPtr_t>::const_iterator it = list_nodes_.begin();
            if (list_nodes_.size() > i)
            {
                std::advance(it, i);
@@ -109,9 +110,9 @@ namespace graphics {
            return *it;
         }
 
-        virtual graphics::LeafNodeLinePtr_t getEdge(size_t i) const
+        virtual LeafNodeLinePtr_t getEdge(size_t i) const
         {
-           std::list<graphics::LeafNodeLinePtr_t>::const_iterator it = list_edges_.begin();
+           std::list<LeafNodeLinePtr_t>::const_iterator it = list_edges_.begin();
            if (list_edges_.size() > i)
            {
                std::advance(it, i);
@@ -145,5 +146,7 @@ namespace graphics {
 
     }; //class
 
-}//namespace graphics
+} /* namespace viewer */
+} /* namespace gepetto */
+
 #endif

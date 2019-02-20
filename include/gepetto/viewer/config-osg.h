@@ -115,7 +115,8 @@ typedef ::osg::Vec4f osgVector4;
 
 typedef ::osg::Quat osgQuat;
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
     
 #define DEF_WIDTH_WINDOW 600
 #define DEF_HEIGHT_WINDOW 480
@@ -148,6 +149,7 @@ namespace graphics {
     };     
 
     
-} /* namespace graphics */
+} /* namespace viewer */
+} /* namespace gepetto */
 
 #endif
