@@ -40,7 +40,6 @@ namespace gepetto {
       , stateConf (".state")
       , verbose (false)
       , noPlugin (false)
-      , startGepettoCorbaServer (true)
       , useNameService (false)
       , refreshRate (30)
       , captureDirectory ()
@@ -127,7 +126,7 @@ namespace gepetto {
       genAndQuit =              (arguments.read("-g") || arguments.read("--generate-config-files"));
       noPlugin =                (arguments.read("-P") || arguments.read("--no-plugin"));
       autoWriteSettings =       (arguments.read("-w") || arguments.read("--auto-write-settings"));
-      startGepettoCorbaServer = (!arguments.read("--no-viewer-server"));
+      bool startViewerServer = (!arguments.read("--no-viewer-server"));
       while (arguments.read ("--use-nameservice", useNameService)) {}
 
       std::string opt;
@@ -141,6 +140,9 @@ namespace gepetto {
         addPyPlugin (QString::fromStdString(opt), !noPlugin);
       while (arguments.read ("-x", opt) || arguments.read ("--run-pyscript", opt))
         addPyScript (QString::fromStdString(opt));
+      if (startViewerServer) {
+        addPlugin ("omniorbserver.so", true);
+      }
 
       arguments.reportRemainingOptionsAsUnrecognized(osg::ArgumentParser::BENIGN);
       if (arguments.errors(osg::ArgumentParser::CRITICAL)) {
@@ -280,7 +282,6 @@ namespace gepetto {
         << nl << nl << "Options:"
         << nl << tab << "Verbose:                " << tab << verbose
         << nl << tab << "No plugin:              " << tab << noPlugin
-        << nl << tab << "Start Viewer server:    " << tab << startGepettoCorbaServer
         << nl << tab << "Use omni name service:  " << tab << useNameService
         << nl << tab << "Refresh rate:           " << tab << refreshRate
 

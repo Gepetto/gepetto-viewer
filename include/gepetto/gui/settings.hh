@@ -43,7 +43,6 @@ namespace gepetto {
       bool verbose;
       bool noPlugin;
       bool autoWriteSettings;
-      bool startGepettoCorbaServer;
       bool useNameService;
 
       int refreshRate;
