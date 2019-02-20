@@ -14,8 +14,8 @@
 // received a copy of the GNU Lesser General Public License along with
 // gepetto-viewer. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef SCENEVIEWER_WINDOWMANAGERS_HH
-#define SCENEVIEWER_WINDOWMANAGERS_HH
+#ifndef GEPETTO_VIEWER_WINDOWMANAGERS_HH
+#define GEPETTO_VIEWER_WINDOWMANAGERS_HH
 
 #include <OpenThreads/Mutex>
 #include <OpenThreads/ScopedLock>
@@ -278,4 +278,4 @@ namespace viewer {
 } /* namespace viewer */
 } /* namespace gepetto */
 
-#endif /* SCENEVIEWER_WINDOWMANAGERS_HH */
+#endif /* GEPETTO_VIEWER_WINDOWMANAGERS_HH */

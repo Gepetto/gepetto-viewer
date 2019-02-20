@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 LAAS-CNRS. All rights reserved.
 //
 
-#ifndef SCENEVIEWER_LEAFNODECOLLADA_HH
-#define SCENEVIEWER_LEAFNODECOLLADA_HH
+#ifndef GEPETTO_VIEWER_LEAFNODECOLLADA_HH
+#define GEPETTO_VIEWER_LEAFNODECOLLADA_HH
 
 #include <gepetto/viewer/node.h>
 #include <osgDB/ReadFile>
@@ -95,4 +95,4 @@ namespace viewer {
 } /* namespace viewer */
 } /* namespace gepetto */
 
-#endif /* SCENEVIEWER_LEAFNODECOLLADA_HH */
+#endif /* GEPETTO_VIEWER_LEAFNODECOLLADA_HH */

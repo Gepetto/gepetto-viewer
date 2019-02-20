@@ -14,8 +14,8 @@
 // received a copy of the GNU Lesser General Public License along with
 // hpp-core. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef SCENEVIEWER_NODE_PROPERTY_HH
-#define SCENEVIEWER_NODE_PROPERTY_HH
+#ifndef GEPETTO_VIEWER_NODE_PROPERTY_HH
+#define GEPETTO_VIEWER_NODE_PROPERTY_HH
 
 #include <map>
 #include <iostream>
@@ -166,4 +166,4 @@ namespace viewer {
 } /* namespace viewer */
 } /* namespace gepetto */
 
-#endif /* SCENEVIEWER_NODE_PROPERTY_HH */
+#endif /* GEPETTO_VIEWER_NODE_PROPERTY_HH */

@@ -6,8 +6,8 @@
 //  Copyright (c) 2015 LAAS-CNRS. All rights reserved.
 //
 
-#ifndef SCENEVIEWER_BLENDER_GEOM_WRITER_VISITOR_HH
-#define SCENEVIEWER_BLENDER_GEOM_WRITER_VISITOR_HH
+#ifndef GEPETTO_VIEWER_BLENDER_GEOM_WRITER_VISITOR_HH
+#define GEPETTO_VIEWER_BLENDER_GEOM_WRITER_VISITOR_HH
 
 #include <iostream>
 #include <fstream>
@@ -62,4 +62,4 @@ namespace viewer {
 } /* namespace viewer */
 } /* namespace gepetto */
 
-#endif /* SCENEVIEWER_BLENDER_GEOM_WRITER_VISITOR_HH */
+#endif /* GEPETTO_VIEWER_BLENDER_GEOM_WRITER_VISITOR_HH */

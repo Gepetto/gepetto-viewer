@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 LAAS-CNRS. All rights reserved.
 //
 
-#ifndef SCENEVIEWER_MACROS_HH
-#define SCENEVIEWER_MACROS_HH
+#ifndef GEPETTO_VIEWER_MACROS_HH
+#define GEPETTO_VIEWER_MACROS_HH
 
 #if __cplusplus > 199711L
 #include <memory>
@@ -61,5 +61,5 @@ typedef ::gepetto::viewer::weak_ptr<const className> className##ConstWeakPtr; \
   /** Accept NodeVisitor */ \
   virtual void accept (NodeVisitor& nv) { if (nv.valid(*this)) { nv.apply (*this); } } \
 
-#endif // SCENEVIEWER_MACROS_HH
+#endif // GEPETTO_VIEWER_MACROS_HH
 

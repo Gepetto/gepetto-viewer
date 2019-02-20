@@ -6,8 +6,8 @@
 //  Copyright (c) 2015 LAAS-CNRS. All rights reserved.
 //
 
-#ifndef SCENEVIEWER_LEAFNODELIGHT_HH
-#define SCENEVIEWER_LEAFNODELIGHT_HH
+#ifndef GEPETTO_VIEWER_LEAFNODELIGHT_HH
+#define GEPETTO_VIEWER_LEAFNODELIGHT_HH
 
 #include <gepetto/viewer/leaf-node-sphere.h>
 #include <gepetto/viewer/group-node.h>
@@ -78,4 +78,4 @@ namespace viewer {
 } /* namespace viewer */
 } /* namespace gepetto */
 
-#endif /* SCENEVIEWER_LEAFNODELIGHT_HH */
+#endif /* GEPETTO_VIEWER_LEAFNODELIGHT_HH */

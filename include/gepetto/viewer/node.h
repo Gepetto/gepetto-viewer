@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 LAAS-CNRS. All rights reserved.
 //
 
-#ifndef SCENEVIEWER_NODE_HH
-#define SCENEVIEWER_NODE_HH
+#ifndef GEPETTO_VIEWER_NODE_HH
+#define GEPETTO_VIEWER_NODE_HH
 
 #include <iostream>
 #include <gepetto/viewer/fwd.h>
@@ -256,4 +256,4 @@ namespace viewer {
 } /* namespace viewer */
 } /* namespace gepetto */
 
-#endif /* dSCENEVIEWER_NODE_HH */
+#endif /* dGEPETTO_VIEWER_NODE_HH */

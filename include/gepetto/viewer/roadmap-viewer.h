@@ -6,8 +6,8 @@
 //  Copyright (c) 2015 LAAS-CNRS. All rights reserved.
 //
 
-#ifndef SCENEVIEWER_ROADMAPVIEWER_HH
-#define SCENEVIEWER_ROADMAPVIEWER_HH
+#ifndef GEPETTO_VIEWER_ROADMAPVIEWER_HH
+#define GEPETTO_VIEWER_ROADMAPVIEWER_HH
 
 #include <OpenThreads/Mutex>
 

@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 LAAS-CNRS. All rights reserved.
 //
 
-#ifndef SCENEVIEWER_WINDOWMANAGER_HH
-#define SCENEVIEWER_WINDOWMANAGER_HH
+#ifndef GEPETTO_VIEWER_WINDOWMANAGER_HH
+#define GEPETTO_VIEWER_WINDOWMANAGER_HH
 
 #include <osgGA/KeySwitchMatrixManipulator>
 #include <osgViewer/Viewer>
@@ -166,4 +166,4 @@ namespace viewer {
 } /* namespace viewer */
 } /* namespace gepetto */
 
-#endif /* SCENEVIEWER_WINDOWMANAGER_HH */
+#endif /* GEPETTO_VIEWER_WINDOWMANAGER_HH */
