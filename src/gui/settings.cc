@@ -134,15 +134,19 @@ namespace gepetto {
         addRobotFromString (opt);
       while (arguments.read ("--add-env", opt))
         addEnvFromString (opt);
+      if (startViewerServer) {
+        // TODO omniorbserver.so should be the first plugin
+        // because of ORB::init...
+        // addPlugin ("omniorbserver.so", true);
+        pluginsToInit_.prepend ("omniorbserver.so");
+        pluginManager_.declarePlugin ("omniorbserver.so");
+      }
       while (arguments.read ("-p", opt) || arguments.read ("--load-plugin", opt))
         addPlugin (QString::fromStdString(opt), !noPlugin);
       while (arguments.read ("-q", opt) || arguments.read ("--load-pyplugin", opt))
         addPyPlugin (QString::fromStdString(opt), !noPlugin);
       while (arguments.read ("-x", opt) || arguments.read ("--run-pyscript", opt))
         addPyScript (QString::fromStdString(opt));
-      if (startViewerServer) {
-        addPlugin ("omniorbserver.so", true);
-      }
 
       arguments.reportRemainingOptionsAsUnrecognized(osg::ArgumentParser::BENIGN);
       if (arguments.errors(osg::ArgumentParser::CRITICAL)) {
