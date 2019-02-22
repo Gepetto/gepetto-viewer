@@ -16,7 +16,11 @@ namespace viewer {
     
     DEF_CLASS_SMART_PTR(Node)
     DEF_CLASS_SMART_PTR(GroupNode)
+
     DEF_CLASS_SMART_PTR(Property)
+
+    DEF_CLASS_SMART_PTR(WindowManager)
+    DEF_CLASS_SMART_PTR(RoadmapViewer)
     
 } /* namespace viewer */
 } /* namespace gepetto */

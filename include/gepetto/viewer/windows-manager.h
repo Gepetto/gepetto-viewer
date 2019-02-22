@@ -20,6 +20,7 @@
 #include <OpenThreads/Mutex>
 #include <OpenThreads/ScopedLock>
 
+#include <gepetto/viewer/fwd.h>
 #include <gepetto/viewer/config-osg.h>
 #include <gepetto/viewer/transform-writer.h>
 
@@ -28,11 +29,6 @@ namespace viewer {
 
     typedef OpenThreads::Mutex Mutex;
     typedef OpenThreads::ScopedLock<Mutex> ScopedLock;
-
-    DEF_CLASS_SMART_PTR(Node)
-    DEF_CLASS_SMART_PTR(GroupNode)
-    DEF_CLASS_SMART_PTR(WindowManager)
-    DEF_CLASS_SMART_PTR(RoadmapViewer)
 
     DEF_CLASS_SMART_PTR(WindowsManager)
 
