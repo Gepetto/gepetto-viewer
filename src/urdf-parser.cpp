@@ -247,7 +247,7 @@ namespace viewer {
 
     void setMaterial (const QDomElement material,
         NodePtr_t node,
-        const MaterialMap_t& materials)
+        MaterialMap_t& materials)
     {
       if (material.isNull()) return;
       Material mat;
@@ -261,6 +261,9 @@ namespace viewer {
       } else {
         // Parse material
         mat = parseMaterial (material);
+        if (!mat.hasColor && !mat.hasTexture)
+          throw std::logic_error ("material tag must have either a color or a texture.");
+        materials[name] = mat;
       }
 
       // Set color
@@ -282,7 +285,7 @@ namespace viewer {
 		    const QDomElement link,
 		    LinkNodePtr_t &linkNode, bool linkFrame,
                     Cache_t& cache,
-                    const MaterialMap_t& materials)
+                    MaterialMap_t& materials)
     {
       static const QString tagName (visual ? "visual" : "collision");
       static const QString nameFormat ("%1/%2_%3");
@@ -354,7 +357,8 @@ namespace viewer {
       int errorRow, errorCol;
 
       if (urdf_file.compare(urdf_file.length() - 5, 5, ".urdf") == 0) {
-        QFile file (urdf_file.c_str());
+        std::string urdf_file2 = getFilename (QString::fromStdString(urdf_file));
+        QFile file (urdf_file2.c_str());
         ok = model.setContent (&file, false, &errorMsg, &errorRow, &errorCol);
         errorPrefix = "Failed to parse ";
         errorPrefix +=  urdf_file.c_str();
