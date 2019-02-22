@@ -218,7 +218,7 @@ namespace viewer {
     hl_switch_node_ptr_ = new ::osg::Group;
     transform_ptr_ = new ::osg::MatrixTransform;
 
-    switch_node_ptr_->setNodeMask(~NodeBit);
+    switch_node_ptr_->setNodeMask(NodeBit | IntersectionBit);
     switch_node_ptr_->setName (id_name_);
     wireframe_modes_.resize(2);
     wireframe_modes_[FILL]      = new ::osg::Group;
