@@ -540,7 +540,7 @@ namespace gepetto {
           qDebug() << signal << " registered";
         }
       else
-        std::cout << "Signal " << signal << "already registered." << std::endl;
+        qDebug() << "Signal" << signal << "already registered.";
     }
 
     QObject* MainWindow::getFromSignal(const char* signal)
@@ -576,7 +576,7 @@ namespace gepetto {
     {
       if (registeredSlots_.find(slot) == registeredSlots_.end())
         {
-          std::cout << "slot " << slot << "isn't registered" << std::endl;
+          qDebug() << "slot" << slot << "isn't registered";
           return NULL;
         }
       return registeredSlots_[slot];
