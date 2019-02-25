@@ -185,6 +185,7 @@ namespace graphics {
     {
         points_ptr_->at(0) = start_point;
         beam_ptr_->dirtyDisplayList();
+        setDirty();
     }
     
     osgVector3 LeafNodeLine::getStartPoint() const
@@ -196,6 +197,7 @@ namespace graphics {
     {
         points_ptr_->at(1) = end_point;
         beam_ptr_->dirtyDisplayList();
+        setDirty();
     }
     
     osgVector3 LeafNodeLine::getEndPoint() const
@@ -205,8 +207,9 @@ namespace graphics {
     
     void LeafNodeLine::setMode (const GLenum& mode)
     {
-      drawArray_ptr_->set (mode, 0, points_ptr_->size ());
+      drawArray_ptr_->set (mode, 0, (GLsizei)points_ptr_->size ());
       beam_ptr_->dirtyDisplayList();
+      setDirty();
     }
 
     GLenum LeafNodeLine::getMode () const
@@ -233,20 +236,23 @@ namespace graphics {
         if (first + count > points_ptr_->size())
           throw std::invalid_argument ("Invalid range of points in LeafNodeLine::setPointsSubset");
         drawArray_ptr_->setFirst (first);
-        drawArray_ptr_->setCount (count);
+        drawArray_ptr_->setCount ((GLsizei)count);
         beam_ptr_->dirtyDisplayList();
+        setDirty();
     }
 
     void LeafNodeLine::setColor (const osgVector4& color)
     {      
         color_ptr_->at(0) = color;
         beam_ptr_->dirtyDisplayList();
+        setDirty();
     }
   
     void LeafNodeLine::setColors (const ::osg::Vec4ArrayRefPtr & colors)
     {
       color_ptr_ = colors;
       beam_ptr_->dirtyDisplayList();
+      setDirty();
     }
 
     // void LeafNodeLine::setLineStipple (const GLint factor, const GLushort pattern)

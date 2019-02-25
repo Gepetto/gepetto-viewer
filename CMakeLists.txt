@@ -24,6 +24,7 @@ INCLUDE(cmake/base.cmake)
 INCLUDE(cmake/boost.cmake)
 INCLUDE(cmake/ide.cmake)
 INCLUDE(cmake/apple.cmake)
+INCLUDE(cmake/test.cmake)
 
 SET(PROJECT_NAME gepetto-viewer)
 SET(PROJECT_DESCRIPTION "An user-friendly Graphical Interface")
@@ -31,7 +32,6 @@ SET(PROJECT_URL "https://github.com/humanoid-path-planner/gepetto-viewer")
 
 # Where to compile shared objects
 SET(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
-SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 
 SETUP_PROJECT()
 
@@ -97,11 +97,13 @@ IF(${URDFDOM_VERSION} VERSION_LESS "0.4.0")
   PKG_CONFIG_APPEND_CFLAGS("-DURDFDOM_POINTER_CAST")
 ENDIF(${URDFDOM_VERSION} VERSION_LESS "0.4.0")
 
-SET(BOOST_COMPONENTS "")
+SET(BOOST_COMPONENTS "unit_test_framework")
 SEARCH_FOR_BOOST()
 INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 
 ADD_SUBDIRECTORY(src)
+ADD_SUBDIRECTORY(tests)
+
 FOREACH(lib ${X11_INCLUDE_DIR})
   PKG_CONFIG_APPEND_CFLAGS("-I${lib}")
 ENDFOREACH(lib ${X11_INCLUDE_DIR})

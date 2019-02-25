@@ -17,6 +17,8 @@
 #include <osgGA/NodeTrackerManipulator>
 #include <osgDB/WriteFile>
 
+#include <../src/is-dirty-visitor.h>
+
 namespace graphics {
   namespace {
     struct ScreenShot : public osg::Camera::DrawCallback
@@ -71,7 +73,8 @@ namespace graphics {
   
   void WindowManager::createBackground()
   {
-    main_camera_->setClearMask(GL_DEPTH_BUFFER_BIT);
+    // Enable Outline highlight state.
+    main_camera_->setClearMask(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     main_camera_->setClearColor(osg::Vec4(0.,0.,0.,0.));
     // Create background camera
     bg_camera_ = new osg::Camera;
@@ -220,9 +223,16 @@ namespace graphics {
       
       viewer_ptr_ = v;
       viewer_ptr_->setSceneData ( scene_ptr_->asGroup() );
+      lastSceneWasDisrty_ = true;
       
       /* init main camera */
       main_camera_ = viewer_ptr_->getCamera ();
+
+      // Enable Outline highlight state.
+      main_camera_->setClearStencil(0);
+      osg::DisplaySettings* ds = osg::DisplaySettings::instance().get();
+      if (ds->getMinimumNumStencilBits() == 0)
+        ds->setMinimumNumStencilBits(1);
       
       gc_ = osg::GraphicsContextRefPtr (gc);
       createBackground();
@@ -349,8 +359,26 @@ namespace graphics {
 
     bool WindowManager::frame ()
     {
+      bool callFrame = screen_capture_ptr_;
+      if (!callFrame) {
+        IsDirtyVisitor isDirtyVisitor;
+        scene_ptr_->accept (isDirtyVisitor);
+        // FIXME For some reasons, when highlight state of a node is changed,
+        // method frame must be called twice to get it rendered properly.
+        // lastSceneWasDisrty_ forces to draw twice after a dirty scene.
+        callFrame = lastSceneWasDisrty_
+          || isDirtyVisitor.isDirty()
+          || viewer_ptr_->checkNeedToDoFrame ();
+        lastSceneWasDisrty_ = isDirtyVisitor.isDirty();
+      }
+      if (callFrame)
         viewer_ptr_->frame();
-        return true;
+      else
+        return false;
+
+      SetCleanVisitor setCleanVisitor;
+      scene_ptr_->accept (setCleanVisitor);
+      return true;
     }
 
     bool WindowManager::run ()

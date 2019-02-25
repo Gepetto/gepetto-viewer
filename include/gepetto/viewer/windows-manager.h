@@ -17,17 +17,23 @@
 #ifndef SCENEVIEWER_WINDOWMANAGERS_HH
 #define SCENEVIEWER_WINDOWMANAGERS_HH
 
-#include <gepetto/viewer/window-manager.h>
-#include <gepetto/viewer/roadmap-viewer.h>
-#include <gepetto/viewer/transform-writer.h>
-
 #include <OpenThreads/Mutex>
 #include <OpenThreads/ScopedLock>
+
+#include <gepetto/viewer/config-osg.h>
+#include <gepetto/viewer/transform-writer.h>
 
 namespace graphics {
 
     typedef OpenThreads::Mutex Mutex;
     typedef OpenThreads::ScopedLock<Mutex> ScopedLock;
+
+    DEF_CLASS_SMART_PTR(Node)
+    DEF_CLASS_SMART_PTR(GroupNode)
+    DEF_CLASS_SMART_PTR(WindowManager)
+    DEF_CLASS_SMART_PTR(RoadmapViewer)
+
+    DEF_CLASS_SMART_PTR(WindowsManager)
 
     struct Configuration {
         osgVector3 position;
@@ -51,21 +57,9 @@ namespace graphics {
       typedef std::vector<NodePtr_t> Nodes_t;
       osg::ref_ptr < TransformWriterVisitor > writer_visitor_;
       Nodes_t nodes_;
-      BlenderFrameCapture ()
-        : writer_visitor_ (new TransformWriterVisitor (
-              new YamlTransformWriter ("gepetto_viewer.yaml")))
-        , nodes_ ()
-      {}
-      void captureFrame () {
-        using std::invalid_argument;
-        if (!writer_visitor_)
-          throw invalid_argument ("Capture writer not defined");
-        if (nodes_.empty()) throw invalid_argument ("No node to capture");
-        writer_visitor_->captureFrame (nodes_.begin(), nodes_.end());
-      }
+      BlenderFrameCapture ();
+      void captureFrame ();
     };
-
-    DEF_CLASS_SMART_PTR(WindowsManager)
 
     class WindowsManager
     {

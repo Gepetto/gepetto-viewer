@@ -19,10 +19,15 @@ namespace graphics {
         totalLength_ = totalLength;
         color_ = osgVector4(color);
         maxCapsule_=maxCapsule;
+
+        osgVector3 zero;
+        // Z -> -X
+        osgQuat y_90(M_PI/2,osgVector3(0,1,0));
         for (size_t i = 0; i< maxCapsule ; i++){
             std::stringstream nameCap;
             nameCap << name << "_cap"<<i;
             LeafNodeCapsulePtr_t cap = LeafNodeCapsule::create(nameCap.str(),radius,(totalLength/((float)maxCapsule)),color);
+            cap->setStaticTransform (zero, y_90);
             list_of_capsule_.push_back(cap);
             this->asQueue()->addChild(cap->asGroup());
         }

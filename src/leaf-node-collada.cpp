@@ -54,13 +54,19 @@ namespace graphics {
   void LeafNodeCollada::init()
   {
     if (!collada_ptr_) {
+      // Setup cache
+      const osg::ref_ptr<osgDB::Options> options = new osgDB::Options();
+      static osg::ref_ptr<osgDB::ObjectCache> object_cache (new osgDB::ObjectCache);
+      options->setObjectCache (object_cache);
+      options->setObjectCacheHint(osgDB::Options::CACHE_ALL);
+
       if (!fileExists(collada_file_path_.c_str()))
         throw std::invalid_argument(std::string("File ") + collada_file_path_ + std::string(" not found."));
 
       std::string osgname = getCachedFileName(collada_file_path_);
       if (!osgname.empty()) {
         std::cout << "Using " << osgname << std::endl;
-        collada_ptr_ = osgDB::readNodeFile(osgname);
+        collada_ptr_ = osgDB::readNodeFile(osgname, options);
       } else {
         // get the extension of the meshs file
         std::string ext = osgDB::getLowerCaseFileExtension(collada_file_path_);
@@ -72,11 +78,11 @@ namespace graphics {
             << std::endl;
         }
         if(ext == "obj"){
-          const osgDB::Options* options = new osgDB::Options("noRotation");
+          options->setOptionString("noRotation");
           collada_ptr_ = osgDB::readNodeFile(collada_file_path_,options);
         }
         else
-          collada_ptr_ = osgDB::readNodeFile(collada_file_path_);
+          collada_ptr_ = osgDB::readNodeFile(collada_file_path_,options);
         if (ext == "dae") {
           bool error = false;
           if (!collada_ptr_) {
@@ -234,6 +240,7 @@ namespace graphics {
     mat_ptr->setAmbient (osg::Material::FRONT_AND_BACK,ambient); 
 
     collada_ptr_->getOrCreateStateSet()->setAttribute(mat_ptr.get());    
+    setDirty();
   }
     
   osgVector4 LeafNodeCollada::getColor() const
@@ -249,6 +256,7 @@ namespace graphics {
 
   void LeafNodeCollada::setAlpha(const float& alpha)
   {
+    // TODO this overload is probably not necessary.
     osg::StateSet* ss = getColladaPtr().get()->getStateSet();
     if (ss)
       {
@@ -265,7 +273,8 @@ namespace graphics {
 	if (alpha == 0)
 	  ss->setRenderingHint(osg::StateSet::DEFAULT_BIN);
 	else
-	  ss->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+          ss->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+        setDirty();
       }
   }
  
@@ -282,6 +291,7 @@ namespace graphics {
     } 
     texture->setImage(image);
     collada_ptr_->getStateSet()->setTextureAttributeAndModes(0,texture,osg::StateAttribute::ON);
+    setDirty();
   }
 
   const std::string& LeafNodeCollada::meshFilePath () const

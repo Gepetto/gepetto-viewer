@@ -75,6 +75,7 @@ namespace graphics {
     {
         list_of_objects_.push_back(child_ptr);
         this->asQueue()->addChild(child_ptr->asGroup());
+        setDirty();
         return true;
     }
     
@@ -84,10 +85,12 @@ namespace graphics {
             std::find (list_of_objects_.begin(), list_of_objects_.end(), child_ptr);
         if (it != list_of_objects_.end())
           list_of_objects_.erase(it);
-        return this->asQueue()->removeChild(this->asQueue()->getChildIndex(child_ptr->asGroup()));
+        bool removed = this->asQueue()->removeChild(this->asQueue()->getChildIndex(child_ptr->asGroup()));
+        if (removed) setDirty();
+        return removed;
     }
 
-    bool GroupNode::hasChild (::graphics::NodePtr_t child_ptr)
+    bool GroupNode::hasChild (::graphics::NodePtr_t child_ptr) const
     {
         Nodes_t::const_iterator it =
             std::find (list_of_objects_.begin(), list_of_objects_.end(), child_ptr);
@@ -98,6 +101,7 @@ namespace graphics {
     {
         list_of_objects_.clear();
         this->asQueue()->removeChild(0, this->asQueue()->getNumChildren());
+        setDirty();
     }
     
     void GroupNode::setLightingMode (const LightingMode& lighting_state)

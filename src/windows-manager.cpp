@@ -101,6 +101,21 @@ namespace graphics {
       };
     }
 
+    BlenderFrameCapture::BlenderFrameCapture () :
+      writer_visitor_ (new TransformWriterVisitor
+          (new YamlTransformWriter ("gepetto_viewer.yaml"))),
+      nodes_ ()
+    {}
+
+    void BlenderFrameCapture::captureFrame ()
+    {
+      using std::invalid_argument;
+      if (!writer_visitor_)
+        throw invalid_argument ("Capture writer not defined");
+      if (nodes_.empty()) throw invalid_argument ("No node to capture");
+      writer_visitor_->captureFrame (nodes_.begin(), nodes_.end());
+    }
+
     WindowsManager::WindowsManager () :
         windowManagers_ (), nodes_ (), groupNodes_ (),roadmapNodes_(),
         osgFrameMtx_ (), configListMtx_ (), newNodeConfigurations_ (),
@@ -372,7 +387,7 @@ namespace graphics {
         RETURN_FALSE_IF_NODE_EXISTS(boxName);
 
         LeafNodeBoxPtr_t box = LeafNodeBox::create
-          (boxName, osgVector3 (.5*boxSize1, .5*boxSize2, .5*boxSize3), color);
+          (boxName, osgVector3 (.5f*boxSize1, .5f*boxSize2, .5f*boxSize3), color);
         ScopedLock lock(osgFrameMutex());
         addNode (boxName, box, true);
         return true;

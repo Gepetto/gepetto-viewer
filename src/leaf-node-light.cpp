@@ -121,12 +121,14 @@ namespace graphics {
     {
         light_ptr_->getLight ()->setDiffuse (color);
         ((LeafNodeSphere*)this)->setColor (color);
+        setDirty();
     }
 
     void LeafNodeLight::setRoot (GroupNodePtr_t root)
     {
       light_ptr_->setLocalStateSetModes (::osg::StateAttribute::ON);
       light_ptr_->setStateSetModes (*root->getOrCreateRootStateSet (), ::osg::StateAttribute::ON);
+      setDirty();
     }
 
     LeafNodeLight::~LeafNodeLight()

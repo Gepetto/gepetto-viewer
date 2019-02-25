@@ -116,6 +116,7 @@ namespace graphics {
 #ifdef OSG_3_5_6_OR_LATER
         shape_drawable_ptr_->build();
 #endif
+        setDirty();
     }
     
     void LeafNodeCone::setHeight (const float& height)
@@ -124,6 +125,7 @@ namespace graphics {
 #ifdef OSG_3_5_6_OR_LATER
         shape_drawable_ptr_->build();
 #endif
+        setDirty();
     }
     
     LeafNodeCone::~LeafNodeCone ()

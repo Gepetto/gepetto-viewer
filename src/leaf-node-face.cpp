@@ -172,11 +172,13 @@ namespace graphics {
 	  (new ::osg::DrawArrays (GL_POLYGON, 0,(GLsizei) vertices_->size ()));
         //osgUtil::Tessellator::retessellatePolygons( *(face_ptr_.get()) );
         osgUtil::SmoothingVisitor::smooth( *(face_ptr_.get()) );
+        setDirty();
     }
     
     void LeafNodeFace::setColor(const osgVector4& color)
     {        
         color_ptr_->at(0) = color;
+        setDirty();
     }
 
     void LeafNodeFace::setTexture(const std::string& image_path)
@@ -201,6 +203,7 @@ namespace graphics {
       face_ptr_->setTexCoordArray(0,texcoords);
 
       geode_ptr_->getStateSet()->setTextureAttributeAndModes(0,texture,osg::StateAttribute::ON);
+      setDirty();
     }
     
     LeafNodeFace::~LeafNodeFace ()
