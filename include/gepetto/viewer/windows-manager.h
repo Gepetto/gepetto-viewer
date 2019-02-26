@@ -32,20 +32,6 @@ namespace viewer {
 
     DEF_CLASS_SMART_PTR(WindowsManager)
 
-    struct Configuration {
-        osgVector3 position;
-        osgQuat quat;
-        Configuration() {}
-        /// \param XYZW when false, the 4 last parameters are a quaternion (w,x,y,z)
-        ///             otherwise, a quaternion (x,y,z,w)
-        explicit Configuration(const float* a, bool XYZW)
-          : position(a[0],a[1],a[2])
-          , quat(a[(XYZW ? 3 : 4)],
-                 a[(XYZW ? 4 : 5)],
-                 a[(XYZW ? 5 : 6)],
-                 a[(XYZW ? 6 : 3)]) {}
-        Configuration(const osgVector3& p, const osgQuat& q) : position(p), quat(q) {}
-    };
     struct NodeConfiguration : Configuration {
         NodePtr_t node;
     };

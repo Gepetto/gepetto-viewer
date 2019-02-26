@@ -1142,8 +1142,7 @@ namespace viewer {
     Configuration WindowsManager::getNodeGlobalTransform(const std::string nodeName) const
     {
         NodePtr_t node = getNode(nodeName, true);
-        std::pair<osgVector3, osgQuat> posQuat = node->getGlobalTransform();
-        return Configuration(posQuat.first, posQuat.second);
+        return node->getGlobalTransform();
     }
 
     bool WindowsManager::setBackgroundColor1(const WindowID windowId,const Color_t& color)

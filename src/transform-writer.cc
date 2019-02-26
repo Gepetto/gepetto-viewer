@@ -63,8 +63,8 @@ namespace viewer {
 
   void TransformWriterVisitor::apply (Node& node)
   {
-    std::pair<osgVector3, osgQuat> pos = node.getGlobalTransform ();
-    writer_->writeTransform (node.getID ().c_str(), pos.first, pos.second);
+    const Configuration& cfg = node.getGlobalTransform ();
+    writer_->writeTransform (node.getID ().c_str(), cfg.position, cfg.quat);
     traverse (node);
   }
 

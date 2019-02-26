@@ -33,7 +33,8 @@ namespace viewer {
 
         /** PositionAttitudeTransform related to the global configuration */
         osg::MatrixTransformRefPtr transform_ptr_;
-        osg::Matrixf Ms_, M_;
+        osg::Matrixf Ms_;
+        Configuration M_;
         
         /** Associated switch node */
         /** TODO: The use of multiswitch may be better */
@@ -51,6 +52,8 @@ namespace viewer {
         
         /** Initialization function */
         void init ();
+
+        void updateTransform ();
 
         ::osg::Group* setupHighlightState (unsigned int state);
 
@@ -95,7 +98,7 @@ namespace viewer {
          \brief returns rotation and position of the node
          in word frame
          */
-        std::pair<osgVector3, osgQuat> getGlobalTransform() const;
+        const Configuration& getGlobalTransform() const;
 
         /**
          \brief getID is a public method for getting the id_name of the Object
@@ -118,6 +121,13 @@ namespace viewer {
         /** Apply a new global configuration
          */
         void applyConfiguration (const osgVector3 & position, const osgQuat & quat);
+
+        /** Apply a new global configuration
+         */
+        inline void applyConfiguration (const Configuration & cfg)
+        {
+          applyConfiguration (cfg.position, cfg.quat);
+        }
         
 	/** Set Static transformation
          */

@@ -329,14 +329,23 @@ namespace viewer {
     properties_[name] = prop;
   }
 
+  void Node::updateTransform ()
+  {
+    osg::Matrixf M;
+    M.setRotate (M_.quat);
+    M.setTrans  (M_.position);
+
+    transform_ptr_->setMatrix (Ms_*M);
+    dirty_ = true;
+  }
+
   void Node::applyConfiguration (const osgVector3 & position, const osgQuat & quat)
   {
     if (!position.valid() || !quat.asVec4().valid()) return;
-    M_.setRotate (quat);
-    M_.setTrans (position);
+    M_.position = position;
+    M_.quat     = quat;
 
-    transform_ptr_->setMatrix (Ms_*M_);
-    dirty_ = true;
+    updateTransform ();
   }
 
   void Node::setStaticTransform(const osgVector3 & position, const osgQuat & quat)
@@ -348,8 +357,7 @@ namespace viewer {
     m.setTrans(position);
     Ms_ = Matrix::scale(s) * m;
 
-    transform_ptr_->setMatrix (Ms_*M_);
-    dirty_ = true;
+    updateTransform ();
   }
 
   osgQuat Node::getStaticRotation() const
@@ -386,8 +394,7 @@ namespace viewer {
     m.setTrans(t);
     Ms_ = ::osg::Matrix::scale(scale) * m;
 
-    transform_ptr_->setMatrix (Ms_*M_);
-    dirty_ = true;
+    updateTransform ();
    }
 
   void Node::setVisibilityMode (const VisibilityMode& mode)
@@ -658,13 +665,13 @@ namespace viewer {
       (*_p)->removeChild(switch_node_ptr_);
   }
   
-  std::pair<osgVector3, osgQuat> Node::getGlobalTransform() const
+  const Configuration& Node::getGlobalTransform() const
   {
-    return std::make_pair(M_.getTrans(), M_.getRotate());
+    return M_;
   }
 
-  void Node::traverse (NodeVisitor& /*visitor*/) {
-  }
+  void Node::traverse (NodeVisitor& /*visitor*/)
+  {}
 
   osg::ref_ptr<osg::Node> Node::getOsgNode() const
   {
