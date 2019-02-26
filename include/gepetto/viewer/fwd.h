@@ -14,6 +14,7 @@
 namespace gepetto {
 namespace viewer {
     
+    class Configuration;
     DEF_CLASS_SMART_PTR(Node)
     DEF_CLASS_SMART_PTR(GroupNode)
 

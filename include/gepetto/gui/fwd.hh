@@ -38,6 +38,7 @@ namespace gepetto {
 
     typedef viewer::NodePtr_t NodePtr_t;
     typedef viewer::GroupNodePtr_t GroupNodePtr_t;
+    typedef viewer::Configuration Configuration;
 
     class ViewerCorbaServer;
 

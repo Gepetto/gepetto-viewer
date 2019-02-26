@@ -10,6 +10,8 @@
 #ifndef DynAndGraph_config_h
 #define DynAndGraph_config_h
 
+#include <QMetaType>
+
 #include <osg/Shape>
 #include <osg/ShapeDrawable>
 #include <osg/Geometry>
@@ -160,5 +162,7 @@ namespace viewer {
     
 } /* namespace viewer */
 } /* namespace gepetto */
+
+Q_DECLARE_METATYPE(gepetto::viewer::Configuration)
 
 #endif
