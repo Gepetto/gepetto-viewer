@@ -44,6 +44,7 @@ namespace viewer {
       template <> struct property_type<osgVector2   > { static inline std::string to_string () { return "osgVector2"   ; } };
       template <> struct property_type<osgVector3   > { static inline std::string to_string () { return "osgVector3"   ; } };
       template <> struct property_type<osgVector4   > { static inline std::string to_string () { return "osgVector4"   ; } };
+      template <> struct property_type<Configuration> { static inline std::string to_string () { return "Configuration"; } };
     }
     /// \endcond
 
@@ -58,6 +59,7 @@ namespace viewer {
         virtual bool set(const osgVector2    & v) { invalidType(v); return false; }
         virtual bool set(const osgVector3    & v) { invalidType(v); return false; }
         virtual bool set(const osgVector4    & v) { invalidType(v); return false; }
+        virtual bool set(const Configuration & v) { invalidType(v); return false; }
 
         virtual bool get(bool          & v) { invalidType(v); return false; }
         virtual bool get(int           & v) { invalidType(v); return false; }
@@ -67,6 +69,7 @@ namespace viewer {
         virtual bool get(osgVector2    & v) { invalidType(v); return false; }
         virtual bool get(osgVector3    & v) { invalidType(v); return false; }
         virtual bool get(osgVector4    & v) { invalidType(v); return false; }
+        virtual bool get(Configuration & v) { invalidType(v); return false; }
 
         virtual bool hasReadAccess () const = 0;
         virtual bool hasWriteAccess() const = 0;
@@ -126,6 +129,7 @@ namespace viewer {
     typedef PropertyTpl<osgVector2   > Vector2Property;
     typedef PropertyTpl<osgVector3   > Vector3Property;
     typedef PropertyTpl<osgVector4   > Vector4Property;
+    typedef PropertyTpl<Configuration> ConfigurationProperty;
 
     /// Conversion between integer and enum name at runtime.
     struct MetaEnum {

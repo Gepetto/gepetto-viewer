@@ -286,6 +286,10 @@ namespace viewer {
         FloatProperty::create("Transparency",
           FloatProperty::getterFromMemberFunction(this, &Node::getAlpha),
           FloatProperty::setterFromMemberFunction(this, &Node::setAlpha)));
+    addProperty(
+        ConfigurationProperty::create("Transform",
+          ConfigurationProperty::getterFromMemberFunction(this, &Node::getGlobalTransform),
+          ConfigurationProperty::setterFromMemberFunction(this, &Node::applyConfiguration)));
   }
 
   Node::Node (const std::string& name) :
