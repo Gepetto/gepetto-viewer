@@ -22,6 +22,7 @@
 #include <gepetto/viewer/config-osg.h>
 
 class QDoubleSpinBox;
+class QLineEdit;
 
 namespace gepetto {
   namespace gui {
@@ -41,10 +42,13 @@ namespace gepetto {
         void updateConfig ();
 
       private:
+        void setPyValue ();
+
         Configuration cfg;
 
         QDoubleSpinBox *x,*y,*z,
                        *roll,*pitch,*yaw;
+        QLineEdit* pyValue;
     };
   } // namespace gui
 } // namespace gepetto

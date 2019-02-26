@@ -21,6 +21,7 @@
 #include <QDoubleSpinBox>
 #include <QFormLayout>
 #include <QLabel>
+#include <QLineEdit>
 #include <QPushButton>
 
 namespace gepetto {
@@ -68,7 +69,7 @@ namespace gepetto {
       double z =c1*s2*c3 - s1*c2*s3;
 
       q[0] = x; q[1] = y; q[2] = z; q[3] = w;
-    } 
+    }
 
     ConfigurationDialog::ConfigurationDialog (const QString& name, const Configuration& q, QWidget *parent)
       : QDialog (parent)
@@ -79,15 +80,17 @@ namespace gepetto {
       , roll  (new QDoubleSpinBox)
       , pitch (new QDoubleSpinBox)
       , yaw   (new QDoubleSpinBox)
+      , pyValue (new QLineEdit)
     {
       setModal (false);
 
       double _r,_p,_y;
       getEulerFromQuat (q.quat,_p,_y,_r);
 
-      x    ->setValue(q.position[0]);
-      y    ->setValue(q.position[1]);
-      z    ->setValue(q.position[2]);
+      x->setValue(q.position[0]); x->setRange(-1000,1000); x->setSingleStep(0.01); x->setDecimals(4);
+      y->setValue(q.position[1]); y->setRange(-1000,1000); y->setSingleStep(0.01); y->setDecimals(4);
+      z->setValue(q.position[2]); z->setRange(-1000,1000); z->setSingleStep(0.01); z->setDecimals(4);
+
       roll ->setValue(_r); roll ->setRange(-osg::PI_2, osg::PI_2); roll ->setSingleStep(0.01); roll ->setDecimals(4);
       pitch->setValue(_p); pitch->setRange(-osg::PI  , osg::PI  ); pitch->setSingleStep(0.01); pitch->setDecimals(4);
       yaw  ->setValue(_y); yaw  ->setRange(-osg::PI_2, osg::PI_2); yaw  ->setSingleStep(0.01); yaw  ->setDecimals(4);
@@ -98,6 +101,9 @@ namespace gepetto {
       connect(roll , SIGNAL(valueChanged(double)), SLOT(updateConfig()));
       connect(pitch, SIGNAL(valueChanged(double)), SLOT(updateConfig()));
       connect(yaw  , SIGNAL(valueChanged(double)), SLOT(updateConfig()));
+
+      pyValue->setReadOnly (true);
+      setPyValue ();
 
       QDialogButtonBox *buttonBox = new QDialogButtonBox (QDialogButtonBox::Close, Qt::Horizontal);
       connect (buttonBox->button (QDialogButtonBox::Close), SIGNAL(clicked(bool)), SLOT(accept()));
@@ -110,6 +116,7 @@ namespace gepetto {
       layout->addRow("roll" , roll );
       layout->addRow("pitch", pitch);
       layout->addRow("yaw"  , yaw  );
+      layout->addRow("value", pyValue);
       layout->addRow(buttonBox);
 
       setLayout (layout);
@@ -122,7 +129,22 @@ namespace gepetto {
       cfg.position[2] = (float)z->value();
       getQuatFromEuler (pitch->value(), yaw->value(), roll->value(), cfg.quat);
 
+      setPyValue ();
+
       emit configurationChanged (cfg);
+    }
+
+    void ConfigurationDialog::setPyValue ()
+    {
+      static const QString sep(", ");
+      pyValue->setText ("[ "
+          + QString::number (cfg.position[0]) + sep
+          + QString::number (cfg.position[1]) + sep
+          + QString::number (cfg.position[2]) + sep
+          + QString::number (cfg.quat.x()) + sep
+          + QString::number (cfg.quat.y()) + sep
+          + QString::number (cfg.quat.z()) + sep
+          + QString::number (cfg.quat.w()) + " ]");
     }
   } // namespace gui
 } // namespace gepetto
