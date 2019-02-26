@@ -26,6 +26,7 @@
 #include "gepetto/gui/mainwindow.hh"
 #include "gepetto/gui/windows-manager.hh"
 #include <gepetto/gui/bodytreewidget.hh>
+#include <gepetto/gui/dialog/configuration.hh>
 
 namespace gepetto {
   namespace gui {
@@ -138,6 +139,26 @@ namespace gepetto {
       return button;
     }
 
+    QWidget* configurationPropertyEditor (BodyTreeItem* bti, const PropertyPtr_t prop)
+    {
+      if (!prop->hasWriteAccess()) return NULL;
+      Configuration value;
+      /* bool success = */ prop->get(value);
+
+      QPushButton* button = new QPushButton("Set transform");
+
+      /// Color dialog should be opened in a different place
+      ConfigurationDialog* cfgDialog = new ConfigurationDialog(bti->text(),
+          value, MainWindow::instance());
+
+      cfgDialog->setProperty("propertyName", QString::fromStdString(prop->name()));
+      cfgDialog->connect(button, SIGNAL(clicked()), SLOT(show()));
+      bti->connect (cfgDialog, SIGNAL(configurationChanged (const Configuration&)),
+          SLOT(setConfigurationProperty(const Configuration&)));
+
+      return button;
+    }
+
     BodyTreeItem::BodyTreeItem(QObject *parent, NodePtr_t node) :
       QObject (parent),
       QStandardItem (QString::fromStdString (node->getID().substr(node->getID().find_last_of("/") + 1))),
@@ -183,6 +204,8 @@ namespace gepetto {
           field = intPropertyEditor(this, prop, true);
         } else if (prop->type() == "unsigned long") {
           field = intPropertyEditor(this, prop, false);
+        } else if (prop->type() == "Configuration") {
+          field = configurationPropertyEditor(this, prop);
         } else if (prop->type() == "osgVector4") {
           if (name.contains ("color", Qt::CaseInsensitive)) {
             field = colorPropertyEditor (this, prop);
@@ -256,6 +279,11 @@ namespace gepetto {
           (float)value.blueF(),
           (float)value.alphaF());
       setProperty (QObject::sender(), c);
+    }
+
+    void BodyTreeItem::setConfigurationProperty (const Configuration& value) const
+    {
+      setProperty (QObject::sender(), value);
     }
 
     BodyTreeItem::~BodyTreeItem()

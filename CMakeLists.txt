@@ -43,6 +43,7 @@ ENDIF(APPLE)
 SET(${PROJECT_NAME}_HEADERS_MOC
   ${CMAKE_SOURCE_DIR}/include/gepetto/gui/action-search-bar.hh
   ${CMAKE_SOURCE_DIR}/include/gepetto/gui/bodytreewidget.hh
+  ${CMAKE_SOURCE_DIR}/include/gepetto/gui/dialog/configuration.hh
   ${CMAKE_SOURCE_DIR}/include/gepetto/gui/dialog/dialogloadenvironment.hh
   ${CMAKE_SOURCE_DIR}/include/gepetto/gui/dialog/dialogloadrobot.hh
   ${CMAKE_SOURCE_DIR}/include/gepetto/gui/dialog/pluginmanagerdialog.hh

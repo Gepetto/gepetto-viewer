@@ -81,6 +81,7 @@ namespace gepetto {
         void setStringProperty (const QString& value) const;
         void setFloatProperty (const double& value) const;
         void setColorProperty (const QColor& value) const;
+        void setConfigurationProperty (const Configuration& value) const;
 
       private:
         template <typename T> void setProperty(const QObject* sender, const T& value) const;

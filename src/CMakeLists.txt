@@ -58,6 +58,7 @@ SET(${LIBRARY_NAME}_SOURCES
 
   gui/action-search-bar.cc
   gui/bodytreewidget.cc
+  gui/dialog/configuration.cc
   gui/dialog/dialogloadenvironment.cc
   gui/dialog/dialogloadrobot.cc
   gui/dialog/pluginmanagerdialog.cc
