@@ -91,9 +91,9 @@ namespace gepetto {
       y->setValue(q.position[1]); y->setRange(-1000,1000); y->setSingleStep(0.01); y->setDecimals(4);
       z->setValue(q.position[2]); z->setRange(-1000,1000); z->setSingleStep(0.01); z->setDecimals(4);
 
-      roll ->setValue(_r); roll ->setRange(-osg::PI_2, osg::PI_2); roll ->setSingleStep(0.01); roll ->setDecimals(4);
-      pitch->setValue(_p); pitch->setRange(-osg::PI  , osg::PI  ); pitch->setSingleStep(0.01); pitch->setDecimals(4);
-      yaw  ->setValue(_y); yaw  ->setRange(-osg::PI_2, osg::PI_2); yaw  ->setSingleStep(0.01); yaw  ->setDecimals(4);
+      roll ->setValue(_r); roll ->setRange(-osg::PI, osg::PI); roll ->setSingleStep(0.01); roll ->setDecimals(4);
+      pitch->setValue(_p); pitch->setRange(-osg::PI, osg::PI); pitch->setSingleStep(0.01); pitch->setDecimals(4);
+      yaw  ->setValue(_y); yaw  ->setRange(-osg::PI, osg::PI); yaw  ->setSingleStep(0.01); yaw  ->setDecimals(4);
 
       connect(x    , SIGNAL(valueChanged(double)), SLOT(updateConfig()));
       connect(y    , SIGNAL(valueChanged(double)), SLOT(updateConfig()));
