@@ -238,6 +238,9 @@ namespace gepetto {
       osgWidget->addAction(actionSearchBar_->showAction());
       osgWindows_.append(osgWidget);
       settings_->restoreDockWidgetsState ();
+      // When creating a window from Python, it isn't desirable to create a
+      // hidden window. We overwrite the visibility.
+      dockOSG->show ();
     }
 
     void MainWindow::openLoadRobotDialog()
