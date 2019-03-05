@@ -241,6 +241,10 @@ namespace gepetto {
       // When creating a window from Python, it isn't desirable to create a
       // hidden window. We overwrite the visibility.
       dockOSG->show ();
+
+      // Add the widget to the window list.
+      QMenu* views3D = ui_->menuWindow->findChild<QMenu*>("3d views", Qt::FindDirectChildrenOnly);
+      views3D->addAction(dockOSG->toggleViewAction());
     }
 
     void MainWindow::openLoadRobotDialog()
@@ -436,7 +440,7 @@ namespace gepetto {
 
     void MainWindow::setupInterface()
     {
-      // Menu "Window"
+      // Menu "Window/Tool bar"
       QMenu* toolbar = ui_->menuWindow->addMenu("Tool bar");
       toolbar->setIcon(QIcon::fromTheme("configure-toolbars"));
       ui_->mainToolBar->setVisible(true);
@@ -444,6 +448,13 @@ namespace gepetto {
 
       ui_->menuWindow->addSeparator();
 
+      // Menu "Window/3D views"
+      QMenu* views3D = ui_->menuWindow->addMenu("3D views");
+      views3D->setObjectName("3d views");
+
+      ui_->menuWindow->addSeparator();
+
+      // Menu "Window"
       ui_->dockWidget_bodyTree->setVisible (false);
       ui_->dockWidget_bodyTree->toggleViewAction ()->setIcon(QIcon::fromTheme("window-new"));
       ui_->dockWidget_bodyTree->toggleViewAction ()->setShortcut(Qt::CTRL + Qt::ALT + Qt::Key_B);
