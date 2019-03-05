@@ -14,6 +14,7 @@
 #include <vector>
 
 #include <QBuffer>
+#include <QDebug>
 #include <QDomDocument>
 #include <QDomElement>
 #include <QFile>
@@ -261,8 +262,11 @@ namespace viewer {
       } else {
         // Parse material
         mat = parseMaterial (material);
-        if (!mat.hasColor && !mat.hasTexture)
-          throw std::logic_error ("material tag must have either a color or a texture.");
+        if (!mat.hasColor && !mat.hasTexture) {
+          qDebug() << "material tag " << name << " must have either a color or a texture.";
+          mat.color = osgVector4 (0.9f,0.9f,0.9f,1.f);
+          mat.hasColor = true;
+        }
         materials[name] = mat;
       }
 
