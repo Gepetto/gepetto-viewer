@@ -367,7 +367,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../../../res/images.qrc"/>
+  <include location="../../res/images.qrc"/>
  </resources>
  <connections>
   <connection>
