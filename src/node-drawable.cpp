@@ -3,6 +3,7 @@
 
 #include <gepetto/viewer/node-drawable.h>
 
+#include <osg/Version>
 #include <osg/Texture2D>
 #include <osgDB/ReadFile>
 
@@ -18,7 +19,12 @@ namespace viewer {
   void NodeDrawable::setColor(const osgVector4 &color)
   {
     shape_drawable_ptr_->setColor(color);
-#ifdef OSG_3_5_6_OR_LATER
+    redrawShape ();
+  }
+
+  void NodeDrawable::redrawShape ()
+  {
+#if OSG_VERSION_GREATER_OR_EQUAL(3, 5, 6)
     shape_drawable_ptr_->build();
 #else
     shape_drawable_ptr_->dirtyDisplayList();

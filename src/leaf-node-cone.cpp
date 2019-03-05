@@ -114,19 +114,13 @@ namespace viewer {
     void LeafNodeCone::setRadius (const float& radius)
     {
         cone_ptr_->setRadius(radius);
-#ifdef OSG_3_5_6_OR_LATER
-        shape_drawable_ptr_->build();
-#endif
-        setDirty();
+        redrawShape ();
     }
     
     void LeafNodeCone::setHeight (const float& height)
     {  
         cone_ptr_->setHeight(height);
-#ifdef OSG_3_5_6_OR_LATER
-        shape_drawable_ptr_->build();
-#endif
-        setDirty();
+        redrawShape ();
     }
     
     LeafNodeCone::~LeafNodeCone ()

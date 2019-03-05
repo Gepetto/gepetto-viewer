@@ -117,10 +117,7 @@ namespace viewer {
     void LeafNodeSphere::setRadius (const float& radius)
     {
         sphere_ptr_->setRadius(radius);
-#ifdef OSG_3_5_6_OR_LATER
-        shape_drawable_ptr_->build();
-#endif
-        setDirty();
+        redrawShape ();
     }
     
     LeafNodeSphere::~LeafNodeSphere()

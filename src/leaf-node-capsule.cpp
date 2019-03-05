@@ -123,19 +123,14 @@ namespace viewer {
     void LeafNodeCapsule::setRadius (const float& radius)
     {
         capsule_ptr_->setRadius(radius);
-#ifdef OSG_3_5_6_OR_LATER
-        shape_drawable_ptr_->build();
-#endif
+        redrawShape ();
         setDirty();
     }
     
     void LeafNodeCapsule::setHeight (const float& height)
     {
         capsule_ptr_->setHeight(height);
-#ifdef OSG_3_5_6_OR_LATER
-        shape_drawable_ptr_->build();
-#endif
-        setDirty();
+        redrawShape ();
     }
 
     LeafNodeCapsule::~LeafNodeCapsule ()

@@ -123,25 +123,13 @@ namespace viewer {
     void LeafNodeCylinder::setRadius (const float& radius)
     {        
         cylinder_ptr_->setRadius(radius);
-#ifdef OSG_3_5_6_OR_LATER
-        shape_drawable_ptr_->build();
-#else
-        shape_drawable_ptr_->dirtyDisplayList();
-        shape_drawable_ptr_->dirtyBound();
-#endif
-        setDirty();
+        redrawShape ();
     }
     
     void LeafNodeCylinder::setHeight (const float& height)
     {        
         cylinder_ptr_->setHeight(height);
-#ifdef OSG_3_5_6_OR_LATER
-        shape_drawable_ptr_->build();
-#else
-        shape_drawable_ptr_->dirtyDisplayList();
-        shape_drawable_ptr_->dirtyBound();
-#endif
-        setDirty();
+        redrawShape ();
     }
     
     LeafNodeCylinder::~LeafNodeCylinder ()

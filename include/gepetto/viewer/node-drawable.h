@@ -24,6 +24,8 @@ namespace viewer {
     protected:
         ::osg::ShapeDrawableRefPtr shape_drawable_ptr_;
 
+        void redrawShape ();
+
         /** Constructor */
         NodeDrawable (const std::string& name) : Node (name) { init (); }
         
