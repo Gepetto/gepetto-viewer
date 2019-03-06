@@ -17,6 +17,8 @@
 #ifndef GEPETTO_GUI_OSGWIDGET_HH
 #define GEPETTO_GUI_OSGWIDGET_HH
 
+#include <gepetto/gui/fwd.hh>
+
 #include <QString>
 #include <QThread>
 #include <QLabel>
@@ -27,7 +29,6 @@
 #include <osgQt/GraphicsWindowQt>
 #include <gepetto/viewer/window-manager.h>
 
-#include <gepetto/gui/fwd.hh>
 #include <gepetto/gui/windows-manager.hh>
 
 class QToolBar;

@@ -1,3 +1,5 @@
+#include "gepetto/gui/fwd.hh"
+
 #include <QApplication>
 #include <QSettings>
 #include <QStyleFactory>

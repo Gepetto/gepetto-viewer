@@ -19,6 +19,9 @@
 
 #include <vector>
 
+#include <QtGui/qopengl.h>
+#include <QtGui>
+
 #include <gepetto/viewer/macros.h>
 #include <gepetto/viewer/fwd.h>
 #include <gepetto/gui/config-dep.hh>

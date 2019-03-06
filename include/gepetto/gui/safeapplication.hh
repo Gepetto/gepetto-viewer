@@ -17,6 +17,8 @@
 #ifndef GEPETTO_GUI_SAFEAPPLICATION_HH
 #define GEPETTO_GUI_SAFEAPPLICATION_HH
 
+#include <gepetto/gui/fwd.hh>
+
 #include <QApplication>
 
 namespace gepetto {

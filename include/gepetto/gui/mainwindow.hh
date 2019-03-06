@@ -17,6 +17,8 @@
 #ifndef GEPETTO_GUI_MAINWINDOW_HH
 #define GEPETTO_GUI_MAINWINDOW_HH
 
+#include "gepetto/gui/fwd.hh"
+
 #include <QList>
 #include <QStandardItemModel>
 #include <QMainWindow>
@@ -24,8 +26,6 @@
 #include <QLabel>
 
 #include <gepetto/viewer/group-node.h>
-
-#include <gepetto/gui/fwd.hh>
 
 #include <gepetto/gui/ledindicator.hh>
 

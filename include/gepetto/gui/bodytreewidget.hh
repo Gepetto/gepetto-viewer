@@ -17,6 +17,8 @@
 #ifndef GEPETTO_GUI_BODYTREEWIDGET_HH
 #define GEPETTO_GUI_BODYTREEWIDGET_HH
 
+#include <gepetto/gui/fwd.hh>
+
 #include <QWidget>
 #include <QTreeView>
 #include <QToolBox>
@@ -24,8 +26,6 @@
 #include <QVector3D>
 
 #include <gepetto/viewer/group-node.h>
-
-#include <gepetto/gui/fwd.hh>
 
 namespace gepetto {
   namespace gui {

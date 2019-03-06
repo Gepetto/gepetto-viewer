@@ -17,13 +17,14 @@
 #ifndef GEPETTO_GUI_PICK_HANDLER_HH
 #define GEPETTO_GUI_PICK_HANDLER_HH
 
+#include <gepetto/gui/fwd.hh>
+
 #include <osgGA/GUIEventHandler>
 #include <gepetto/viewer/node.h>
 
 #include <QObject>
 #include <QModelIndex>
 
-#include <gepetto/gui/fwd.hh>
 #include <gepetto/gui/qt-osg-keyboard.hh>
 
 namespace gepetto {
