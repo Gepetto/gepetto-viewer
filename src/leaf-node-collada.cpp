@@ -12,6 +12,7 @@
 #include <ios>
 #include <osg/LightModel>
 #include <osg/Texture2D>
+#include <osg/Version>
 #include <osgDB/FileNameUtils>
 #include <gepetto/viewer/leaf-node-collada.h>
 
@@ -51,15 +52,44 @@ namespace viewer {
     }
   }
 
+#if OSG_VERSION_LESS_THAN(3,3,3)
+  struct ObjectCache {
+    typedef std::map<std::string, osg::NodeRefPtr> Map_t;
+    Map_t map_;
+    bool get (const std::string& name, osg::NodeRefPtr& node) const
+    {
+      Map_t::const_iterator it = map_.find (name);
+      if (it != map_.end()) {
+        node = it->second;
+        return true;
+      }
+      return false;
+    } 
+    void add (const std::string& name, osg::NodeRefPtr& node)
+    {
+      map_.insert (std::make_pair(name,node));
+    }
+  };
+#endif
+
   /* Declaration of private function members */
 
   void LeafNodeCollada::init()
   {
+#if OSG_VERSION_GREATER_OR_EQUAL(3,3,3)
+    static osg::ref_ptr<osgDB::ObjectCache> object_cache (new osgDB::ObjectCache);
+#else
+    static ObjectCache object_cache;
+    if (!collada_ptr_)
+      object_cache.get(collada_file_path_, collada_ptr_);
+#endif
+
     if (!collada_ptr_) {
       // Setup cache
       const osg::ref_ptr<osgDB::Options> options = new osgDB::Options();
-      static osg::ref_ptr<osgDB::ObjectCache> object_cache (new osgDB::ObjectCache);
+#if OSG_VERSION_GREATER_OR_EQUAL(3,3,3)
       options->setObjectCache (object_cache);
+#endif
       options->setObjectCacheHint(osgDB::Options::CACHE_ALL);
 
       if (!fileExists(collada_file_path_.c_str()))
@@ -103,6 +133,9 @@ namespace viewer {
       }
       if (!collada_ptr_)
         throw std::invalid_argument(std::string("File ") + collada_file_path_ + std::string(" found but could not be opened. Check that a plugin exist."));
+#if OSG_VERSION_LESS_THAN(3,3,3)
+      object_cache.add(collada_file_path_, collada_ptr_);
+#endif
 
       /* Allow transparency */
       collada_ptr_->getOrCreateStateSet()->setMode(GL_BLEND, ::osg::StateAttribute::ON);

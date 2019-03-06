@@ -18,7 +18,8 @@
 // <http://www.gnu.org/licenses/>.
 
 #define BOOST_TEST_MODULE nodes
-#include <boost/test/included/unit_test.hpp>
+#include <boost/test/unit_test.hpp>
+#include <boost/utility/binary.hpp>
 
 #include <gepetto/viewer/node.h>
 #include <gepetto/viewer/leaf-node-box.h>

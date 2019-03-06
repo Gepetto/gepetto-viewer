@@ -87,7 +87,7 @@ int main (int argc, char** argv)
       simplified = input;
     } else {
       simplifier.setSampleRatio(ratio);
-      simplified = input->clone(osg::CopyOp::DEEP_COPY_ALL)->asNode();
+      simplified = dynamic_cast<osg::Node*>(input->clone(osg::CopyOp::DEEP_COPY_ALL));
       simplified->accept (simplifier);
     }
     lod->addChild (simplified, minDists[i], maxDists[i]);
