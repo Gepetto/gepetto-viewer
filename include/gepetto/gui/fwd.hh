@@ -19,7 +19,10 @@
 
 #include <vector>
 
-#include <QtGui/qopengl.h>
+#include <QtGlobal>
+#if QT_VERSION >= 0x050000
+# include <QtGui/qopengl.h>
+#endif
 #include <QtGui>
 
 #include <gepetto/viewer/macros.h>
