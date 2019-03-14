@@ -14,8 +14,8 @@
 // received a copy of the GNU Lesser General Public License along with
 // hpp-core. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef SCENEVIEWER_NODE_PROPERTY_HH
-#define SCENEVIEWER_NODE_PROPERTY_HH
+#ifndef GEPETTO_VIEWER_NODE_PROPERTY_HH
+#define GEPETTO_VIEWER_NODE_PROPERTY_HH
 
 #include <map>
 #include <iostream>
@@ -23,11 +23,12 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
+#include <gepetto/viewer/fwd.h>
 #include <gepetto/viewer/config-osg.h>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
     
-    DEF_CLASS_SMART_PTR(Property)
     typedef std::map<std::string, PropertyPtr_t> PropertyMap_t;
 
     /// \cond
@@ -43,6 +44,7 @@ namespace graphics {
       template <> struct property_type<osgVector2   > { static inline std::string to_string () { return "osgVector2"   ; } };
       template <> struct property_type<osgVector3   > { static inline std::string to_string () { return "osgVector3"   ; } };
       template <> struct property_type<osgVector4   > { static inline std::string to_string () { return "osgVector4"   ; } };
+      template <> struct property_type<Configuration> { static inline std::string to_string () { return "Configuration"; } };
     }
     /// \endcond
 
@@ -57,6 +59,7 @@ namespace graphics {
         virtual bool set(const osgVector2    & v) { invalidType(v); return false; }
         virtual bool set(const osgVector3    & v) { invalidType(v); return false; }
         virtual bool set(const osgVector4    & v) { invalidType(v); return false; }
+        virtual bool set(const Configuration & v) { invalidType(v); return false; }
 
         virtual bool get(bool          & v) { invalidType(v); return false; }
         virtual bool get(int           & v) { invalidType(v); return false; }
@@ -66,6 +69,7 @@ namespace graphics {
         virtual bool get(osgVector2    & v) { invalidType(v); return false; }
         virtual bool get(osgVector3    & v) { invalidType(v); return false; }
         virtual bool get(osgVector4    & v) { invalidType(v); return false; }
+        virtual bool get(Configuration & v) { invalidType(v); return false; }
 
         virtual bool hasReadAccess () const = 0;
         virtual bool hasWriteAccess() const = 0;
@@ -125,6 +129,7 @@ namespace graphics {
     typedef PropertyTpl<osgVector2   > Vector2Property;
     typedef PropertyTpl<osgVector3   > Vector3Property;
     typedef PropertyTpl<osgVector4   > Vector4Property;
+    typedef PropertyTpl<Configuration> ConfigurationProperty;
 
     /// Conversion between integer and enum name at runtime.
     struct MetaEnum {
@@ -162,6 +167,7 @@ namespace graphics {
         const MetaEnum* metaEnum_;
     };
 
-} /* namespace graphics */
+} /* namespace viewer */
+} /* namespace gepetto */
 
-#endif /* SCENEVIEWER_NODE_PROPERTY_HH */
+#endif /* GEPETTO_VIEWER_NODE_PROPERTY_HH */

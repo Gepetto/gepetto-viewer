@@ -6,14 +6,15 @@
 //  Copyright (c) 2016 LAAS-CNRS. All rights reserved.
 //
 
-#ifndef SCENEVIEWER_LEAFNODEMESH_HH
-#define SCENEVIEWER_LEAFNODEMESH_HH
+#ifndef GEPETTO_VIEWER_LEAFNODEMESH_HH
+#define GEPETTO_VIEWER_LEAFNODEMESH_HH
 
 #include <gepetto/viewer/node.h>
 #include <osg/PrimitiveSet>
 #include <osg/Geometry>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
     DEF_CLASS_SMART_PTR(LeafNodeMesh)
     
     /** Implementation of the Mesh GraphicalObject in OSG render */
@@ -95,6 +96,7 @@ namespace graphics {
         virtual ~LeafNodeMesh();
         
     };
-} /* namespace graphics */
+} /* namespace viewer */
+} /* namespace gepetto */
 
-#endif /* SCENEVIEWER_LEAFNODECOLLADA_HH */
+#endif /* GEPETTO_VIEWER_LEAFNODECOLLADA_HH */

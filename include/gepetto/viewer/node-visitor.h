@@ -6,13 +6,14 @@
 //  Copyright (c) 2015 LAAS-CNRS. All rights reserved.
 //
 
-#ifndef SCENEVIEWER_NODE_VISITOR_HH
-#define SCENEVIEWER_NODE_VISITOR_HH
+#ifndef GEPETTO_VIEWER_NODE_VISITOR_HH
+#define GEPETTO_VIEWER_NODE_VISITOR_HH
 
 #include <iostream>
 #include <gepetto/viewer/config-osg.h>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
     class Node;
     class GroupNode;
     class LeafNodeArrow;
@@ -60,6 +61,7 @@ namespace graphics {
       protected:
         bool invisibleAreValid_;
     }; /* class Node */
-} /* namespace graphics */
+} /* namespace viewer */
+} /* namespace gepetto */
 
-#endif /* SCENEVIEWER_NODE_VISITOR_HH */
+#endif /* GEPETTO_VIEWER_NODE_VISITOR_HH */

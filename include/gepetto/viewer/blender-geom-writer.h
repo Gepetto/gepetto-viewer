@@ -6,8 +6,8 @@
 //  Copyright (c) 2015 LAAS-CNRS. All rights reserved.
 //
 
-#ifndef SCENEVIEWER_BLENDER_GEOM_WRITER_VISITOR_HH
-#define SCENEVIEWER_BLENDER_GEOM_WRITER_VISITOR_HH
+#ifndef GEPETTO_VIEWER_BLENDER_GEOM_WRITER_VISITOR_HH
+#define GEPETTO_VIEWER_BLENDER_GEOM_WRITER_VISITOR_HH
 
 #include <iostream>
 #include <fstream>
@@ -15,7 +15,8 @@
 #include <gepetto/viewer/config-osg.h>
 #include <gepetto/viewer/node-visitor.h>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
 
     DEF_CLASS_SMART_PTR(BlenderGeomWriterVisitor)
 
@@ -58,6 +59,7 @@ namespace graphics {
         unsigned int nodeCount_;
         std::size_t groupDepth_;
     };
-} /* namespace graphics */
+} /* namespace viewer */
+} /* namespace gepetto */
 
-#endif /* SCENEVIEWER_BLENDER_GEOM_WRITER_VISITOR_HH */
+#endif /* GEPETTO_VIEWER_BLENDER_GEOM_WRITER_VISITOR_HH */

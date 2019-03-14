@@ -8,7 +8,8 @@
 
 #include <gepetto/viewer/leaf-node-capsule.h>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
     
     /* Declaration of private function members */
     
@@ -122,19 +123,14 @@ namespace graphics {
     void LeafNodeCapsule::setRadius (const float& radius)
     {
         capsule_ptr_->setRadius(radius);
-#ifdef OSG_3_5_6_OR_LATER
-        shape_drawable_ptr_->build();
-#endif
+        redrawShape ();
         setDirty();
     }
     
     void LeafNodeCapsule::setHeight (const float& height)
     {
         capsule_ptr_->setHeight(height);
-#ifdef OSG_3_5_6_OR_LATER
-        shape_drawable_ptr_->build();
-#endif
-        setDirty();
+        redrawShape ();
     }
 
     LeafNodeCapsule::~LeafNodeCapsule ()
@@ -151,4 +147,6 @@ namespace graphics {
     
     /* End of declaration of public function members */
     
-} /* namespace graphics */
+} /* namespace viewer */
+
+} /* namespace gepetto */

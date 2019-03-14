@@ -83,7 +83,8 @@
     throw std::invalid_argument (oss.str ().c_str ());				       \
   }
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
     namespace {
       typedef std::map<std::string, NodePtr_t>::iterator          NodeMapIt;
       typedef std::map<std::string, NodePtr_t>::const_iterator    NodeMapConstIt;
@@ -92,13 +93,6 @@ namespace graphics {
       typedef std::map<std::string, GroupNodePtr_t>::const_iterator    GroupNodeMapConstIt;
 
       typedef ScopedLock ScopedLock;
-
-      struct ApplyConfigurationFunctor {
-        void operator() (const NodeConfiguration& nc) const
-        {
-            nc.node->applyConfiguration ( nc.position, nc.quat);
-        }
-      };
     }
 
     BlenderFrameCapture::BlenderFrameCapture () :
@@ -302,22 +296,6 @@ namespace graphics {
         return it->second;
     }
 
-    void WindowsManager::refresh ()
-    {
-      {
-        ScopedLock lock(configListMtx_);
-        {
-          ScopedLock lock(osgFrameMutex());
-          //refresh scene with the new configuration
-          std::for_each(newNodeConfigurations_.begin(),
-              newNodeConfigurations_.end(),
-              ApplyConfigurationFunctor());
-        }
-        newNodeConfigurations_.resize (0);
-      }
-      if (autoCaptureTransform_) captureTransform ();
-    }
-
     void WindowsManager::createScene (const std::string& sceneName)
     {
       createGroup(sceneName);
@@ -471,12 +449,12 @@ namespace graphics {
 
     bool WindowsManager::addCone (const std::string& coneName,
             const float radius, const float height,
-            const Color_t&)
+            const Color_t& color)
     {
         RETURN_FALSE_IF_NODE_EXISTS(coneName);
 
         LeafNodeConePtr_t cone = LeafNodeCone::create
-          (coneName, radius, height);
+          (coneName, radius, height, color);
         ScopedLock lock(osgFrameMutex());
         addNode (coneName, cone, true);
         return true;
@@ -1084,7 +1062,9 @@ namespace graphics {
 
     void WindowsManager::captureTransform ()
     {
-	ScopedLock lock(osgFrameMutex());
+        // This requires only a read access to the scene.
+        // The only requirement is that no node get delete while accessing them.
+	//ScopedLock lock(osgFrameMutex());
         blenderCapture_.captureFrame ();
     }
 
@@ -1162,8 +1142,7 @@ namespace graphics {
     Configuration WindowsManager::getNodeGlobalTransform(const std::string nodeName) const
     {
         NodePtr_t node = getNode(nodeName, true);
-        std::pair<osgVector3, osgQuat> posQuat = node->getGlobalTransform();
-        return Configuration(posQuat.first, posQuat.second);
+        return node->getGlobalTransform();
     }
 
     bool WindowsManager::setBackgroundColor1(const WindowID windowId,const Color_t& color)
@@ -1264,4 +1243,6 @@ namespace graphics {
   DEFINE_WINDOWS_MANAGER_GET_SET_PROPERTY_FOR_TYPE(float, Float)
   DEFINE_WINDOWS_MANAGER_GET_SET_PROPERTY_FOR_TYPE(bool, Bool)
   DEFINE_WINDOWS_MANAGER_GET_SET_PROPERTY_FOR_TYPE(int, Int)
-} // namespace graphics
+} /* namespace viewer */
+
+} // namespace gepetto

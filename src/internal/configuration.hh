@@ -21,8 +21,8 @@
 
 #include <osgText/Font>
 
-namespace graphics {
+namespace gepetto {
   osg::ref_ptr<osgText::Font> defaultFont();
-} /* namespace graphics */
+} /* namespace gepetto */
 
 #endif // SCENEVIEWER_INTERNAL_CONFIGURATION_HH

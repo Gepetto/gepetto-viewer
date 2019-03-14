@@ -13,7 +13,8 @@
 #include <osg/LineWidth>
 #include <gepetto/viewer/node.h>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
     int getNodeMode (LeafNodeLine* node) { return node->getMode(); }
     void setNodeMode (LeafNodeLine* node, const int& v) { node->setMode((GLenum)v); }
 
@@ -86,7 +87,7 @@ namespace graphics {
     }
     
     LeafNodeLine::LeafNodeLine (const std::string& name, const osgVector3& start_point, const osgVector3& end_point) :
-        graphics::NodeDrawable (name)
+        NodeDrawable (name)
     {
         init ();
         setStartPoint(start_point);
@@ -95,7 +96,7 @@ namespace graphics {
     }
 
     LeafNodeLine::LeafNodeLine (const std::string& name, const osgVector3& start_point, const osgVector3& end_point, const osgVector4& color) :
-        graphics::NodeDrawable (name)
+        NodeDrawable (name)
     {
         init ();
         setStartPoint(start_point);
@@ -104,7 +105,7 @@ namespace graphics {
     }
 
     LeafNodeLine::LeafNodeLine (const std::string& name, const ::osg::Vec3ArrayRefPtr& points, const osgVector4& color) :
-        graphics::NodeDrawable (name)
+        NodeDrawable (name)
     {
         init ();
         setPoints(points);
@@ -112,7 +113,7 @@ namespace graphics {
     }
 
     LeafNodeLine::LeafNodeLine (const LeafNodeLine& other) :
-        graphics::NodeDrawable (other)
+        NodeDrawable (other)
     {
         init();
         setPoints (other.points_ptr_);
@@ -281,4 +282,6 @@ namespace graphics {
     
     /* End of declaration of public function members */
     
-} /* namespace graphics */
+} /* namespace viewer */
+
+} /* namespace gepetto */

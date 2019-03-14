@@ -38,7 +38,8 @@
         BOOST_CHECK_SMALL (angle, (double)tol);         \
 }
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
   struct NodeTest {
     static void checkAbstractClass (NodePtr_t node)
     {
@@ -73,8 +74,8 @@ namespace graphics {
       osgVector3 t1 (0.f,0.f,1.f);
       osgQuat q1 (0.5f,0.5f,0.5f,0.5f);
       node->applyConfiguration (t1, q1);
-      CHECK_VECT_CLOSE (node->getGlobalTransform().first , t1, 1e-4);
-      CHECK_QUAT_CLOSE (node->getGlobalTransform().second, q1, 1e-4);
+      CHECK_VECT_CLOSE (node->getGlobalTransform().position, t1, 1e-4);
+      CHECK_QUAT_CLOSE (node->getGlobalTransform().quat    , q1, 1e-4);
 
       matrixTransform->getMatrix().decompose(t, q, s, so);
       // This is very counter intuitive...
@@ -84,9 +85,10 @@ namespace graphics {
       node->setStaticTransform (_ts, _qs);
     }
   };
+} /* namespace viewer */
 }
 
-using namespace graphics;
+using namespace gepetto::viewer;
 
 BOOST_AUTO_TEST_SUITE( node )
 

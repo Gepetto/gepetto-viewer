@@ -18,7 +18,8 @@
 #include <gepetto/viewer/window-manager.h>
 #include <gepetto/viewer/node-visitor.h>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
   namespace {
     const osg::StateSetRefPtr& getVisibleStateSet (const LightingMode& mode)
     {
@@ -217,7 +218,7 @@ namespace graphics {
     hl_switch_node_ptr_ = new ::osg::Group;
     transform_ptr_ = new ::osg::MatrixTransform;
 
-    switch_node_ptr_->setNodeMask(~NodeBit);
+    switch_node_ptr_->setNodeMask(NodeBit | IntersectionBit);
     switch_node_ptr_->setName (id_name_);
     wireframe_modes_.resize(2);
     wireframe_modes_[FILL]      = new ::osg::Group;
@@ -285,6 +286,10 @@ namespace graphics {
         FloatProperty::create("Transparency",
           FloatProperty::getterFromMemberFunction(this, &Node::getAlpha),
           FloatProperty::setterFromMemberFunction(this, &Node::setAlpha)));
+    addProperty(
+        ConfigurationProperty::create("Transform",
+          ConfigurationProperty::getterFromMemberFunction(this, &Node::getGlobalTransform),
+          ConfigurationProperty::setterFromMemberFunction(this, &Node::applyConfiguration)));
   }
 
   Node::Node (const std::string& name) :
@@ -328,14 +333,23 @@ namespace graphics {
     properties_[name] = prop;
   }
 
+  void Node::updateTransform ()
+  {
+    osg::Matrixf M;
+    M.setRotate (M_.quat);
+    M.setTrans  (M_.position);
+
+    transform_ptr_->setMatrix (Ms_*M);
+    dirty_ = true;
+  }
+
   void Node::applyConfiguration (const osgVector3 & position, const osgQuat & quat)
   {
     if (!position.valid() || !quat.asVec4().valid()) return;
-    M_.setRotate (quat);
-    M_.setTrans (position);
+    M_.position = position;
+    M_.quat     = quat;
 
-    transform_ptr_->setMatrix (Ms_*M_);
-    dirty_ = true;
+    updateTransform ();
   }
 
   void Node::setStaticTransform(const osgVector3 & position, const osgQuat & quat)
@@ -347,8 +361,7 @@ namespace graphics {
     m.setTrans(position);
     Ms_ = Matrix::scale(s) * m;
 
-    transform_ptr_->setMatrix (Ms_*M_);
-    dirty_ = true;
+    updateTransform ();
   }
 
   osgQuat Node::getStaticRotation() const
@@ -385,8 +398,7 @@ namespace graphics {
     m.setTrans(t);
     Ms_ = ::osg::Matrix::scale(scale) * m;
 
-    transform_ptr_->setMatrix (Ms_*M_);
-    dirty_ = true;
+    updateTransform ();
    }
 
   void Node::setVisibilityMode (const VisibilityMode& mode)
@@ -657,13 +669,13 @@ namespace graphics {
       (*_p)->removeChild(switch_node_ptr_);
   }
   
-  std::pair<osgVector3, osgQuat> Node::getGlobalTransform() const
+  const Configuration& Node::getGlobalTransform() const
   {
-    return std::make_pair(M_.getTrans(), M_.getRotate());
+    return M_;
   }
 
-  void Node::traverse (NodeVisitor& /*visitor*/) {
-  }
+  void Node::traverse (NodeVisitor& /*visitor*/)
+  {}
 
   osg::ref_ptr<osg::Node> Node::getOsgNode() const
   {
@@ -673,4 +685,6 @@ namespace graphics {
   /* End of declaration of public function members */
 
 
-} /* namespace graphics */
+} /* namespace viewer */
+
+} /* namespace gepetto */

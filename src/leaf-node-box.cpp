@@ -8,7 +8,8 @@
 
 #include <gepetto/viewer/leaf-node-box.h>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
     
     /* Declaration of private function members */
 
@@ -116,12 +117,7 @@ namespace graphics {
     void LeafNodeBox::setHalfAxis (const osgVector3& half_axis)
     {        
         box_ptr_->setHalfLengths(half_axis);
-        shape_drawable_ptr_->dirtyDisplayList();
-        shape_drawable_ptr_->dirtyBound();
-#ifdef OSG_3_5_6_OR_LATER
-        shape_drawable_ptr_->build();
-#endif
-        setDirty();
+        redrawShape ();
     }
     
     LeafNodeBox::~LeafNodeBox()
@@ -138,4 +134,5 @@ namespace graphics {
     
     /* End of declaration of public function members */
     
-} /* namespace graphics */
+} /* namespace viewer */
+} /* namespace gepetto */

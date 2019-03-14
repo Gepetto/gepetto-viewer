@@ -8,13 +8,13 @@
 
 #include <gepetto/viewer/leaf-node-ground.h>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
     
     /* Declaration of private function members */
     
     void LeafNodeGround::init()
     {
-      //node_osg_ptr_ = ::graphics::NodeOSG::create(getCenter(), getRotation(), getConfiguration());
       osgVector3 center = osgVector3( length_ , width_ , 0.f );
       
       /* Number of cells on both dimensions */
@@ -254,4 +254,6 @@ namespace graphics {
     }
   
     /* End of declaration of public function members */
+} /* namespace viewer */
+
 }

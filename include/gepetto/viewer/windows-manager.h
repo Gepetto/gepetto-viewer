@@ -14,41 +14,24 @@
 // received a copy of the GNU Lesser General Public License along with
 // gepetto-viewer. If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef SCENEVIEWER_WINDOWMANAGERS_HH
-#define SCENEVIEWER_WINDOWMANAGERS_HH
+#ifndef GEPETTO_VIEWER_WINDOWMANAGERS_HH
+#define GEPETTO_VIEWER_WINDOWMANAGERS_HH
 
 #include <OpenThreads/Mutex>
 #include <OpenThreads/ScopedLock>
 
+#include <gepetto/viewer/fwd.h>
 #include <gepetto/viewer/config-osg.h>
 #include <gepetto/viewer/transform-writer.h>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
 
     typedef OpenThreads::Mutex Mutex;
     typedef OpenThreads::ScopedLock<Mutex> ScopedLock;
 
-    DEF_CLASS_SMART_PTR(Node)
-    DEF_CLASS_SMART_PTR(GroupNode)
-    DEF_CLASS_SMART_PTR(WindowManager)
-    DEF_CLASS_SMART_PTR(RoadmapViewer)
-
     DEF_CLASS_SMART_PTR(WindowsManager)
 
-    struct Configuration {
-        osgVector3 position;
-        osgQuat quat;
-        Configuration() {}
-        /// \param XYZW when false, the 4 last parameters are a quaternion (w,x,y,z)
-        ///             otherwise, a quaternion (x,y,z,w)
-        explicit Configuration(const float* a, bool XYZW)
-          : position(a[0],a[1],a[2])
-          , quat(a[(XYZW ? 3 : 4)],
-                 a[(XYZW ? 4 : 5)],
-                 a[(XYZW ? 5 : 6)],
-                 a[(XYZW ? 6 : 3)]) {}
-        Configuration(const osgVector3& p, const osgQuat& q) : position(p), quat(q) {}
-    };
     struct NodeConfiguration : Configuration {
         NodePtr_t node;
     };
@@ -75,15 +58,12 @@ namespace graphics {
 
         private:
             typedef std::vector <WindowManagerPtr_t> WindowManagerVector_t;
-            typedef std::vector<NodeConfiguration> NodeConfigurations_t;
             WindowManagerVector_t windowManagers_;
             std::map<std::string, NodePtr_t> nodes_;
             std::map<std::string, GroupNodePtr_t> groupNodes_;
             std::map<std::string, RoadmapViewerPtr_t> roadmapNodes_;
-            OpenThreads::Mutex osgFrameMtx_, configListMtx_;
-            NodeConfigurations_t newNodeConfigurations_;
+            Mutex osgFrameMtx_;
             BlenderFrameCapture blenderCapture_;
-            bool autoCaptureTransform_;
 
             static osgVector4 getColor(const std::string& colorName);
             static std::string parentName(const std::string& name);
@@ -101,6 +81,12 @@ namespace graphics {
               */
             WindowsManager ();
             WindowID addWindow (std::string winName, WindowManagerPtr_t newWindow);
+
+            typedef std::vector<NodeConfiguration> NodeConfigurations_t;
+            Mutex configListMtx_;
+            NodeConfigurations_t newNodeConfigurations_;
+            bool autoCaptureTransform_;
+            void refreshConfigs (const NodeConfigurations_t& configs);
 
             template <typename Iterator, typename NodeContainer_t> 
               std::size_t getNodes
@@ -122,12 +108,10 @@ namespace graphics {
             virtual std::vector<std::string> getSceneList();
             virtual std::vector<std::string> getWindowList();
 
-            /// Return the mutex to be locked before refreshing
-            OpenThreads::Mutex& osgFrameMutex () {
+            /// Return the mutex to be locked before modifying the scene.
+            Mutex& osgFrameMutex () {
               return osgFrameMtx_;
             }
-
-            virtual void refresh();
 
             virtual WindowID getWindowID (const std::string& windowName);
 
@@ -273,6 +257,7 @@ namespace graphics {
             NodePtr_t getNode (const std::string& nodeName, bool throwIfDoesntExist = false) const;
             Configuration getNodeGlobalTransform(const std::string nodeName) const;
     };
-} /* namespace graphics */
+} /* namespace viewer */
+} /* namespace gepetto */
 
-#endif /* SCENEVIEWER_WINDOWMANAGERS_HH */
+#endif /* GEPETTO_VIEWER_WINDOWMANAGERS_HH */

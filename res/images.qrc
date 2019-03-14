@@ -1,0 +1,18 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>stop.png</file>
+        <file>pause.png</file>
+        <file>play.png</file>
+        <file>record.png</file>
+        <file>zoom_fit.png</file>
+        <file>refresh.png</file>
+        <file>floor.png</file>
+    </qresource>
+    <qresource prefix="/osg">
+        <file>record.gif</file>
+        <file>selection.png</file>
+    </qresource>
+    <qresource prefix="/img">
+        <file>gepetto.png</file>
+    </qresource>
+</RCC>

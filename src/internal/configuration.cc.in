@@ -16,7 +16,7 @@
 
 #include <../src/internal/configuration.hh>
 
-namespace graphics {
+namespace gepetto {
   osg::ref_ptr<osgText::Font> defaultFont ()
   {
     static osg::ref_ptr<osgText::Font> font = osgText::readFontFile("@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_DATAROOTDIR@/@PROJECT_NAME@/fonts/arial.ttf");
@@ -25,4 +25,4 @@ namespace graphics {
 
   void (osg::ShapeDrawable::*drawableSetColor) (const osgVector4&) = &osg::ShapeDrawable::setColor;
   const osgVector4& (osg::ShapeDrawable::*drawableGetColor) () const = &osg::ShapeDrawable::getColor;
-} /* namespace graphics */
+} /* namespace gepetto */

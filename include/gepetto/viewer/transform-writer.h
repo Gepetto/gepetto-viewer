@@ -6,15 +6,16 @@
 //  Copyright (c) 2015 LAAS-CNRS. All rights reserved.
 //
 
-#ifndef SCENEVIEWER_TRANSFORM_WRITER_VISITOR_HH
-#define SCENEVIEWER_TRANSFORM_WRITER_VISITOR_HH
+#ifndef GEPETTO_VIEWER_TRANSFORM_WRITER_VISITOR_HH
+#define GEPETTO_VIEWER_TRANSFORM_WRITER_VISITOR_HH
 
 #include <iostream>
 #include <fstream>
 #include <gepetto/viewer/config-osg.h>
 #include <gepetto/viewer/node-visitor.h>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
 
     DEF_CLASS_SMART_PTR(TransformWriter)
     DEF_CLASS_SMART_PTR(BasicTransformWriter)
@@ -116,6 +117,7 @@ namespace graphics {
       for (Iterator it = begin; it != end; ++it) apply (**it);
       writer_->closeFile ();
     }
-} /* namespace graphics */
+} /* namespace viewer */
+} /* namespace gepetto */
 
-#endif /* SCENEVIEWER_TRANSFORM_WRITER_VISITOR_HH */
+#endif /* GEPETTO_VIEWER_TRANSFORM_WRITER_VISITOR_HH */

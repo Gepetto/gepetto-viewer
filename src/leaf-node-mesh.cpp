@@ -6,13 +6,13 @@
 //  Copyright (c) 2016 LAAS-CNRS. All rights reserved.
 //
 
-#include <sys/stat.h>
-#include <fstream>
-#include <ios>
 #include <gepetto/viewer/leaf-node-mesh.h>
+
+#include <osg/Texture2D>
 #include <osgDB/ReadFile>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
     
   /* Declaration of private function members */
 
@@ -61,7 +61,7 @@ namespace graphics {
     setColor(color_diffuse);
   }
   
-  LeafNodeMesh::LeafNodeMesh(const graphics::LeafNodeMesh& other) :
+  LeafNodeMesh::LeafNodeMesh(const LeafNodeMesh& other) :
     Node(other.getID())
   {
     init();
@@ -240,4 +240,6 @@ namespace graphics {
     
   /* End of declaration of public function members */
     
-} /* namespace graphics */
+} /* namespace viewer */
+
+} /* namespace gepetto */

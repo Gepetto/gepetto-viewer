@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 LAAS-CNRS. All rights reserved.
 //
 
-#ifndef SCENEVIEWER_WINDOWMANAGER_HH
-#define SCENEVIEWER_WINDOWMANAGER_HH
+#ifndef GEPETTO_VIEWER_WINDOWMANAGER_HH
+#define GEPETTO_VIEWER_WINDOWMANAGER_HH
 
 #include <osgGA/KeySwitchMatrixManipulator>
 #include <osgViewer/Viewer>
@@ -15,7 +15,8 @@
 #include <gepetto/viewer/group-node.h>
 #include <gepetto/viewer/node.h>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
 
     DEF_CLASS_SMART_PTR(WindowManager)
 
@@ -162,6 +163,7 @@ namespace graphics {
 	void detachCamera();
 
     };
-} /* namespace graphics */
+} /* namespace viewer */
+} /* namespace gepetto */
 
-#endif /* SCENEVIEWER_WINDOWMANAGER_HH */
+#endif /* GEPETTO_VIEWER_WINDOWMANAGER_HH */

@@ -11,11 +11,12 @@
 
 #include <gepetto/viewer/leaf-node-sphere.h>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
     /* Declaration of private function members */
 
     RoadmapViewer::RoadmapViewer (const std::string& name,const osgVector4& colorNode,float radiusSphere,float sizeAxis,const osgVector4& colorEdge):
-        graphics::Node (name), list_nodes_(),list_edges_()
+        Node (name), list_nodes_(),list_edges_()
     {
         colorNode_=osgVector4(colorNode);
         colorEdge_=osgVector4(colorEdge);
@@ -25,7 +26,7 @@ namespace graphics {
     }
 
     RoadmapViewer::RoadmapViewer (const RoadmapViewer& other):
-        graphics::Node (other), list_nodes_(),list_edges_()
+        Node (other), list_nodes_(),list_edges_()
     {
         size_t i;
         for (i=0;i < other.getNumOfNodes(); i++)
@@ -122,14 +123,14 @@ namespace graphics {
    void RoadmapViewer::setVisibilityMode (const VisibilityMode& visibility_state)
    {
        Node::setVisibilityMode (visibility_state);
-       std::list<graphics::LeafNodeXYZAxisPtr_t>::iterator iter_list_of_nodes;
+       std::list<LeafNodeXYZAxisPtr_t>::iterator iter_list_of_nodes;
        for (iter_list_of_nodes = list_nodes_.begin();
             iter_list_of_nodes != list_nodes_.end();
             iter_list_of_nodes++)
        {
            (*iter_list_of_nodes)->setVisibilityMode ( visibility_state );
        }
-       std::list<graphics::LeafNodeLinePtr_t>::iterator iter_list_of_edges;
+       std::list<LeafNodeLinePtr_t>::iterator iter_list_of_edges;
        for (iter_list_of_edges = list_edges_.begin();
             iter_list_of_edges != list_edges_.end();
             iter_list_of_edges++)
@@ -141,14 +142,14 @@ namespace graphics {
    void RoadmapViewer::setLightingMode (const LightingMode& lighting_state)
    {
        Node::setLightingMode ( lighting_state );
-       std::list<graphics::LeafNodeXYZAxisPtr_t>::iterator iter_list_of_nodes;
+       std::list<LeafNodeXYZAxisPtr_t>::iterator iter_list_of_nodes;
        for (iter_list_of_nodes = list_nodes_.begin();
             iter_list_of_nodes != list_nodes_.end();
             iter_list_of_nodes++)
        {
            (*iter_list_of_nodes)->setLightingMode ( lighting_state );
        }
-       std::list<graphics::LeafNodeLinePtr_t>::iterator iter_list_of_edges;
+       std::list<LeafNodeLinePtr_t>::iterator iter_list_of_edges;
        for (iter_list_of_edges = list_edges_.begin();
             iter_list_of_edges != list_edges_.end();
             iter_list_of_edges++)
@@ -161,14 +162,14 @@ namespace graphics {
    {
        Node::setWireFrameMode ( wireframe_state );
 
-       std::list<graphics::LeafNodeXYZAxisPtr_t>::iterator iter_list_of_nodes;
+       std::list<LeafNodeXYZAxisPtr_t>::iterator iter_list_of_nodes;
        for (iter_list_of_nodes = list_nodes_.begin();
             iter_list_of_nodes != list_nodes_.end();
             iter_list_of_nodes++)
        {
            (*iter_list_of_nodes)->setWireFrameMode ( wireframe_state );
        }
-       std::list<graphics::LeafNodeLinePtr_t>::iterator iter_list_of_edges;
+       std::list<LeafNodeLinePtr_t>::iterator iter_list_of_edges;
        for (iter_list_of_edges = list_edges_.begin();
             iter_list_of_edges != list_edges_.end();
             iter_list_of_edges++)
@@ -179,7 +180,7 @@ namespace graphics {
 
    void RoadmapViewer::setColorNode(const osgVector4& color)
    {
-     std::list<graphics::LeafNodeXYZAxisPtr_t>::iterator it;
+     std::list<LeafNodeXYZAxisPtr_t>::iterator it;
      for (it = list_nodes_.begin(); it != list_nodes_.end(); ++it) {
        (*it)->setColor ( color );
      }
@@ -187,7 +188,7 @@ namespace graphics {
 
    void RoadmapViewer::setColorEdge(const osgVector4& color)
    {
-     std::list<graphics::LeafNodeLinePtr_t>::iterator it;
+     std::list<LeafNodeLinePtr_t>::iterator it;
      for (it = list_edges_.begin(); it != list_edges_.end(); ++it) {
        (*it)->setColor ( color );
      }
@@ -196,4 +197,6 @@ namespace graphics {
     /* End of declaration of public function members */
 
 
-} // namespace graphics
+} /* namespace viewer */
+
+} // namespace gepetto

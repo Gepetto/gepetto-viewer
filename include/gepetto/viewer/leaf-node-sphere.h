@@ -6,12 +6,13 @@
 //  Copyright (c) 2014 LAAS-CNRS. All rights reserved.
 //
 
-#ifndef SCENEVIEWER_LEAFNODESPHERE_HH
-#define SCENEVIEWER_LEAFNODESPHERE_HH
+#ifndef GEPETTO_VIEWER_LEAFNODESPHERE_HH
+#define GEPETTO_VIEWER_LEAFNODESPHERE_HH
 
 #include <gepetto/viewer/node-drawable.h>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
     DEF_CLASS_SMART_PTR(LeafNodeSphere)
     
     /** Implementation of the Sphere GraphicalObject in OSG render */
@@ -76,6 +77,7 @@ namespace graphics {
         virtual ~LeafNodeSphere();
         
     };
-} /* namespace graphics */
+} /* namespace viewer */
+} /* namespace gepetto */
 
-#endif /* SCENEVIEWER_LEAFNODESPHERE_HH */
+#endif /* GEPETTO_VIEWER_LEAFNODESPHERE_HH */

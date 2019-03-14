@@ -6,13 +6,14 @@
 //  Copyright (c) 2014 LAAS-CNRS. All rights reserved
 //
 
-#ifndef SCENEVIEWER_LEAFNODEXYZ_HH
-#define SCENEVIEWER_LEAFNODEXYZ_HH
+#ifndef GEPETTO_VIEWER_LEAFNODEXYZ_HH
+#define GEPETTO_VIEWER_LEAFNODEXYZ_HH
 
 #include <gepetto/viewer/node-drawable.h>
 #include <osgDB/ReadFile>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
 
     DEF_CLASS_SMART_PTR(LeafNodeXYZAxis)
 
@@ -82,6 +83,7 @@ namespace graphics {
         virtual ~LeafNodeXYZAxis();
 
     };
-} /* namespace graphics */
+} /* namespace viewer */
+} /* namespace gepetto */
 
-#endif /* SCENEVIEWER_LEAFNODEXYZAXIS_HH */
+#endif /* GEPETTO_VIEWER_LEAFNODEXYZAXIS_HH */

@@ -6,12 +6,13 @@
 //  Copyright (c) 2014 LAAS-CNRS. All rights reserved.
 //
 
-#ifndef SCENEVIEWER_LEAFNODELINE_HH
-#define SCENEVIEWER_LEAFNODELINE_HH
+#ifndef GEPETTO_VIEWER_LEAFNODELINE_HH
+#define GEPETTO_VIEWER_LEAFNODELINE_HH
 
 #include <gepetto/viewer/node-drawable.h>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
     DEF_CLASS_SMART_PTR(LeafNodeLine)
     
     class LeafNodeLine : public NodeDrawable
@@ -126,6 +127,7 @@ namespace graphics {
         
     };
     
-} /* namespace graphics */
+} /* namespace viewer */
+} /* namespace gepetto */
 
-#endif /* SCENEVIEWER_LEAFNODELINE_HH */
+#endif /* GEPETTO_VIEWER_LEAFNODELINE_HH */

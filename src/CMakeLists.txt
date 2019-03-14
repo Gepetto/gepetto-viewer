@@ -19,9 +19,13 @@
 
 SET(LIBRARY_NAME ${PROJECT_NAME})
 
-CONFIG_FILES(
-  internal/configuration.cc
-)
+# {{{ libgepetto-viewer.so
+
+# {{{ Files
+CONFIGURE_FILE(
+  ${CMAKE_CURRENT_SOURCE_DIR}/internal/configuration.cc.in
+  ${CMAKE_CURRENT_BINARY_DIR}/internal/configuration.cc
+  @ONLY)
 
 SET(${LIBRARY_NAME}_SOURCES
   group-node.cpp
@@ -51,28 +55,112 @@ SET(${LIBRARY_NAME}_SOURCES
   blender-geom-writer.cc
   OSGManipulator/keyboard-manipulator.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/internal/configuration.cc
+
+  gui/action-search-bar.cc
+  gui/bodytreewidget.cc
+  gui/dialog/configuration.cc
+  gui/dialog/dialogloadenvironment.cc
+  gui/dialog/dialogloadrobot.cc
+  gui/dialog/pluginmanagerdialog.cc
+  gui/ledindicator.cc
+  gui/mainwindow.cc
+  gui/node-action.cc
+  gui/osgwidget.cc
+  gui/pick-handler.cc
+  gui/python-decorator.hh
+  gui/pythonwidget.cc
+  gui/safeapplication.cc
+  gui/selection-event.cc
+  gui/selection-handler.cc
+  gui/settings.cc
+  gui/shortcut-factory.cc
+  gui/tree-item.cc
+  gui/windows-manager.cc
 )
 
 SET(HEADERS)
 FOREACH(header ${${PROJECT_NAME}_HEADERS})
   LIST(APPEND HEADERS ${PROJECT_SOURCE_DIR}/${header})
 ENDFOREACH()
-
-ADD_LIBRARY(${LIBRARY_NAME} SHARED ${HEADERS} ${${LIBRARY_NAME}_SOURCES})
-
 ADD_HEADER_GROUP(HEADERS)
 ADD_SOURCE_GROUP(${LIBRARY_NAME}_SOURCES)
+# }}}
+
+# {{{ Configure PythonQt
+IF(GEPETTO_GUI_HAS_PYTHONQT)
+  INCLUDE_DIRECTORIES(SYSTEM "${PYTHON_INCLUDE_DIR}" "${PYTHONQT_INCLUDE_DIR}")
+  SET (${PROJECT_NAME}_SOURCES
+    ${${PROJECT_NAME}_SOURCES}
+    gui/pythonwidget.cc
+    gui/python-decorator.hh)
+  SET (${PROJECT_NAME}_MOC
+    ${${PROJECT_NAME}_HEADERS_MOC}
+    gui/python-decorator.hh
+    )
+ELSE (GEPETTO_GUI_HAS_PYTHONQT)
+  MESSAGE(STATUS "Skipping PythonQt settings")
+  SET (${PROJECT_NAME}_MOC
+    ${${PROJECT_NAME}_HEADERS_MOC}
+    )
+ENDIF(GEPETTO_GUI_HAS_PYTHONQT)
+# }}}
+
+# {{{ Configure Qt
+IF(PROJECT_USE_QT4)
+  QT4_WRAP_CPP(${PROJECT_NAME}_HEADERS_MOCED ${${PROJECT_NAME}_MOC})
+  #QT4_WRAP_UI(${PROJECT_NAME}_FORMS_HEADERS ${${PROJECT_NAME}_FORMS})
+  QT4_ADD_RESOURCES(${PROJECT_NAME}_RESOURCES_RCC ${${PROJECT_NAME}_RESOURCES})
+  INCLUDE(${QT_USE_FILE})
+ELSE(PROJECT_USE_QT4)
+  QT5_WRAP_CPP(${PROJECT_NAME}_HEADERS_MOCED ${${PROJECT_NAME}_MOC})
+  #QT5_WRAP_UI(${PROJECT_NAME}_FORMS_HEADERS ${${PROJECT_NAME}_FORMS})
+  QT5_ADD_RESOURCES(${PROJECT_NAME}_RESOURCES_RCC ${${PROJECT_NAME}_RESOURCES})
+ENDIF(PROJECT_USE_QT4)
+
+ADD_DEFINITIONS(${QT_DEFINITIONS})
+# }}}
+
+# {{{ Compile and link
+ADD_LIBRARY(${LIBRARY_NAME} SHARED
+  ${${PROJECT_NAME}_HEADERS_MOCED}
+  ${${PROJECT_NAME}_HEADERS_NO_MOC}
+  ${${PROJECT_NAME}_RESOURCES_RCC}
+  ${${LIBRARY_NAME}_SOURCES})
 
 PKG_CONFIG_USE_DEPENDENCY(${LIBRARY_NAME} openscenegraph)
-PKG_CONFIG_USE_DEPENDENCY(${LIBRARY_NAME} urdfdom)
-TARGET_LINK_LIBRARIES(${LIBRARY_NAME} ${Boost_LIBRARIES})
-TARGET_LINK_LIBRARIES(${LIBRARY_NAME} ${X11_LIBRARIES})
-TARGET_LINK_LIBRARIES(${LIBRARY_NAME} ${OPENGL_LIBRARIES})
+PKG_CONFIG_USE_DEPENDENCY(${LIBRARY_NAME} ${OSGQT_DEPENDENCY})
+PKG_CONFIG_USE_DEPENDENCY(${LIBRARY_NAME} openthreads)
+
+ADD_DEFINITIONS(${QT_DEFINITIONS})
+TARGET_LINK_LIBRARIES(${LIBRARY_NAME}
+  ${Boost_LIBRARIES}
+  ${X11_LIBRARIES}
+  ${OPENGL_LIBRARIES}
+  ${PROJECT_QT_LIBS}
+  ${PYTHONQT_LIBRARIES})
 
 INSTALL(TARGETS ${LIBRARY_NAME} DESTINATION lib)
+# }}}
+# }}}
 
+# {{{ gepetto-gui
+CONFIGURE_FILE(
+  ${CMAKE_CURRENT_SOURCE_DIR}/gui/main.cc.in
+  ${CMAKE_CURRENT_BINARY_DIR}/gui/main.cc
+  @ONLY)
+ADD_EXECUTABLE(gepetto-gui ${CMAKE_CURRENT_BINARY_DIR}/gui/main.cc)
+#PKG_CONFIG_USE_DEPENDENCY(gepetto-gui openscenegraph)
+TARGET_LINK_LIBRARIES(gepetto-gui ${LIBRARY_NAME})
+
+INSTALL(TARGETS gepetto-gui DESTINATION bin)
+# }}}
+
+# {{{ gvtools
 ADD_EXECUTABLE(gvtools gvtools.cpp)
 PKG_CONFIG_USE_DEPENDENCY(gvtools openscenegraph)
 TARGET_LINK_LIBRARIES(gvtools ${Boost_LIBRARIES} ${OPENGL_LIBRARIES})
 
 INSTALL(TARGETS gvtools DESTINATION bin)
+# }}}
+
+# vim: foldmethod=marker foldlevel=0

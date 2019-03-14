@@ -6,12 +6,13 @@
 //  Copyright (c) 2014 LAAS-CNRS. All rights reserved.
 //
 
-#ifndef SCENEVIEWER_LEAFNODEBOX_HH
-#define SCENEVIEWER_LEAFNODEBOX_HH
+#ifndef GEPETTO_VIEWER_LEAFNODEBOX_HH
+#define GEPETTO_VIEWER_LEAFNODEBOX_HH
 
 #include <gepetto/viewer/node-drawable.h>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
     DEF_CLASS_SMART_PTR(LeafNodeBox)
     
     /** Implementation of the Box GraphicalObject in OSG render engine */
@@ -76,6 +77,7 @@ namespace graphics {
         virtual ~LeafNodeBox();
         
     };
-} /* namespace graphics */
+} /* namespace viewer */
+} /* namespace gepetto */
 
-#endif /* SCENEVIEWER_LEAFNODEBOX_HH */
+#endif /* GEPETTO_VIEWER_LEAFNODEBOX_HH */

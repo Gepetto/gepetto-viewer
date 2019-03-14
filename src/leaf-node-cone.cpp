@@ -8,7 +8,8 @@
 
 #include <gepetto/viewer/leaf-node-cone.h>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
     
     /* Declaration of private function members */
     
@@ -113,19 +114,13 @@ namespace graphics {
     void LeafNodeCone::setRadius (const float& radius)
     {
         cone_ptr_->setRadius(radius);
-#ifdef OSG_3_5_6_OR_LATER
-        shape_drawable_ptr_->build();
-#endif
-        setDirty();
+        redrawShape ();
     }
     
     void LeafNodeCone::setHeight (const float& height)
     {  
         cone_ptr_->setHeight(height);
-#ifdef OSG_3_5_6_OR_LATER
-        shape_drawable_ptr_->build();
-#endif
-        setDirty();
+        redrawShape ();
     }
     
     LeafNodeCone::~LeafNodeCone ()
@@ -142,4 +137,6 @@ namespace graphics {
     
     /* End of declaration of public function members */
     
-} /* namespace graphics */
+} /* namespace viewer */
+
+} /* namespace gepetto */

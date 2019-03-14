@@ -9,7 +9,8 @@
 
 #include <sstream>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
 
   // ---- protected constructor ---- //
 
@@ -35,7 +36,7 @@ namespace graphics {
 
 
   NodeRod::NodeRod (const NodeRod& other):
-      graphics::Node (other)
+      Node (other)
   {
       size_t i;
       radius_ = other.radius();
@@ -126,5 +127,6 @@ namespace graphics {
     }
 
 
-} // namespace graphics
+} /* namespace viewer */
+} // namespace gepetto
 

@@ -6,13 +6,14 @@
 //  Copyright (c) 2014 LAAS-CNRS. All rights reserved.
 //
 
-#ifndef SCENEVIEWER_URDFPARSER_HH
-#define SCENEVIEWER_URDFPARSER_HH
+#ifndef GEPETTO_VIEWER_URDFPARSER_HH
+#define GEPETTO_VIEWER_URDFPARSER_HH
 
 #include <gepetto/viewer/group-node.h>
 #include <gepetto/viewer/leaf-node-collada.h>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
   namespace urdfParser {
 
     /// If input starts with "package://", read ROS_PACKAGE_PATH environment
@@ -40,6 +41,7 @@ namespace graphics {
 			  const bool& visual = true,
 			  const bool& linkFrame = true);
   }
-}
+} /* namespace viewer */
+} /* namespace gepetto */
 
-#endif // SCENEVIEWER_URDFPARSER_HH
+#endif // GEPETTO_VIEWER_URDFPARSER_HH

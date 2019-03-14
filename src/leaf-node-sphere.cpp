@@ -8,7 +8,8 @@
 
 #include <gepetto/viewer/leaf-node-sphere.h>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
     
     /* Declaration of private function members */
 
@@ -116,10 +117,7 @@ namespace graphics {
     void LeafNodeSphere::setRadius (const float& radius)
     {
         sphere_ptr_->setRadius(radius);
-#ifdef OSG_3_5_6_OR_LATER
-        shape_drawable_ptr_->build();
-#endif
-        setDirty();
+        redrawShape ();
     }
     
     LeafNodeSphere::~LeafNodeSphere()
@@ -136,4 +134,6 @@ namespace graphics {
     
     /* End of declaration of public function members */
     
-} /* namespace graphics */
+} /* namespace viewer */
+
+} /* namespace gepetto */

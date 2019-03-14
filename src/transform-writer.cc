@@ -17,7 +17,8 @@
 #include <gepetto/viewer/transform-writer.h>
 #include <gepetto/viewer/node.h>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
   namespace {
     const char indent[] = "  ";
   }
@@ -62,8 +63,8 @@ namespace graphics {
 
   void TransformWriterVisitor::apply (Node& node)
   {
-    std::pair<osgVector3, osgQuat> pos = node.getGlobalTransform ();
-    writer_->writeTransform (node.getID ().c_str(), pos.first, pos.second);
+    const Configuration& cfg = node.getGlobalTransform ();
+    writer_->writeTransform (node.getID ().c_str(), cfg.position, cfg.quat);
     traverse (node);
   }
 
@@ -75,4 +76,5 @@ namespace graphics {
     writer_->closeFile ();
   }
 
-} // namespace graphics
+} // namespace viewer
+} // namespace gepetto

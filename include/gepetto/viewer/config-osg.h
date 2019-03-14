@@ -10,7 +10,7 @@
 #ifndef DynAndGraph_config_h
 #define DynAndGraph_config_h
 
-#include <gepetto/viewer/macros.h>
+#include <QMetaType>
 
 #include <osg/Shape>
 #include <osg/ShapeDrawable>
@@ -23,8 +23,6 @@
 #include <osg/Node>
 #include <osg/Group>
 #include <osg/Switch>
-#include <osgShadow/ShadowedScene>
-#include <osgShadow/ViewDependentShadowMap>
 #include <osg/ClearNode>
 #include <osg/LineWidth>
 
@@ -47,6 +45,9 @@
 #include <osg/GraphicsContext>
 
 #include <osg/PolygonMode>
+
+#include <gepetto/viewer/fwd.h>
+#include <gepetto/viewer/macros.h>
 
 namespace osg
 {
@@ -98,11 +99,6 @@ namespace osg
   
 } /* namespace osg */
 
-namespace osgShadow {
-    DEF_OSG_CLASS_REF_PTR(ShadowedScene)
-    DEF_OSG_CLASS_REF_PTR(ViewDependentShadowMap)
-} /* namespace osgShadow */
-
 namespace osgViewer
 {
     DEF_OSG_CLASS_REF_PTR(Viewer)
@@ -115,7 +111,8 @@ typedef ::osg::Vec4f osgVector4;
 
 typedef ::osg::Quat osgQuat;
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
     
 #define DEF_WIDTH_WINDOW 600
 #define DEF_HEIGHT_WINDOW 480
@@ -147,7 +144,25 @@ namespace graphics {
         FACE_AND_EDGE
     };     
 
+    struct Configuration
+    {
+        osgVector3 position;
+        osgQuat quat;
+        Configuration() {}
+        /// \param XYZW when false, the 4 last parameters are a quaternion (w,x,y,z)
+        ///             otherwise, a quaternion (x,y,z,w)
+        explicit Configuration(const float* a, bool XYZW)
+          : position(a[0],a[1],a[2])
+          , quat(a[(XYZW ? 3 : 4)],
+                 a[(XYZW ? 4 : 5)],
+                 a[(XYZW ? 5 : 6)],
+                 a[(XYZW ? 6 : 3)]) {}
+        Configuration(const osgVector3& p, const osgQuat& q) : position(p), quat(q) {}
+    };
     
-} /* namespace graphics */
+} /* namespace viewer */
+} /* namespace gepetto */
+
+Q_DECLARE_METATYPE(gepetto::viewer::Configuration)
 
 #endif

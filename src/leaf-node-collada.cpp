@@ -11,11 +11,13 @@
 #include <clocale>
 #include <ios>
 #include <osg/LightModel>
+#include <osg/Texture2D>
 #include <osg/Version>
 #include <osgDB/FileNameUtils>
 #include <gepetto/viewer/leaf-node-collada.h>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
   inline bool fileExists (const char* fn)
   { struct stat buffer; return (stat (fn, &buffer) == 0); }
 
@@ -377,4 +379,6 @@ namespace graphics {
     
   /* End of declaration of public function members */
     
-} /* namespace graphics */
+} /* namespace viewer */
+
+} /* namespace gepetto */

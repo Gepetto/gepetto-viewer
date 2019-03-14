@@ -3,9 +3,12 @@
 
 #include <gepetto/viewer/node-drawable.h>
 
+#include <osg/Version>
+#include <osg/Texture2D>
 #include <osgDB/ReadFile>
 
-namespace graphics {
+namespace gepetto {
+namespace viewer {
   void NodeDrawable::init ()
   {
     addProperty(Vector4Property::create("Color",
@@ -16,12 +19,18 @@ namespace graphics {
   void NodeDrawable::setColor(const osgVector4 &color)
   {
     shape_drawable_ptr_->setColor(color);
-#ifdef OSG_3_5_6_OR_LATER
+    redrawShape ();
+  }
+
+  void NodeDrawable::redrawShape ()
+  {
+#if OSG_VERSION_GREATER_OR_EQUAL(3, 5, 6)
     shape_drawable_ptr_->build();
 #else
     shape_drawable_ptr_->dirtyDisplayList();
     shape_drawable_ptr_->dirtyBound();
 #endif
+    setDirty();
   }
 
   osgVector4 NodeDrawable::getColor() const
@@ -41,5 +50,7 @@ namespace graphics {
     }
     texture->setImage(image);
     geode_ptr_->getStateSet()->setTextureAttributeAndModes(0,texture,osg::StateAttribute::ON);
+    setDirty();
   }
+} /* namespace viewer */
 }
