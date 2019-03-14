@@ -54,7 +54,7 @@ namespace viewer {
   class SetDirtyVisitorTpl : public NodeVisitor
   {
     public:
-      SetDirtyVisitorTpl () : NodeVisitor (false) {}
+      SetDirtyVisitorTpl () : NodeVisitor (true) {}
 
       ~SetDirtyVisitorTpl () {}
 
