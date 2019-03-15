@@ -18,7 +18,9 @@
 // <http://www.gnu.org/licenses/>.
 
 #define BOOST_TEST_MODULE safe_application
+#ifndef Q_MOC_RUN
 #include <boost/test/included/unit_test.hpp>
+#endif
 
 #include <gepetto/gui/safeapplication.hh>
 
@@ -49,7 +51,7 @@ BOOST_AUTO_TEST_CASE (safeApplication) {
   QEvent event (QEvent::None);
   int argc = 0;
   SafeApplication app (argc, NULL);
-  
+
   test.stdex = true;
   app.notify (&test, &event);
   test.stdex = false;

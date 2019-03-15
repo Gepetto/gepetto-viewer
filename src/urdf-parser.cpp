@@ -24,8 +24,6 @@
 #include <QStringList>
 #include <QtGlobal>
 
-#include <osgQt/Version>
-
 #include <gepetto/viewer/leaf-node-cylinder.h>
 #include <gepetto/viewer/leaf-node-box.h>
 #include <gepetto/viewer/leaf-node-sphere.h>
@@ -415,7 +413,7 @@ namespace viewer {
       QString name = material.attribute ("name");
       materials[name] = mat;
     }
-        
+
 
     GroupNodePtr_t robot = GroupNode::create(robotName);
     QDomNodeList links = model.elementsByTagName ("link");
