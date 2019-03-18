@@ -33,6 +33,7 @@ class ObjectTest : public QObject
 
     bool event(QEvent *e)
     {
+      (void)e;
       if (stdex) {
         throw std::logic_error ("std logic_error from ObjectTest");
       } else {
