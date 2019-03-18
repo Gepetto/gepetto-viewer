@@ -162,4 +162,27 @@ TARGET_LINK_LIBRARIES(gvtools ${Boost_LIBRARIES} ${OPENGL_LIBRARIES})
 INSTALL(TARGETS gvtools DESTINATION bin)
 # }}}
 
+IF(${CMAKE_VERSION} VERSION_LESS 3.0)
+    SET(UIC_CMAKE_28_COMPAT_DEPENDENCIES)
+    SET(${LIBRARY_NAME}_DIALOG_UIC
+        pluginmanagerdialog
+        dialogloadrobot
+        dialogloadenvironment
+        )
+    SET(${LIBRARY_NAME}_UIC
+        mainwindow
+        )
+    foreach(ui ${${LIBRARY_NAME}_DIALOG_UIC})
+        QT4_WRAP_UI("ui_${ui}.h" "gui/dialog/${ui}.ui")
+        SET(UIC_CMAKE_28_COMPAT_DEPENDENCIES ${UIC_CMAKE_28_COMPAT_DEPENDENCIES} "ui_${ui}.h")
+    endforeach(ui ${${LIBRARY_NAME}_DIALOG_UIC})
+    foreach(ui ${${LIBRARY_NAME}_UIC})
+        QT4_WRAP_UI("ui_${ui}.h" "gui/${ui}.ui")
+        SET(UIC_CMAKE_28_COMPAT_DEPENDENCIES ${UIC_CMAKE_28_COMPAT_DEPENDENCIES} "ui_${ui}.h")
+    endforeach(ui ${${LIBRARY_NAME}_UIC})
+    ADD_CUSTOM_TARGET(UIC_CMAKE_28_COMPAT ALL DEPENDS ${UIC_CMAKE_28_COMPAT_DEPENDENCIES})
+    ADD_DEPENDENCIES(${LIBRARY_NAME} UIC_CMAKE_28_COMPAT)
+ENDIF(${CMAKE_VERSION} VERSION_LESS 3.0)
+
+
 # vim: foldmethod=marker foldlevel=0
