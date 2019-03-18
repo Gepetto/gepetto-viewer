@@ -29,7 +29,9 @@
 #include <osgViewer/Viewer>
 
 #include <iostream>
+#ifndef Q_MOC_RUN
 #include <boost/regex.hpp>
+#endif
 
 #include <gepetto/gui/selection-event.hh>
 #include <gepetto/gui/windows-manager.hh>

@@ -20,15 +20,17 @@
 #include <map>
 #include <iostream>
 
+#ifndef Q_MOC_RUN
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
+#endif
 
 #include <gepetto/viewer/fwd.h>
 #include <gepetto/viewer/config-osg.h>
 
 namespace gepetto {
 namespace viewer {
-    
+
     typedef std::map<std::string, PropertyPtr_t> PropertyMap_t;
 
     /// \cond

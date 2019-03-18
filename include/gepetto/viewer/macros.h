@@ -20,6 +20,7 @@ namespace viewer {
 }
 }
 #else
+#ifndef Q_MOC_RUN
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
 namespace gepetto {
@@ -30,6 +31,7 @@ namespace viewer {
   using boost::dynamic_pointer_cast;
 }
 }
+#endif
 #endif
 
 #include <osg/ref_ptr>
@@ -62,4 +64,3 @@ typedef ::gepetto::viewer::weak_ptr<const className> className##ConstWeakPtr; \
   virtual void accept (NodeVisitor& nv) { if (nv.valid(*this)) { nv.apply (*this); } } \
 
 #endif // GEPETTO_VIEWER_MACROS_HH
-

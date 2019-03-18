@@ -18,7 +18,9 @@
 #include "gepetto/gui/mainwindow.hh"
 #include <gepetto/gui/pick-handler.hh>
 
+#ifndef Q_MOC_RUN
 #include <boost/regex.hpp>
+#endif
 
 #include <QAction>
 #include <QFileDialog>

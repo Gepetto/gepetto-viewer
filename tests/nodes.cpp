@@ -18,8 +18,10 @@
 // <http://www.gnu.org/licenses/>.
 
 #define BOOST_TEST_MODULE nodes
+#ifndef Q_MOC_RUN
 #include <boost/test/unit_test.hpp>
 #include <boost/utility/binary.hpp>
+#endif
 
 #include <gepetto/viewer/node.h>
 #include <gepetto/viewer/leaf-node-box.h>
@@ -98,6 +100,3 @@ BOOST_AUTO_TEST_CASE (box) {
 }
 
 BOOST_AUTO_TEST_SUITE_END()
-
-
-
