@@ -511,6 +511,7 @@ namespace viewer {
    matrix.setTrans(pos.x(),pos.y(),pos.z());
    matrix.setRotate(rot);
    manipulator_ptr->setByMatrix(matrix);
+   lastSceneWasDisrty_=true;
   }
 
   
