@@ -243,7 +243,7 @@ namespace gepetto {
       dockOSG->show ();
 
       // Add the widget to the window list.
-      QMenu* views3D = ui_->menuWindow->findChild<QMenu*>("3d views",
+      QMenu* views3D = ui_->menuWindow->findChild<QMenu*>("3d views"
 #if (QT_VERSION >= QT_VERSION_CHECK(5,0,0))
               , Qt::FindDirectChildrenOnly
 #endif

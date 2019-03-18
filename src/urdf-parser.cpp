@@ -24,6 +24,11 @@
 #include <QStringList>
 #include <QtGlobal>
 
+#include <osg/Version>
+#if OSG_VERSION_GREATER_OR_EQUAL(3,3,9) && OSG_VERSION_LESS_THAN(3,5,7)
+#include <osgQt/Version>
+#endif
+
 #include <gepetto/viewer/leaf-node-cylinder.h>
 #include <gepetto/viewer/leaf-node-box.h>
 #include <gepetto/viewer/leaf-node-sphere.h>
