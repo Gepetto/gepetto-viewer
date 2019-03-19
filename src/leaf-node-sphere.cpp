@@ -32,8 +32,8 @@ namespace viewer {
         geode_ptr_->getOrCreateStateSet()->setMode(GL_BLEND, ::osg::StateAttribute::ON);
 
         addProperty(FloatProperty::create("Radius",
-              FloatProperty::getterFromMemberFunction(sphere_ptr_.get(), &osg::Sphere::getRadius),
-              FloatProperty::setterFromMemberFunction(sphere_ptr_.get(), &osg::Sphere::setRadius)));
+              FloatProperty::getterFromMemberFunction(this, &LeafNodeSphere::getRadius),
+              FloatProperty::setterFromMemberFunction(this, &LeafNodeSphere::setRadius)));
     }
     
     LeafNodeSphere::LeafNodeSphere(const std::string& name, const float& radius) :
