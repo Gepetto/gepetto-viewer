@@ -29,6 +29,7 @@ namespace viewer {
         LeafNodeColladaWeakPtr weak_ptr_;
         
         /** Associated Node Shape */
+        ::osg::GroupRefPtr group_ptr_;
         ::osg::NodeRefPtr collada_ptr_;
         
         void init();
