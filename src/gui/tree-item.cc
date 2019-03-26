@@ -142,14 +142,12 @@ namespace gepetto {
     QWidget* configurationPropertyEditor (BodyTreeItem* bti, const PropertyPtr_t prop)
     {
       if (!prop->hasWriteAccess()) return NULL;
-      Configuration value;
-      /* bool success = */ prop->get(value);
 
       QPushButton* button = new QPushButton("Set transform");
 
       /// Color dialog should be opened in a different place
-      ConfigurationDialog* cfgDialog = new ConfigurationDialog(bti->text(),
-          value, MainWindow::instance());
+      ConfigurationDialog* cfgDialog = new ConfigurationDialog(prop,
+          bti->text(), MainWindow::instance());
 
       cfgDialog->setProperty("propertyName", QString::fromStdString(prop->name()));
       cfgDialog->connect(button, SIGNAL(clicked()), SLOT(show()));

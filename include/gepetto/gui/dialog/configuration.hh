@@ -33,7 +33,8 @@ namespace gepetto {
       public:
         typedef viewer::Configuration Configuration;
 
-        ConfigurationDialog (const QString& name, const Configuration& q, QWidget *parent = 0);
+        ConfigurationDialog (const viewer::PropertyPtr_t prop,
+            const QString& name, QWidget *parent = 0);
 
       signals:
         void configurationChanged (const Configuration& config);
@@ -41,9 +42,14 @@ namespace gepetto {
       private slots:
         void updateConfig ();
 
+      protected:
+        void showEvent (QShowEvent* event);
+
       private:
+        void setConfigFromProperty ();
         void setPyValue ();
 
+        viewer::PropertyPtr_t prop;
         Configuration cfg;
 
         QDoubleSpinBox *x,*y,*z,

@@ -217,12 +217,15 @@ namespace viewer {
     switch_node_ptr_ = new ::osg::Group;
     hl_switch_node_ptr_ = new ::osg::Group;
     transform_ptr_ = new ::osg::MatrixTransform;
+    transform_ptr_ ->setName ("positionInParentNode");
 
     switch_node_ptr_->setNodeMask(NodeBit | IntersectionBit);
     switch_node_ptr_->setName (id_name_);
     wireframe_modes_.resize(2);
     wireframe_modes_[FILL]      = new ::osg::Group;
+    wireframe_modes_[FILL]      ->setName ("wireframe: FILL");
     wireframe_modes_[WIREFRAME] = new ::osg::Group;
+    wireframe_modes_[WIREFRAME] ->setName ("wireframe: WIREFRAME");
 
     /* Building hierarchie */
     selected_wireframe_ = FILL;
@@ -241,6 +244,7 @@ namespace viewer {
     }
     // setHighlightState(0);
     hl_switch_node_ptr_->addChild(highlight_nodes_[selected_highlight_]);
+    hl_switch_node_ptr_->setName ("highlight switch");
 
     wireframe_modes_[WIREFRAME]->setStateSet(getWireframeStateSet());
     wireframe_modes_[WIREFRAME]->setDataVariance (osg::Object::STATIC);

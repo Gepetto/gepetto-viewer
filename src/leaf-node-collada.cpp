@@ -76,6 +76,9 @@ namespace viewer {
 
   void LeafNodeCollada::init()
   {
+    group_ptr_ = new osg::Group;
+    group_ptr_->setName ("groupForMaterial");
+
 #if OSG_VERSION_GREATER_OR_EQUAL(3,3,3)
     static osg::ref_ptr<osgDB::ObjectCache> object_cache (new osgDB::ObjectCache);
 #else
@@ -141,9 +144,11 @@ namespace viewer {
       collada_ptr_->getOrCreateStateSet()->setMode(GL_BLEND, ::osg::StateAttribute::ON);
       collada_ptr_->setDataVariance(osg::Object::STATIC);
     }
+    collada_ptr_->setName ("meshfile");
 
     /* Create PositionAttitudeTransform */
-    this->asQueue()->addChild(collada_ptr_);
+    group_ptr_->addChild(collada_ptr_);
+    this->asQueue()->addChild(group_ptr_);
 
     addProperty(StringProperty::create("Mesh file",
           StringProperty::getterFromMemberFunction(this, &LeafNodeCollada::meshFilePath),
@@ -274,13 +279,13 @@ namespace viewer {
     mat_ptr->setDiffuse (osg::Material::FRONT_AND_BACK,color); 
     mat_ptr->setAmbient (osg::Material::FRONT_AND_BACK,ambient); 
 
-    collada_ptr_->getOrCreateStateSet()->setAttribute(mat_ptr.get());    
+    group_ptr_->getOrCreateStateSet()->setAttribute(mat_ptr.get());    
     setDirty();
   }
     
   osgVector4 LeafNodeCollada::getColor() const
   {
-    osg::StateSet* ss = collada_ptr_.get()->getStateSet();
+    osg::StateSet* ss = group_ptr_->getStateSet();
     if (ss) {
       osg::Material *mat = dynamic_cast<osg::Material*>
         (ss->getAttribute(osg::StateAttribute::MATERIAL));
@@ -292,7 +297,7 @@ namespace viewer {
   void LeafNodeCollada::setAlpha(const float& alpha)
   {
     // TODO this overload is probably not necessary.
-    osg::StateSet* ss = getColladaPtr().get()->getStateSet();
+    osg::StateSet* ss = group_ptr_->getStateSet();
     if (ss)
       {
 	alpha_ = alpha;
@@ -325,7 +330,7 @@ namespace viewer {
       return;
     } 
     texture->setImage(image);
-    collada_ptr_->getStateSet()->setTextureAttributeAndModes(0,texture,osg::StateAttribute::ON);
+    collada_ptr_->getOrCreateStateSet()->setTextureAttributeAndModes(0,texture,osg::StateAttribute::ON);
     setDirty();
   }
 
