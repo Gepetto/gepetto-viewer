@@ -213,6 +213,7 @@ namespace viewer {
        connected to the parent <- switch_node_ptr_                           <- auto_transform_ptr_ <- connection of children here
        <- normal_node_ptr_
     */
+    scale_ = osgVector3 (1, 1, 1);
 
     switch_node_ptr_ = new ::osg::Group;
     hl_switch_node_ptr_ = new ::osg::Group;
@@ -291,6 +292,10 @@ namespace viewer {
           FloatProperty::getterFromMemberFunction(this, &Node::getAlpha),
           FloatProperty::setterFromMemberFunction(this, &Node::setAlpha)));
     addProperty(
+        Vector3Property::create("Scale",
+          Vector3Property::getterFromMemberFunction(this, &Node::getScale),
+          Vector3Property::setterFromMemberFunction(this, &Node::setScale)));
+    addProperty(
         ConfigurationProperty::create("Transform",
           ConfigurationProperty::getterFromMemberFunction(this, &Node::getGlobalTransform),
           ConfigurationProperty::setterFromMemberFunction(this, &Node::applyConfiguration)));
@@ -343,7 +348,7 @@ namespace viewer {
     M.setRotate (M_.quat);
     M.setTrans  (M_.position);
 
-    transform_ptr_->setMatrix (Ms_*M);
+    transform_ptr_->setMatrix (::osg::Matrix::scale(scale_)*Ms_*M);
     dirty_ = true;
   }
 
@@ -358,12 +363,8 @@ namespace viewer {
 
   void Node::setStaticTransform(const osgVector3 & position, const osgQuat & quat)
   {
-    osgQuat q, so; osgVector3 t, s;
-    Ms_.decompose(t, q, s, so);
-
-    Matrix m (quat);
-    m.setTrans(position);
-    Ms_ = Matrix::scale(s) * m;
+    Ms_.setRotate (quat);
+    Ms_.setTrans  (position);
 
     updateTransform ();
   }
@@ -384,9 +385,7 @@ namespace viewer {
 
   osgVector3 Node::getScale() const
   {
-    osgQuat q, so; osgVector3 t, s;
-    Ms_.decompose(t, q, s, so);
-    return s;
+    return scale_;
   }
 
   void Node::setScale(float scale)
@@ -394,16 +393,12 @@ namespace viewer {
     setScale (osgVector3(scale,scale,scale));
   }
 
- void Node::setScale(const osgVector3 &scale)
-   {
-    osgQuat q, so; osgVector3 t, s;
-    Ms_.decompose(t, q, s, so);
-    Matrix m (q);
-    m.setTrans(t);
-    Ms_ = ::osg::Matrix::scale(scale) * m;
+  void Node::setScale(const osgVector3 &scale)
+  {
+    scale_ = scale;
 
     updateTransform ();
-   }
+  }
 
   void Node::setVisibilityMode (const VisibilityMode& mode)
   {

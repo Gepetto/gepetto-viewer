@@ -34,6 +34,7 @@ namespace viewer {
 
         /** PositionAttitudeTransform related to the global configuration */
         osg::MatrixTransformRefPtr transform_ptr_;
+        osgVector3 scale_;
         osg::Matrixf Ms_;
         Configuration M_;
         
