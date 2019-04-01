@@ -40,6 +40,21 @@
         BOOST_CHECK_SMALL (angle, (double)tol);         \
 }
 
+namespace osg {
+std::ostream& operator<< (std::ostream& os, const Matrix& m)
+{
+  const char* s = ", ";
+  const char* l = "\n";
+  os
+    << m(0,0) << s << m(0,1) << s << m(0,2) << s << m(0,3) << l
+    << m(1,0) << s << m(1,1) << s << m(1,2) << s << m(1,3) << l
+    << m(2,0) << s << m(2,1) << s << m(2,2) << s << m(2,3) << l
+    << m(3,0) << s << m(3,1) << s << m(3,2) << s << m(3,3)
+    ;
+  return os;
+}
+}
+
 namespace gepetto {
 namespace viewer {
   struct NodeTest {

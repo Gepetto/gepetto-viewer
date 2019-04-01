@@ -20,6 +20,8 @@ namespace viewer {
 
     DEF_CLASS_SMART_PTR(WindowManager)
 
+    /// Manage a window that renders a scene.
+    /// The root of the rendered scene is a \ref GroupNode.
     class WindowManager
     {
     private:
@@ -40,9 +42,15 @@ namespace viewer {
       ::osg::Vec4 bg_color1_;
       ::osg::Vec4 bg_color2_;
       ::osg::GeometryRefPtr bg_geom_;
-    
+
         /* OSG Screen capture handler */
         osg::ref_ptr < ::osgViewer::ScreenCaptureHandler> screen_capture_ptr_;
+
+        /** Heads-Up Display (HUD) camera */
+        ::osg::CameraRefPtr hud_camera_;
+        osg::ref_ptr<osgText::Text> texts_[3][3];
+        osg::ref_ptr<osg::Geode> textGeode_;
+        bool textActive_[3][3];
 
         bool lastSceneWasDisrty_;
 
@@ -54,6 +62,8 @@ namespace viewer {
       
       void createBackground();
       void applyBackgroundColor();
+
+        void createHUDcamera();
 
         void init(osg::GraphicsContext* gc);
 
@@ -75,9 +85,15 @@ namespace viewer {
         void initWeakPtr (WindowManagerWeakPtr other_weak_ptr);
     protected:
 
-
-
     public:
+        enum TextAlignment {
+          TOP    = 0,
+          CENTER = 1,
+          BOTTOM = 2,
+          RIGHT  = 0,
+          LEFT   = 2
+        };
+
         /** Create and initialize a graphical engine of type OSG
          */
         static WindowManagerPtr_t create();
@@ -135,6 +151,12 @@ namespace viewer {
 
         /** Return the window width and height as a 2D vector */
         osgVector2 getWindowDimension () const;
+
+        std::string getText (TextAlignment verticalPos, TextAlignment horizontalPos) const;
+
+        /** Set the HUD text */
+        void setText (TextAlignment verticalPos, TextAlignment horizontalPos,
+            const std::string& text, float size = 20);
 
         /** Return a ref to the viewer */
         ::osgViewer::ViewerRefPtr getViewerClone();

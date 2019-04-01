@@ -478,8 +478,10 @@ namespace gepetto {
       env.endGroup ();
 
       env.beginGroup("pyplugins");
-      foreach (QString name, pyplugins_)
-        env.setValue(name, !noPlugin);
+      for (PluginManager::PyMap::const_iterator p = pluginManager_.pyplugins ().constBegin();
+          p != pluginManager_.pyplugins().constEnd(); p++) {
+        env.setValue(p.key(), (noPlugin)?false:pluginManager_.isPyPluginLoaded (p.key()));
+      }
       env.endGroup ();
 
       env.beginGroup("omniORB");

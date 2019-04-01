@@ -23,6 +23,7 @@ namespace viewer {
       NodeBit         = 0x2
     };
     
+    /// Abstract base class of 3D objects in a scene.
     class Node
     {
     private:
@@ -33,6 +34,7 @@ namespace viewer {
 
         /** PositionAttitudeTransform related to the global configuration */
         osg::MatrixTransformRefPtr transform_ptr_;
+        osgVector3 scale_;
         osg::Matrixf Ms_;
         Configuration M_;
         

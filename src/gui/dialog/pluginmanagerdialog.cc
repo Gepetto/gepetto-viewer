@@ -199,7 +199,7 @@ namespace gepetto {
           QString script;
           if (fi.isAbsolute()) script = name;
           else script = QDir::currentPath() + QDir::separator() + name;
-          pyplugins_[moduleName] = script;
+          pyplugins_[name] = script;
         } else
           pyplugins_[name] = name;
         return true;
