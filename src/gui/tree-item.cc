@@ -139,6 +139,24 @@ namespace gepetto {
       return button;
     }
 
+    QWidget* vector3PropertyEditor (BodyTreeItem* bti, const PropertyPtr_t prop)
+    {
+      if (!prop->hasWriteAccess()) return NULL;
+
+      QPushButton* button = new QPushButton("Set vector 3");
+
+      /// Vector3 dialog should be opened in a different place
+      Vector3Dialog* cfgDialog = new Vector3Dialog(prop,
+          bti->text(), MainWindow::instance());
+
+      cfgDialog->setProperty("propertyName", QString::fromStdString(prop->name()));
+      cfgDialog->connect(button, SIGNAL(clicked()), SLOT(show()));
+      bti->connect (cfgDialog, SIGNAL(valueChanged (const osgVector3&)),
+          SLOT(setVector3Property(const osgVector3&)));
+
+      return button;
+    }
+
     QWidget* configurationPropertyEditor (BodyTreeItem* bti, const PropertyPtr_t prop)
     {
       if (!prop->hasWriteAccess()) return NULL;
@@ -204,6 +222,8 @@ namespace gepetto {
           field = intPropertyEditor(this, prop, false);
         } else if (prop->type() == "Configuration") {
           field = configurationPropertyEditor(this, prop);
+        } else if (prop->type() == "osgVector3") {
+          field = vector3PropertyEditor (this, prop);
         } else if (prop->type() == "osgVector4") {
           if (name.contains ("color", Qt::CaseInsensitive)) {
             field = colorPropertyEditor (this, prop);
@@ -267,6 +287,11 @@ namespace gepetto {
     void BodyTreeItem::setFloatProperty (const double& value) const
     {
       setProperty (QObject::sender(), float(value));
+    }
+
+    void BodyTreeItem::setVector3Property (const osgVector3& value) const
+    {
+      setProperty (QObject::sender(), value);
     }
 
     void BodyTreeItem::setColorProperty (const QColor& value) const

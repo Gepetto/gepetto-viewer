@@ -81,6 +81,7 @@ namespace gepetto {
         void setUIntProperty (int value) const;
         void setStringProperty (const QString& value) const;
         void setFloatProperty (const double& value) const;
+        void setVector3Property (const osgVector3& value) const;
         void setColorProperty (const QColor& value) const;
         void setConfigurationProperty (const Configuration& value) const;
 

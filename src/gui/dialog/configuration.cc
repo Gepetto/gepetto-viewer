@@ -73,6 +73,75 @@ namespace gepetto {
       q[0] = x; q[1] = y; q[2] = z; q[3] = w;
     }
 
+    Vector3Dialog::Vector3Dialog (
+        const viewer::PropertyPtr_t property, const QString& name, QWidget *parent)
+      : QDialog (parent)
+      , prop (property)
+      , pyValue (new QLineEdit)
+    {
+      for (int i = 0; i < 3; ++i) x[i] = new QDoubleSpinBox;
+
+      setModal (false);
+
+      setValueFromProperty ();
+
+      pyValue->setReadOnly (true);
+      setPyValue ();
+
+      for (int i = 0; i < 3; ++i)
+        connect(x[i], SIGNAL(valueChanged(double)), SLOT(updateValue()));
+
+      QDialogButtonBox *buttonBox = new QDialogButtonBox (QDialogButtonBox::Close, Qt::Horizontal);
+      connect (buttonBox->button (QDialogButtonBox::Close), SIGNAL(clicked(bool)), SLOT(accept()));
+
+      QFormLayout *layout = new QFormLayout;
+      layout->addRow(new QLabel (name));
+      for (int i = 0; i < 3; ++i)
+        layout->addRow("X" + QString::number(i), x[i]);
+      layout->addRow("value", pyValue);
+      layout->addRow(buttonBox);
+
+      setLayout (layout);
+    }
+
+    void Vector3Dialog::showEvent (QShowEvent* event)
+    {
+      setValueFromProperty();
+      QDialog::showEvent (event);
+    }
+
+    void Vector3Dialog::updateValue ()
+    {
+      for (int i = 0; i < 3; ++i)
+        cfg[i] = (float)x[i]->value();
+
+      setPyValue ();
+
+      emit valueChanged (cfg);
+    }
+
+    void Vector3Dialog::setValueFromProperty ()
+    {
+      prop->get (cfg);
+
+      for (int i = 0; i < 3; ++i) {
+        x[i]->setValue(cfg[i]);
+        x[i]->setRange(-1000,1000);
+        x[i]->setSingleStep(0.01);
+        x[i]->setDecimals(4);
+      }
+    }
+
+    void Vector3Dialog::setPyValue ()
+    {
+      static const QString sep(", ");
+      QString text = "[ ";
+      for (int i = 0; i < 3; ++i)
+        text += QString::number (cfg[i]) + sep;
+      text += " ]";
+      pyValue->setText (text);
+    }
+
     ConfigurationDialog::ConfigurationDialog (
         const viewer::PropertyPtr_t property, const QString& name, QWidget *parent)
       : QDialog (parent)
@@ -89,15 +158,15 @@ namespace gepetto {
 
       setConfigFromProperty ();
 
+      pyValue->setReadOnly (true);
+      setPyValue ();
+
       connect(x    , SIGNAL(valueChanged(double)), SLOT(updateConfig()));
       connect(y    , SIGNAL(valueChanged(double)), SLOT(updateConfig()));
       connect(z    , SIGNAL(valueChanged(double)), SLOT(updateConfig()));
       connect(roll , SIGNAL(valueChanged(double)), SLOT(updateConfig()));
       connect(pitch, SIGNAL(valueChanged(double)), SLOT(updateConfig()));
       connect(yaw  , SIGNAL(valueChanged(double)), SLOT(updateConfig()));
-
-      pyValue->setReadOnly (true);
-      setPyValue ();
 
       QDialogButtonBox *buttonBox = new QDialogButtonBox (QDialogButtonBox::Close, Qt::Horizontal);
       connect (buttonBox->button (QDialogButtonBox::Close), SIGNAL(clicked(bool)), SLOT(accept()));
