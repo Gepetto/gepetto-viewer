@@ -26,6 +26,7 @@
 #include <QFileDialog>
 #include <QProcess>
 #include <QTextBrowser>
+#include <QDockWidget>
 
 #include <osg/Camera>
 
@@ -85,6 +86,7 @@ namespace gepetto {
     , process_ (new QProcess (this))
     , showPOutput_ (new QDialog (this, Qt::Dialog | Qt::WindowCloseButtonHint | Qt::WindowMinMaxButtonsHint))
     , pOutput_ (new QTextBrowser())
+    , fullscreen_ (new QWidget (NULL, Qt::Window | Qt::WindowStaysOnTopHint))
     {
       initGraphicsWindowsAndViewer (parent, name);
       initToolBar ();
@@ -121,6 +123,7 @@ namespace gepetto {
       pickHandler_ = NULL;
       wm_.reset();
       wsm_.reset();
+      delete fullscreen_;
     }
 
     void OSGWidget::paintEvent(QPaintEvent*)
@@ -272,6 +275,17 @@ namespace gepetto {
           this, SLOT(toggleCapture(bool)));
       recordMovie->setCheckable (true);
       recordMovie->setToolTip("Record the central widget as a sequence of images. You can find the images in /tmp/gepetto-gui/record/img_%d.jpeg");
+
+      QAction* toggleFullscreen = new QAction(iconFromTheme("view-fullscreen"),
+          "Toggle fullscreen mode", this);
+      toggleFullscreen->setShortcut (Qt::SHIFT | Qt::Key_F);
+      toggleFullscreen->setCheckable (true);
+      toggleFullscreen->setChecked (false);
+      connect(toggleFullscreen, SIGNAL(toggled(bool)), SLOT(toggleFullscreenMode(bool)));
+      toolBar_->addAction (toggleFullscreen);
+
+      fullscreen_->setLayout(new QVBoxLayout);
+      fullscreen_->layout()->setContentsMargins (0,0,0,0);
     }
 
     void OSGWidget::initGraphicsWindowsAndViewer (MainWindow* parent, const std::string& name)
@@ -316,6 +330,25 @@ namespace gepetto {
       viewer_->addEventHandler(new osgViewer::HelpHandler);
       viewer_->addEventHandler(pickHandler_);
       viewer_->addEventHandler(new osgViewer::StatsHandler);
+    }
+
+    void OSGWidget::toggleFullscreenMode (bool fullscreenOn)
+    {
+      if (!isVisible()) return;
+      if (fullscreenOn) {
+        QDockWidget* dockOSG = qobject_cast<QDockWidget*>(this->parentWidget());
+        if (dockOSG) {
+          normal_ = this->parentWidget();
+          fullscreen_->layout()->addWidget (this);
+          fullscreen_->showFullScreen();
+        }
+      } else {
+        QDockWidget* dockOSG = qobject_cast<QDockWidget*>(normal_);
+        if (dockOSG) {
+          fullscreen_->hide();
+          dockOSG->setWidget (this);
+        }
+      }
     }
   } // namespace gui
 } // namespace gepetto
