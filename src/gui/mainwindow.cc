@@ -227,6 +227,10 @@ namespace gepetto {
           tr("Window ") + osgWidget->objectName(), this);
       dockOSG->setObjectName ("gepetto-gui.osg." + osgWidget->objectName());
       dockOSG->setWidget(osgWidget);
+      // TODO at the moment, when the widget is made floating and then non-floating
+      // again, the OSGWidget becomes hidden. I could not find the bug so I removed
+      // the feature DockWidgetFloatable.
+      dockOSG->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable);
       connect(dockOSG,SIGNAL(visibilityChanged(bool)),SLOT(dockVisibilityChanged(bool)));
       addDockWidget(Qt::RightDockWidgetArea, dockOSG);
       if (osgWindows_.empty()) {
