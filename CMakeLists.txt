@@ -31,7 +31,7 @@ INCLUDE(cmake-module/osgqt.cmake)
 
 SET(PROJECT_NAME gepetto-viewer)
 SET(PROJECT_DESCRIPTION "An user-friendly Graphical Interface")
-SET(PROJECT_URL "https://github.com/humanoid-path-planner/gepetto-viewer")
+SET(PROJECT_URL "https://github.com/Gepetto/gepetto-viewer")
 
 SETUP_PROJECT()
 
