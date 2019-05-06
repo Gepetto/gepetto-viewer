@@ -66,6 +66,8 @@ namespace gepetto {
       ui_->bodyTreeContent->init(ui_->bodyTree, ui_->propertyArea);
 
       // This scene contains elements required for User Interaction.
+      osg()->createScene("gepetto-gui");
+      // TODO remove me. This is kept for backward compatibility
       osg()->createScene("hpp-gui");
 
       // Setup the main OSG widget
@@ -217,7 +219,7 @@ namespace gepetto {
 
     void MainWindow::createDefaultView()
     {
-      std::stringstream ss; ss << "hpp_gui_window_" << osgWindows_.size();
+      std::stringstream ss; ss << "window_" << osgWindows_.size();
       createView (ss.str());
     }
 
@@ -236,6 +238,8 @@ namespace gepetto {
       if (osgWindows_.empty()) {
         // This OSGWidget should be the central view
         centralWidget_ = osgWidget;
+        osg()->addSceneToWindow("gepetto-gui", centralWidget_->windowID());
+        // TODO remove me. This is kept for backward compatibility
         osg()->addSceneToWindow("hpp-gui", centralWidget_->windowID());
       }
       actionSearchBar_->addAction(new NodeAction("Attach camera " + osgWidget->objectName() + " to selected node", osgWidget, this));
