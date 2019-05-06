@@ -22,7 +22,7 @@ namespace viewer {
 
     /// Manage a window that renders a scene.
     /// The root of the rendered scene is a \ref GroupNode.
-    class WindowManager
+    class WindowManager : public GroupNode
     {
     private:
         const int nodeTrackerManipulatorIndex;
@@ -126,7 +126,7 @@ namespace viewer {
 
         /** Return the scene group
          */
-        virtual GroupNodePtr_t getScene() const { return scene_ptr_->self(); }
+        virtual GroupNodePtr_t getScene() const { return self(); }
 
         /** Return the current doing of procedure
          */

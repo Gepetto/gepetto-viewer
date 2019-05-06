@@ -181,7 +181,7 @@ namespace viewer {
       //bg_camera_->setGraphicsContext(camera->getGraphicsContext());
     }
     
-    scene_ptr_->asGroup()->addChild(bg_camera_);
+    asGroup()->addChild(bg_camera_);
   }
 
   void WindowManager::createHUDcamera()
@@ -245,39 +245,39 @@ namespace viewer {
     viewer_ptr_->addEventHandler (rh);
 
     // Property to scene
-    scene_ptr_->addProperty (
+    addProperty (
         StringProperty::create("Text/TopLeft",
           boost::bind (&WindowManager::getText, this, TOP, LEFT),
           boost::bind (&WindowManager::setText, this, TOP, LEFT, _1, 20)));
-    scene_ptr_->addProperty (
+    addProperty (
         StringProperty::create("Text/TopCenter",
           boost::bind (&WindowManager::getText, this, TOP, CENTER),
           boost::bind (&WindowManager::setText, this, TOP, CENTER, _1, 20)));
-    scene_ptr_->addProperty (
+    addProperty (
         StringProperty::create("Text/TopRight",
           boost::bind (&WindowManager::getText, this, TOP, RIGHT),
           boost::bind (&WindowManager::setText, this, TOP, RIGHT, _1, 20)));
-    scene_ptr_->addProperty (
+    addProperty (
         StringProperty::create("Text/CenterLeft",
           boost::bind (&WindowManager::getText, this, CENTER, LEFT),
           boost::bind (&WindowManager::setText, this, CENTER, LEFT, _1, 20)));
-    scene_ptr_->addProperty (
+    addProperty (
         StringProperty::create("Text/CenterCenter",
           boost::bind (&WindowManager::getText, this, CENTER, CENTER),
           boost::bind (&WindowManager::setText, this, CENTER, CENTER, _1, 20)));
-    scene_ptr_->addProperty (
+    addProperty (
         StringProperty::create("Text/CenterRight",
           boost::bind (&WindowManager::getText, this, CENTER, RIGHT),
           boost::bind (&WindowManager::setText, this, CENTER, RIGHT, _1, 20)));
-    scene_ptr_->addProperty (
+    addProperty (
         StringProperty::create("Text/BottomLeft",
           boost::bind (&WindowManager::getText, this, BOTTOM, LEFT),
           boost::bind (&WindowManager::setText, this, BOTTOM, LEFT, _1, 20)));
-    scene_ptr_->addProperty (
+    addProperty (
         StringProperty::create("Text/BottomCenter",
           boost::bind (&WindowManager::getText, this, BOTTOM, CENTER),
           boost::bind (&WindowManager::setText, this, BOTTOM, CENTER, _1, 20)));
-    scene_ptr_->addProperty (
+    addProperty (
         StringProperty::create("Text/BottomRight",
           boost::bind (&WindowManager::getText, this, BOTTOM, RIGHT),
           boost::bind (&WindowManager::setText, this, BOTTOM, RIGHT, _1, 20)));
@@ -300,7 +300,7 @@ namespace viewer {
       for (int i = 0; i < 3; ++i)
         for (int j = 0; j < 3; ++j)
           if (textActive_[i][j]) return;
-      scene_ptr_->asGroup()->removeChild(hud_camera_);
+      asGroup()->removeChild(hud_camera_);
       return;
     }
 
@@ -312,11 +312,11 @@ namespace viewer {
     text->setCharacterSize( size );
     text->setText( content );
 
-    if (!scene_ptr_->asGroup()->containsNode(hud_camera_)) {
+    if (!asGroup()->containsNode(hud_camera_)) {
       osg::Viewport* vp = viewer_ptr_->getCamera()->getViewport();
       viewer_ptr_->getEventQueue()->windowResize ((int)vp->x(), (int)vp->y(), (int)vp->width(), (int)vp->height());
 
-      scene_ptr_->asGroup()->addChild(hud_camera_);
+      asGroup()->addChild(hud_camera_);
     }
   }
 
@@ -396,10 +396,10 @@ namespace viewer {
 
     void WindowManager::init(osgViewer::Viewer* v, osg::GraphicsContext* gc)
     {
-      scene_ptr_ = GroupNode::create(gc->getTraits()->windowName);
+      setID (gc->getTraits()->windowName);
       
       viewer_ptr_ = v;
-      viewer_ptr_->setSceneData ( scene_ptr_->asGroup() );
+      viewer_ptr_->setSceneData ( asGroup() );
       lastSceneWasDisrty_ = true;
       
       /* init main camera */
@@ -417,35 +417,42 @@ namespace viewer {
       createHUDcamera();
     }
 
-    WindowManager::WindowManager () : nodeTrackerManipulatorIndex(2)
+    WindowManager::WindowManager ()
+      : GroupNode ("")
+      , nodeTrackerManipulatorIndex(2)
     {
         init (0, 0, DEF_WIDTH_WINDOW, DEF_HEIGHT_WINDOW);
     }
 
-    WindowManager::WindowManager (osg::GraphicsContext* gc) : nodeTrackerManipulatorIndex(2)
+    WindowManager::WindowManager (osg::GraphicsContext* gc)
+      : GroupNode ("")
+      , nodeTrackerManipulatorIndex(2)
     {
         init (gc);
     }
 
-    WindowManager::WindowManager (osgViewer::Viewer* v, osg::GraphicsContext* gc) : nodeTrackerManipulatorIndex(2)
+    WindowManager::WindowManager (osgViewer::Viewer* v, osg::GraphicsContext* gc)
+      : GroupNode ("")
+      , nodeTrackerManipulatorIndex(2)
     {
         init (v, gc);
     }
 
     WindowManager::WindowManager (const unsigned int& x,
-                                            const unsigned int& y,
-                                            const unsigned int& width,
-                                            const unsigned int& height) : nodeTrackerManipulatorIndex(2)
+                                  const unsigned int& y,
+                                  const unsigned int& width,
+                                  const unsigned int& height)
+      : GroupNode ("")
+      , nodeTrackerManipulatorIndex(2)
     {
         init (x, y, width, height);
     }
 
-    WindowManager::WindowManager (const WindowManager& other) : nodeTrackerManipulatorIndex(2)
+    WindowManager::WindowManager (const WindowManager& other)
+      : GroupNode (other)
+      , nodeTrackerManipulatorIndex(2)
     {
-      init ((unsigned int) other.getWindowPosition().x(),
-	    (unsigned int) other.getWindowPosition().y(),
-	    (unsigned int) other.getWindowDimension().x(),
-	    (unsigned int) other.getWindowDimension().y());
+      init (viewer_ptr_, gc_);
     }
 
     void WindowManager::initWeakPtr (WindowManagerWeakPtr other_weak_ptr)
@@ -526,7 +533,7 @@ namespace viewer {
 
     bool WindowManager::addNode(NodePtr_t graphical_object_ptr)
     {
-        bool result = scene_ptr_->addChild (graphical_object_ptr);
+        bool result = addChild (graphical_object_ptr);
         return result;
     }
 
@@ -540,7 +547,7 @@ namespace viewer {
       bool callFrame = screen_capture_ptr_;
       if (!callFrame) {
         IsDirtyVisitor isDirtyVisitor;
-        scene_ptr_->accept (isDirtyVisitor);
+        accept (isDirtyVisitor);
         // FIXME For some reasons, when highlight state of a node is changed,
         // method frame must be called twice to get it rendered properly.
         // lastSceneWasDisrty_ forces to draw twice after a dirty scene.
@@ -555,7 +562,7 @@ namespace viewer {
         return false;
 
       SetCleanVisitor setCleanVisitor;
-      scene_ptr_->accept (setCleanVisitor);
+      accept (setCleanVisitor);
       return true;
     }
 
@@ -602,7 +609,6 @@ namespace viewer {
     WindowManager::~WindowManager()
     {
       stopCapture ();
-      scene_ptr_.reset();
       viewer_ptr_ = NULL;
     }
   

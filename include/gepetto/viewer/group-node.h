@@ -51,7 +51,7 @@ namespace viewer {
         
         /** Proceed to a clonage of the current object defined by the copy constructor
          */
-        virtual GroupNodePtr_t clone(void) const;
+        GroupNodePtr_t clone(void) const;
         
         /** Return a shared pointer of the current object
          */
