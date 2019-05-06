@@ -24,7 +24,7 @@ namespace viewer {
     };
     
     /// Abstract base class of 3D objects in a scene.
-    class Node
+    class Node : public Properties
     {
     private:
         friend class NodeTest;
@@ -60,8 +60,6 @@ namespace viewer {
         ::osg::Group* setupHighlightState (unsigned int state);
 
     protected:
-        PropertyMap_t properties_;
-
         /** protected because it's used in LeafNodeCapsule */
         ::osg::GeodeRefPtr landmark_geode_ptr_;
 
@@ -91,8 +89,6 @@ namespace viewer {
             id_name_ = id_name;
             switch_node_ptr_->setName (id_name_);
         }
-
-        const PropertyPtr_t& property(const std::string& name) const;
 
     public:
 
@@ -234,31 +230,6 @@ namespace viewer {
 
         SCENE_VIEWER_ACCEPT_VISITOR;
         virtual void traverse (NodeVisitor& visitor);
-
-        template <typename T>
-        bool getProperty(const std::string& name, T& value) const
-        {
-          return property(name)->get(value);
-        }
-
-        template <typename T>
-        bool setProperty(const std::string& name, const T& value)
-        {
-          bool res = property(name)->set(value);
-          if (res) setDirty();
-          return res;
-        }
-
-        bool hasProperty(const std::string& name) const;
-
-        const PropertyMap_t& properties () const
-        {
-          return properties_;
-        }
-
-        void addProperty(const PropertyPtr_t& prop);
-
-        void addProperty(const std::string& name, const PropertyPtr_t& prop);
 
         /* Destructor */
         virtual ~Node ();

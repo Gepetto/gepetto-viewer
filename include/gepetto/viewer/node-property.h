@@ -169,6 +169,44 @@ namespace viewer {
         const MetaEnum* metaEnum_;
     };
 
+    class Properties
+    {
+      protected:
+        PropertyMap_t properties_;
+
+        const PropertyPtr_t& property(const std::string& name) const;
+
+        /// Called when a property is modified.
+        virtual void setDirty (bool dirty=true) = 0;
+
+      public:
+
+        template <typename T>
+        bool getProperty(const std::string& name, T& value) const
+        {
+          return property(name)->get(value);
+        }
+
+        template <typename T>
+        bool setProperty(const std::string& name, const T& value)
+        {
+          bool res = property(name)->set(value);
+          if (res) this->setDirty();
+          return res;
+        }
+
+        bool hasProperty(const std::string& name) const;
+
+        const PropertyMap_t& properties () const
+        {
+          return properties_;
+        }
+
+        void addProperty(const PropertyPtr_t& prop);
+
+        void addProperty(const std::string& name, const PropertyPtr_t& prop);
+    };
+
 } /* namespace viewer */
 } /* namespace gepetto */
 

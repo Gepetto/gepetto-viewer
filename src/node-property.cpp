@@ -98,6 +98,34 @@ namespace viewer {
     throw std::invalid_argument(oss.str());
     return false;
   }
+
+  const PropertyPtr_t& Properties::property(const std::string& name) const
+  {
+    PropertyMap_t::const_iterator _prop = properties_.find(name);
+    if (_prop == properties_.end())
+      throw std::invalid_argument("Unknown property " + name);
+    const PropertyPtr_t& prop = _prop->second;
+    if (!prop)
+      throw std::invalid_argument("Unknown property " + name);
+    return prop;
+  }
+
+  bool Properties::hasProperty(const std::string& name) const
+  {
+    PropertyMap_t::const_iterator _prop = properties_.find(name);
+    return (_prop != properties_.end());
+  }
+
+  void Properties::addProperty(const PropertyPtr_t& prop)
+  {
+    addProperty(prop->name(), prop);
+  }
+
+  void Properties::addProperty(const std::string& name, const PropertyPtr_t& prop)
+  {
+    properties_[name] = prop;
+  }
+
 } /* namespace viewer */
 
 } /* namespace gepetto */

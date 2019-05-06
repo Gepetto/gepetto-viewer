@@ -315,33 +315,6 @@ namespace viewer {
     init();
   }
 
-  const PropertyPtr_t& Node::property(const std::string& name) const
-  {
-    PropertyMap_t::const_iterator _prop = properties_.find(name);
-    if (_prop == properties_.end())
-      throw std::invalid_argument("Unknown property " + name);
-    const PropertyPtr_t& prop = _prop->second;
-    if (!prop)
-      throw std::invalid_argument("Unknown property " + name);
-    return prop;
-  }
-
-  bool Node::hasProperty(const std::string& name) const
-  {
-    PropertyMap_t::const_iterator _prop = properties_.find(name);
-    return (_prop != properties_.end());
-  }
-
-  void Node::addProperty(const PropertyPtr_t& prop)
-  {
-    addProperty(prop->name(), prop);
-  }
-
-  void Node::addProperty(const std::string& name, const PropertyPtr_t& prop)
-  {
-    properties_[name] = prop;
-  }
-
   void Node::updateTransform ()
   {
     osg::Matrixf M;
