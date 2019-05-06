@@ -75,6 +75,12 @@ namespace gepetto {
       protected:
         virtual void paintEvent(QPaintEvent* event);
 
+        bool isFixedSize () const;
+
+        void setFixedSize (bool fixedSize);
+
+        void setWindowDimension (const osgVector2& size);
+
       private slots:
         void readyReadProcessOutput ();
         void toggleFullscreenMode (bool fullscreenOn);

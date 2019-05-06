@@ -105,6 +105,17 @@ namespace gepetto {
       hblayout->addWidget(glWidget);
       glWidget->setMinimumSize(50,10);
 
+      // TODO Adding the properties here is problematic. They won't be
+      // shown in the GUI because the display is created before this code is run.
+      wm_->addProperty (
+        viewer::BoolProperty::create("WindowFixedSize",
+          viewer::BoolProperty::getterFromMemberFunction (this, &OSGWidget::isFixedSize),
+          viewer::BoolProperty::setterFromMemberFunction (this, &OSGWidget::setFixedSize)));
+      wm_->addProperty (
+        viewer::Vector2Property::create("WindowSize",
+          viewer::Vector2Property::getterFromMemberFunction (wm_.get(), &viewer::WindowManager::getWindowDimension),
+          viewer::Vector2Property::Setter_t()));
+
       connect( &timer_, SIGNAL(timeout()), this, SLOT(update()) );
       timer_.start(parent->settings_->refreshRate);
 
@@ -236,6 +247,53 @@ namespace gepetto {
       viewer::ScopedLock lock(wsm_->osgFrameMutex());
       wm_->stopCapture ();
       return true;
+    }
+
+    bool OSGWidget::isFixedSize () const
+    {
+      static const std::string name("WindowSize");
+      const viewer::PropertyMap_t& propMap = wm_->properties ();
+      viewer::PropertyMap_t::const_iterator _prop = propMap.find(name);
+      if (_prop == propMap.end()) return false;
+      viewer::PropertyPtr_t size = _prop->second;
+      if (!size) return false;
+      return size->hasWriteAccess();
+    }
+
+    void OSGWidget::setFixedSize (bool fixedSize)
+    {
+      static const std::string name("WindowSize");
+      const viewer::PropertyMap_t& propMap = wm_->properties ();
+      viewer::PropertyMap_t::const_iterator _prop = propMap.find(name);
+      if (_prop == propMap.end()) return;
+      viewer::PropertyPtr_t size = _prop->second;
+      if (!size) return;
+      if (size->hasWriteAccess() == fixedSize) return;
+      // Cast to Vector2Property
+      viewer::Vector2Property::Ptr_t vsize = boost::dynamic_pointer_cast<viewer::Vector2Property>(size);
+      if (!vsize) return;
+      osgQt::GLWidget* glWidget = graphicsWindow_->getGLWidget();
+      if (fixedSize) {
+        glWidget->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
+        // Add write access
+        vsize->setter (viewer::Vector2Property::Setter_t(
+              viewer::Vector2Property::setterFromMemberFunction (this, &OSGWidget::setWindowDimension)
+              ));
+      } else {
+        glWidget->setSizePolicy (QSizePolicy::Preferred, QSizePolicy::Preferred);
+        // Remove write access
+        vsize->setter (viewer::Vector2Property::Setter_t());
+      }
+    }
+
+    void OSGWidget::setWindowDimension (const osgVector2& size)
+    {
+      osgQt::GLWidget* glWidget = graphicsWindow_->getGLWidget();
+      if (isFixedSize()) {
+        glWidget->resize ((int)size[0], (int)size[1]);
+        glWidget->setMinimumSize((int)size[0], (int)size[1]);
+      } else
+        glWidget->setMinimumSize(50,10);
     }
 
     void OSGWidget::readyReadProcessOutput()
