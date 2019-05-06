@@ -118,9 +118,15 @@ namespace viewer {
         bool hasReadAccess  () const { return (bool)getter_; }
         bool hasWriteAccess () const { return (bool)setter_; }
 
+        const Getter_t& getter () const { return getter_; }
+        void getter (const Getter_t& g) { getter_ = g; }
+
+        const Setter_t& setter () const { return setter_; }
+        void setter (const Setter_t& s) { setter_ = s; }
+
       private:
-        const Getter_t getter_;
-        const Setter_t setter_;
+        Getter_t getter_;
+        Setter_t setter_;
     };
 
     typedef PropertyTpl<bool         > BoolProperty;
