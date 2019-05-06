@@ -140,11 +140,15 @@ namespace viewer {
          */
         virtual bool run ();
 
-        /** Define dimension of the window */
-        virtual void setWindowDimension (const unsigned int& width, const unsigned int& height);
+        /** Define dimension of the window
+         *  \param size (width, height)
+         **/
+        virtual void setWindowDimension (const osgVector2& size);
 
-        /** Define the window position */
-        virtual void setWindowPosition (const unsigned int& x_position, const unsigned int& y_position);
+        /** Define the window position
+         *  \param position (x_pos, y_pos)
+         **/
+        virtual void setWindowPosition (const osgVector2& position);
 
         /** Return the window x and y position as a 2D vector */
         osgVector2 getWindowPosition () const;

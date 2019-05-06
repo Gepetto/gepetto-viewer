@@ -571,12 +571,11 @@ namespace viewer {
         return viewer_ptr_->run();
     }
 
-    void WindowManager::setWindowDimension (const unsigned int& width,
-                                                 const unsigned int& height)
+    void WindowManager::setWindowDimension (const osgVector2& size)
     {
         /* Define new trait dimension of the main camera */
         const osg::GraphicsContext::Traits* traits_ptr = gc_->getTraits ();
-        gc_->resized (traits_ptr->x, traits_ptr->y, width, height);
+        gc_->resized (traits_ptr->x, traits_ptr->y, (int)size[0], (int)size[1]);
     }
 
     osgVector2 WindowManager::getWindowDimension() const
@@ -588,12 +587,11 @@ namespace viewer {
         return dimention;
     }
 
-    void WindowManager::setWindowPosition (const unsigned int& x_position,
-                                                const unsigned int& y_position)
+    void WindowManager::setWindowPosition (const osgVector2& position)
     {
         /* Define new trait dimension of the main camera */
         const osg::GraphicsContext::Traits* traits_ptr = gc_->getTraits ();
-        gc_->resized (x_position, y_position,
+        gc_->resized ((int)position[0], (int)position[1],
                 traits_ptr->width, traits_ptr->height);
     }
 

@@ -242,6 +242,8 @@ namespace viewer {
 
             virtual std::string getStringProperty(const std::string& nodeName, const std::string& propName) const;
             virtual void setStringProperty(const std::string& nodeName, const std::string& propName, const std::string& value);
+            virtual osgVector2 getVector2Property(const std::string& nodeName, const std::string& propName) const;
+            virtual void setVector2Property(const std::string& nodeName, const std::string& propName, const osgVector2& value);
             virtual osgVector3 getVector3Property(const std::string& nodeName, const std::string& propName) const;
             virtual void setVector3Property(const std::string& nodeName, const std::string& propName, const osgVector3& value);
             virtual osgVector4 getColorProperty(const std::string& nodeName, const std::string& propName) const;
