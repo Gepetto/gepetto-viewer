@@ -53,6 +53,8 @@ namespace gepetto {
 
       QString installDirectory;
 
+      QString appStyle;
+
       /// Set up default values
       Settings (const char* installDirectory);
 

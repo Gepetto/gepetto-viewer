@@ -19,6 +19,7 @@
 #include <QSettings>
 #include <QDir>
 #include <QtDebug>
+#include <QStyleFactory>
 
 #include <osg/DisplaySettings>
 #include <osg/ArgumentParser>
@@ -47,6 +48,11 @@ namespace gepetto {
       , captureFilename ("screenshot")
       , captureExtension ("png")
       , installDirectory (installDir)
+#if (QT_VERSION < QT_VERSION_CHECK(5,0,0))
+      , appStyle ("cleanlooks")
+#else
+      , appStyle ("fusion")
+#endif
 
       , mw (0)
     {
@@ -319,7 +325,7 @@ namespace gepetto {
           QCoreApplication::organizationName (),
           getQSettingsFileName (predifinedRobotConf));
       if (robot.status() != QSettings::NoError) {
-        logError(QString ("Enable to open configuration file ")
+        logError(QString ("Unable to open configuration file ")
                  + robot.fileName());
       } else {
         foreach (QString name, robot.childGroups()) {
@@ -347,7 +353,7 @@ namespace gepetto {
           QCoreApplication::organizationName (),
           getQSettingsFileName (predifinedEnvConf));
       if (env.status() != QSettings::NoError) {
-        logError(QString ("Enable to open configuration file ") + env.fileName());
+        logError(QString ("Unable to open configuration file ") + env.fileName());
       } else {
         foreach (QString name, env.childGroups()) {
           env.beginGroup(name);
@@ -379,7 +385,7 @@ namespace gepetto {
           QCoreApplication::organizationName (),
           getQSettingsFileName (configurationFile));
       if (env.status() != QSettings::NoError) {
-        logError(QString ("Enable to open configuration file ") + env.fileName());
+        logError(QString ("Unable to open configuration file ") + env.fileName());
       } else {
         osg::DisplaySettings* ds = osg::DisplaySettings::instance().get();
         env.beginGroup("viewer");
@@ -388,6 +394,18 @@ namespace gepetto {
         GET_PARAM(nbMultiSamples, int, toInt);
         ds->setNumMultiSamples(nbMultiSamples);
         GET_PARAM(avconv, QString, toString);
+
+        QString appStyle;
+        GET_PARAM(appStyle, QString, toString);
+        if (!appStyle.isNull()) {
+          if (QStyleFactory::keys().contains(appStyle, Qt::CaseInsensitive))
+            this->appStyle = appStyle;
+          else {
+            logError ("Available application styles are " + QStyleFactory::keys().join(", "));
+            logError ("Requested value is " + appStyle);
+            logError ("Current value is " + this->appStyle);
+          }
+        }
 
         GET_PARAM(useNameService, bool, toBool);
         env.endGroup ();
@@ -472,6 +490,7 @@ namespace gepetto {
       env.setValue ("nbMultiSamples", ds->getNumMultiSamples());
       env.setValue ("useNameService", useNameService);
       env.setValue ("avconv", avconv);
+      env.setValue ("appStyle", appStyle);
       env.endGroup ();
 
       env.beginGroup("plugins");
