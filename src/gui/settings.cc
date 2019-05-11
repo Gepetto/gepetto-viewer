@@ -42,6 +42,7 @@ namespace gepetto {
       , noPlugin (false)
       , useNameService (false)
       , refreshRate (30)
+      , avconv ("avconv")
       , captureDirectory ()
       , captureFilename ("screenshot")
       , captureExtension ("png")
@@ -288,6 +289,7 @@ namespace gepetto {
         << nl << tab << "No plugin:              " << tab << noPlugin
         << nl << tab << "Use omni name service:  " << tab << useNameService
         << nl << tab << "Refresh rate:           " << tab << refreshRate
+        << nl << tab << "avconv:                 " << tab << avconv.toStdString()
 
         << nl << nl << "Screen capture options:"
         << nl << tab << "Directory:              " << tab << captureDirectory
@@ -385,6 +387,7 @@ namespace gepetto {
         int nbMultiSamples = 4;
         GET_PARAM(nbMultiSamples, int, toInt);
         ds->setNumMultiSamples(nbMultiSamples);
+        GET_PARAM(avconv, QString, toString);
 
         GET_PARAM(useNameService, bool, toBool);
         env.endGroup ();
@@ -468,6 +471,7 @@ namespace gepetto {
       env.setValue ("refreshRate", refreshRate);
       env.setValue ("nbMultiSamples", ds->getNumMultiSamples());
       env.setValue ("useNameService", useNameService);
+      env.setValue ("avconv", avconv);
       env.endGroup ();
 
       env.beginGroup("plugins");

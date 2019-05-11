@@ -186,7 +186,7 @@ namespace gepetto {
         if (!outputFile.isNull()) {
           if (QFile::exists(outputFile))
             QFile::remove(outputFile);
-          QString avconv = "avconv";
+          QString avconv = main->settings_->avconv;
 
           QStringList args;
           QString input = "/tmp/gepetto-gui/record/img_0_%d.jpeg";
@@ -203,6 +203,27 @@ namespace gepetto {
           showPOutput_->resize(main->size() / 2);
           showPOutput_->show();
           process_->start(avconv, args);
+          bool started = process_->waitForStarted(-1);
+          if (!started) {
+            showPOutput_->hide();
+            switch (process_->error()) {
+              case QProcess::FailedToStart:
+                main->logError ("Failed to start " + avconv + ". Either it is missing, "
+                    "or you may have insufficient permissions to invoke it.\n");
+                break;
+              case QProcess::Crashed      :
+                main->logError ("" + avconv + " crashed some time after starting successfully.");
+                break;
+              case QProcess::Timedout     :
+              case QProcess::WriteError   :
+              case QProcess::ReadError    :
+              case QProcess::UnknownError :
+                main->logError ("An unknown error made " + avconv + " stopped before "
+                    "finishing.");
+                break;
+            }
+            main->logError ("You can manually run\n" + avconv + " " + args.join(" "));
+          }
         }
       }
     }
@@ -329,8 +350,8 @@ namespace gepetto {
           this, SLOT(captureFrame()))
         ->setToolTip("Take a snapshot");
 
-      QAction* recordMovie = toolBar_->addAction(iconFromTheme("media-record"), "Record movie",
-          this, SLOT(toggleCapture(bool)));
+      QAction* recordMovie = toolBar_->addAction(iconFromTheme("media-record"), "Record movie");
+      connect(recordMovie, SIGNAL(triggered(bool)), SLOT(toggleCapture(bool)), Qt::QueuedConnection);
       recordMovie->setCheckable (true);
       recordMovie->setToolTip("Record the central widget as a sequence of images. You can find the images in /tmp/gepetto-gui/record/img_%d.jpeg");
 
