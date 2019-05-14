@@ -23,17 +23,45 @@
 
 namespace gepetto {
   namespace gui {
-    class SafeApplication : public QApplication
+    class SlotExceptionCatch
     {
-      Q_OBJECT
-
       public:
-        explicit SafeApplication (int& argc, char ** argv);
+        SlotExceptionCatch () : child_ (NULL) {}
 
-        virtual bool notify(QObject* receiver, QEvent* e);
+        /// Inherited classes must call impl_notify method surronded by a try/catch
+        virtual bool safeNotify (QApplication* app, QObject* receiver, QEvent* e) = 0;
 
-      signals:
-        void log (QString text);
+        void addAsLeaf (SlotExceptionCatch* child)
+        {
+          if (child_ == NULL) child_ = child;
+          else child_->addAsLeaf (child);
+        }
+
+      protected:
+        bool impl_notify(QApplication* app, QObject* receiver, QEvent* e)
+        {
+          if (child_ == NULL)
+            return app->QApplication::notify(receiver, e);
+          else
+            return child_->safeNotify(app, receiver, e);
+        }
+
+        SlotExceptionCatch* child_;
+    };
+
+    class SafeApplication : public QApplication, public SlotExceptionCatch
+    {
+      public:
+        explicit SafeApplication (int& argc, char ** argv)
+          : QApplication(argc, argv) {}
+
+        bool notify(QObject* receiver, QEvent* e)
+        {
+          return impl_notify (this, receiver, e);
+        }
+
+      private:
+        bool safeNotify (QApplication*, QObject*, QEvent*) { assert(false); return false; };
     };
   } // namespace gui
 } // namespace gepetto

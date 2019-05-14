@@ -68,7 +68,6 @@ SET(${LIBRARY_NAME}_SOURCES
   gui/osgwidget.cc
   gui/pick-handler.cc
   gui/python-decorator.hh
-  gui/safeapplication.cc
   gui/selection-event.cc
   gui/selection-handler.cc
   gui/settings.cc

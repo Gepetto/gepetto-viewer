@@ -86,7 +86,6 @@ int main(int argc, char *argv[])
   settings.setMainWindow (&w);
   settings.initPlugins ();
   settings.restoreState ();
-  w.connect (&a, SIGNAL (log(QString)), SLOT (logError(const QString&)));
   w.show();
   splash.finish(&w);
   int retCode = a.exec();
