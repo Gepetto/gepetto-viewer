@@ -155,20 +155,20 @@ namespace gepetto {
       while (arguments.read ("-x", opt) || arguments.read ("--run-pyscript", opt))
         addPyScript (QString::fromStdString(opt));
 
-      arguments.reportRemainingOptionsAsUnrecognized(osg::ArgumentParser::BENIGN);
-      if (arguments.errors(osg::ArgumentParser::CRITICAL)) {
-        arguments.writeErrorMessages(std::cout);
-        retVal = 2;
-      } else if (arguments.errors(osg::ArgumentParser::BENIGN)) {
-        arguments.writeErrorMessages(std::cout);
-      }
-
       for (int i = 0; i < arguments.argc()-1; ) {
         if (strncmp (arguments.argv()[i], "-ORB", 4) == 0) {
           addOmniORB (arguments.argv()[i], arguments.argv()[i+1]);
           arguments.remove (i, 2);
         } else
           ++i;
+      }
+
+      arguments.reportRemainingOptionsAsUnrecognized(osg::ArgumentParser::BENIGN);
+      if (arguments.errors(osg::ArgumentParser::CRITICAL)) {
+        arguments.writeErrorMessages(std::cout);
+        retVal = 2;
+      } else if (arguments.errors(osg::ArgumentParser::BENIGN)) {
+        arguments.writeErrorMessages(std::cout);
       }
 
       if (!omniORBargv_.contains("-ORBendPoint"))
@@ -583,7 +583,11 @@ namespace gepetto {
 
     void Settings::addOmniORB (const QString& arg, const QString& value)
     {
-      omniORBargv_ << arg << value;
+      int i = omniORBargv_.indexOf (arg);
+      if (i == -1)
+        omniORBargv_ << arg << value;
+      else
+        omniORBargv_[i+1] = value;
     }
 
     void Settings::log(const QString &t)

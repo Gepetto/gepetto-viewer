@@ -20,7 +20,6 @@ IF(GEPETTO_GUI_HAS_PYTHONQT)
     FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/gepetto/gui/blenderexport.py
     ${CMAKE_CURRENT_SOURCE_DIR}/gepetto/gui/intersection.py
-    ${CMAKE_CURRENT_SOURCE_DIR}/gepetto/gui/matplotlibwidget.py
     ${CMAKE_CURRENT_SOURCE_DIR}/gepetto/gui/__init__.py
     DESTINATION ${PYTHON_SITELIB}/gepetto/gui
     )
