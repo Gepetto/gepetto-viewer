@@ -43,10 +43,10 @@ namespace gepetto {
       , noPlugin (false)
       , useNameService (false)
       , refreshRate (30)
-      , avconv ("avconv")
       , captureDirectory ()
       , captureFilename ("screenshot")
       , captureExtension ("png")
+      , avconv ("avconv")
       , installDirectory (installDir)
 #if (QT_VERSION < QT_VERSION_CHECK(5,0,0))
       , appStyle ("cleanlooks")
@@ -61,6 +61,13 @@ namespace gepetto {
       user.mkpath (path);
       user.cd (path);
       captureDirectory = user.absolutePath().toStdString();
+
+      avConvInputOptions
+            << "-r" << "25";
+      avConvOutputOptions
+            << "-vf" << "scale=trunc(iw/2)*2:trunc(ih/2)*2"
+            << "-r" << "25"
+            << "-vcodec" << "libx264";
     }
 
     void Settings::setupPaths () const
@@ -295,12 +302,15 @@ namespace gepetto {
         << nl << tab << "No plugin:              " << tab << noPlugin
         << nl << tab << "Use omni name service:  " << tab << useNameService
         << nl << tab << "Refresh rate:           " << tab << refreshRate
-        << nl << tab << "avconv:                 " << tab << avconv.toStdString()
 
         << nl << nl << "Screen capture options:"
         << nl << tab << "Directory:              " << tab << captureDirectory
         << nl << tab << "Filename:               " << tab << captureFilename
         << nl << tab << "Extension:              " << tab << captureExtension
+        << nl << tab << "Avconv command:         " << tab << avconv.toStdString()
+        << nl << tab << "Avconv input options:   " << tab << avConvInputOptions .join(' ').toStdString()
+        << nl << tab << "Avconv output options:  " << tab << avConvOutputOptions.join(' ').toStdString()
+
         << nl
         << nl << "omniORB configuration" ;
       for (int i = 1; i < omniORBargv_.size(); i+=2)
@@ -393,7 +403,6 @@ namespace gepetto {
         int nbMultiSamples = 4;
         GET_PARAM(nbMultiSamples, int, toInt);
         ds->setNumMultiSamples(nbMultiSamples);
-        GET_PARAM(avconv, QString, toString);
 
         QString appStyle;
         GET_PARAM(appStyle, QString, toString);
@@ -426,6 +435,14 @@ namespace gepetto {
         foreach (QString name, env.childKeys()) {
             addOmniORB ("-ORB" + name, env.value(name).toString());
         }
+        env.endGroup ();
+
+        env.beginGroup("avconv");
+        avconv = env.value ("command", avconv).toString();
+        avConvInputOptions  = env.value ("input_options" ,
+            avConvInputOptions).toStringList();
+        avConvOutputOptions = env.value ("output_options",
+            avConvOutputOptions).toStringList();
         env.endGroup ();
         log (QString ("Read configuration file ") + env.fileName());
       }
@@ -489,7 +506,6 @@ namespace gepetto {
       env.setValue ("refreshRate", refreshRate);
       env.setValue ("nbMultiSamples", ds->getNumMultiSamples());
       env.setValue ("useNameService", useNameService);
-      env.setValue ("avconv", avconv);
       env.setValue ("appStyle", appStyle);
       env.endGroup ();
 
@@ -510,6 +526,12 @@ namespace gepetto {
       env.beginGroup("omniORB");
       for (int i = 1; i < omniORBargv_.size(); i+=2)
         env.setValue (omniORBargv_[i-1].mid(4), omniORBargv_[i]);
+      env.endGroup ();
+
+      env.beginGroup("avconv");
+      env.setValue ("command", avconv);
+      env.setValue ("input_options", avConvInputOptions);
+      env.setValue ("output_options", avConvInputOptions);
       env.endGroup ();
       log (QString ("Wrote configuration file ") + env.fileName());
     }

@@ -48,8 +48,14 @@ namespace gepetto {
       int refreshRate;
 
       /// Path to avconv binary (maybe ffmpeg on some distributions).
-      QString avconv;
       std::string captureDirectory, captureFilename, captureExtension;
+
+      /// \group record_parameter Video generation parameters
+      /// \{
+      QString avconv;
+      QStringList avConvInputOptions;
+      QStringList avConvOutputOptions;
+      /// \}
 
       QString installDirectory;
 

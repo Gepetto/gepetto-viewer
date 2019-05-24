@@ -190,11 +190,9 @@ namespace gepetto {
 
           QStringList args;
           QString input = "/tmp/gepetto-gui/record/img_0_%d.jpeg";
-          args << "-r" << "50"
+          args << main->settings_->avConvInputOptions
             << "-i" << input
-            << "-vf" << "scale=trunc(iw/2)*2:trunc(ih/2)*2"
-            << "-r" << "25"
-            << "-vcodec" << "libx264"
+            << main->settings_->avConvOutputOptions
             << outputFile;
           qDebug () << args;
 
