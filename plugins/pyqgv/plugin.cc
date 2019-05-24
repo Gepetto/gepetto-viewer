@@ -19,10 +19,15 @@
 #include <plugin.hh>
 
 #include <decorator.hh>
+#include <gepetto/gui/config-dep.hh>
 
 namespace PyQgv {
   void Plugin::init() {
+#if GEPETTO_GUI_HAS_PYTHONQT
     registerQGV();
+#else
+    qWarning() << "Cannot load pyqgv plugin without PythonQt support.";
+#endif
   }
 
 #if (QT_VERSION < QT_VERSION_CHECK(5,0,0))

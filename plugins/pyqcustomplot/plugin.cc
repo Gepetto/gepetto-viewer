@@ -19,10 +19,15 @@
 #include <plugin.hh>
 
 #include <decorator.hh>
+#include <gepetto/gui/config-dep.hh>
 
 namespace PyQCustomPlot {
   void Plugin::init() {
+#if GEPETTO_GUI_HAS_PYTHONQT
     registerQCustomPlot();
+#else
+    qWarning() << "Cannot load pyqcustomplot plugin without PythonQt support.";
+#endif
   }
 
 #if (QT_VERSION < QT_VERSION_CHECK(5,0,0))
