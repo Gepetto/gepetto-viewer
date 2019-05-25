@@ -51,6 +51,7 @@ SET(${PROJECT_NAME}_HEADERS_MOC
   ${CMAKE_SOURCE_DIR}/include/gepetto/gui/mainwindow.hh
   ${CMAKE_SOURCE_DIR}/include/gepetto/gui/node-action.hh
   ${CMAKE_SOURCE_DIR}/include/gepetto/gui/osgwidget.hh
+  ${CMAKE_SOURCE_DIR}/include/gepetto/gui/safeapplication.hh
   ${CMAKE_SOURCE_DIR}/include/gepetto/gui/selection-event.hh
   ${CMAKE_SOURCE_DIR}/include/gepetto/gui/selection-handler.hh
   ${CMAKE_SOURCE_DIR}/include/gepetto/gui/shortcut-factory.hh
