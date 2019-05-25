@@ -308,8 +308,8 @@ namespace gepetto {
         << nl << tab << "Filename:               " << tab << captureFilename
         << nl << tab << "Extension:              " << tab << captureExtension
         << nl << tab << "Avconv command:         " << tab << avconv.toStdString()
-        << nl << tab << "Avconv input options:   " << tab << avConvInputOptions .join(' ').toStdString()
-        << nl << tab << "Avconv output options:  " << tab << avConvOutputOptions.join(' ').toStdString()
+        << nl << tab << "Avconv input options:   " << tab << avConvInputOptions .join(" ").toStdString()
+        << nl << tab << "Avconv output options:  " << tab << avConvOutputOptions.join(" ").toStdString()
 
         << nl
         << nl << "omniORB configuration" ;
