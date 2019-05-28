@@ -1,20 +1,36 @@
-Release 1.1.0: on May 7. 2015
-=============================
-new feature since 1.0.0:
+                                                                -*- outline -*-
+New in v4.6.0
+* Install safeapplication.hh again.
+* Enforce compatibility with Qt4.
+* Add editor for Vector3 property.
+* Make OSGWidget full-screenable.
+* Fix dock widget.
+* Put property map in class Properties and make Node inherits from it.
+* Make WindowManager inherits from GroupNode.
+* Fix window dimension API.
+* Fix wrong namings.
+* Make Property getter and setter modifiable.
+* Add ability to set the size of a window to a fixed value.
+* Handle errors when recording movies + path to avconv tunable.
+* Add ability to change Qt style.
+* Update SafeApplication to handle exceptions.
+* Move directory pyplugins from gepetto-viewer-corba to this repo.
+* Fix CMake + OmniORB arguments.
+* Fix widget size policies.
+* Add tool tip to properties.
+* Fix pyqcustomplot and pyqgv without PythonQt support.
+* Improve video generation user experience.
 
-    Enable urdf parser to tolerate several geometries for each link.
-    New primitives are supported, like
-      - arrows,
-      - capsules.
-    New feratures have been added, like
-      - camera control,
-      - highlight mode,
-      - lightning control,
-      - transparency mode,
-      - keyboard shortcuts,
-      - roadmap display for path planning.
-    API has been enriched to get better control
-    
-
-Release 1.0.0 on March 3. 2015
-==============================
+New in v1.1.0
+* Enable urdf parser to tolerate several geometries for each link.
+  - New primitives are supported, like
+     - arrows,
+     - capsules.
+  - New feratures have been added, like
+     - camera control,
+     - highlight mode,
+     - lightning control,
+     - transparency mode,
+     - keyboard shortcuts,
+     - roadmap display for path planning.
+  -  API has been enriched to get better control
