@@ -287,7 +287,11 @@ namespace gepetto {
         if (nameVariant.isValid()) {
           std::string name = nameVariant.toString().toStdString();
           ScopedLock lock (MainWindow::instance()->osg()->osgFrameMutex());
-          node_->setProperty<T>(name, value);
+          try {
+            node_->setProperty<T>(name, value);
+          } catch (const std::exception& e) {
+            MainWindow::instance()->logError (e.what());
+          }
         } else {
           qDebug() << "Sender has no property propertyName" << sender;
         }
