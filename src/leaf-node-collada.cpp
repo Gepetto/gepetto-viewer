@@ -119,6 +119,22 @@ namespace viewer {
           }
 
           collada_ptr_ = osgDB::readNodeFile(collada_file_path_,options);
+
+          // FIXME: Fixes https://github.com/Gepetto/gepetto-viewer/issues/95
+          // The bug: Assimp seems to ignore the DAE up_axis tag. Because this
+          // cannot be fixed in assimp without a huge impact, we make GV
+          // compatible with assimp.
+          //
+          // The fix: OSG DAE plugin rotates the actual model with a root
+          // PositionAttitudeTransform, when the DAE up axis is not Z.
+          // We simply reset the attitude.
+          osg::PositionAttitudeTransform* pat =
+            dynamic_cast<osg::PositionAttitudeTransform*> (collada_ptr_.get());
+          if (pat != NULL) {
+            std::cout << "Reset up_axis to Z_UP." << std::endl;
+            pat->setAttitude (osgQuat());
+          }
+
           bool error = false;
           if (!collada_ptr_) {
             std::cout << "File: " << collada_file_path_ << " could not be loaded\n";
