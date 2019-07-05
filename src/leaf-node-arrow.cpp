@@ -7,6 +7,7 @@
 //
 
 #include <gepetto/viewer/leaf-node-arrow.h>
+#include <osg/Version>
 
 namespace gepetto {
 namespace viewer {
@@ -156,7 +157,18 @@ namespace viewer {
     {
         cylinder_drawable_->setColor(color);
         cone_drawable_->setColor(color);
+#if OSG_VERSION_GREATER_OR_EQUAL(3, 5, 6)
+        cylinder_drawable_->build();
+        cone_drawable_->build();
+#else
+        cylinder_drawable_->dirtyDisplayList();
+        cone_drawable_->dirtyDisplayList();
+        cylinder_drawable_->dirtyBound();
+        cone_drawable_->dirtyBound();
+#endif
         color_ = color;
+        setTransparentRenderingBin (color[3] < Node::TransparencyRenderingBinThreashold);
+        setDirty();
     }
 
     void LeafNodeArrow::resize(float radius,float length)

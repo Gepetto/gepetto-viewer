@@ -91,6 +91,7 @@ namespace viewer {
         }
 
     public:
+        static const float TransparencyRenderingBinThreashold;
 
         /**
          \brief returns rotation and position of the node
@@ -227,6 +228,11 @@ namespace viewer {
 
         virtual void setAlpha (const float& alpha);
 	virtual float getAlpha() const;
+
+        void setTransparency (const float& transparency);
+	float getTransparency() const;
+
+        void setTransparentRenderingBin (bool transparent = true);
 
         SCENE_VIEWER_ACCEPT_VISITOR;
         virtual void traverse (NodeVisitor& visitor);

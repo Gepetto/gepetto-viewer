@@ -205,6 +205,8 @@ namespace viewer {
   }
   using ::osg::Matrix;
 
+  const float Node::TransparencyRenderingBinThreashold = 0.99f;
+
   /* Declaration of private function members */
   void Node::init ()
   {
@@ -250,7 +252,7 @@ namespace viewer {
     wireframe_modes_[WIREFRAME]->setStateSet(getWireframeStateSet());
     wireframe_modes_[WIREFRAME]->setDataVariance (osg::Object::STATIC);
     geode_ptr_ = NULL;
-    alpha_ = 0;
+    alpha_ = 1.;
 
     visibilityMode_ = VISIBILITY_ON;
     lightingMode_   = LIGHT_INFLUENCE_ON;
@@ -288,7 +290,7 @@ namespace viewer {
           Vector4Property::Getter_t(),
           Vector4Property::setterFromMemberFunction(this, &Node::setColor)));
     addProperty(
-        FloatProperty::create("Transparency",
+        FloatProperty::create("Alpha",
           FloatProperty::getterFromMemberFunction(this, &Node::getAlpha),
           FloatProperty::setterFromMemberFunction(this, &Node::setAlpha)));
     addProperty(
@@ -610,16 +612,12 @@ namespace viewer {
 	osg::Material *mat;
 	if (ss->getAttribute(osg::StateAttribute::MATERIAL))
 	  mat = dynamic_cast<osg::Material*>(ss->getAttribute(osg::StateAttribute::MATERIAL));
-	else
-	  {
-	    mat = new osg::Material;
-	    ss->setAttribute(mat, osg::StateAttribute::OFF);
-	  }
-	mat->setTransparency(osg::Material::FRONT_AND_BACK, alpha);
-	if (alpha_ > 0)
-	  ss->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
-	else
-          ss->setRenderingHint(osg::StateSet::DEFAULT_BIN);
+        else {
+          mat = new osg::Material;
+          ss->setAttribute(mat, osg::StateAttribute::OFF);
+        }
+        mat->setAlpha(osg::Material::FRONT_AND_BACK, alpha);
+        setTransparentRenderingBin (alpha_<TransparencyRenderingBinThreashold);
         dirty_ = true;
       }
   }
@@ -627,6 +625,36 @@ namespace viewer {
   float Node::getAlpha() const
   {
     return alpha_;
+  }
+
+  void Node::setTransparency (const float& transparency)
+  {
+    setAlpha (1.f - transparency);
+  }
+
+  float Node::getTransparency() const
+  {
+    return 1.f - getAlpha();
+  }
+
+  void Node::setTransparentRenderingBin (bool transparent)
+  {
+    if (geode_ptr_.get() == NULL)
+    {
+      std::cout << "You must initialize a Geode on " << id_name_ << " to use Alpha" << std::endl;
+      return ;
+    }
+    osg::StateSet* ss = geode_ptr_.get()->getStateSet();
+    if (ss)
+    {
+      bool isTransparent = (ss->getRenderingHint() == osg::StateSet::TRANSPARENT_BIN);
+      if (transparent == isTransparent) return;
+      if (transparent)
+        ss->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+      else
+        ss->setRenderingHint(osg::StateSet::DEFAULT_BIN);
+      dirty_ = true;
+    }
   }
 
   Node::~Node ()
