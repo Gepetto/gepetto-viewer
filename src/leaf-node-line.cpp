@@ -246,6 +246,7 @@ namespace viewer {
     {      
         color_ptr_->at(0) = color;
         beam_ptr_->dirtyDisplayList();
+        setTransparentRenderingBin (color[3] < Node::TransparencyRenderingBinThreashold);
         setDirty();
     }
   
@@ -253,6 +254,14 @@ namespace viewer {
     {
       color_ptr_ = colors;
       beam_ptr_->dirtyDisplayList();
+      bool transparent = false;
+      for (std::size_t i = 0; i < colors->size(); ++i) {
+        if (colors->at(i)[3] < Node::TransparencyRenderingBinThreashold) {
+          transparent = true;
+          break;
+        }
+      }
+      setTransparentRenderingBin (transparent);
       setDirty();
     }
 

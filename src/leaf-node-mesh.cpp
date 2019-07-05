@@ -147,7 +147,7 @@ namespace viewer {
     osgVector4 color_specular(0.0f,0.0f,0.0f,0.0f),
       color_emissive(0.0f,0.0f,0.0f,0.0f);
     setColor(color_diffuse,color_specular,color_emissive);
-
+    setTransparentRenderingBin (color_diffuse[3] < Node::TransparencyRenderingBinThreashold);
   }
 
   void LeafNodeMesh::setAlpha(const float& alpha)

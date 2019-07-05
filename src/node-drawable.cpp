@@ -20,6 +20,7 @@ namespace viewer {
   {
     shape_drawable_ptr_->setColor(color);
     redrawShape ();
+    setTransparentRenderingBin (color[3] < Node::TransparencyRenderingBinThreashold);
   }
 
   void NodeDrawable::redrawShape ()
