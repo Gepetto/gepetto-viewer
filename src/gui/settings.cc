@@ -179,7 +179,7 @@ namespace gepetto {
       }
 
       if (!omniORBargv_.contains("-ORBendPoint"))
-        addOmniORB ("-ORBendPoint", "::localhost:12321");
+        addOmniORB ("-ORBendPoint", ":::12321");
 
       if (genAndQuit && retVal < 1) retVal = 1;
 
