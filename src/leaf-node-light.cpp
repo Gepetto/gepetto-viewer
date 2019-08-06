@@ -121,7 +121,7 @@ namespace viewer {
     void LeafNodeLight::setColor (const osgVector4& color)
     {
         light_ptr_->getLight ()->setDiffuse (color);
-        ((LeafNodeSphere*)this)->setColor (color);
+        LeafNodeSphere::setColor (color);
         setDirty();
     }
 
