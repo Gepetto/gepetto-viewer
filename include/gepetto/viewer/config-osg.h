@@ -114,20 +114,17 @@ typedef ::osg::Quat osgQuat;
 namespace gepetto {
 namespace viewer {
     
-#define DEF_WIDTH_WINDOW 600
-#define DEF_HEIGHT_WINDOW 480
- 
     enum VisibilityMode
     {
-        VISIBILITY_ON = 0,
-        ALWAYS_ON_TOP,
-        VISIBILITY_OFF
+        VISIBILITY_OFF = 0,
+        VISIBILITY_ON = 1,
+        ALWAYS_ON_TOP
     };
     
     enum LightingMode
     {
-        LIGHT_INFLUENCE_ON = 0,
-        LIGHT_INFLUENCE_OFF
+        LIGHT_INFLUENCE_OFF = 0,
+        LIGHT_INFLUENCE_ON = 1
     };
     
     enum WireFrameMode

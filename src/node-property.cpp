@@ -99,6 +99,34 @@ namespace viewer {
     return false;
   }
 
+  bool EnumProperty::set(const std::string& value)
+  {
+    const MetaEnum& me = *metaEnum();
+    for (std::size_t i = 0; i < me.names.size(); ++i)
+      if (me.names[i] == value)
+        return IntProperty::set(me.values[i]);
+    std::ostringstream oss;
+    oss << "Invalid value " << value << " for enum " << me.type << ". "
+      "Possible values are ";
+    for (std::size_t i = 0; i < me.values.size(); ++i)
+      oss << me.names[i] << " (" << me.values[i] << "), ";
+    throw std::invalid_argument(oss.str());
+    return false;
+  }
+
+  bool EnumProperty::get(std::string& str)
+  {
+    int value;
+    if (!IntProperty::get(value)) return false;
+    const MetaEnum& me = *metaEnum();
+    for (std::size_t i = 0; i < me.names.size(); ++i)
+      if (me.values[i] == value) {
+        str = me.names[i];
+        return true;
+      }
+    return false;
+  }
+
   const PropertyPtr_t& Properties::property(const std::string& name) const
   {
     PropertyMap_t::const_iterator _prop = properties_.find(name);
