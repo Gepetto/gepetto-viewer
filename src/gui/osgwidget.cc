@@ -63,6 +63,7 @@
 
 #include <gepetto/viewer/urdf-parser.h>
 #include <gepetto/viewer/OSGManipulator/keyboard-manipulator.h>
+#include <gepetto/viewer/macros.h>
 
 #include <gepetto/gui/windows-manager.hh>
 #include <gepetto/gui/selection-event.hh>
@@ -289,7 +290,7 @@ namespace gepetto {
       if (!size) return;
       if (size->hasWriteAccess() == fixedSize) return;
       // Cast to Vector2Property
-      viewer::Vector2Property::Ptr_t vsize = boost::dynamic_pointer_cast<viewer::Vector2Property>(size);
+      viewer::Vector2Property::Ptr_t vsize = viewer::dynamic_pointer_cast<viewer::Vector2Property>(size);
       if (!vsize) return;
       osgQt::GLWidget* glWidget = graphicsWindow_->getGLWidget();
       if (fixedSize) {
