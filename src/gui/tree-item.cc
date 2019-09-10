@@ -58,8 +58,12 @@ namespace gepetto {
 
       QString toolTip (
           "Python:\n"
+          "As an integer:\n"
           "  gui.getIntProperty(nodeName,\"%1\")\n"
-          "  gui.setIntProperty(nodeName,\"%1\",int)");
+          "  gui.setIntProperty(nodeName,\"%1\",int)\n"
+          "or as a string:\n"
+          "  gui.getStringProperty(nodeName,\"%1\")\n"
+          "  gui.setStringProperty(nodeName,\"%1\",string)");
 
       QComboBox* cb = new QComboBox;
       cb->setToolTip (toolTip.arg(prop->name().c_str()));

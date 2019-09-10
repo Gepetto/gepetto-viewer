@@ -83,6 +83,8 @@ namespace viewer {
       protected:
         Property(const std::string& name) : name_ (name) {}
 
+        virtual ~Property() {}
+
         const std::string name_;
 
         template <typename T> inline void invalidType(T) const { throw std::invalid_argument ("Property " + name_ + " is not of type " + details::property_type<T>::to_string()); }
@@ -112,8 +114,10 @@ namespace viewer {
         PropertyTpl(const std::string& name, const Getter_t& g, const Setter_t& s)
           : Property(name), getter_(g), setter_(s) {}
 
-        bool set(const T& value) { if (!hasWriteAccess()) { invalidSet(); return false; } setter_(value)   ; return true; }
-        bool get(      T& value) { if (!hasReadAccess ()) { invalidGet(); return false; } value = getter_(); return true; }
+        virtual ~PropertyTpl() {}
+
+        virtual bool set(const T& value) { if (!hasWriteAccess()) { invalidSet(); return false; } setter_(value)   ; return true; }
+        virtual bool get(      T& value) { if (!hasReadAccess ()) { invalidGet(); return false; } value = getter_(); return true; }
 
         bool hasReadAccess  () const { return (bool)getter_; }
         bool hasWriteAccess () const { return (bool)setter_; }
@@ -170,6 +174,16 @@ namespace viewer {
         /// Set the enum property.
         /// It also checks that \c value is a valid enum.
         bool set(const int& value);
+
+        /// Set the enum property from a string.
+        /// It also checks that \c value is a valid enum.
+        bool set(const std::string& value);
+
+        /// Get the enum property as an integer
+        bool get(int   & v) { return IntProperty::get (v); }
+
+        /// Get the enum property as a string
+        bool get(std::string   & v);
 
       private:
         const MetaEnum* metaEnum_;

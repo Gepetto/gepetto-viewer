@@ -421,7 +421,7 @@ namespace viewer {
       : GroupNode ("")
       , nodeTrackerManipulatorIndex(2)
     {
-        init (0, 0, DEF_WIDTH_WINDOW, DEF_HEIGHT_WINDOW);
+        init (0, 0, 600, 480);
     }
 
     WindowManager::WindowManager (osg::GraphicsContext* gc)
