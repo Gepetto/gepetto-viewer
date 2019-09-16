@@ -447,6 +447,13 @@ namespace viewer {
         return true;
     }
 
+    void WindowsManager::removeLightSources (const std::string& meshName)
+    {
+        FIND_NODE_OF_TYPE_OR_THROW (LeafNodeCollada, mesh, meshName);
+        ScopedLock lock(osgFrameMutex());
+        mesh->removeLightSources();
+    }
+
     bool WindowsManager::addCone (const std::string& coneName,
             const float radius, const float height,
             const Color_t& color)

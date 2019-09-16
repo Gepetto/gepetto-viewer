@@ -144,6 +144,8 @@ namespace viewer {
             virtual bool resizeArrow(const std::string& arrowName ,float newRadius, float newLength) throw(std::exception);
 
             virtual bool addMesh(const std::string& meshName, const std::string& meshPath);
+            /// See LeafNodeCollada::removeLightSources()
+            virtual void removeLightSources(const std::string& meshName);
 
             virtual bool addCone(const std::string& coneName, float radius, float height, const Color_t& color);
 
