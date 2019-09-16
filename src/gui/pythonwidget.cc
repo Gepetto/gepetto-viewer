@@ -25,11 +25,23 @@
 #include <PythonQtClassInfo.h>
 #include <PythonQt_QtBindings.h>
 
+#include <boost/python.hpp>
+
 #include "gepetto/gui/osgwidget.hh"
 #include "gepetto/gui/mainwindow.hh"
 #include "gepetto/gui/plugin-interface.hh"
 
 #include "../../src/gui/python-decorator.hh"
+#include "../../src/gui/python-bindings.hh"
+
+namespace bp = boost::python;
+
+BOOST_PYTHON_MODULE(gepettogui_internals)
+{
+  exposeOSG();
+  exposeGV();
+  exposeGG();
+}
 
 namespace gepetto {
     typedef gui::MainWindow GMainWindow;
@@ -60,6 +72,14 @@ namespace gepetto {
       PythonWidget::PythonWidget(QWidget *parent) :
         QDockWidget("&PythonQt console", parent)
       {
+        PyImport_AppendInittab("gepettogui_internals",
+#if PY_MAJOR_VERSION==3
+            &PyInit_gepettogui_internals
+#elif PY_MAJOR_VERSION==2
+            &initgepettogui_internals
+#endif
+            );
+
         setObjectName ("gepetto-gui.pythonqtconsole");
         PythonQt::init(PythonQt::RedirectStdOut);
         PythonQt_init_QtBindings();
@@ -75,8 +95,7 @@ namespace gepetto {
             << "BodyTreeWidget"
             << "BodyTreeItem"
             << "SelectionEvent"
-            << "MainWindow"
-            << "WindowsManager");
+            << "MainWindow");
 
         PythonQt::self()->registerCPPClass ("MainWindow", "QMainWindow", "gepetto");
         PythonQt::self()->registerCPPClass ("OSGWidget" , "QWidget"    , "gepetto");
@@ -100,6 +119,8 @@ namespace gepetto {
 
         toggleViewAction()->setShortcut(gepetto::gui::DockKeyShortcutBase + Qt::Key_A);
         connect(button_, SIGNAL(clicked()), SLOT(browseFile()));
+
+        bp::import ("gepettogui_internals");
       }
 
       PythonWidget::~PythonWidget()

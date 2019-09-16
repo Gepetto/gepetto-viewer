@@ -18,6 +18,7 @@
 #define GEPETTO_GUI_PYTHON_DECORATOR_HH
 
 #include <PythonQt.h>
+#include <boost/python.hpp>
 
 #include <gepetto/gui/mainwindow.hh>
 #include <gepetto/gui/osgwidget.hh>
@@ -36,7 +37,12 @@ namespace gepetto {
 
       QList <OSGWidget*> osgWindows (MainWindow* w) const { return w->osgWindows(); }
 
-      WindowsManager* osg (MainWindow* w) const { return w->osg().get(); }
+      PyObject* osg (MainWindow* w) const
+      {
+        boost::python::object obj(boost::python::ptr(w->osg().get()));
+        boost::python::incref(obj.ptr());
+        return obj.ptr();
+      }
 
       QObject* getFromSlot (MainWindow* w, const char* slot) const { return w->getFromSlot(slot); }
 
