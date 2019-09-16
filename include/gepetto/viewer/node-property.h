@@ -113,11 +113,11 @@ namespace viewer {
 
         virtual ~VoidProperty() {}
 
-        bool set(void) { invalidSet(); return false; }
         bool get(void) { if (!hasReadAccess ()) { invalidGet(); return false; } function_(); return true; }
+        bool set(void) { return get(); }
 
         bool hasReadAccess  () const { return (bool)function_; }
-        bool hasWriteAccess () const { return false; }
+        bool hasWriteAccess () const { return hasReadAccess(); }
 
         const Function_t& function () const { return function_; }
         void function (const Function_t& f) { function_ = f; }

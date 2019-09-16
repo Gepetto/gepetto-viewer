@@ -33,6 +33,17 @@ namespace gepetto {
     using viewer::ScopedLock;
     using viewer::PropertyPtr_t;
 
+    QWidget* voidPropertyEditor (BodyTreeItem* bti, const PropertyPtr_t prop)
+    {
+      QString toolTip (
+          "Python:\n"
+          "  gui.callVoidProperty(nodeName,\"%1\")");
+      QPushButton* button = new QPushButton(prop->name().c_str());
+      button->setToolTip (toolTip.arg(prop->name().c_str()));
+      bti->connect(button, SIGNAL(clicked()), SLOT(callVoidProperty()));
+      return button;
+    }
+
     QWidget* boolPropertyEditor (BodyTreeItem* bti, const PropertyPtr_t prop)
     {
       QString toolTip (
@@ -250,6 +261,8 @@ namespace gepetto {
         QWidget* field = NULL;
         if (prop->type() == "enum") {
           field = enumPropertyEditor(this, prop);
+        } else if (prop->type() == "void") {
+          field = voidPropertyEditor(this, prop);
         } else if (prop->type() == "bool") {
           field = boolPropertyEditor(this, prop);
         } else if (prop->type() == "string") {
@@ -293,6 +306,30 @@ namespace gepetto {
           ScopedLock lock (MainWindow::instance()->osg()->osgFrameMutex());
           try {
             node_->setProperty<T>(name, value);
+          } catch (const std::exception& e) {
+            MainWindow::instance()->logError (e.what());
+          }
+        } else {
+          qDebug() << "Sender has no property propertyName" << sender;
+        }
+      }
+    }
+
+    void BodyTreeItem::callVoidProperty () const
+    {
+      QObject* sender = QObject::sender();
+      if (sender != NULL) {
+        QVariant nameVariant = sender->property("propertyName");
+        if (nameVariant.isValid()) {
+          std::string name = nameVariant.toString().toStdString();
+          ScopedLock lock (MainWindow::instance()->osg()->osgFrameMutex());
+          if (!node_->hasProperty(name)) {
+            qDebug() << "Node does not have property " << nameVariant;
+            return;
+          }
+          PropertyPtr_t voidProp = node_->properties().find(name)->second;
+          try {
+            voidProp->get();
           } catch (const std::exception& e) {
             MainWindow::instance()->logError (e.what());
           }

@@ -192,6 +192,8 @@ namespace viewer {
     addProperty(Vector4Property::create("Color",
           Vector4Property::getterFromMemberFunction(this, &LeafNodeCollada::getColor),
           Vector4Property::setterFromMemberFunction(this, &LeafNodeCollada::setColor)));
+    addProperty(VoidProperty::create("RemoveLightSources",
+          VoidProperty::memberFunction(this, &LeafNodeCollada::removeLightSources)));
   }
     
   LeafNodeCollada::LeafNodeCollada(const std::string& name, const std::string& collada_file_path) :
