@@ -1252,6 +1252,16 @@ namespace viewer {
   DEFINE_WINDOWS_MANAGER_GET_SET_PROPERTY_FOR_TYPE(float, Float)
   DEFINE_WINDOWS_MANAGER_GET_SET_PROPERTY_FOR_TYPE(bool, Bool)
   DEFINE_WINDOWS_MANAGER_GET_SET_PROPERTY_FOR_TYPE(int, Int)
+
+  void WindowsManager::callVoidProperty(const std::string& nodeName, const std::string& propName)
+  {
+    NodePtr_t node = getNode(nodeName, true);
+    ScopedLock lock(osgFrameMutex());
+    if (!node->hasProperty(propName))
+      throw std::invalid_argument ("Could not find the property");
+    PropertyPtr_t voidProp = node->properties().find(propName)->second;
+    voidProp->get();
+  }
 } /* namespace viewer */
 
 } // namespace gepetto

@@ -256,6 +256,7 @@ namespace viewer {
             virtual void setBoolProperty(const std::string& nodeName, const std::string& propName, const bool& value);
             virtual int getIntProperty(const std::string& nodeName, const std::string& propName) const;
             virtual void setIntProperty(const std::string& nodeName, const std::string& propName, const int& value);
+            virtual void callVoidProperty(const std::string& nodeName, const std::string& propName);
 
             WindowManagerPtr_t getWindowManager (const WindowID wid, bool throwIfDoesntExist = false) const;
             GroupNodePtr_t getGroup (const std::string groupName, bool throwIfDoesntExist = false) const;
