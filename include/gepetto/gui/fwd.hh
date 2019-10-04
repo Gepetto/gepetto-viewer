@@ -22,6 +22,11 @@
 #include <QtGlobal>
 #if QT_VERSION >= 0x050000
 # include <QtGui/qopengl.h>
+#ifdef __APPLE__
+/* FIX COMPILE BUG:
+*/
+typedef void (APIENTRY *GLDEBUGPROC)(GLenum source,GLenum type,GLuint id,GLenum severity,GLsizei length,const GLchar *message,const GLvoid *userParam);
+#endif
 #endif
 #include <QtGui>
 
