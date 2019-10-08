@@ -76,6 +76,7 @@ namespace gepetto {
     private slots:
         void doInitialize();
 
+        void callVoidProperty () const;
         void setBoolProperty (bool value) const;
         void setIntProperty (int value) const;
         void setUIntProperty (int value) const;

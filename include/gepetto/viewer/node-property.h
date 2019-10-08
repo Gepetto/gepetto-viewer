@@ -38,6 +38,7 @@ namespace viewer {
       template <typename T> struct property_type {};
       template <typename T> struct property_type <const T > : property_type<T> {};
       template <typename T> struct property_type <     T& > : property_type<T> {};
+      template <> struct property_type<void         > { static inline std::string to_string () { return "void"         ; } };
       template <> struct property_type<bool         > { static inline std::string to_string () { return "bool"         ; } };
       template <> struct property_type<int          > { static inline std::string to_string () { return "int"          ; } };
       template <> struct property_type<float        > { static inline std::string to_string () { return "float"        ; } };
@@ -53,6 +54,7 @@ namespace viewer {
     /// Abstract base class for runtime properties of Node.
     class Property {
       public:
+        virtual bool set(      void             ) { throw std::invalid_argument ("Property " + name_ + " is not of type void."); return false; }
         virtual bool set(const bool          & v) { invalidType(v); return false; }
         virtual bool set(const int           & v) { invalidType(v); return false; }
         virtual bool set(const float         & v) { invalidType(v); return false; }
@@ -63,6 +65,7 @@ namespace viewer {
         virtual bool set(const osgVector4    & v) { invalidType(v); return false; }
         virtual bool set(const Configuration & v) { invalidType(v); return false; }
 
+        virtual bool get(void             ) { throw std::invalid_argument ("Property " + name_ + " is not of type void."); return false; }
         virtual bool get(bool          & v) { invalidType(v); return false; }
         virtual bool get(int           & v) { invalidType(v); return false; }
         virtual bool get(float         & v) { invalidType(v); return false; }
@@ -90,6 +93,37 @@ namespace viewer {
         template <typename T> inline void invalidType(T) const { throw std::invalid_argument ("Property " + name_ + " is not of type " + details::property_type<T>::to_string()); }
         inline void invalidGet() const { throw std::logic_error ("Cannot read property "  + name_ + "."); }
         inline void invalidSet() const { throw std::logic_error ("Cannot write property " + name_ + "."); }
+    };
+
+    class VoidProperty : public Property {
+      public:
+        typedef boost::function<void (void)> Function_t;
+        typedef shared_ptr<VoidProperty> Ptr_t;
+
+        static Ptr_t create (const std::string& name, const Function_t& f) { return Ptr_t(new VoidProperty(name, f)); }
+        virtual std::string type() { return details::property_type<void>::to_string(); }
+
+        template <typename Obj, typename ReturnType>
+        static inline Function_t memberFunction(Obj* obj, ReturnType (Obj::*mem_func)()      ) { return boost::bind(mem_func, obj); }
+        template <typename Obj, typename ReturnType>
+        static inline Function_t memberFunction(Obj* obj, ReturnType (Obj::*mem_func)() const) { return boost::bind(mem_func, obj); }
+
+        VoidProperty(const std::string& name, const Function_t& f)
+          : Property(name), function_(f) {}
+
+        virtual ~VoidProperty() {}
+
+        bool get(void) { if (!hasReadAccess ()) { invalidGet(); return false; } function_(); return true; }
+        bool set(void) { return get(); }
+
+        bool hasReadAccess  () const { return (bool)function_; }
+        bool hasWriteAccess () const { return hasReadAccess(); }
+
+        const Function_t& function () const { return function_; }
+        void function (const Function_t& f) { function_ = f; }
+
+      private:
+        Function_t function_;
     };
 
     template <typename T>

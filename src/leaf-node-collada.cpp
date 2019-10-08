@@ -52,6 +52,19 @@ namespace viewer {
     }
   }
 
+  class LightSourceRemoving : public osg::NodeVisitor
+  {
+    public:
+      LightSourceRemoving () : NodeVisitor (TRAVERSE_ALL_CHILDREN) {}
+
+      void apply(osg::LightSource& node)
+      {
+        osg::Group* group = new osg::Group (node);
+        for (unsigned int i = 0; i < node.getNumParents(); ++i)
+          node.getParent(i)->replaceChild (&node, group);
+      }
+  };
+
 #if OSG_VERSION_LESS_THAN(3,3,3)
   struct ObjectCache {
     typedef std::map<std::string, osg::NodeRefPtr> Map_t;
@@ -179,6 +192,8 @@ namespace viewer {
     addProperty(Vector4Property::create("Color",
           Vector4Property::getterFromMemberFunction(this, &LeafNodeCollada::getColor),
           Vector4Property::setterFromMemberFunction(this, &LeafNodeCollada::setColor)));
+    addProperty(VoidProperty::create("RemoveLightSources",
+          VoidProperty::memberFunction(this, &LeafNodeCollada::removeLightSources)));
   }
     
   LeafNodeCollada::LeafNodeCollada(const std::string& name, const std::string& collada_file_path) :
@@ -389,6 +404,12 @@ namespace viewer {
   osg::ref_ptr<osg::Node> LeafNodeCollada::getOsgNode() const
   {
     return collada_ptr_;
+  }
+
+  void LeafNodeCollada::removeLightSources ()
+  {
+    LightSourceRemoving lsRemoving;
+    collada_ptr_->traverse (lsRemoving);
   }
 
   LeafNodeCollada::~LeafNodeCollada()

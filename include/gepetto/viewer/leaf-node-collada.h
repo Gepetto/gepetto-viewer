@@ -87,6 +87,9 @@ namespace viewer {
 	virtual void setAlpha(const float& alpha);
 	virtual osg::ref_ptr<osg::Node> getOsgNode() const;
 
+        /// Remove any osg::LightSource of this mesh.
+        void removeLightSources ();
+
         SCENE_VIEWER_ACCEPT_VISITOR;
 
         /** Destructor */
