@@ -25,6 +25,8 @@
 #include <OpenThreads/ScopedLock>
 
 #include <osgDB/WriteFile>
+#include <osgDB/Registry>
+#include <osgDB/ReaderWriter>
 
 #include <gepetto/viewer/window-manager.h>
 #include <gepetto/viewer/node.h>
@@ -1095,9 +1097,15 @@ namespace viewer {
         ScopedLock lock(osgFrameMutex());
         osg::ref_ptr <osgDB::Options> os = new osgDB::Options;
         os->setOptionString ("NoExtras");
-        bool ret = osgDB::writeNodeFile (*nodes_[nodeName]->asGroup (),
-            std::string (filename), os.get());
-        return ret;
+        osgDB::ReaderWriter::WriteResult wr =
+          osgDB::Registry::instance()->writeNode
+          (*nodes_[nodeName]->asGroup (), std::string (filename), os.get());
+        if (!wr.success()) {
+          std::ostringstream oss;
+          oss << "Error writing file " << filename << ": " << wr.message();
+          throw std::runtime_error (oss.str ().c_str ());
+        }
+        return wr.success();
     }
 
     bool WindowsManager::writeWindowFile (const WindowID windowId,
