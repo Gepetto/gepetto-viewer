@@ -180,7 +180,7 @@ namespace viewer {
     void LeafNodeFace::setColor(const osgVector4& color)
     {        
         color_ptr_->at(0) = color;
-        setTransparentRenderingBin (color[3] < Node::TransparencyRenderingBinThreashold);
+        setTransparentRenderingBin (color[3] < Node::TransparencyRenderingBinThreshold);
         setDirty();
     }
 

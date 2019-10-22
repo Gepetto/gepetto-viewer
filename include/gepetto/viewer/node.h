@@ -91,7 +91,7 @@ namespace viewer {
         }
 
     public:
-        static const float TransparencyRenderingBinThreashold;
+        static const float TransparencyRenderingBinThreshold;
 
         /**
          \brief returns rotation and position of the node
