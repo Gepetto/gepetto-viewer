@@ -51,7 +51,6 @@ SET(${PROJECT_NAME}_HEADERS_MOC
   ${CMAKE_SOURCE_DIR}/include/gepetto/gui/mainwindow.hh
   ${CMAKE_SOURCE_DIR}/include/gepetto/gui/node-action.hh
   ${CMAKE_SOURCE_DIR}/include/gepetto/gui/osgwidget.hh
-  ${CMAKE_SOURCE_DIR}/include/gepetto/gui/safeapplication.hh
   ${CMAKE_SOURCE_DIR}/include/gepetto/gui/selection-event.hh
   ${CMAKE_SOURCE_DIR}/include/gepetto/gui/selection-handler.hh
   ${CMAKE_SOURCE_DIR}/include/gepetto/gui/shortcut-factory.hh
@@ -66,6 +65,7 @@ SET(${PROJECT_NAME}_HEADERS_NO_MOC
   ${CMAKE_SOURCE_DIR}/include/gepetto/gui/pick-handler.hh
   ${CMAKE_SOURCE_DIR}/include/gepetto/gui/qt-osg-keyboard.hh
   ${CMAKE_SOURCE_DIR}/include/gepetto/gui/plugin-interface.hh
+  ${CMAKE_SOURCE_DIR}/include/gepetto/gui/safeapplication.hh
   ${CMAKE_SOURCE_DIR}/include/gepetto/gui/settings.hh
 
   ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/config-osg.h
