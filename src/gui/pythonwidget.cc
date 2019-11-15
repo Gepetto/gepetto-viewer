@@ -20,7 +20,6 @@
 #include <QFileDialog>
 #include <QSettings>
 #include <PythonQt.h>
-#include <PythonQt_QtAll.h>
 #include <gui/PythonQtScriptingConsole.h>
 #include <PythonQtClassInfo.h>
 #include <PythonQt_QtBindings.h>
