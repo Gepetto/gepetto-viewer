@@ -43,6 +43,7 @@ void QGVDecorator::loadLayout (QGVScene* s, const QString &text)                
 void QGVDecorator::applyLayout(QGVScene* s, const QString &algorithm)                     { s->applyLayout(algorithm); }
 void QGVDecorator::render     (QGVScene* s, const QString &algorithm)                     { s->render(algorithm); }
 void QGVDecorator::render     (QGVScene* s, const QString &algorithm, const QString file) { s->render(algorithm, file); }
+bool QGVDecorator::writeGraph (QGVScene* s, const QString &filename)                      { return s->writeGraph(filename); }
 void QGVDecorator::freeLayout (QGVScene* s) { s->freeLayout(); }
 void QGVDecorator::clear      (QGVScene* s) { s->clear(); }
 // ------- QGVScene ------------------------------------------- //

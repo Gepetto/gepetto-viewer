@@ -48,6 +48,7 @@ namespace PyQgv {
     void applyLayout(QGVScene* s, const QString &algorithm = "dot");
     void render     (QGVScene* s, const QString &algorithm);
     void render     (QGVScene* s, const QString &algorithm, const QString file);
+    bool writeGraph (QGVScene* s, const QString &filename);
     void freeLayout (QGVScene* s);
     void clear      (QGVScene* s);
     // ------- QGVScene ------------------------------------------- //
