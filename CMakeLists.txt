@@ -19,6 +19,10 @@
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.6)
 
+SET(PROJECT_NAME gepetto-viewer)
+SET(PROJECT_DESCRIPTION "An user-friendly Graphical Interface")
+SET(PROJECT_URL "https://github.com/Gepetto/gepetto-viewer")
+
 SET(CXX_DISABLE_WERROR TRUE)
 INCLUDE(cmake/base.cmake)
 INCLUDE(cmake/boost.cmake)
@@ -29,11 +33,8 @@ INCLUDE(cmake/test.cmake)
 INCLUDE(cmake-module/qt.cmake)
 INCLUDE(cmake-module/osgqt.cmake)
 
-SET(PROJECT_NAME gepetto-viewer)
-SET(PROJECT_DESCRIPTION "An user-friendly Graphical Interface")
-SET(PROJECT_URL "https://github.com/Gepetto/gepetto-viewer")
-
-SETUP_PROJECT()
+COMPUTE_PROJECT_ARGS(PROJECT_ARGS LANGUAGES CXX)
+PROJECT(${PROJECT_NAME} ${PROJECT_ARGS})
 
 IF(APPLE)
   APPLY_DEFAULT_APPLE_CONFIGURATION()
@@ -177,7 +178,5 @@ PKG_CONFIG_APPEND_LIBS_RAW(${X11_LIBRARIES})
 PKG_CONFIG_APPEND_LIBS_RAW(${OPENGL_LIBRARIES})
 PKG_CONFIG_APPEND_LIBS(${PROJECT_NAME})
 # }}}
-
-SETUP_PROJECT_FINALIZE()
 
 # vim: foldmethod=marker foldlevel=0
