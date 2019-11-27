@@ -105,7 +105,7 @@ namespace viewer {
            std::list<LeafNodeXYZAxisPtr_t>::const_iterator it = list_nodes_.begin();
            if (list_nodes_.size() > i)
            {
-               std::advance(it, i);
+               std::advance(it, (long)i);
            }
            return *it;
         }
@@ -115,7 +115,7 @@ namespace viewer {
            std::list<LeafNodeLinePtr_t>::const_iterator it = list_edges_.begin();
            if (list_edges_.size() > i)
            {
-               std::advance(it, i);
+               std::advance(it, (long)i);
            }
            return *it;
         }

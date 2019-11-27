@@ -84,7 +84,7 @@ namespace viewer {
            Nodes_t::const_iterator it = list_of_objects_.begin();
            if (list_of_objects_.size() > i)
            {
-               std::advance(it, i);
+               std::advance(it, (long)i);
            }     
            return *it;    
         }
