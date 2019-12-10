@@ -205,7 +205,7 @@ namespace viewer {
   }
   using ::osg::Matrix;
 
-  const float Node::TransparencyRenderingBinThreashold = 0.99f;
+  const float Node::TransparencyRenderingBinThreshold = 0.99f;
 
   /* Declaration of private function members */
   void Node::init ()
@@ -617,7 +617,7 @@ namespace viewer {
           ss->setAttribute(mat, osg::StateAttribute::OFF);
         }
         mat->setAlpha(osg::Material::FRONT_AND_BACK, alpha);
-        setTransparentRenderingBin (alpha_<TransparencyRenderingBinThreashold);
+        setTransparentRenderingBin (alpha_<TransparencyRenderingBinThreshold);
         dirty_ = true;
       }
   }

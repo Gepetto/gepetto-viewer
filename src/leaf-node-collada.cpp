@@ -312,7 +312,7 @@ namespace viewer {
     mat_ptr->setAmbient (osg::Material::FRONT_AND_BACK,ambient); 
 
     group_ptr_->getOrCreateStateSet()->setAttribute(mat_ptr.get());    
-    setTransparentRenderingBin (color[3] < Node::TransparencyRenderingBinThreashold);
+    setTransparentRenderingBin (color[3] < Node::TransparencyRenderingBinThreshold);
     setDirty();
   }
     

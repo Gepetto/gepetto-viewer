@@ -22,8 +22,10 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8.6)
 SET(PROJECT_NAME gepetto-viewer)
 SET(PROJECT_DESCRIPTION "An user-friendly Graphical Interface")
 SET(PROJECT_URL "https://github.com/Gepetto/gepetto-viewer")
+SET(PROJECT_USE_CMAKE_EXPORT TRUE)
 
 SET(CXX_DISABLE_WERROR TRUE)
+
 INCLUDE(cmake/base.cmake)
 INCLUDE(cmake/boost.cmake)
 INCLUDE(cmake/ide.cmake)
@@ -126,13 +128,13 @@ SET(CMAKE_MODULE_PATH
   ${CMAKE_MODULE_PATH})
 # If GEPETTO_GUI_HAS_PYTHONQT is set to TRUE, then PythonQt is required.
 IF(DEFINED GEPETTO_GUI_HAS_PYTHONQT AND GEPETTO_GUI_HAS_PYTHONQT)
-  FIND_PACKAGE(PythonQt REQUIRED COMPONENTS QtAll)
+  FIND_PACKAGE(PythonQt REQUIRED)
 ELSE()
-  FIND_PACKAGE(PythonQt COMPONENTS QtAll)
+  FIND_PACKAGE(PythonQt)
 ENDIF()
 # Declare option GEPETTO_GUI_HAS_PYTHONQT
 # If GEPETTO_GUI_HAS_PYTHONQT was defined, this does not change its value.
-IF (PythonQt_FOUND AND PythonQt_QtAll_FOUND)
+IF (PythonQt_FOUND)
   SET(GEPETTO_GUI_HAS_PYTHONQT TRUE CACHE BOOL "Use PythonQt dependency")
   SET(BOOST_COMPONENTS python)
 ELSE()

@@ -167,7 +167,7 @@ namespace viewer {
         cone_drawable_->dirtyBound();
 #endif
         color_ = color;
-        setTransparentRenderingBin (color[3] < Node::TransparencyRenderingBinThreashold);
+        setTransparentRenderingBin (color[3] < Node::TransparencyRenderingBinThreshold);
         setDirty();
     }
 
