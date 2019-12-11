@@ -160,7 +160,11 @@ namespace viewer {
           if (error) {
             std::cout << "You may try to convert the file with the following command:\n"
               "osgconv " << collada_file_path_ << ' ' << collada_file_path_ << ".osgb" << std::endl;
-          }
+          } else
+            // TODO Collada usually have light sources than are badly rendered
+            // gepetto-viewer. Another possible fix is to adapt the ambient
+            // light so that it illuminates more the scene than the DAE lights.
+            removeLightSources();
         } else
           collada_ptr_ = osgDB::readNodeFile(collada_file_path_,options);
       }
