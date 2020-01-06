@@ -29,8 +29,9 @@
 #include <osgQt/Version>
 #endif
 
-#include <gepetto/viewer/leaf-node-cylinder.h>
 #include <gepetto/viewer/leaf-node-box.h>
+#include <gepetto/viewer/leaf-node-capsule.h>
+#include <gepetto/viewer/leaf-node-cylinder.h>
 #include <gepetto/viewer/leaf-node-sphere.h>
 
 
@@ -227,6 +228,23 @@ namespace viewer {
       return meshNode;
     }
 
+    /// \param collision collision or visual tag
+    bool isCapsule (const QDomElement& link,
+        const QDomElement& collision)
+    {
+      QString gname = collision.attribute("name");
+      if (gname.isNull()) return false;
+      QDomElement cc = link.firstChildElement("collision_checking");
+      if (cc.isNull()) return false;
+
+      for (QDomElement element = cc.firstChildElement ("capsule");
+          !element.isNull();
+          element = element.nextSiblingElement ("capsule"))
+        if (element.attribute("name") == gname) return true;
+
+      return false;
+    }
+
     Material parseMaterial (const QDomElement material)
     {
       Material mat;
@@ -289,7 +307,7 @@ namespace viewer {
 
     template <bool visual> void addGeoms(const std::string &robotName,
                     const QString& namePrefix,
-		    const QDomElement link,
+		    const QDomElement& link,
 		    LinkNodePtr_t &linkNode, bool linkFrame,
                     Cache_t& cache,
                     MaterialMap_t& materials)
@@ -326,7 +344,10 @@ namespace viewer {
             if (!ok) throw std::logic_error ("Could not parse cylinder radius.");
             float length = type.attribute("length").toFloat (&ok);
             if (!ok) throw std::logic_error ("Could not parse cylinder length.");
-	    node = LeafNodeCylinder::create (name_i.toStdString(), radius, length);
+            if (isCapsule (link, element))
+              node = LeafNodeCapsule::create (name_i.toStdString(), radius, length);
+            else
+              node = LeafNodeCylinder::create (name_i.toStdString(), radius, length);
             ++N;
           } else if (type.tagName() == "sphere") {
             float radius = type.attribute("radius").toFloat (&ok);
