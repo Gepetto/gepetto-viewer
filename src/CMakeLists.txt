@@ -67,7 +67,6 @@ SET(${LIBRARY_NAME}_SOURCES
   gui/node-action.cc
   gui/osgwidget.cc
   gui/pick-handler.cc
-  gui/python-decorator.hh
   gui/selection-event.cc
   gui/selection-handler.cc
   gui/settings.cc
