@@ -439,7 +439,8 @@ namespace viewer {
         RETURN_FALSE_IF_NODE_EXISTS(meshName);
         LeafNodeColladaPtr_t mesh;
         try {
-          mesh = LeafNodeCollada::create (meshName, meshPath);
+          mesh = LeafNodeCollada::create (meshName,
+              urdfParser::getFilename(meshPath));
         } catch (const std::exception& exc) {
           std::cout << exc.what() << std::endl;
           return false;
