@@ -53,7 +53,7 @@ namespace gepetto {
       /// \name OSGWidget
       /// \{
 
-      int windowID (OSGWidget* o) const { return o->windowID(); }
+      QString windowID (OSGWidget* o) const { return QString::fromStdString(o->windowID()); }
 
       /// \}
     };

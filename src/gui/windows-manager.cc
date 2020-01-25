@@ -43,7 +43,7 @@ namespace gepetto {
       return WindowsManagerPtr_t (new WindowsManager(bodyTree));
     }
 
-    int WindowsManager::createWindow(QString windowName)
+    WindowsManager::WindowID WindowsManager::createWindow(QString windowName)
     {
       return createWindow(windowName.toStdString());
     }
@@ -66,8 +66,8 @@ namespace gepetto {
     {
       viewer::WindowManagerPtr_t newWindow = viewer::WindowManager::create (viewer, gc);
       WindowID windowId = addWindow (windowName, newWindow);
-      assert (windowId == widgets_.size());
-      widgets_.push_back(widget);
+      assert (windowId == windowName);
+      widgets_.insert(std::make_pair(windowId, widget));
       return windowId;
     }
 

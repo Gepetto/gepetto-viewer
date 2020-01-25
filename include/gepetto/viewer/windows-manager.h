@@ -52,14 +52,11 @@ namespace viewer {
             typedef osg::Vec3f::value_type value_type;
             typedef osgVector4 Color_t;
             typedef ::osg::Vec3ArrayRefPtr Vec3ArrayPtr_t;
-            typedef unsigned int WindowID;
-
-            typedef std::map <std::string, WindowID> WindowIDMap_t;
-            WindowIDMap_t windowIDmap_;
+            typedef std::string WindowID;
 
         private:
-            typedef std::vector <WindowManagerPtr_t> WindowManagerVector_t;
-            WindowManagerVector_t windowManagers_;
+            typedef std::map <WindowID, WindowManagerPtr_t> WindowManagerMap_t;
+            WindowManagerMap_t windowManagers_;
             std::map<std::string, NodePtr_t> nodes_;
             std::map<std::string, GroupNodePtr_t> groupNodes_;
             std::map<std::string, RoadmapViewerPtr_t> roadmapNodes_;
@@ -140,8 +137,8 @@ namespace viewer {
 
             virtual bool addRod (const std::string& rodName, const Color_t& color,const float radius,const float length, short maxCapsule);
 
-            virtual bool resizeCapsule(const std::string& capsuleName, float newHeight) throw (std::exception);
-            virtual bool resizeArrow(const std::string& arrowName ,float newRadius, float newLength) throw(std::exception);
+            virtual bool resizeCapsule(const std::string& capsuleName, float newHeight);
+            virtual bool resizeArrow(const std::string& arrowName ,float newRadius, float newLength);
 
             virtual bool addMesh(const std::string& meshName, const std::string& meshPath);
             /// See LeafNodeCollada::removeLightSources()
