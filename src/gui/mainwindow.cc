@@ -219,7 +219,7 @@ namespace gepetto {
 
     void MainWindow::createDefaultView()
     {
-      std::stringstream ss; ss << "window_" << osgWindows_.size();
+      std::stringstream ss; ss << "View " << osgWindows_.size();
       createView (ss.str());
     }
 

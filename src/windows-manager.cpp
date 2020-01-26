@@ -129,7 +129,7 @@ namespace viewer {
             WindowManagerPtr_t newWindow)
     {
       WindowManagerMap_t::const_iterator it = windowManagers_.find (winName);
-      if (it == windowManagers_.end ())
+      if (it != windowManagers_.end ())
         throw std::invalid_argument ("A window with this name already exists.");
 
       windowManagers_.insert(std::make_pair(winName, newWindow));
@@ -1118,14 +1118,9 @@ namespace viewer {
       WindowManagerMap_t::const_iterator it = windowManagers_.find (wid);
       if (it != windowManagers_.end ())
         return it->second;
-      else {
-        std::ostringstream oss;
-        oss << "Window ID " << wid << " doesn't exist.";
-        if (throwIfDoesntExist)
-          throw std::invalid_argument (oss.str ());
-        std::cout << oss.str () << std::endl;
-        return WindowManagerPtr_t ();
-      }
+      else if (throwIfDoesntExist)
+        throw std::invalid_argument ("Window ID " + wid + " doesn't exist.");
+      return WindowManagerPtr_t ();
     }
 
     GroupNodePtr_t WindowsManager::getGroup (const std::string groupName,
