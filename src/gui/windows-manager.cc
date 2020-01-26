@@ -50,6 +50,8 @@ namespace gepetto {
 
     WindowsManager::WindowID WindowsManager::createWindow(const std::string& windowName)
     {
+      if (getWindowManager(windowName, false))
+        return windowName;
       MainWindow* main = MainWindow::instance();
       OSGWidget* widget;
       QMetaObject::invokeMethod (main, "createView",
@@ -64,6 +66,8 @@ namespace gepetto {
                                                           osgViewer::Viewer *viewer,
                                                           osg::GraphicsContext *gc)
     {
+      if (getWindowManager(windowName, false))
+        return windowName;
       viewer::WindowManagerPtr_t newWindow = viewer::WindowManager::create (viewer, gc);
       WindowID windowId = addWindow (windowName, newWindow);
       assert (windowId == windowName);
