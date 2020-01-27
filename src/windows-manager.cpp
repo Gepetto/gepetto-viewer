@@ -85,6 +85,13 @@
     throw std::invalid_argument (oss.str ().c_str ());				       \
   }
 
+#define RETURN_FALSE_IF_WINDOW_DOES_NOT_EXIST(var,name)                        \
+  WindowManagerPtr_t var = getWindowManager(name, false);                      \
+  if (!var) {                                                                  \
+    std::cerr << "Window \"" << name << "\" does not exist." << std::endl;     \
+    return false;                                                              \
+  }
+
 namespace gepetto {
 namespace viewer {
     namespace {
@@ -121,11 +128,13 @@ namespace viewer {
     WindowsManager::WindowID WindowsManager::addWindow (std::string winName,
             WindowManagerPtr_t newWindow)
     {
-      WindowID windowId = (WindowID) windowManagers_.size ();
-      windowIDmap_ [winName] = windowId;
-      windowManagers_.push_back (newWindow);
+      WindowManagerMap_t::const_iterator it = windowManagers_.find (winName);
+      if (it != windowManagers_.end ())
+        throw std::invalid_argument ("A window with this name already exists.");
+
+      windowManagers_.insert(std::make_pair(winName, newWindow));
       addGroup (winName, newWindow->getScene(), false);
-      return windowId;
+      return winName;
     }
 
     WindowsManagerPtr_t WindowsManager::create ()
@@ -292,10 +301,10 @@ namespace viewer {
 
     WindowsManager::WindowID WindowsManager::getWindowID (const std::string& wn)
     {
-        WindowIDMap_t::iterator it = windowIDmap_.find (wn);
-        if (it == windowIDmap_.end ())
+        WindowManagerMap_t::const_iterator it = windowManagers_.find (wn);
+        if (it == windowManagers_.end ())
             throw std::invalid_argument ("There is no windows with that name");
-        return it->second;
+        return wn;
     }
 
     void WindowsManager::createScene (const std::string& sceneName)
@@ -313,39 +322,26 @@ namespace viewer {
             WindowID windowId)
     {
         GroupNodePtr_t group = getGroup(sceneName, true);
-        if (windowId < windowManagers_.size ()) {
-            ScopedLock lock(osgFrameMutex());
-            windowManagers_[windowId]->addNode (group);
-            return true;
-        }
-        else {
-            std::cout << "Window ID " << windowId
-                << " doesn't exist." << std::endl;
-            return false;
-        }
+        RETURN_FALSE_IF_WINDOW_DOES_NOT_EXIST(window, windowId);
+        ScopedLock lock(osgFrameMutex());
+        window->addNode (group);
+        return true;
     }
 
      bool WindowsManager::attachCameraToNode(const std::string& nodeName, const WindowID windowId)
      {
         NodePtr_t node = getNode(nodeName, true);
-        if (windowId > windowManagers_.size()) {
-    	  std::cout << "Window ID" << windowId << "doesn't exist." << std::endl;
-  	  return false;
-        }
+        RETURN_FALSE_IF_WINDOW_DOES_NOT_EXIST(window, windowId);
   	ScopedLock lock(osgFrameMutex());
-	windowManagers_[windowId]->attachCameraToNode(node);
+	window->attachCameraToNode(node);
 	return true;
      }
 
      bool WindowsManager::detachCamera(const WindowID windowId)
      {
-        if (windowId > windowManagers_.size()) {
-    	  std::cout << "Window ID " << windowId << " doesn't exist."
-  		    << std::endl;
-  	  return false;
-        }
+        RETURN_FALSE_IF_WINDOW_DOES_NOT_EXIST(window, windowId);
   	ScopedLock lock(osgFrameMutex());
-	windowManagers_[windowId]->detachCamera();
+	window->detachCamera();
 	return true;
      }
 
@@ -416,7 +412,6 @@ namespace viewer {
     }
 
     bool WindowsManager::resizeCapsule(const std::string& capsuleName, float newHeight)
-      throw(std::exception)
     {
         FIND_NODE_OF_TYPE_OR_THROW (LeafNodeCapsule, cap, capsuleName);
         ScopedLock lock(osgFrameMutex());
@@ -425,7 +420,6 @@ namespace viewer {
     }
 
     bool WindowsManager::resizeArrow(const std::string& arrowName ,float newRadius, float newLength)
-      throw(std::exception)
     {
         FIND_NODE_OF_TYPE_OR_THROW (LeafNodeArrow, arrow, arrowName);
         ScopedLock lock(osgFrameMutex());
@@ -439,7 +433,8 @@ namespace viewer {
         RETURN_FALSE_IF_NODE_EXISTS(meshName);
         LeafNodeColladaPtr_t mesh;
         try {
-          mesh = LeafNodeCollada::create (meshName, meshPath);
+          mesh = LeafNodeCollada::create (meshName,
+              urdfParser::getFilename(meshPath));
         } catch (const std::exception& exc) {
           std::cout << exc.what() << std::endl;
           return false;
@@ -747,9 +742,9 @@ namespace viewer {
     std::vector<std::string> WindowsManager::getWindowList ()
     {
         std::vector<std::string> l;
-        l.reserve(windowIDmap_.size());
-        for (WindowIDMap_t::const_iterator it = windowIDmap_.begin ();
-                it!=windowIDmap_.end (); ++it) {
+        l.reserve(windowManagers_.size());
+        for (WindowManagerMap_t::const_iterator it = windowManagers_.begin ();
+                it!=windowManagers_.end (); ++it) {
             l.push_back (it->first);
         }
         return l;
@@ -1111,32 +1106,21 @@ namespace viewer {
     bool WindowsManager::writeWindowFile (const WindowID windowId,
         const std::string& filename)
     {
-        if (windowId < windowManagers_.size ()) {
-            ScopedLock lock(osgFrameMutex());
-            bool ret = windowManagers_[windowId]->writeNodeFile (std::string (filename));
-            return ret;
-        }
-        else {
-            std::cout << "Window ID " << windowId
-                << " doesn't exist." << std::endl;
-            return false;
-        }
+        RETURN_FALSE_IF_WINDOW_DOES_NOT_EXIST(window, windowId);
+        ScopedLock lock(osgFrameMutex());
+        bool ret = window->writeNodeFile (std::string (filename));
+        return ret;
     }
 
     WindowManagerPtr_t WindowsManager::getWindowManager (const WindowID wid,
         bool throwIfDoesntExist) const
     {
-      if (wid < windowManagers_.size ()) {
-        return windowManagers_[wid];
-      }
-      else {
-        std::ostringstream oss;
-        oss << "Window ID " << wid << " doesn't exist.";
-        if (throwIfDoesntExist)
-          throw std::invalid_argument (oss.str ());
-        std::cout << oss.str () << std::endl;
-        return WindowManagerPtr_t ();
-      }
+      WindowManagerMap_t::const_iterator it = windowManagers_.find (wid);
+      if (it != windowManagers_.end ())
+        return it->second;
+      else if (throwIfDoesntExist)
+        throw std::invalid_argument ("Window ID " + wid + " doesn't exist.");
+      return WindowManagerPtr_t ();
     }
 
     GroupNodePtr_t WindowsManager::getGroup (const std::string groupName,

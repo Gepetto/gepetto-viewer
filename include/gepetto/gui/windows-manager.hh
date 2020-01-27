@@ -57,7 +57,7 @@ namespace gepetto {
         void setRefreshIsSynchronous (bool synchonous);
 
       public slots:
-        int createWindow(QString windowName);
+        WindowID createWindow(QString windowName);
         void asyncRefresh ();
 
       protected:
@@ -78,7 +78,7 @@ namespace gepetto {
                          bool isGroup);
         void deleteBodyItem(const std::string& nodeName);
 
-        std::vector<OSGWidget*> widgets_;
+        std::map<WindowID, OSGWidget*> widgets_;
 
         bool refreshIsSynchronous_;
         viewer::Mutex configsAsyncMtx_;

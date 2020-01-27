@@ -79,7 +79,7 @@ namespace gepetto {
     , graphicsWindow_()
     , wsm_ (wm)
     , pickHandler_ (new PickHandler (this, wsm_))
-    , wid_ (-1)
+    , wid_ ()
     , wm_ ()
     , viewer_ (new osgViewer::Viewer)
     , screenCapture_ ()

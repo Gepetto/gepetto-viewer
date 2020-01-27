@@ -1,0 +1,66 @@
+/**
+
+\defgroup gepetto_viewer_cmake_macros CMake macros
+\{
+
+\brief
+
+Here are some details on how to build and install plugins with CMake.
+
+\par Get the macro.
+
+\code{.py}
+# Tells pkg-config to read qtversion and cmake_plugin from pkg config file.
+LIST(APPEND PKG_CONFIG_ADDITIONAL_VARIABLES qtversion cmake_plugin)
+
+ADD_REQUIRED_DEPENDENCY("gepetto-viewer")
+
+# Variable GEPETTO_VIEWER_QTVERSION contains something like 4.8.1 or 5.2.1
+
+# Include macro GEPETTO_GUI_PLUGIN
+INCLUDE(${GEPETTO_VIEWER_PREFIX}/${GEPETTO_VIEWER_CMAKE_PLUGIN})
+\endcode
+
+\par Declare a C++ plugin:
+
+\code{.py}
+GEPETTO_GUI_PLUGIN(pluginskeleton
+  # Whether to use Qt4 or Qt5
+  ${QT4}
+
+  # List of headers that need not to be moced.
+  HEADERS_NO_MOC
+
+  # List of headers to be moced
+  HEADERS
+  plugin.hh
+
+  # List of Qt forms
+  FORMS
+
+  # List of Qt resources
+  RESOURCES
+
+  # List of source files
+  SOURCES
+  plugin.cc
+
+  # List of dependencies to be given to TARGET_LINK_LIBRARIES
+  LINK_DEPENDENCIES
+
+  # List of dependencies to be given to PKG_CONFIG_USE_DEPENDENCY
+  PKG_CONFIG_DEPENDENCIES
+  )
+\endcode
+
+\par Declare a Python plugin:
+
+\code{.py}
+# pythonfile refers to the path to .py file from a
+# path of PYTHONPATH
+GEPETTO_GUI_PYPLUGIN (pythonfile)
+\endcode
+
+\}
+
+*/
