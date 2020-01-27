@@ -1,4 +1,6 @@
-INPUT = @CMAKE_SOURCE_DIR@/include \
-      @CMAKE_SOURCE_DIR@/doc
+INPUT = @CMAKE_SOURCE_DIR@/include   \
+        @CMAKE_SOURCE_DIR@/doc       \
+        @CMAKE_SOURCE_DIR@/pyplugins \
+        @CMAKE_SOURCE_DIR@/plugins
 
-FILE_PATTERNS = *.hh *.h
+FILE_PATTERNS = *.hh *.h *.dox *.py
