@@ -82,7 +82,15 @@ namespace viewer {
     {
       map_.insert (std::make_pair(name,node));
     }
+    void erase (const std::string& name)
+    {
+      map_.erase(name);
+    }
   };
+
+  ObjectCache object_cache;
+#else
+  osg::ref_ptr<osgDB::ObjectCache> object_cache (new osgDB::ObjectCache);
 #endif
 
   /* Declaration of private function members */
@@ -92,10 +100,7 @@ namespace viewer {
     group_ptr_ = new osg::Group;
     group_ptr_->setName ("groupForMaterial");
 
-#if OSG_VERSION_GREATER_OR_EQUAL(3,3,3)
-    static osg::ref_ptr<osgDB::ObjectCache> object_cache (new osgDB::ObjectCache);
-#else
-    static ObjectCache object_cache;
+#if OSG_VERSION_LESS_THAN(3,3,3)
     if (!collada_ptr_)
       object_cache.get(collada_file_path_, collada_ptr_);
 #endif
@@ -416,6 +421,17 @@ namespace viewer {
   {
     /* Proper deletion of all tree scene */
     this->asQueue()->removeChild(collada_ptr_);
+
+    if (collada_ptr_->referenceCount() == 2) {
+      // If the object is only referenced by this node and the cache,
+      // remove it from the cache.
+#if OSG_VERSION_LESS_THAN(3,3,3)
+      object_cache.erase(collada_file_path_);
+#else
+      object_cache->removeFromObjectCache(collada_file_path_);
+#endif
+    }
+
     collada_ptr_ = NULL;
         
     weak_ptr_.reset();
