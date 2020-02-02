@@ -225,11 +225,16 @@ namespace viewer {
     }
 
     void LeafNodeLine::setPoints (const ::osg::Vec3ArrayRefPtr& points)
-    {        
+    {
+        bool sizeChanged = (points->size() != points_ptr_->size());
         points_ptr_ = points;
         beam_ptr_->setVertexArray (points_ptr_.get ());
-        setPointsSubset (0, points->size());
-        beam_ptr_->dirtyDisplayList();
+        if (sizeChanged)
+          setPointsSubset (0, points->size());
+        else {
+          beam_ptr_->dirtyDisplayList();
+          setDirty();
+        }
     }
 
     void LeafNodeLine::setPointsSubset (const int first, const std::size_t count)
