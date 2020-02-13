@@ -114,7 +114,7 @@ namespace viewer {
       std::string ext = fn.substr(fn.find_last_of(".")+1,fn.size());
       std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
       if(ext == "obj") {
-        os << "bpy.ops.import_scene.obj (filepath=\"" << fn << "\")" << end;
+        os << "bpy.ops.import_scene.obj (filepath=\"" << fn << "\", axis_forward='Y', axis_up='Z')" << end;
       } else if (ext == "dae") {
         os << "bpy.ops.wm.collada_import (filepath=\"" << fn << "\")" << end;
       } else if (ext == "stl") {
