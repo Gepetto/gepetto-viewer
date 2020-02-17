@@ -153,6 +153,7 @@ SET(BOOST_COMPONENTS ${BOOST_COMPONENTS} unit_test_framework system regex)
 SEARCH_FOR_BOOST()
 INCLUDE_DIRECTORIES(SYSTEM ${Boost_INCLUDE_DIRS})
 
+# Check if we are on a platform with ffmpeg or avconv
 FIND_PROGRAM(AVCONV avconv)
 IF(NOT AVCONV)
   FIND_PROGRAM(FFMPEG ffmpeg)
@@ -160,6 +161,9 @@ IF(NOT AVCONV)
     SET(AVCONV "${FFMPEG}")
   ELSE(FFMPEG)
     MESSAGE(WARNING "neither avconv nor ffmpeg have been found.")
+    # Fallback to old behavior:
+    # ffmpeg / avconv non-availability at configure time
+    # doesn't mean anything at run time.
     SET(AVCONV "avconv")
   ENDIF(FFMPEG)
 ENDIF(AVCONV)

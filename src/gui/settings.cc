@@ -24,7 +24,6 @@
 #include <osg/DisplaySettings>
 #include <osg/ArgumentParser>
 
-#include <gepetto/gui/config-dep.hh>
 #include <gepetto/gui/dialog/dialogloadrobot.hh>
 #include <gepetto/gui/dialog/dialogloadenvironment.hh>
 #include <gepetto/gui/mainwindow.hh>
