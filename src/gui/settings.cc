@@ -46,7 +46,7 @@ namespace gepetto {
       , captureDirectory ()
       , captureFilename ("screenshot")
       , captureExtension ("png")
-      , avconv ("avconv")
+      , avconv (AVCONV)
       , installDirectory (installDir)
 #if (QT_VERSION < QT_VERSION_CHECK(5,0,0))
       , appStyle ("cleanlooks")
