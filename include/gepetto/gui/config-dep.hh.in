@@ -2,5 +2,6 @@
 # define GEPETTO_GUI_CONFIG_DEP_HH
 
 #cmakedefine01 GEPETTO_GUI_HAS_PYTHONQT
+#cmakedefine AVCONV "@AVCONV@"
 
 #endif // GEPETTO_GUI_CONFIG_DEP_HH

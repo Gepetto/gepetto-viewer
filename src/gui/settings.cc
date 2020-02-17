@@ -24,6 +24,7 @@
 #include <osg/DisplaySettings>
 #include <osg/ArgumentParser>
 
+#include <gepetto/gui/config-dep.hh>
 #include <gepetto/gui/dialog/dialogloadrobot.hh>
 #include <gepetto/gui/dialog/dialogloadenvironment.hh>
 #include <gepetto/gui/mainwindow.hh>
@@ -46,7 +47,7 @@ namespace gepetto {
       , captureDirectory ()
       , captureFilename ("screenshot")
       , captureExtension ("png")
-      , avconv ("avconv")
+      , avconv (AVCONV)
       , installDirectory (installDir)
 #if (QT_VERSION < QT_VERSION_CHECK(5,0,0))
       , appStyle ("cleanlooks")

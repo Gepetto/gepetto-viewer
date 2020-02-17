@@ -153,6 +153,17 @@ SET(BOOST_COMPONENTS ${BOOST_COMPONENTS} unit_test_framework system regex)
 SEARCH_FOR_BOOST()
 INCLUDE_DIRECTORIES(SYSTEM ${Boost_INCLUDE_DIRS})
 
+FIND_PROGRAM(AVCONV avconv)
+IF(NOT AVCONV)
+  FIND_PROGRAM(FFMPEG ffmpeg)
+  IF(FFMPEG)
+    SET(AVCONV "${FFMPEG}")
+  ELSE(FFMPEG)
+    MESSAGE(WARNING "neither avconv nor ffmpeg have been found.")
+    SET(AVCONV "avconv")
+  ENDIF(FFMPEG)
+ENDIF(AVCONV)
+
 CONFIGURE_FILE(
   ${CMAKE_SOURCE_DIR}/include/gepetto/gui/config-dep.hh.in
   ${CMAKE_BINARY_DIR}/include/gepetto/gui/config-dep.hh
