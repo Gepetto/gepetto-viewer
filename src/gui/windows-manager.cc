@@ -78,7 +78,7 @@ namespace gepetto {
     WindowsManager::WindowsManager(BodyTreeWidget* bodyTree)
       : Parent_t ()
       , bodyTree_ (bodyTree)
-      , refreshIsSynchronous_ (true)
+      , refreshIsSynchronous_ (false)
     {
     }
 
