@@ -134,6 +134,9 @@ namespace viewer {
         typedef shared_ptr<PropertyTpl> Ptr_t;
 
         static Ptr_t create (const std::string& name, const Getter_t& g, const Setter_t& s) { return Ptr_t(new PropertyTpl(name, g, s)); }
+        static Ptr_t create (const std::string& name, const Getter_t& g) { return Ptr_t(new PropertyTpl(name, g, Setter_t())); }
+        static Ptr_t create (const std::string& name, const Setter_t& s) { return Ptr_t(new PropertyTpl(name, Getter_t(), s)); }
+
         virtual std::string type() { return details::property_type<T>::to_string(); }
 
         template <typename Obj>
@@ -144,6 +147,42 @@ namespace viewer {
         static inline Setter_t setterFromMemberFunction(Obj* obj, void (Obj::*mem_func)(const T&)) { return boost::bind(mem_func, obj, _1); }
         template <typename Obj>
         static inline Setter_t setterFromMemberFunction(Obj* obj, void (Obj::*mem_func)(T)) { return boost::bind(mem_func, obj, _1); }
+
+        template <typename Obj, typename RetType>
+        static Ptr_t create (const std::string& name, Obj* obj,
+            RetType (Obj::*mem_get)() const,
+            void (Obj::*mem_set)(const T&))
+        {
+          return create (name, Getter_t(boost::bind(mem_get, obj)),
+              Setter_t(boost::bind(mem_set, obj, _1)));
+        }
+        template <typename Obj, typename RetType>
+        static Ptr_t create (const std::string& name, Obj* obj,
+            RetType (Obj::*mem_get)() const,
+            void (Obj::*mem_set)(T))
+        {
+          return create (name, Getter_t(boost::bind(mem_get, obj)),
+              Setter_t(boost::bind(mem_set, obj, _1)));
+        }
+        template <typename Obj, typename RetType>
+        static Ptr_t createRO (const std::string& name, Obj* obj,
+            RetType (Obj::*mem_get)() const)
+        {
+          return create (name, Getter_t(boost::bind(mem_get, obj)));
+        }
+        template <typename Obj>
+        static Ptr_t createWO (const std::string& name, Obj* obj,
+            void (Obj::*mem_set)(const T&))
+        {
+          return create (name, Setter_t(boost::bind(mem_set, obj, _1)));
+        }
+        template <typename Obj, typename RetType>
+        static Ptr_t createWO (const std::string& name, Obj* obj,
+            void (Obj::*mem_set)(T))
+        {
+          return create (name, Setter_t(boost::bind(mem_set, obj, _1)));
+        }
+
 
         PropertyTpl(const std::string& name, const Getter_t& g, const Setter_t& s)
           : Property(name), getter_(g), setter_(s) {}

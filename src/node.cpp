@@ -283,11 +283,9 @@ namespace viewer {
           BoolProperty::Setter_t(boost::bind(setNodeLandmark, this, _1))));
     addProperty(
         StringProperty::create("Name",
-          StringProperty::getterFromMemberFunction (this, &Node::getID),
-          StringProperty::Setter_t()));
+          StringProperty::getterFromMemberFunction (this, &Node::getID)));
     addProperty(
         Vector4Property::create("Color",
-          Vector4Property::Getter_t(),
           Vector4Property::setterFromMemberFunction(this, &Node::setColor)));
     addProperty(
         FloatProperty::create("Alpha",
