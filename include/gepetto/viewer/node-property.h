@@ -23,6 +23,7 @@
 #ifndef Q_MOC_RUN
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
+#include <boost/mpl/if.hpp>
 #endif
 
 #include <gepetto/viewer/fwd.h>
@@ -126,8 +127,40 @@ namespace viewer {
         Function_t function_;
     };
 
-    template <typename T>
-    class PropertyTpl : public Property {
+    template<typename Scalar>
+    struct Range {
+      Scalar min, max, step;
+      bool adaptiveDecimal;
+
+      Range () :
+#if __cplusplus >= 201103L
+        min(std::numeric_limits<Scalar>::lowest()),
+#else
+        min(std::numeric_limits<Scalar>::quiet_NaN()),
+#endif
+        max(std::numeric_limits<Scalar>::max()),
+        step (static_cast<Scalar>(1)),
+        adaptiveDecimal (false)
+      {}
+
+#if __cplusplus >= 201103L
+      inline bool hasMin () { return min > std::numeric_limits<Scalar>::lowest(); }
+#else
+      inline bool hasMin () { return min == min; }
+#endif
+      inline bool hasMax () { return max < std::numeric_limits<Scalar>::max(); }
+      inline bool hasRange() { return hasMin() && hasMax(); }
+
+      void setRange(const Scalar& minimum, const Scalar& maximum)
+      { min = minimum; max = maximum; }
+      void setRange(const Scalar& minimum, const Scalar& maximum, const Scalar& _step)
+      { min = minimum; max = maximum; step = _step;}
+    };
+
+    struct NoRange {};
+
+    template <typename T, typename Range = NoRange>
+    class PropertyTpl : public Property, public Range {
       public:
         typedef boost::function<void(const T&)> Setter_t;
         typedef boost::function<  T (void)> Getter_t;
@@ -215,6 +248,14 @@ namespace viewer {
     typedef PropertyTpl<osgVector3   > Vector3Property;
     typedef PropertyTpl<osgVector4   > Vector4Property;
     typedef PropertyTpl<Configuration> ConfigurationProperty;
+
+    typedef PropertyTpl<int          , Range<int          > > RangedIntProperty;
+    typedef PropertyTpl<float        , Range<float        > > RangedFloatProperty;
+    typedef PropertyTpl<unsigned long, Range<unsigned long> > RangedUIntProperty;
+    typedef PropertyTpl<osgVector2   , Range<float        > > RangedVector2Property;
+    typedef PropertyTpl<osgVector3   , Range<float        > > RangedVector3Property;
+    typedef PropertyTpl<osgVector4   , Range<float        > > RangedVector4Property;
+    typedef PropertyTpl<Configuration, Range<float        > > RangedConfigurationProperty;
 
     /// Conversion between integer and enum name at runtime.
     struct MetaEnum {
