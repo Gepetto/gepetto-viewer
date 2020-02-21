@@ -33,9 +33,9 @@ namespace viewer {
       ::osg::Vec3ArrayRefPtr vertices_array_ptr = new ::osg::Vec3Array;
       colors_array_ptr_ = new ::osg::Vec4Array;
       
-      for ( int j(0) ; j < nY ; j++ )
+      for ( int j(0) ; j < (int)nY ; j++ )
       {
-        for ( int i(0) ; i < nX ; i++ )
+        for ( int i(0) ; i < (int)nX ; i++ )
         {
           vertices_array_ptr->push_back( - center + x_base_square * ((float) i) + y_base_square * ((float) (j+1)));
           vertices_array_ptr->push_back( - center + x_base_square * ((float) i) + y_base_square * ((float) j));
@@ -58,7 +58,7 @@ namespace viewer {
       }
       
       /* Allocating grid_geometry_ptr_ */
-      if (~grid_geometry_ptr_.valid()) {
+      if (!grid_geometry_ptr_.valid()) {
         grid_geometry_ptr_ = new ::osg::Geometry;
       }
       
@@ -80,7 +80,7 @@ namespace viewer {
       
       
         /* Allocating geode_ptr_ */
-        if (~geode_ptr_.valid()) {
+        if (!geode_ptr_.valid()) {
             geode_ptr_ = new ::osg::Geode;
         }
         
@@ -212,9 +212,9 @@ namespace viewer {
         float nY = floorf( 2.f * width_ / square_width_ );
         
         /* Set colors */
-        for ( int j(0) ; j < nY ; j++ )
+        for ( int j(0) ; j < (int)nY ; j++ )
         {
-          for ( int i(0) ; i < nX ; i++ )
+          for ( int i(0) ; i < (int)nX ; i++ )
           {
             if ((i+j)%2) {
               colors_array_ptr_->push_back(color1_);
