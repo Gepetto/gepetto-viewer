@@ -16,6 +16,7 @@
 
 #include <gepetto/gui/dialog/configuration.hh>
 
+#include <QtGlobal>
 #include <QDialog>
 #include <QDialogButtonBox>
 #include <QDoubleSpinBox>
@@ -28,6 +29,19 @@
 
 namespace gepetto {
   namespace gui {
+
+    void setSpinBoxRange(const viewer::PropertyPtr_t& prop, QDoubleSpinBox* sb)
+    {
+      viewer::Range<float>* range = dynamic_cast<viewer::Range<float>*>(prop.get());
+      if (range) {
+        if (range->hasMin()) sb->setMinimum(static_cast<double>(range->min));
+        if (range->hasMax()) sb->setMaximum(static_cast<double>(range->max));
+        sb->setSingleStep(static_cast<double>(range->step));
+#if QT_VERSION > QT_VERSION_CHECK(5, 12, 0)
+        if (range->adaptiveDecimal) sb->setStepType (QAbstractSpinBox::AdaptiveDecimalStepType);
+#endif
+      }
+    }
 
     void getEulerFromQuat(osg::Quat q, double& heading, double& attitude, double& bank)
     {
@@ -79,7 +93,11 @@ namespace gepetto {
       , prop (property)
       , pyValue (new QLineEdit)
     {
-      for (int i = 0; i < 3; ++i) x[i] = new QDoubleSpinBox;
+      for (int i = 0; i < 3; ++i) {
+        x[i] = new QDoubleSpinBox;
+        setSpinBoxRange(property, x[i]);
+      }
+
 
       setModal (false);
 
@@ -154,6 +172,13 @@ namespace gepetto {
       , yaw   (new QDoubleSpinBox)
       , pyValue (new QLineEdit)
     {
+      setSpinBoxRange(property, x    );
+      setSpinBoxRange(property, y    );
+      setSpinBoxRange(property, z    );
+      setSpinBoxRange(property, roll );
+      setSpinBoxRange(property, pitch);
+      setSpinBoxRange(property, yaw  );
+
       setModal (false);
 
       setConfigFromProperty ();

@@ -16,6 +16,7 @@
 
 #include "gepetto/gui/tree-item.hh"
 
+#include <QtGlobal>
 #include <QDebug>
 #include <QLineEdit>
 #include <QColorDialog>
@@ -41,6 +42,9 @@ namespace gepetto {
         if (range->hasMin()) sb->setMinimum(static_cast<QtScalar>(range->min));
         if (range->hasMax()) sb->setMaximum(static_cast<QtScalar>(range->max));
         sb->setSingleStep(static_cast<QtScalar>(range->step));
+#if QT_VERSION > QT_VERSION_CHECK(5, 12, 0)
+        if (range->adaptiveDecimal) sb->setStepType (QAbstractSpinBox::AdaptiveDecimalStepType);
+#endif
       }
     }
 
