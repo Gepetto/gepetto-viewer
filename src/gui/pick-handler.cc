@@ -29,9 +29,6 @@
 #include <osgViewer/Viewer>
 
 #include <iostream>
-#ifndef Q_MOC_RUN
-#include <boost/regex.hpp>
-#endif
 
 #include <gepetto/gui/selection-event.hh>
 #include <gepetto/gui/windows-manager.hh>
@@ -155,7 +152,6 @@ namespace gepetto {
       // intersector->getIntersections();
       const osgUtil::LineSegmentIntersector::Intersection&
         intersection = intersector_->getFirstIntersection();
-      bool hasSkipped = false;
       for (int i = (int) intersection.nodePath.size()-1; i >= 0 ; --i) {
         //if (intersection.nodePath[i]->getNodeMask() == viewer::EditionBit) {
           // TODO start editing node configuration.
@@ -165,10 +161,6 @@ namespace gepetto {
         if (!(intersection.nodePath[i]->getNodeMask() & viewer::NodeBit)) continue;
         NodePtr_t n = wsm_->getNode(intersection.nodePath[i]->getName ());
         if (n) {
-          if (!hasSkipped && boost::regex_match (n->getID(), boost::regex ("^.*_[0-9]+$"))) {
-            hasSkipped = true;
-            continue;
-          }
           SelectionEvent *event = new SelectionEvent(SelectionEvent::FromOsgWindow,
               n,
               mapper_.getQtModKey(modKeyMask));
