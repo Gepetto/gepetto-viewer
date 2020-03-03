@@ -16,6 +16,7 @@
 
 #include "gepetto/gui/tree-item.hh"
 
+#include <QtGlobal>
 #include <QDebug>
 #include <QLineEdit>
 #include <QColorDialog>
@@ -32,6 +33,20 @@ namespace gepetto {
   namespace gui {
     using viewer::ScopedLock;
     using viewer::PropertyPtr_t;
+
+    template <typename Scalar, typename QtScalar, typename QtSpinBox>
+    void setSpinBoxRange(const PropertyPtr_t& prop, QtSpinBox* sb)
+    {
+      viewer::Range<Scalar>* range = dynamic_cast<viewer::Range<Scalar>*>(prop.get());
+      if (range) {
+        if (range->hasMin()) sb->setMinimum(static_cast<QtScalar>(range->min));
+        if (range->hasMax()) sb->setMaximum(static_cast<QtScalar>(range->max));
+        sb->setSingleStep(static_cast<QtScalar>(range->step));
+#if QT_VERSION > QT_VERSION_CHECK(5, 12, 0)
+        if (range->adaptiveDecimal) sb->setStepType (QAbstractSpinBox::AdaptiveDecimalStepType);
+#endif
+      }
+    }
 
     QWidget* voidPropertyEditor (BodyTreeItem* bti, const PropertyPtr_t prop)
     {
@@ -127,6 +142,7 @@ namespace gepetto {
         bti->connect(dsb, SIGNAL(valueChanged(double)), SLOT(setFloatProperty(double)));
       else
         dsb->setEnabled(false);
+      setSpinBoxRange<float, double>(prop, dsb);
       return dsb;
     }
 
@@ -155,6 +171,8 @@ namespace gepetto {
           bti->connect(dsb, SIGNAL(valueChanged(int)), SLOT(setUIntProperty(int)));
       } else
         dsb->setEnabled(false);
+      setSpinBoxRange<int, int>(prop, dsb);
+      setSpinBoxRange<unsigned long, int>(prop, dsb);
       return dsb;
     }
 

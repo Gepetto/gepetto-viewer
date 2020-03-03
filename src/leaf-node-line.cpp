@@ -64,8 +64,8 @@ namespace viewer {
         /* Allow transparency */
         geode_ptr_->getOrCreateStateSet()->setMode(GL_BLEND, ::osg::StateAttribute::ON);
         
-        /* No light influence */
-        beam_ptr_->getOrCreateStateSet()->setMode(GL_LIGHTING, ::osg::StateAttribute::OFF | ::osg::StateAttribute::PROTECTED);
+        /* No light influence by default */
+        setLightingMode(LIGHT_INFLUENCE_OFF);
         
         /* Set a default line width */
         osg::LineWidth* linewidth = new osg::LineWidth();

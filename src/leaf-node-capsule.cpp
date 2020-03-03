@@ -26,12 +26,21 @@ namespace viewer {
         geode_ptr_ = new osg::Geode ();
         geode_ptr_->addDrawable (shape_drawable_ptr_);
         
-        addProperty(FloatProperty::create("Radius",
-              FloatProperty::getterFromMemberFunction(this, &LeafNodeCapsule::getRadius),
-              FloatProperty::setterFromMemberFunction(this, &LeafNodeCapsule::setRadius)));
-        addProperty(FloatProperty::create("Height",
-              FloatProperty::getterFromMemberFunction(this, &LeafNodeCapsule::getHeight),
-              FloatProperty::setterFromMemberFunction(this, &LeafNodeCapsule::setHeight)));
+        RangedFloatProperty::Ptr_t radiusProp =
+            RangedFloatProperty::create("Radius", this,
+              &LeafNodeCapsule::getRadius, &LeafNodeCapsule::setRadius);
+        radiusProp->min = 0.f;
+        radiusProp->step = 0.1f;
+        radiusProp->adaptiveDecimal = true;
+        addProperty(radiusProp);
+
+        RangedFloatProperty::Ptr_t heightProp =
+          RangedFloatProperty::create("Height", this,
+              &LeafNodeCapsule::getHeight, &LeafNodeCapsule::setHeight);
+        heightProp->min = 0.f;
+        heightProp->step = 0.1f;
+        heightProp->adaptiveDecimal = true;
+        addProperty(heightProp);
 
         /* Create PositionAttitudeTransform */
         this->asQueue()->addChild (geode_ptr_);

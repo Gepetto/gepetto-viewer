@@ -262,9 +262,8 @@ namespace viewer {
           EnumProperty::Getter_t(boost::bind(getNodeHighlightState, this)),
           EnumProperty::Setter_t(boost::bind(setNodeHighlightState, this, _1))));
     addProperty(
-        BoolProperty::create("Highlight/Enable",
-          BoolProperty::getterFromMemberFunction (this, &Node::getHighlightEnabled),
-          BoolProperty::setterFromMemberFunction (this, &Node::setHighlightEnabled)));
+        BoolProperty::create("Highlight/Enable", this,
+          &Node::getHighlightEnabled, &Node::setHighlightEnabled));
     addProperty(
         EnumProperty::create("Visibility", visibilityModeEnum(),
           EnumProperty::Getter_t(boost::bind(getNodeVisibilityMode, this)),
@@ -281,26 +280,24 @@ namespace viewer {
         BoolProperty::create("Landmark",
           BoolProperty::getterFromMemberFunction (this, &Node::hasLandmark),
           BoolProperty::Setter_t(boost::bind(setNodeLandmark, this, _1))));
+    addProperty(StringProperty::createRO("Name", this, &Node::getID));
+    addProperty(Vector4Property::createWO("Color", this, &Node::setColor));
+
+    RangedFloatProperty::Ptr_t alphaProp =
+      RangedFloatProperty::create("Alpha", this, &Node::getAlpha, &Node::setAlpha);
+    alphaProp->setRange(0.f, 1.f, 0.1f);
+    addProperty(alphaProp);
+
+    RangedVector3Property::Ptr_t scaleProp =
+        RangedVector3Property::create("Scale", this, &Node::getScale, &Node::setScale);
+    scaleProp->min = 0.f;
+    scaleProp->step = 0.1f;
+    scaleProp->adaptiveDecimal = true;
+    addProperty(scaleProp);
+
     addProperty(
-        StringProperty::create("Name",
-          StringProperty::getterFromMemberFunction (this, &Node::getID),
-          StringProperty::Setter_t()));
-    addProperty(
-        Vector4Property::create("Color",
-          Vector4Property::Getter_t(),
-          Vector4Property::setterFromMemberFunction(this, &Node::setColor)));
-    addProperty(
-        FloatProperty::create("Alpha",
-          FloatProperty::getterFromMemberFunction(this, &Node::getAlpha),
-          FloatProperty::setterFromMemberFunction(this, &Node::setAlpha)));
-    addProperty(
-        Vector3Property::create("Scale",
-          Vector3Property::getterFromMemberFunction(this, &Node::getScale),
-          Vector3Property::setterFromMemberFunction(this, &Node::setScale)));
-    addProperty(
-        ConfigurationProperty::create("Transform",
-          ConfigurationProperty::getterFromMemberFunction(this, &Node::getGlobalTransform),
-          ConfigurationProperty::setterFromMemberFunction(this, &Node::applyConfiguration)));
+        ConfigurationProperty::create("Transform", this,
+          &Node::getGlobalTransform, &Node::applyConfiguration));
   }
 
   Node::Node (const std::string& name) :
