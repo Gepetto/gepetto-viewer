@@ -128,6 +128,8 @@ namespace viewer {
           collada_ptr_ = osgDB::readNodeFile(collada_file_path_,options);
         }
         else if (ext == "dae") {
+          float scale = 1.f;
+          options->setPluginData("DAE-AssetUnitMeter", &scale);
           if (*localeconv()->decimal_point != '.') {
             std::cerr << "Warning: your locale convention uses '"
               << localeconv()->decimal_point << "' as decimal separator while DAE "
@@ -165,6 +167,14 @@ namespace viewer {
           if (error) {
             std::cout << "You may try to convert the file with the following command:\n"
               "osgconv " << collada_file_path_ << ' ' << collada_file_path_ << ".osgb" << std::endl;
+          }
+          // Apply scale
+          if (scale != 1.) {
+            osg::ref_ptr<osg::MatrixTransform> xform = new osg::MatrixTransform;
+            xform->setDataVariance( osg::Object::STATIC );
+            xform->setMatrix( osg::Matrix::scale( scale, scale, scale ) );
+            xform->addChild( collada_ptr_ );
+            collada_ptr_ = xform;
           }
         } else
           collada_ptr_ = osgDB::readNodeFile(collada_file_path_,options);
