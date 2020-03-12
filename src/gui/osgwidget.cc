@@ -60,6 +60,7 @@
 #include <gepetto/viewer/urdf-parser.h>
 #include <gepetto/viewer/OSGManipulator/keyboard-manipulator.h>
 #include <gepetto/viewer/macros.h>
+#include <gepetto/viewer/window-manager.h>
 
 #include <gepetto/gui/windows-manager.hh>
 #include <gepetto/gui/selection-event.hh>

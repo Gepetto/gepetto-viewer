@@ -25,8 +25,6 @@
 #include <QStandardItemModel>
 #include <QVector3D>
 
-#include <gepetto/viewer/group-node.h>
-
 namespace gepetto {
   namespace gui {
     /// Contains the list of all the bodies in the scene.

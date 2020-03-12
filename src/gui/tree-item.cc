@@ -22,6 +22,7 @@
 #include <QColorDialog>
 #include <QFormLayout>
 
+#include <gepetto/viewer/node.h>
 #include <gepetto/viewer/group-node.h>
 
 #include "gepetto/gui/mainwindow.hh"

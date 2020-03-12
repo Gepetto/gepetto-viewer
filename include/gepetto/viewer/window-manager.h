@@ -13,7 +13,6 @@
 #include <osgViewer/Viewer>
 #include <osgViewer/ViewerEventHandlers>
 #include <gepetto/viewer/group-node.h>
-#include <gepetto/viewer/node.h>
 
 namespace gepetto {
 namespace viewer {

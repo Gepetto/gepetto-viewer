@@ -25,8 +25,6 @@
 #include <QCheckBox>
 #include <QLabel>
 
-#include <gepetto/viewer/group-node.h>
-
 #include <gepetto/gui/ledindicator.hh>
 
 #include <gepetto/gui/dialog/dialogloadrobot.hh>

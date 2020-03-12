@@ -27,8 +27,6 @@
 #include <QPushButton>
 #include <QSignalMapper>
 
-#include <gepetto/viewer/node.h>
-
 namespace gepetto {
   namespace gui {
     class BodyTreeItem : public QObject, public QStandardItem

@@ -30,6 +30,7 @@
 
 #include <iostream>
 
+#include <gepetto/viewer/node.h>
 #include <gepetto/gui/selection-event.hh>
 #include <gepetto/gui/windows-manager.hh>
 #include <gepetto/gui/osgwidget.hh>

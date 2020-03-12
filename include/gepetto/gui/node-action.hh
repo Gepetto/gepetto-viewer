@@ -21,8 +21,6 @@
 
 #include <QAction>
 
-#include <gepetto/viewer/node.h>
-
 namespace gepetto {
   namespace gui {
     class NodeActionBase : public QAction {

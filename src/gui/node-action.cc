@@ -16,6 +16,8 @@
 
 #include <gepetto/gui/node-action.hh>
 
+#include <gepetto/viewer/node.h>
+#include <gepetto/viewer/window-manager.h>
 #include <gepetto/gui/mainwindow.hh>
 #include <gepetto/gui/selection-handler.hh>
 #include <gepetto/gui/windows-manager.hh>

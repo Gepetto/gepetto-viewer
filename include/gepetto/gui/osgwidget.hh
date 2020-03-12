@@ -18,6 +18,7 @@
 #define GEPETTO_GUI_OSGWIDGET_HH
 
 #include <gepetto/gui/fwd.hh>
+#include <gepetto/viewer/config-osg.h>
 
 #include <QString>
 #include <QThread>
@@ -25,11 +26,10 @@
 #include <QTimer>
 
 #include <osg/ref_ptr>
+#include <osgViewer/ViewerBase>
+#include <osgViewer/ViewerEventHandlers>
 
 #include <osgQt/GraphicsWindowQt>
-#include <gepetto/viewer/window-manager.h>
-
-#include <gepetto/gui/windows-manager.hh>
 
 class QToolBar;
 class QProcess;
@@ -38,7 +38,7 @@ class QTextBrowser;
 namespace gepetto {
   namespace gui {
     typedef viewer::WindowManagerPtr_t WindowManagerPtr_t;
-    typedef WindowsManager::WindowID WindowID;
+    typedef viewer::WindowID WindowID;
 
     /// Widget that displays scenes.
     class OSGWidget : public QWidget
@@ -92,7 +92,7 @@ namespace gepetto {
         osg::ref_ptr<osgQt::GraphicsWindowQt> graphicsWindow_;
         WindowsManagerPtr_t wsm_;
         osg::ref_ptr<PickHandler> pickHandler_;
-        WindowsManager::WindowID wid_;
+        WindowID wid_;
         WindowManagerPtr_t wm_;
         QTimer timer_;
         osgViewer::ViewerRefPtr viewer_;

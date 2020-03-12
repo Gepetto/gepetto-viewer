@@ -20,7 +20,6 @@
 #include <gepetto/gui/fwd.hh>
 
 #include <osgGA/GUIEventHandler>
-#include <gepetto/viewer/node.h>
 
 #include <QObject>
 #include <QModelIndex>
