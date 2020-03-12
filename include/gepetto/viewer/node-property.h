@@ -26,6 +26,8 @@
 #include <boost/mpl/if.hpp>
 #endif
 
+#include <QWidget>
+
 #include <gepetto/viewer/fwd.h>
 #include <gepetto/viewer/config-osg.h>
 
@@ -33,6 +35,8 @@ namespace gepetto {
 namespace viewer {
 
     typedef std::map<std::string, PropertyPtr_t> PropertyMap_t;
+    class Property;
+    template <typename T> class PropertyTpl;
 
     /// \cond
     namespace details {
@@ -44,39 +48,61 @@ namespace viewer {
       template <> struct property_type<int          > { static inline std::string to_string () { return "int"          ; } };
       template <> struct property_type<float        > { static inline std::string to_string () { return "float"        ; } };
       template <> struct property_type<std::string  > { static inline std::string to_string () { return "string"       ; } };
-      template <> struct property_type<unsigned long> { static inline std::string to_string () { return "unsigned long"; } };
       template <> struct property_type<osgVector2   > { static inline std::string to_string () { return "osgVector2"   ; } };
       template <> struct property_type<osgVector3   > { static inline std::string to_string () { return "osgVector3"   ; } };
       template <> struct property_type<osgVector4   > { static inline std::string to_string () { return "osgVector4"   ; } };
       template <> struct property_type<Configuration> { static inline std::string to_string () { return "Configuration"; } };
+
+      template <typename T> QWidget* buildEditor (PropertyTpl<T>* property) { return NULL; }
+      template <> QWidget* buildEditor<bool         > (PropertyTpl<bool         >* property);
+      template <> QWidget* buildEditor<int          > (PropertyTpl<int          >* property);
+      template <> QWidget* buildEditor<float        > (PropertyTpl<float        >* property);
+      template <> QWidget* buildEditor<std::string  > (PropertyTpl<std::string  >* property);
+      template <> QWidget* buildEditor<osgVector2   > (PropertyTpl<osgVector2   >* property);
+      template <> QWidget* buildEditor<osgVector3   > (PropertyTpl<osgVector3   >* property);
+      template <> QWidget* buildEditor<osgVector4   > (PropertyTpl<osgVector4   >* property);
+      template <> QWidget* buildEditor<Configuration> (PropertyTpl<Configuration>* property);
     }
     /// \endcond
 
     /// Abstract base class for runtime properties of Node.
-    class Property {
+    class Property : public QObject {
+      Q_OBJECT
+
+      public slots:
+        bool set(      void             );
+        bool set(const bool          & v);
+        bool set(const int           & v);
+        bool set(const float         & v);
+        bool set(const std::string   & v);
+        bool set(const osgVector2    & v);
+        bool set(const osgVector3    & v);
+        bool set(const osgVector4    & v);
+        bool set(const Configuration & v);
+
+        bool get(void             );
+        bool get(bool          & v);
+        bool get(int           & v);
+        bool get(float         & v);
+        bool get(std::string   & v);
+        bool get(osgVector2    & v);
+        bool get(osgVector3    & v);
+        bool get(osgVector4    & v);
+        bool get(Configuration & v);
+
+        // Provide slots to convert from double to float.
+        bool set(const double& v);
+        bool get(double      & v);
+
+        // Provide slots to convert from QString to std::string
+        bool set(const QString& v);
+        bool get(QString      & v);
+
+        // Provide slots to convert from QColor to osgVector4
+        bool set(const QColor& v);
+        bool get(QColor      & v);
+
       public:
-        virtual bool set(      void             ) { throw std::invalid_argument ("Property " + name_ + " is not of type void."); return false; }
-        virtual bool set(const bool          & v) { invalidType(v); return false; }
-        virtual bool set(const int           & v) { invalidType(v); return false; }
-        virtual bool set(const float         & v) { invalidType(v); return false; }
-        virtual bool set(const std::string   & v) { invalidType(v); return false; }
-        virtual bool set(const unsigned long & v) { invalidType(v); return false; }
-        virtual bool set(const osgVector2    & v) { invalidType(v); return false; }
-        virtual bool set(const osgVector3    & v) { invalidType(v); return false; }
-        virtual bool set(const osgVector4    & v) { invalidType(v); return false; }
-        virtual bool set(const Configuration & v) { invalidType(v); return false; }
-
-        virtual bool get(void             ) { throw std::invalid_argument ("Property " + name_ + " is not of type void."); return false; }
-        virtual bool get(bool          & v) { invalidType(v); return false; }
-        virtual bool get(int           & v) { invalidType(v); return false; }
-        virtual bool get(float         & v) { invalidType(v); return false; }
-        virtual bool get(std::string   & v) { invalidType(v); return false; }
-        virtual bool get(unsigned long & v) { invalidType(v); return false; }
-        virtual bool get(osgVector2    & v) { invalidType(v); return false; }
-        virtual bool get(osgVector3    & v) { invalidType(v); return false; }
-        virtual bool get(osgVector4    & v) { invalidType(v); return false; }
-        virtual bool get(Configuration & v) { invalidType(v); return false; }
-
         virtual bool hasReadAccess () const = 0;
         virtual bool hasWriteAccess() const = 0;
 
@@ -84,14 +110,41 @@ namespace viewer {
 
         const std::string& name () const { return name_; }
 
+        /// \return NULL is this property is not editable, otherwise it returns
+        ///         a valid new QWidget.
+        virtual QWidget* guiEditor ()
+        {
+          return NULL;
+        }
+
       protected:
-        Property(const std::string& name) : name_ (name) {}
+        virtual bool impl_set(      void             );
+        virtual bool impl_set(const bool          & v);
+        virtual bool impl_set(const int           & v);
+        virtual bool impl_set(const float         & v);
+        virtual bool impl_set(const std::string   & v);
+        virtual bool impl_set(const osgVector2    & v);
+        virtual bool impl_set(const osgVector3    & v);
+        virtual bool impl_set(const osgVector4    & v);
+        virtual bool impl_set(const Configuration & v);
+
+        virtual bool impl_get(void             );
+        virtual bool impl_get(bool          & v);
+        virtual bool impl_get(int           & v);
+        virtual bool impl_get(float         & v);
+        virtual bool impl_get(std::string   & v);
+        virtual bool impl_get(osgVector2    & v);
+        virtual bool impl_get(osgVector3    & v);
+        virtual bool impl_get(osgVector4    & v);
+        virtual bool impl_get(Configuration & v);
+
+      protected:
+        Property(const std::string& name);
 
         virtual ~Property() {}
 
         const std::string name_;
 
-        template <typename T> inline void invalidType(T) const { throw std::invalid_argument ("Property " + name_ + " is not of type " + details::property_type<T>::to_string()); }
         inline void invalidGet() const { throw std::logic_error ("Cannot read property "  + name_ + "."); }
         inline void invalidSet() const { throw std::logic_error ("Cannot write property " + name_ + "."); }
     };
@@ -114,53 +167,24 @@ namespace viewer {
 
         virtual ~VoidProperty() {}
 
-        bool get(void) { if (!hasReadAccess ()) { invalidGet(); return false; } function_(); return true; }
-        bool set(void) { return get(); }
-
         bool hasReadAccess  () const { return (bool)function_; }
         bool hasWriteAccess () const { return hasReadAccess(); }
 
         const Function_t& function () const { return function_; }
         void function (const Function_t& f) { function_ = f; }
 
+        QWidget* guiEditor ();
+
+      protected:
+        bool impl_get(void) { if (!hasReadAccess ()) { invalidGet(); return false; } function_(); return true; }
+        bool impl_set(void) { return get(); }
+
       private:
         Function_t function_;
     };
 
-    template<typename Scalar>
-    struct Range {
-      Scalar min, max, step;
-      bool adaptiveDecimal;
-
-      Range () :
-#if __cplusplus >= 201103L
-        min(std::numeric_limits<Scalar>::lowest()),
-#else
-        min(std::numeric_limits<Scalar>::quiet_NaN()),
-#endif
-        max(std::numeric_limits<Scalar>::max()),
-        step (static_cast<Scalar>(1)),
-        adaptiveDecimal (false)
-      {}
-
-#if __cplusplus >= 201103L
-      inline bool hasMin () { return min > std::numeric_limits<Scalar>::lowest(); }
-#else
-      inline bool hasMin () { return min == min; }
-#endif
-      inline bool hasMax () { return max < std::numeric_limits<Scalar>::max(); }
-      inline bool hasRange() { return hasMin() && hasMax(); }
-
-      void setRange(const Scalar& minimum, const Scalar& maximum)
-      { min = minimum; max = maximum; }
-      void setRange(const Scalar& minimum, const Scalar& maximum, const Scalar& _step)
-      { min = minimum; max = maximum; step = _step;}
-    };
-
-    struct NoRange {};
-
-    template <typename T, typename Range = NoRange>
-    class PropertyTpl : public Property, public Range {
+    template <typename T>
+    class PropertyTpl : public Property {
       public:
         typedef boost::function<void(const T&)> Setter_t;
         typedef boost::function<  T (void)> Getter_t;
@@ -222,9 +246,6 @@ namespace viewer {
 
         virtual ~PropertyTpl() {}
 
-        virtual bool set(const T& value) { if (!hasWriteAccess()) { invalidSet(); return false; } setter_(value)   ; return true; }
-        virtual bool get(      T& value) { if (!hasReadAccess ()) { invalidGet(); return false; } value = getter_(); return true; }
-
         bool hasReadAccess  () const { return (bool)getter_; }
         bool hasWriteAccess () const { return (bool)setter_; }
 
@@ -234,28 +255,118 @@ namespace viewer {
         const Setter_t& setter () const { return setter_; }
         void setter (const Setter_t& s) { setter_ = s; }
 
+        virtual QWidget* guiEditor ()
+        {
+          return details::buildEditor(this);
+        }
+
+      protected:
+        virtual bool impl_set(const T& value) { if (!hasWriteAccess()) { invalidSet(); return false; } setter_(value)   ; return true; }
+        virtual bool impl_get(      T& value) { if (!hasReadAccess ()) { invalidGet(); return false; } value = getter_(); return true; }
+
       private:
         Getter_t getter_;
         Setter_t setter_;
+    };
+
+    template<typename Scalar>
+    struct Range {
+      Scalar min, max, step;
+      bool adaptiveDecimal;
+
+      Range () :
+#if __cplusplus >= 201103L
+        min(std::numeric_limits<Scalar>::lowest()),
+#else
+        min(std::numeric_limits<Scalar>::quiet_NaN()),
+#endif
+        max(std::numeric_limits<Scalar>::max()),
+        step (static_cast<Scalar>(1)),
+        adaptiveDecimal (false)
+      {}
+
+#if __cplusplus >= 201103L
+      inline bool hasMin () const { return min > std::numeric_limits<Scalar>::lowest(); }
+#else
+      inline bool hasMin () const { return min == min; }
+#endif
+      inline bool hasMax () const { return max < std::numeric_limits<Scalar>::max(); }
+      inline bool hasRange() const { return hasMin() && hasMax(); }
+
+      void setRange(const Scalar& minimum, const Scalar& maximum)
+      { min = minimum; max = maximum; }
+      void setRange(const Scalar& minimum, const Scalar& maximum, const Scalar& _step)
+      { min = minimum; max = maximum; step = _step;}
+    };
+
+    template <typename T, typename RangeT = T>
+    class RangedPropertyTpl : public PropertyTpl<T>, public Range<RangeT> {
+      public:
+        typedef boost::function<void(const T&)> Setter_t;
+        typedef boost::function<  T (void)> Getter_t;
+        typedef shared_ptr<RangedPropertyTpl> Ptr_t;
+
+        static Ptr_t create (const std::string& name, const Getter_t& g, const Setter_t& s) { return Ptr_t(new RangedPropertyTpl(name, g, s)); }
+        static Ptr_t create (const std::string& name, const Getter_t& g) { return Ptr_t(new RangedPropertyTpl(name, g, Setter_t())); }
+        static Ptr_t create (const std::string& name, const Setter_t& s) { return Ptr_t(new RangedPropertyTpl(name, Getter_t(), s)); }
+
+        template <typename Obj, typename RetType>
+        static Ptr_t create (const std::string& name, Obj* obj,
+            RetType (Obj::*mem_get)() const,
+            void (Obj::*mem_set)(const T&))
+        {
+          return create (name, Getter_t(boost::bind(mem_get, obj)),
+              Setter_t(boost::bind(mem_set, obj, _1)));
+        }
+        template <typename Obj, typename RetType>
+        static Ptr_t create (const std::string& name, Obj* obj,
+            RetType (Obj::*mem_get)() const,
+            void (Obj::*mem_set)(T))
+        {
+          return create (name, Getter_t(boost::bind(mem_get, obj)),
+              Setter_t(boost::bind(mem_set, obj, _1)));
+        }
+        template <typename Obj, typename RetType>
+        static Ptr_t createRO (const std::string& name, Obj* obj,
+            RetType (Obj::*mem_get)() const)
+        {
+          return create (name, Getter_t(boost::bind(mem_get, obj)));
+        }
+        template <typename Obj>
+        static Ptr_t createWO (const std::string& name, Obj* obj,
+            void (Obj::*mem_set)(const T&))
+        {
+          return create (name, Setter_t(boost::bind(mem_set, obj, _1)));
+        }
+        template <typename Obj, typename RetType>
+        static Ptr_t createWO (const std::string& name, Obj* obj,
+            void (Obj::*mem_set)(T))
+        {
+          return create (name, Setter_t(boost::bind(mem_set, obj, _1)));
+        }
+
+
+        RangedPropertyTpl(const std::string& name, const Getter_t& g, const Setter_t& s)
+          : PropertyTpl<T>(name, g, s) {}
+
+        virtual ~RangedPropertyTpl() {}
     };
 
     typedef PropertyTpl<bool         > BoolProperty;
     typedef PropertyTpl<int          > IntProperty;
     typedef PropertyTpl<float        > FloatProperty;
     typedef PropertyTpl<std::string  > StringProperty;
-    typedef PropertyTpl<unsigned long> UIntProperty;
     typedef PropertyTpl<osgVector2   > Vector2Property;
     typedef PropertyTpl<osgVector3   > Vector3Property;
     typedef PropertyTpl<osgVector4   > Vector4Property;
     typedef PropertyTpl<Configuration> ConfigurationProperty;
 
-    typedef PropertyTpl<int          , Range<int          > > RangedIntProperty;
-    typedef PropertyTpl<float        , Range<float        > > RangedFloatProperty;
-    typedef PropertyTpl<unsigned long, Range<unsigned long> > RangedUIntProperty;
-    typedef PropertyTpl<osgVector2   , Range<float        > > RangedVector2Property;
-    typedef PropertyTpl<osgVector3   , Range<float        > > RangedVector3Property;
-    typedef PropertyTpl<osgVector4   , Range<float        > > RangedVector4Property;
-    typedef PropertyTpl<Configuration, Range<float        > > RangedConfigurationProperty;
+    typedef RangedPropertyTpl<int          > RangedIntProperty;
+    typedef RangedPropertyTpl<float        > RangedFloatProperty;
+    typedef RangedPropertyTpl<osgVector2   , float> RangedVector2Property;
+    typedef RangedPropertyTpl<osgVector3   , float> RangedVector3Property;
+    typedef RangedPropertyTpl<osgVector4   , float> RangedVector4Property;
+    typedef RangedPropertyTpl<Configuration, float> RangedConfigurationProperty;
 
     /// Conversion between integer and enum name at runtime.
     struct MetaEnum {
@@ -285,19 +396,22 @@ namespace viewer {
         EnumProperty(const std::string& name, const MetaEnum* type, const Getter_t& g, const Setter_t& s)
           : IntProperty(name, g, s), metaEnum_ (type) {}
 
+        virtual QWidget* guiEditor ();
+
+      protected:
         /// Set the enum property.
         /// It also checks that \c value is a valid enum.
-        bool set(const int& value);
+        bool impl_set(const int& value);
 
         /// Set the enum property from a string.
         /// It also checks that \c value is a valid enum.
-        bool set(const std::string& value);
+        bool impl_set(const std::string& value);
 
         /// Get the enum property as an integer
-        bool get(int   & v) { return IntProperty::get (v); }
+        bool impl_get(int   & v);
 
         /// Get the enum property as a string
-        bool get(std::string   & v);
+        bool impl_get(std::string   & v);
 
       private:
         const MetaEnum* metaEnum_;
@@ -314,7 +428,6 @@ namespace viewer {
         virtual void setDirty (bool dirty=true) = 0;
 
       public:
-
         template <typename T>
         bool getProperty(const std::string& name, T& value) const
         {
@@ -339,6 +452,8 @@ namespace viewer {
         void addProperty(const PropertyPtr_t& prop);
 
         void addProperty(const std::string& name, const PropertyPtr_t& prop);
+
+        QWidget* guiEditor ();
     };
 
 } /* namespace viewer */

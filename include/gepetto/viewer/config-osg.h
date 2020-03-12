@@ -160,6 +160,9 @@ namespace viewer {
 } /* namespace viewer */
 } /* namespace gepetto */
 
+Q_DECLARE_METATYPE(osgVector2)
+Q_DECLARE_METATYPE(osgVector3)
+Q_DECLARE_METATYPE(osgVector4)
 Q_DECLARE_METATYPE(gepetto::viewer::Configuration)
 
 #endif
