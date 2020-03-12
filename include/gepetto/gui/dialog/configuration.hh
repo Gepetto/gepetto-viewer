@@ -26,33 +26,36 @@ class QLineEdit;
 
 namespace gepetto {
   namespace gui {
-    class Vector3Dialog : public QDialog
+    class VectorNDialog : public QDialog
     {
       Q_OBJECT
 
       public:
-        typedef viewer::Configuration Configuration;
-
-        Vector3Dialog (const viewer::PropertyPtr_t prop,
+        VectorNDialog (viewer::Property* prop, int N,
             const QString& name, QWidget *parent = 0);
 
+        void setVector2FromProperty ();
+        void setVector3FromProperty ();
+        void setVector4FromProperty ();
+
       signals:
+        void valueChanged (const osgVector2& config);
         void valueChanged (const osgVector3& config);
+        void valueChanged (const osgVector4& config);
 
       private slots:
-        void updateValue ();
+        void updateValue2 ();
+        void updateValue3 ();
+        void updateValue4 ();
 
       protected:
         void showEvent (QShowEvent* event);
 
       private:
-        void setValueFromProperty ();
         void setPyValue ();
 
-        viewer::PropertyPtr_t prop;
-        osgVector3 cfg;
-
-        QDoubleSpinBox* x[3];
+        viewer::Property* prop;
+        QVector<QDoubleSpinBox*> spinBoxes;
         QLineEdit* pyValue;
     };
 
@@ -63,7 +66,7 @@ namespace gepetto {
       public:
         typedef viewer::Configuration Configuration;
 
-        ConfigurationDialog (const viewer::PropertyPtr_t prop,
+        ConfigurationDialog (viewer::Property* prop,
             const QString& name, QWidget *parent = 0);
 
       signals:
@@ -79,7 +82,7 @@ namespace gepetto {
         void setConfigFromProperty ();
         void setPyValue ();
 
-        viewer::PropertyPtr_t prop;
+        viewer::Property* prop;
         Configuration cfg;
 
         QDoubleSpinBox *x,*y,*z,

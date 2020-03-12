@@ -30,9 +30,9 @@
 namespace gepetto {
   namespace gui {
 
-    void setSpinBoxRange(const viewer::PropertyPtr_t& prop, QDoubleSpinBox* sb)
+    void setSpinBoxRange(const viewer::Property* prop, QDoubleSpinBox* sb)
     {
-      viewer::Range<float>* range = dynamic_cast<viewer::Range<float>*>(prop.get());
+      const viewer::Range<float>* range = dynamic_cast<const viewer::Range<float>*>(prop);
       if (range) {
         if (range->hasMin()) sb->setMinimum(static_cast<double>(range->min));
         if (range->hasMax()) sb->setMaximum(static_cast<double>(range->max));
@@ -87,81 +87,127 @@ namespace gepetto {
       q[0] = x; q[1] = y; q[2] = z; q[3] = w;
     }
 
-    Vector3Dialog::Vector3Dialog (
-        const viewer::PropertyPtr_t property, const QString& name, QWidget *parent)
+    VectorNDialog::VectorNDialog (viewer::Property* property, int N,
+        const QString& name, QWidget *parent)
       : QDialog (parent)
       , prop (property)
       , pyValue (new QLineEdit)
     {
-      for (int i = 0; i < 3; ++i) {
-        x[i] = new QDoubleSpinBox;
-        setSpinBoxRange(property, x[i]);
+      for (int i = 0; i < N; ++i) {
+        spinBoxes.append(new QDoubleSpinBox);
+        setSpinBoxRange(property, spinBoxes.back());
       }
-
 
       setModal (false);
 
-      setValueFromProperty ();
-
       pyValue->setReadOnly (true);
-      setPyValue ();
 
-      for (int i = 0; i < 3; ++i)
-        connect(x[i], SIGNAL(valueChanged(double)), SLOT(updateValue()));
+      const char* slotUpdateValue;
+      switch (N) {
+        case 2: slotUpdateValue = SLOT(updateValue2()); break;
+        case 3: slotUpdateValue = SLOT(updateValue3()); break;
+        case 4: slotUpdateValue = SLOT(updateValue4()); break;
+        default: throw std::invalid_argument("Vector size is invalid");
+      }
+      foreach (QDoubleSpinBox* sb, spinBoxes)
+        connect(sb, SIGNAL(valueChanged(double)), slotUpdateValue);
 
       QDialogButtonBox *buttonBox = new QDialogButtonBox (QDialogButtonBox::Close, Qt::Horizontal);
       connect (buttonBox->button (QDialogButtonBox::Close), SIGNAL(clicked(bool)), SLOT(accept()));
 
       QFormLayout *layout = new QFormLayout;
       layout->addRow(new QLabel (name));
-      for (int i = 0; i < 3; ++i)
-        layout->addRow("X" + QString::number(i), x[i]);
+      for (int i = 0; i < N; ++i)
+        layout->addRow("X" + QString::number(i), spinBoxes[i]);
       layout->addRow("value", pyValue);
       layout->addRow(buttonBox);
 
       setLayout (layout);
     }
 
-    void Vector3Dialog::showEvent (QShowEvent* event)
+    void VectorNDialog::showEvent (QShowEvent* event)
     {
-      setValueFromProperty();
+      //setValueFromProperty();
       QDialog::showEvent (event);
     }
 
-    void Vector3Dialog::updateValue ()
+    template <typename Vector>
+    inline void getValues (Vector& v, const QVector<QDoubleSpinBox*> spinBoxes)
     {
-      for (int i = 0; i < 3; ++i)
-        cfg[i] = (float)x[i]->value();
-
-      setPyValue ();
-
-      emit valueChanged (cfg);
-    }
-
-    void Vector3Dialog::setValueFromProperty ()
-    {
-      prop->get (cfg);
-
-      for (int i = 0; i < 3; ++i) {
-        x[i]->setValue(cfg[i]);
-        x[i]->setRange(-1000,1000);
-        x[i]->setSingleStep(0.01);
-        x[i]->setDecimals(4);
+      int i = 0;
+      foreach (QDoubleSpinBox* sb, spinBoxes) {
+        v[i] = (float)sb->value ();
+        ++i;
       }
     }
 
-    void Vector3Dialog::setPyValue ()
+    void VectorNDialog::updateValue2 ()
+    {
+      osgVector2 cfg;
+      getValues(cfg, spinBoxes);
+      setPyValue ();
+      emit valueChanged (cfg);
+    }
+
+    void VectorNDialog::updateValue3 ()
+    {
+      osgVector3 cfg;
+      getValues(cfg, spinBoxes);
+      setPyValue ();
+      emit valueChanged (cfg);
+    }
+
+    void VectorNDialog::updateValue4 ()
+    {
+      osgVector4 cfg;
+      getValues(cfg, spinBoxes);
+      setPyValue ();
+      emit valueChanged (cfg);
+    }
+
+    template <typename Vector>
+    inline void setValues (const Vector& v, QVector<QDoubleSpinBox*> spinBoxes)
+    {
+      int i = 0;
+      foreach (QDoubleSpinBox* sb, spinBoxes) {
+        sb->setValue (v[i]);
+        ++i;
+      }
+    }
+
+    void VectorNDialog::setVector2FromProperty ()
+    {
+      osgVector2 cfg;
+      prop->get (cfg);
+      setValues(cfg, spinBoxes);
+    }
+
+    void VectorNDialog::setVector3FromProperty ()
+    {
+      osgVector3 cfg;
+      prop->get (cfg);
+      setValues(cfg, spinBoxes);
+    }
+
+    void VectorNDialog::setVector4FromProperty ()
+    {
+      osgVector4 cfg;
+      prop->get (cfg);
+      setValues(cfg, spinBoxes);
+    }
+
+    void VectorNDialog::setPyValue ()
     {
       static const QString sep(", ");
       QString text = "[ ";
-      for (int i = 0; i < 3; ++i)
-        text += QString::number (cfg[i]) + sep;
+      foreach (QDoubleSpinBox* sb, spinBoxes)
+        text += QString::number (sb->value()) + sep;
       text += " ]";
       pyValue->setText (text);
     }
 
     ConfigurationDialog::ConfigurationDialog (
-        const viewer::PropertyPtr_t property, const QString& name, QWidget *parent)
+        viewer::Property* property, const QString& name, QWidget *parent)
       : QDialog (parent)
       , prop (property)
       , x     (new QDoubleSpinBox)
