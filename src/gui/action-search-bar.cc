@@ -21,11 +21,13 @@
 #include <QAction>
 #include <QKeyEvent>
 #include <QCompleter>
+#include <QAbstractItemView>
+#include <QHBoxLayout>
 
 namespace gepetto {
   namespace gui {
-    ActionSearchBar::ActionSearchBar (QWidget* parent)
-      : QLineEdit(parent)
+    ActionSearchBar::ActionSearchBar (QWidget* grandparent)
+      : QLineEdit(NULL)
       , model_ (new QStringListModel(this))
       , completer_ (new QCompleter(model_, this))
       , showAction_ (new QAction("Open action search bar popup", this))
@@ -33,13 +35,17 @@ namespace gepetto {
       setPlaceholderText("Type here");
       setCompleter(completer_);
       completer_->setCaseSensitivity(Qt::CaseInsensitive);
-      // completer_->setCompletionMode(QCompleter::UnfilteredPopupCompletion);
       showAction_->setShortcut(Qt::Key_M);
       showAction_->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 
       connect(this, SIGNAL(returnPressed()), SLOT(handleReturnPressed()));
-      connect(completer_, SIGNAL(activated(QString)), SLOT(trigger(QString)));
-      connect(showAction_, SIGNAL(triggered()), SLOT(show()));
+
+      QWidget* popup(new QWidget(grandparent));
+      popup->setWindowFlags(Qt::Popup);
+      popup->connect(showAction_, SIGNAL(triggered()), SLOT(show()));
+      QHBoxLayout *layout = new QHBoxLayout(popup);
+      layout->addWidget(this);
+      layout->setContentsMargins(0,0,0,0);
     }
 
     void ActionSearchBar::addAction (QAction* action)
@@ -58,10 +64,15 @@ namespace gepetto {
     {
       switch (event->key()) {
         case Qt::Key_Escape:
-          close();
+          parentWidget()->close();
           return;
         case Qt::Key_Enter:
           handleReturnPressed();
+          return;
+        case Qt::Key_Tab:
+          // Autocomplete
+          if (completer_->completionCount() > 0)
+            setText(completer_->currentCompletion());
           return;
         default:
           QLineEdit::keyPressEvent(event);
@@ -71,10 +82,9 @@ namespace gepetto {
 
     void ActionSearchBar::showEvent ( QShowEvent* )
     {
-      move(QCursor::pos());
+      parentWidget()->move(QCursor::pos());
+      setFocus(Qt::PopupFocusReason);
       selectAll();
-      // completer_->complete();
-      // setFocus(Qt::OtherFocusReason);
     }
 
     bool ActionSearchBar::trigger ( const QString& s )
@@ -83,19 +93,14 @@ namespace gepetto {
       if (!actions_.contains(s)) return false;
       actions_[s]->trigger();
       // qDebug() << "Action " << s;
-      close();
+      parentWidget()->close();
       return true;
     }
 
     void ActionSearchBar::handleReturnPressed ()
     {
-      if (!trigger(text())) {
-        if (completer_->completionCount() > 0) {
-          if (trigger(completer_->currentCompletion()))
-            return;
-        }
-      }
-      close();
+      trigger(text());
+      parentWidget()->close();
     }
   }
 }

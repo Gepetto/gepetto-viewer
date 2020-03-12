@@ -523,8 +523,6 @@ namespace gepetto {
       connect (this, SIGNAL(logString(QString)), SLOT(log(QString)));
       connect (this, SIGNAL(logErrorString(QString)), SLOT(logError(QString)));
 
-      // actionSearchBar_->setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
-      actionSearchBar_->setWindowFlags(Qt::Popup);
       actionSearchBar_->addAction(new NodeAction(NodeAction::VISIBILITY_ON,  "Show node", this));
       actionSearchBar_->addAction(new NodeAction(NodeAction::VISIBILITY_OFF, "Hide node", this));
       actionSearchBar_->addAction(new NodeAction(NodeAction::ALWAYS_ON_TOP, "Always on top", this));
