@@ -152,25 +152,19 @@ namespace viewer {
 
   void LeafNodeMesh::setAlpha(const float& alpha)
   {
-    osg::StateSet* ss = mesh_geometry_ptr_->getStateSet();
-    if (ss)
-      {
-	alpha_ = alpha;
-	osg::Material *mat;
-	if (ss->getAttribute(osg::StateAttribute::MATERIAL))
-	  mat = dynamic_cast<osg::Material*>(ss->getAttribute(osg::StateAttribute::MATERIAL));
-	else
-	  {
-	    mat = new osg::Material;
-	    ss->setAttribute(mat, osg::StateAttribute::OFF | osg::StateAttribute::OVERRIDE);
-	  }
-	mat->setTransparency(osg::Material::FRONT_AND_BACK, alpha);
-	if (alpha == 0)
-	  ss->setRenderingHint(osg::StateSet::DEFAULT_BIN);
-	else
-          ss->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
-        setDirty();
-      }
+    osg::StateSet* ss = mesh_geometry_ptr_->getOrCreateStateSet();
+    alpha_ = alpha;
+    osg::Material *mat;
+    if (ss->getAttribute(osg::StateAttribute::MATERIAL))
+      mat = dynamic_cast<osg::Material*>(ss->getAttribute(osg::StateAttribute::MATERIAL));
+    else
+    {
+      mat = new osg::Material;
+      ss->setAttribute(mat);
+    }
+    mat->setAlpha(osg::Material::FRONT_AND_BACK, alpha);
+    setTransparentRenderingBin (alpha < Node::TransparencyRenderingBinThreshold, ss);
+    setDirty();
   }
  
   void LeafNodeMesh::setTexture(const std::string& image_path)

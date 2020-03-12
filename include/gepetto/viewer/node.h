@@ -90,6 +90,9 @@ namespace viewer {
             switch_node_ptr_->setName (id_name_);
         }
 
+        void setTransparentRenderingBin (bool transparent = true,
+            osg::StateSet* ss = NULL);
+
     public:
         static const float TransparencyRenderingBinThreshold;
 
@@ -231,8 +234,6 @@ namespace viewer {
 
         void setTransparency (const float& transparency);
 	float getTransparency() const;
-
-        void setTransparentRenderingBin (bool transparent = true);
 
         SCENE_VIEWER_ACCEPT_VISITOR;
         virtual void traverse (NodeVisitor& visitor);

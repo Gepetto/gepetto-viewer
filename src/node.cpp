@@ -634,24 +634,24 @@ namespace viewer {
     return 1.f - getAlpha();
   }
 
-  void Node::setTransparentRenderingBin (bool transparent)
+  void Node::setTransparentRenderingBin (bool transparent, osg::StateSet* ss)
   {
-    if (geode_ptr_.get() == NULL)
-    {
-      std::cout << "You must initialize a Geode on " << id_name_ << " to use Alpha" << std::endl;
-      return ;
+    if (ss == NULL) {
+      if (geode_ptr_.get() == NULL) {
+        std::cout << "You must initialize a Geode on " << id_name_ <<
+          " to use Alpha" << std::endl;
+        return;
+      }
+      ss = geode_ptr_.get()->getStateSet();
+      if (ss == NULL) return;
     }
-    osg::StateSet* ss = geode_ptr_.get()->getStateSet();
-    if (ss)
-    {
-      bool isTransparent = (ss->getRenderingHint() == osg::StateSet::TRANSPARENT_BIN);
-      if (transparent == isTransparent) return;
-      if (transparent)
-        ss->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
-      else
-        ss->setRenderingHint(osg::StateSet::DEFAULT_BIN);
-      dirty_ = true;
-    }
+    bool isTransparent = (ss->getRenderingHint() == osg::StateSet::TRANSPARENT_BIN);
+    if (transparent == isTransparent) return;
+    if (transparent)
+      ss->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+    else
+      ss->setRenderingHint(osg::StateSet::DEFAULT_BIN);
+    dirty_ = true;
   }
 
   Node::~Node ()

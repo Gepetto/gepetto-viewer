@@ -326,8 +326,9 @@ namespace viewer {
     mat_ptr->setDiffuse (osg::Material::FRONT_AND_BACK,color); 
     mat_ptr->setAmbient (osg::Material::FRONT_AND_BACK,ambient); 
 
-    group_ptr_->getOrCreateStateSet()->setAttribute(mat_ptr.get());    
-    setTransparentRenderingBin (color[3] < Node::TransparencyRenderingBinThreshold);
+    osg::StateSet* ss = group_ptr_->getOrCreateStateSet();
+    ss->setAttribute(mat_ptr.get());
+    setTransparentRenderingBin (color[3] < Node::TransparencyRenderingBinThreshold, ss);
     setDirty();
   }
     
@@ -339,33 +340,27 @@ namespace viewer {
         (ss->getAttribute(osg::StateAttribute::MATERIAL));
       if (mat) return mat->getDiffuse(osg::Material::FRONT_AND_BACK);
     }
-    return osgVector4();
+    return osgVector4(1.,1.,1.,1.);
   }
 
   void LeafNodeCollada::setAlpha(const float& alpha)
   {
     // TODO this overload is probably not necessary.
-    osg::StateSet* ss = group_ptr_->getStateSet();
-    if (ss)
-      {
-	alpha_ = alpha;
-	osg::Material *mat;
-	if (ss->getAttribute(osg::StateAttribute::MATERIAL))
-	  mat = dynamic_cast<osg::Material*>(ss->getAttribute(osg::StateAttribute::MATERIAL));
-	else
-	  {
-	    mat = new osg::Material;
-	    ss->setAttribute(mat, osg::StateAttribute::OFF | osg::StateAttribute::OVERRIDE);
-	  }
-	mat->setTransparency(osg::Material::FRONT_AND_BACK, alpha);
-	if (alpha == 0)
-	  ss->setRenderingHint(osg::StateSet::DEFAULT_BIN);
-	else
-          ss->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
-        setDirty();
-      }
+    osg::StateSet* ss = group_ptr_->getOrCreateStateSet();
+
+    alpha_ = alpha;
+    osg::Material *mat;
+    if (ss->getAttribute(osg::StateAttribute::MATERIAL))
+      mat = dynamic_cast<osg::Material*>(ss->getAttribute(osg::StateAttribute::MATERIAL));
+    else {
+      mat = new osg::Material;
+      ss->setAttribute(mat);
+    }
+    mat->setAlpha(osg::Material::FRONT_AND_BACK, alpha);
+    setTransparentRenderingBin (alpha < Node::TransparencyRenderingBinThreshold, ss);
+    setDirty();
   }
- 
+
   void LeafNodeCollada::setTexture(const std::string& image_path)
   {
     texture_file_path_ = image_path;
