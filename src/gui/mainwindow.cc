@@ -435,19 +435,13 @@ namespace gepetto {
     {
       // QDockWidget focused
       QDockWidget* dock = getParentDockWidget (QApplication::focusWidget());
-      if (dock==NULL) {
-        qDebug() << "No QDockWidget focused";
+      if (dock==NULL)
         return;
-      }
       // QDockWidget under cursor
       QDockWidget* other = getParentDockWidget (
           QApplication::widgetAt (QCursor::pos()));
-      if (other==NULL) {
-        qDebug() << "No QDockWidget under cursor";
-        return;
-      }
+      if (other==NULL) return;
       if (other == dock) return;
-      qDebug() << "Split " << dock->objectName() << other->objectName() << orientation;
       splitDockWidget(dock, other, orientation);
     }
 
@@ -565,14 +559,14 @@ namespace gepetto {
           qDebug() << signal << " registered";
         }
       else
-        qDebug() << "Signal" << signal << "already registered.";
+        qWarning() << "Signal" << signal << "already registered.";
     }
 
     QObject* MainWindow::getFromSignal(const char* signal)
     {
       if (registeredSignals_.find(signal) == registeredSignals_.end())
         {
-          std::cout << "signal " << signal << "isn't registered" << std::endl;
+          qInfo() << "signal " << signal << "isn't registered";
           return NULL;
         }
       return registeredSignals_[signal];
@@ -594,14 +588,14 @@ namespace gepetto {
           qDebug() << slot << " registered";
         }
       else
-        std::cout << "Slot " << slot << "already registered." << std::endl;
+        qWarning() << "Slot " << slot << "already registered.";
     }
 
     QObject* MainWindow::getFromSlot(const char* slot)
     {
       if (registeredSlots_.find(slot) == registeredSlots_.end())
         {
-          qDebug() << "slot" << slot << "isn't registered";
+          qInfo() << "slot" << slot << "isn't registered";
           return NULL;
         }
       return registeredSlots_[slot];

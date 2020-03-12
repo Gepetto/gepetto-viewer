@@ -710,19 +710,10 @@ namespace viewer {
     {
         std::vector<std::string> l;
         GroupNodePtr_t g (getGroup(group));
-        if(!g)
-            std::cout << "Unexisting group: " << group << std::endl;
-        else
-        {
-            std::cout << "List of Nodes in group :" << group << std::endl;
-            l.reserve(g->getNumOfChildren());
-            for(std::size_t i = 0; i < g->getNumOfChildren(); ++i)
-            {
-                NodePtr_t node = g->getChild(i);
-                l.push_back(node->getID());
-                std::cout << '\t' << node->getID() << std::endl;
-            }
-        }
+        if(!g) return l;
+        l.reserve(g->getNumOfChildren());
+        for(std::size_t i = 0; i < g->getNumOfChildren(); ++i)
+          l.push_back(g->getChild(i)->getID());
         return l;
     }
 
@@ -730,12 +721,9 @@ namespace viewer {
     {
         std::vector<std::string> l;
         l.reserve(groupNodes_.size());
-        std::cout << "List of GroupNodes :" << std::endl;
-        for (GroupNodeMapConstIt it =
-                groupNodes_.begin (); it!=groupNodes_.end (); ++it) {
-            std::cout << "   " << it->first << std::endl;
+        for (GroupNodeMapConstIt it = groupNodes_.begin ();
+            it!=groupNodes_.end (); ++it)
             l.push_back (it->first);
-        }
         return l;
     }
 

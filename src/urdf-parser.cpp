@@ -35,7 +35,7 @@
 #include <gepetto/viewer/leaf-node-sphere.h>
 
 
-#define OUT(x) std::cout << x << std::endl
+#define OUT(x) qDebug() << x;
 // #define OUT(x) (void)0
 
 namespace gepetto {
