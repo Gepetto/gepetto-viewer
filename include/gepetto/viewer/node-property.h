@@ -376,6 +376,47 @@ namespace viewer {
         virtual ~RangedPropertyTpl() {}
     };
 
+    template <typename T>
+    class StoredPropertyTpl : public Property {
+      public:
+        typedef shared_ptr<StoredPropertyTpl> Ptr_t;
+
+        static Ptr_t create (const std::string& name) { return Ptr_t(new StoredPropertyTpl(name)); }
+
+        virtual std::string type() { return details::property_type<T>::to_string(); }
+
+        StoredPropertyTpl(const std::string& name) : Property(name) {}
+
+        virtual ~StoredPropertyTpl() {}
+
+        bool hasReadAccess  () const { return true; }
+        bool hasWriteAccess () const { return true; }
+
+        virtual QWidget* guiEditor ()
+        {
+          return details::buildEditor<T>(this);
+        }
+
+        T value;
+
+      protected:
+        bool impl_set(const T& v) { value = v; return true; }
+        bool impl_get(      T& v) { v = value; return true; }
+    };
+
+    template <typename T, typename RangeT>
+    class RangedStoredPropertyTpl : public StoredPropertyTpl<T>, public Range<RangeT> {
+      public:
+        typedef shared_ptr<RangedStoredPropertyTpl> Ptr_t;
+
+        static Ptr_t create (const std::string& name) { return Ptr_t(new RangedStoredPropertyTpl(name)); }
+
+        RangedStoredPropertyTpl(const std::string& name)
+          : StoredPropertyTpl<T>(name) {}
+
+        virtual ~RangedStoredPropertyTpl() {}
+    };
+
     typedef PropertyTpl<bool         > BoolProperty;
     typedef PropertyTpl<int          > IntProperty;
     typedef PropertyTpl<float        > FloatProperty;
