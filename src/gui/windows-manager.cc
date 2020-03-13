@@ -262,7 +262,7 @@ namespace gepetto {
     {
       void operator() (const viewer::NodeConfiguration& nc) const
       {
-        nc.node->applyConfiguration ( nc.position, nc.quat);
+        nc.node->applyConfiguration (nc);
       }
     };
 

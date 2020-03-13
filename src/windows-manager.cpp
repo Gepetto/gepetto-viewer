@@ -882,13 +882,14 @@ namespace viewer {
     bool WindowsManager::applyConfiguration (const std::string& nodeName,
             const Configuration& configuration)
     {
+        // TODO should we throw ?
+        if (!configuration.valid()) return false;
         NodePtr_t updatedNode = getNode (nodeName, false);
         if (!updatedNode) return false;
 
         NodeConfiguration newNodeConfiguration;
         newNodeConfiguration.node = updatedNode;
-        newNodeConfiguration.position = configuration.position;
-        newNodeConfiguration.quat = configuration.quat;
+        ((Configuration&)newNodeConfiguration) = configuration;
 
         ScopedLock lock(configListMtx_);
         newNodeConfigurations_.push_back (newNodeConfiguration);

@@ -106,11 +106,6 @@ namespace viewer {
          */
         virtual void setAlpha (const float& alpha);
         
-        /** Apply the scale value of all children
-         * note : scale value must be positive
-         */
-        virtual void setScale (const float scale);
-
         /** Set the color of the object */
         void setColor (const osgVector4& color);
 

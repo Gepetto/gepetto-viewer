@@ -142,11 +142,6 @@ namespace viewer {
 	}
     }
     
-    void GroupNode::setScale (const float scale)
-    {
-        Node::setScale (scale);
-    }
-    
     void GroupNode::setColor (const osgVector4& color)
     {
         Nodes_t::iterator iter_list_of_objects;
