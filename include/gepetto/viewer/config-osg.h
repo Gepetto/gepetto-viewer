@@ -155,6 +155,16 @@ namespace viewer {
                  a[(XYZW ? 5 : 6)],
                  a[(XYZW ? 6 : 3)]) {}
         Configuration(const osgVector3& p, const osgQuat& q) : position(p), quat(q) {}
+
+        bool operator== (const Configuration& other) const
+        {
+          return position == other.position && quat == other.quat;
+        }
+
+        bool operator!= (const Configuration& other) const
+        {
+          return position != other.position || quat != other.quat;
+        }
     };
     
 } /* namespace viewer */

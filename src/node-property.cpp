@@ -42,7 +42,7 @@ namespace viewer {
 
   static Initializer initializer;
 
-  template <typename T> inline void invalidType(const std::string& name, T) {
+  template <typename T> inline bool invalidType(const std::string& name, T) {
     throw std::invalid_argument ("Property " + name + " is not of type " + details::property_type<T>::to_string());
   }
 
@@ -53,15 +53,35 @@ namespace viewer {
     setObjectName(QString::fromStdString(name));
   }
 
-  bool Property::set(      void             ) { return impl_set( ); }
-  bool Property::set(const bool          & v) { return impl_set(v); }
-  bool Property::set(const int           & v) { return impl_set(v); }
-  bool Property::set(const float         & v) { return impl_set(v); }
-  bool Property::set(const std::string   & v) { return impl_set(v); }
-  bool Property::set(const osgVector2    & v) { return impl_set(v); }
-  bool Property::set(const osgVector3    & v) { return impl_set(v); }
-  bool Property::set(const osgVector4    & v) { return impl_set(v); }
-  bool Property::set(const Configuration & v) { return impl_set(v); }
+  template<typename T>
+  bool check_if_value_changed(Property& prop, const T& v)
+  {
+    if(!prop.hasReadAccess()) return true;
+    T current;
+    if(!prop.get(current)) return true;
+    //std::cout << "current " << current << std::endl;
+    return current != v;
+  }
+
+  inline QColor qColor(const osgVector4& v)
+  {
+    return QColor::fromRgbF((qreal)v[0], (qreal)v[1], (qreal)v[2], (qreal)v[3]);
+  }
+
+#define SET_IMPLEMENTATION(v,emit2)                                            \
+  if (!check_if_value_changed(*this,v)) return true;                           \
+  if (impl_set(v)) { emit valueChanged(v); emit2; return true; }               \
+  return false
+
+  bool Property::set(      void             ) { bool b = impl_set( ); if (b) { emit valueChanged( ); } return b; }
+  bool Property::set(const bool          & v) { SET_IMPLEMENTATION(v,); }
+  bool Property::set(const int           & v) { SET_IMPLEMENTATION(v,); }
+  bool Property::set(const float         & v) { SET_IMPLEMENTATION(v, emit valueChanged(static_cast<double>(v))); }
+  bool Property::set(const std::string   & v) { SET_IMPLEMENTATION(v, emit valueChanged(QString::fromStdString(v))); }
+  bool Property::set(const osgVector2    & v) { SET_IMPLEMENTATION(v,); }
+  bool Property::set(const osgVector3    & v) { SET_IMPLEMENTATION(v,); }
+  bool Property::set(const osgVector4    & v) { SET_IMPLEMENTATION(v, emit valueChanged(qColor(v))); }
+  bool Property::set(const Configuration & v) { SET_IMPLEMENTATION(v,); }
 
   bool Property::get(void             ) { return impl_get( ); }
   bool Property::get(bool          & v) { return impl_get(v); }
@@ -73,25 +93,25 @@ namespace viewer {
   bool Property::get(osgVector4    & v) { return impl_get(v); }
   bool Property::get(Configuration & v) { return impl_get(v); }
 
-  bool Property::impl_set(      void             ) { throw std::invalid_argument ("Property " + name_ + " is not of type void."); return false; }
-  bool Property::impl_set(const bool          & v) { invalidType(name_,v); return false; }
-  bool Property::impl_set(const int           & v) { invalidType(name_,v); return false; }
-  bool Property::impl_set(const float         & v) { invalidType(name_,v); return false; }
-  bool Property::impl_set(const std::string   & v) { invalidType(name_,v); return false; }
-  bool Property::impl_set(const osgVector2    & v) { invalidType(name_,v); return false; }
-  bool Property::impl_set(const osgVector3    & v) { invalidType(name_,v); return false; }
-  bool Property::impl_set(const osgVector4    & v) { invalidType(name_,v); return false; }
-  bool Property::impl_set(const Configuration & v) { invalidType(name_,v); return false; }
+  bool Property::impl_set(      void             ) { throw std::invalid_argument ("Property " + name_ + " is not of type void."); }
+  bool Property::impl_set(const bool          & v) { return invalidType(name_,v); }
+  bool Property::impl_set(const int           & v) { return invalidType(name_,v); }
+  bool Property::impl_set(const float         & v) { return invalidType(name_,v); }
+  bool Property::impl_set(const std::string   & v) { return invalidType(name_,v); }
+  bool Property::impl_set(const osgVector2    & v) { return invalidType(name_,v); }
+  bool Property::impl_set(const osgVector3    & v) { return invalidType(name_,v); }
+  bool Property::impl_set(const osgVector4    & v) { return invalidType(name_,v); }
+  bool Property::impl_set(const Configuration & v) { return invalidType(name_,v); }
 
-  bool Property::impl_get(void             ) { throw std::invalid_argument ("Property " + name_ + " is not of type void."); return false; }
-  bool Property::impl_get(bool          & v) { invalidType(name_,v); return false; }
-  bool Property::impl_get(int           & v) { invalidType(name_,v); return false; }
-  bool Property::impl_get(float         & v) { invalidType(name_,v); return false; }
-  bool Property::impl_get(std::string   & v) { invalidType(name_,v); return false; }
-  bool Property::impl_get(osgVector2    & v) { invalidType(name_,v); return false; }
-  bool Property::impl_get(osgVector3    & v) { invalidType(name_,v); return false; }
-  bool Property::impl_get(osgVector4    & v) { invalidType(name_,v); return false; }
-  bool Property::impl_get(Configuration & v) { invalidType(name_,v); return false; }
+  bool Property::impl_get(void             ) { throw std::invalid_argument ("Property " + name_ + " is not of type void."); }
+  bool Property::impl_get(bool          & v) { return invalidType(name_,v); }
+  bool Property::impl_get(int           & v) { return invalidType(name_,v); }
+  bool Property::impl_get(float         & v) { return invalidType(name_,v); }
+  bool Property::impl_get(std::string   & v) { return invalidType(name_,v); }
+  bool Property::impl_get(osgVector2    & v) { return invalidType(name_,v); }
+  bool Property::impl_get(osgVector3    & v) { return invalidType(name_,v); }
+  bool Property::impl_get(osgVector4    & v) { return invalidType(name_,v); }
+  bool Property::impl_get(Configuration & v) { return invalidType(name_,v); }
 
   bool Property::set(const double& v) { return set(static_cast<float>(v)); }
 
@@ -124,8 +144,7 @@ namespace viewer {
     osgVector4 _v ((float)v.redF(), (float)v.greenF(), (float)v.blueF(),
           (float)v.alphaF());
     bool res = get (_v);
-    v = QColor::fromRgbF((qreal) _v[0], (qreal) _v[1], (qreal) _v[2],
-        (qreal) _v[3]);
+    v = qColor(_v);
     return res;
   }
 
@@ -173,164 +192,167 @@ namespace viewer {
       return cb;
     }
 
-   template <> QWidget* buildEditor<std::string  > (PropertyTpl<std::string  >* prop)
-   {
-     QString toolTip (
-         "Python:\n"
-         "  gui.getStringProperty(nodeName,\"%1\")\n"
-         "  gui.setStringProperty(nodeName,\"%1\",str)");
-     QLineEdit* le = new QLineEdit;
-     le->setToolTip (toolTip.arg(prop->objectName()));
-     std::string value;
-     /* bool success = */ prop->get(value);
-     le->setText(QString::fromStdString(value));
-     if (prop->hasWriteAccess())
-       prop->connect(le, SIGNAL(textChanged(QString)), SLOT(set(QString)), Qt::DirectConnection);
-     else
-       le->setReadOnly(true);
-     return le;
-   }
- 
-   template <> QWidget* buildEditor<float> (PropertyTpl<float>* prop)
-   {
-     QString toolTip (
-         "Python:\n"
-         "  gui.getFloatProperty(nodeName,\"%1\")\n"
-         "  gui.setFloatProperty(nodeName,\"%1\",float)");
-     QDoubleSpinBox* dsb = new QDoubleSpinBox;
-     dsb->setObjectName(prop->objectName());
-     dsb->setToolTip (toolTip.arg(prop->objectName()));
-     float value;
-     /* bool success = */ prop->get(value);
-     dsb->setValue(value);
-     if (prop->hasWriteAccess())
-       prop->connect(dsb, SIGNAL(valueChanged(double)), SLOT(set(double)), Qt::DirectConnection);
-     else
-       dsb->setEnabled(false);
-     setSpinBoxRange<float, double>(prop, dsb);
-     return dsb;
-   }
+    template <> QWidget* buildEditor<std::string  > (PropertyTpl<std::string  >* prop)
+    {
+      QString toolTip (
+          "Python:\n"
+          "  gui.getStringProperty(nodeName,\"%1\")\n"
+          "  gui.setStringProperty(nodeName,\"%1\",str)");
+      QLineEdit* le = new QLineEdit;
+      le->setToolTip (toolTip.arg(prop->objectName()));
+      std::string value;
+      /* bool success = */ prop->get(value);
+      le->setText(QString::fromStdString(value));
+      if (prop->hasWriteAccess())
+        prop->connect(le, SIGNAL(textChanged(QString)), SLOT(set(QString)), Qt::DirectConnection);
+      else
+        le->setReadOnly(true);
+      return le;
+    }
 
-   template <> QWidget* buildEditor<int          > (PropertyTpl<int          >* prop)
-   {
-     QString toolTip (
-         "Python:\n"
-         "  gui.getIntProperty(nodeName,\"%1\")\n"
-         "  gui.setIntProperty(nodeName,\"%1\",int)");
-     QSpinBox* dsb = new QSpinBox;
-     dsb->setToolTip (toolTip.arg(prop->objectName()));
-     int value;
-     /* bool success = */ prop->get(value);
-     dsb->setValue(value);
-     if (prop->hasWriteAccess())
-       prop->connect(dsb, SIGNAL(valueChanged(int)), SLOT(set(int)), Qt::DirectConnection);
-     else
-       dsb->setEnabled(false);
-     setSpinBoxRange<int, int>(prop, dsb);
-     return dsb;
-   }
+    template <> QWidget* buildEditor<float> (PropertyTpl<float>* prop)
+    {
+      QString toolTip (
+          "Python:\n"
+          "  gui.getFloatProperty(nodeName,\"%1\")\n"
+          "  gui.setFloatProperty(nodeName,\"%1\",float)");
+      QDoubleSpinBox* dsb = new QDoubleSpinBox;
+      dsb->setObjectName(prop->objectName());
+      dsb->setToolTip (toolTip.arg(prop->objectName()));
+      float value;
+      /* bool success = */ prop->get(value);
+      dsb->setValue(value);
+      if (prop->hasWriteAccess()) {
+        prop->connect(dsb, SIGNAL(valueChanged(double)), SLOT(set(double)), Qt::DirectConnection);
+        dsb->connect(prop, SIGNAL(valueChanged(double)), SLOT(setValue(double)), Qt::DirectConnection);
+        prop->dumpObjectInfo();
+        dsb->dumpObjectInfo();
+      } else
+        dsb->setEnabled(false);
+      setSpinBoxRange<float, double>(prop, dsb);
+      return dsb;
+    }
 
-   QWidget* buildVectorNEditor (const QString& name, int N, Property* prop)
-   {
-     QString toolTip (
-         "Python:\n"
-         "  gui.getVector3Property(nodeName,\"%1\")\n"
-         "  gui.setVector3Property(nodeName,\"%1\",int)");
-     QPushButton* button = new QPushButton("Set value");
-     button->setToolTip (toolTip.arg(name));
- 
-     /// Vector3 dialog should be opened in a different place
-     gui::VectorNDialog* cfgDialog = new gui::VectorNDialog(prop, N, name);
-     switch (N) {
-       case 2:
-         cfgDialog->setVector2FromProperty();
-         prop->connect (cfgDialog, SIGNAL(valueChanged (osgVector2)),
-             SLOT(set(osgVector2)), Qt::DirectConnection);
-         break;
-       case 3:
-         cfgDialog->setVector3FromProperty();
-         prop->connect (cfgDialog, SIGNAL(valueChanged (osgVector3)),
-             SLOT(set(osgVector3)), Qt::DirectConnection);
-         break;
-       case 4:
-         cfgDialog->setVector4FromProperty();
-         prop->connect (cfgDialog, SIGNAL(valueChanged (osgVector4)),
-             SLOT(set(osgVector4)), Qt::DirectConnection);
-         break;
-       default:
-         break;
-     }
-     cfgDialog->setProperty("propertyName", name);
-     cfgDialog->connect(button, SIGNAL(clicked()), SLOT(show()));
+    template <> QWidget* buildEditor<int          > (PropertyTpl<int          >* prop)
+    {
+      QString toolTip (
+          "Python:\n"
+          "  gui.getIntProperty(nodeName,\"%1\")\n"
+          "  gui.setIntProperty(nodeName,\"%1\",int)");
+      QSpinBox* dsb = new QSpinBox;
+      dsb->setToolTip (toolTip.arg(prop->objectName()));
+      int value;
+      /* bool success = */ prop->get(value);
+      dsb->setValue(value);
+      if (prop->hasWriteAccess())
+        prop->connect(dsb, SIGNAL(valueChanged(int)), SLOT(set(int)), Qt::DirectConnection);
+      else
+        dsb->setEnabled(false);
+      setSpinBoxRange<int, int>(prop, dsb);
+      return dsb;
+    }
 
-     return button;
-   }
+    QWidget* buildVectorNEditor (const QString& name, int N, Property* prop)
+    {
+      QString toolTip (
+          "Python:\n"
+          "  gui.getVector3Property(nodeName,\"%1\")\n"
+          "  gui.setVector3Property(nodeName,\"%1\",int)");
+      QPushButton* button = new QPushButton("Set value");
+      button->setToolTip (toolTip.arg(name));
 
-   template <> QWidget* buildEditor<osgVector2   > (PropertyTpl<osgVector2   >* prop)
-   {
-     if (!prop->hasWriteAccess()) return NULL;
-     return buildVectorNEditor (prop->objectName(), 2, prop);
-   }
+      /// Vector3 dialog should be opened in a different place
+      gui::VectorNDialog* cfgDialog = new gui::VectorNDialog(prop, N, name);
+      switch (N) {
+        case 2:
+          cfgDialog->setVector2FromProperty();
+          prop->connect (cfgDialog, SIGNAL(valueChanged (osgVector2)),
+              SLOT(set(osgVector2)), Qt::DirectConnection);
+          break;
+        case 3:
+          cfgDialog->setVector3FromProperty();
+          prop->connect (cfgDialog, SIGNAL(valueChanged (osgVector3)),
+              SLOT(set(osgVector3)), Qt::DirectConnection);
+          break;
+        case 4:
+          cfgDialog->setVector4FromProperty();
+          prop->connect (cfgDialog, SIGNAL(valueChanged (osgVector4)),
+              SLOT(set(osgVector4)), Qt::DirectConnection);
+          break;
+        default:
+          break;
+      }
+      cfgDialog->setProperty("propertyName", name);
+      cfgDialog->connect(button, SIGNAL(clicked()), SLOT(show()));
 
-   template <> QWidget* buildEditor<osgVector3   > (PropertyTpl<osgVector3   >* prop)
-   {
-     if (!prop->hasWriteAccess()) return NULL;
-     return buildVectorNEditor (prop->objectName(), 3, prop);
-   }
+      return button;
+    }
 
-   QWidget* buildColorEditor (QString& name, Property* prop)
-   {
-     QString toolTip (
-         "Python:\n"
-         "  gui.getColorProperty(nodeName,\"%1\")\n"
-         "  gui.setColorProperty(nodeName,\"%1\",int)");
-     QColor color;
-     /* bool success = */ prop->get(color);
- 
-     QPushButton* button = new QPushButton("Select color");
-     button->setToolTip (toolTip.arg(name));
-     // Set icon for current color value
- 
-     /// Color dialog should be opened in a different place
-     QColorDialog* colorDialog = new QColorDialog(color, button);
-     colorDialog->setOption(QColorDialog::ShowAlphaChannel, true);
- 
-     colorDialog->setProperty("propertyName", name);
-     colorDialog->connect(button, SIGNAL(clicked()), SLOT(open()));
-     prop->connect (colorDialog, SIGNAL(colorSelected(QColor)), SLOT(set(QColor)), Qt::DirectConnection);
- 
-     return button;
-   }
+    template <> QWidget* buildEditor<osgVector2   > (PropertyTpl<osgVector2   >* prop)
+    {
+      if (!prop->hasWriteAccess()) return NULL;
+      return buildVectorNEditor (prop->objectName(), 2, prop);
+    }
 
-   template <> QWidget* buildEditor<osgVector4   > (PropertyTpl<osgVector4   >* prop)
-   {
-     if (!prop->hasWriteAccess()) return NULL;
+    template <> QWidget* buildEditor<osgVector3   > (PropertyTpl<osgVector3   >* prop)
+    {
+      if (!prop->hasWriteAccess()) return NULL;
+      return buildVectorNEditor (prop->objectName(), 3, prop);
+    }
 
-     QString name (prop->objectName());
-     if (name.contains ("color", Qt::CaseInsensitive))
-       return buildColorEditor(name, prop);
+    QWidget* buildColorEditor (QString& name, Property* prop)
+    {
+      QString toolTip (
+          "Python:\n"
+          "  gui.getColorProperty(nodeName,\"%1\")\n"
+          "  gui.setColorProperty(nodeName,\"%1\",int)");
+      QColor color;
+      /* bool success = */ prop->get(color);
 
-     return buildVectorNEditor (name, 4, prop);
-   }
- 
-   template <> QWidget* buildEditor<Configuration> (PropertyTpl<Configuration>* prop)
-   {
-     if (!prop->hasWriteAccess()) return NULL;
- 
-     QString name (QString::fromStdString(prop->name()));
-     QPushButton* button = new QPushButton("Set transform");
- 
-     /// Color dialog should be opened in a different place
-     gui::ConfigurationDialog* cfgDialog =
-       new gui::ConfigurationDialog(prop, name);
- 
-     cfgDialog->setProperty("propertyName", name);
-     cfgDialog->connect(button, SIGNAL(clicked()), SLOT(show()));
-     prop->connect (cfgDialog, SIGNAL(configurationChanged (const Configuration&)),
-         SLOT(set(Configuration)), Qt::DirectConnection);
- 
-     return button;
-   }
+      QPushButton* button = new QPushButton("Select color");
+      button->setToolTip (toolTip.arg(name));
+      // Set icon for current color value
+
+      /// Color dialog should be opened in a different place
+      QColorDialog* colorDialog = new QColorDialog(color, button);
+      colorDialog->setOption(QColorDialog::ShowAlphaChannel, true);
+
+      colorDialog->setProperty("propertyName", name);
+      colorDialog->connect(button, SIGNAL(clicked()), SLOT(open()));
+      prop->connect (colorDialog, SIGNAL(colorSelected(QColor)), SLOT(set(QColor)), Qt::DirectConnection);
+
+      return button;
+    }
+
+    template <> QWidget* buildEditor<osgVector4   > (PropertyTpl<osgVector4   >* prop)
+    {
+      if (!prop->hasWriteAccess()) return NULL;
+
+      QString name (prop->objectName());
+      if (name.contains ("color", Qt::CaseInsensitive))
+        return buildColorEditor(name, prop);
+
+      return buildVectorNEditor (name, 4, prop);
+    }
+
+    template <> QWidget* buildEditor<Configuration> (PropertyTpl<Configuration>* prop)
+    {
+      if (!prop->hasWriteAccess()) return NULL;
+
+      QString name (QString::fromStdString(prop->name()));
+      QPushButton* button = new QPushButton("Set transform");
+
+      /// Color dialog should be opened in a different place
+      gui::ConfigurationDialog* cfgDialog =
+        new gui::ConfigurationDialog(prop, name);
+
+      cfgDialog->setProperty("propertyName", name);
+      cfgDialog->connect(button, SIGNAL(clicked()), SLOT(show()));
+      prop->connect (cfgDialog, SIGNAL(configurationChanged (const Configuration&)),
+          SLOT(set(Configuration)), Qt::DirectConnection);
+
+      return button;
+    }
   } // namespace details
 
   int MetaEnum::from_string (const std::string& s)

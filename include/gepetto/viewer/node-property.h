@@ -80,6 +80,16 @@ namespace viewer {
         bool set(const osgVector4    & v);
         bool set(const Configuration & v);
 
+        // Provide slots to convert from double to float.
+        bool set(const double& v);
+
+        // Provide slots to convert from QString to std::string.
+        bool set(const QString& v);
+
+        // Provide slots to convert from QColor to osgVector4.
+        bool set(const QColor& v);
+
+      public:
         bool get(void             );
         bool get(bool          & v);
         bool get(int           & v);
@@ -91,16 +101,29 @@ namespace viewer {
         bool get(Configuration & v);
 
         // Provide slots to convert from double to float.
-        bool set(const double& v);
         bool get(double      & v);
-
-        // Provide slots to convert from QString to std::string
-        bool set(const QString& v);
+        // Provide slots to convert from QString to std::string.
         bool get(QString      & v);
-
-        // Provide slots to convert from QColor to osgVector4
-        bool set(const QColor& v);
+        // Provide slots to convert from QColor to osgVector4.
         bool get(QColor      & v);
+
+      signals:
+        void valueChanged(      void             );
+        void valueChanged(const bool          & v);
+        void valueChanged(const int           & v);
+        void valueChanged(const float         & v);
+        void valueChanged(const std::string   & v);
+        void valueChanged(const osgVector2    & v);
+        void valueChanged(const osgVector3    & v);
+        void valueChanged(const osgVector4    & v);
+        void valueChanged(const Configuration & v);
+
+        // Provide slots to convert from double to float.
+        void valueChanged(const double& v);
+        // Provide slots to convert from QString to std::string
+        void valueChanged(const QString& v);
+        // Provide slots to convert from QColor to osgVector4
+        void valueChanged(const QColor& v);
 
       public:
         virtual bool hasReadAccess () const = 0;
