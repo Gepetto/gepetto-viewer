@@ -324,11 +324,10 @@ namespace viewer {
     dirty_ = true;
   }
 
-  void Node::applyConfiguration (const osgVector3 & position, const osgQuat & quat)
+  void Node::applyConfiguration (const Configuration & cfg)
   {
-    if (!position.valid() || !quat.asVec4().valid()) return;
-    M_.position = position;
-    M_.quat     = quat;
+    if (!cfg.valid()) return;
+    M_ = cfg;
 
     updateTransform ();
   }

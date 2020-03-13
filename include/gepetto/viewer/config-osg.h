@@ -165,6 +165,11 @@ namespace viewer {
         {
           return position != other.position || quat != other.quat;
         }
+
+        bool valid() const
+        {
+          return position.valid() && quat.asVec4().valid();
+        }
     };
     
 } /* namespace viewer */

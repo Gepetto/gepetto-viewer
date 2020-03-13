@@ -122,14 +122,14 @@ namespace viewer {
         
         /** Apply a new global configuration
          */
-        void applyConfiguration (const osgVector3 & position, const osgQuat & quat);
+        inline void applyConfiguration (const osgVector3 & position, const osgQuat & quat)
+        {
+          applyConfiguration (Configuration(position, quat));
+        }
 
         /** Apply a new global configuration
          */
-        inline void applyConfiguration (const Configuration & cfg)
-        {
-          applyConfiguration (cfg.position, cfg.quat);
-        }
+        void applyConfiguration (const Configuration & cfg);
         
 	/** Set Static transformation
          */
