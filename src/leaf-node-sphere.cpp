@@ -31,9 +31,13 @@ namespace viewer {
         /* Allow transparency */
         geode_ptr_->getOrCreateStateSet()->setMode(GL_BLEND, ::osg::StateAttribute::ON);
 
-        addProperty(FloatProperty::create("Radius",
-              FloatProperty::getterFromMemberFunction(this, &LeafNodeSphere::getRadius),
-              FloatProperty::setterFromMemberFunction(this, &LeafNodeSphere::setRadius)));
+        RangedFloatProperty::Ptr_t radiusProp =
+            RangedFloatProperty::create("Radius", this,
+              &LeafNodeSphere::getRadius, &LeafNodeSphere::setRadius);
+        radiusProp->min = 0.f;
+        radiusProp->step = 0.1f;
+        radiusProp->adaptiveDecimal = true;
+        addProperty(radiusProp);
     }
     
     LeafNodeSphere::LeafNodeSphere(const std::string& name, const float& radius) :
