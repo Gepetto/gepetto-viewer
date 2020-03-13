@@ -25,71 +25,114 @@ class QDoubleSpinBox;
 class QLineEdit;
 
 namespace gepetto {
-  namespace gui {
-    class VectorNDialog : public QDialog
-    {
-      Q_OBJECT
+namespace gui {
 
-      public:
-        VectorNDialog (viewer::Property* prop, int N,
-            const QString& name, QWidget *parent = 0);
+typedef viewer::Configuration Configuration;
+/*
+ * README The MOC tool from Qt does not expand macros. Thus, the code in comment below
+ * does not work because the classes are not mocced.
+ * The remaining of the file, after this comment, correspond to the macro
+ * expansion at the time of writing.
 
-        void setVector2FromProperty ();
-        void setVector3FromProperty ();
-        void setVector4FromProperty ();
+#define DECLARE_PROPERTY_EDITOR(Name, Type)                  \
+  class Name : public QDialog {                              \
+    Q_OBJECT                                                 \
+                                                             \
+   public:                                                   \
+    Name(viewer::Property* prop, QWidget* parent = 0);       \
+                                                             \
+    void setValueFromProperty(viewer::Property* prop);       \
+                                                             \
+   signals:                                                  \
+    void valueChanged(const Type& config);                   \
+                                                             \
+   public slots:                                             \
+    void set(const Type& v);                                 \
+                                                             \
+   private slots:                                            \
+    void updateValue();                                      \
+                                                             \
+   private:                                                  \
+    void setPyValue();                                       \
+                                                             \
+    QVector<QDoubleSpinBox*> spinBoxes;                      \
+    QLineEdit* pyValue;                                      \
+  }
 
-      signals:
-        void valueChanged (const osgVector2& config);
-        void valueChanged (const osgVector3& config);
-        void valueChanged (const osgVector4& config);
+DECLARE_PROPERTY_EDITOR(Vector2Dialog, osgVector2);
+DECLARE_PROPERTY_EDITOR(Vector3Dialog, osgVector3);
+DECLARE_PROPERTY_EDITOR(Vector4Dialog, osgVector4);
+DECLARE_PROPERTY_EDITOR(ConfigurationDialog, Configuration);
 
-      private slots:
-        void updateValue2 ();
-        void updateValue3 ();
-        void updateValue4 ();
+#undef DECLARE_PROPERTY_EDITOR
+*/
 
-      protected:
-        void showEvent (QShowEvent* event);
+class Vector2Dialog : public QDialog {
+  Q_OBJECT
+public:
+  Vector2Dialog(viewer::Property* prop, QWidget* parent = 0);
+  void setValueFromProperty(viewer::Property* prop);
+signals:
+  void valueChanged(const osgVector2& config);
+public slots:
+  void set(const osgVector2& v);
+private slots:
+  void updateValue();
+private:
+  void setPyValue();
+  QVector<QDoubleSpinBox*> spinBoxes;
+  QLineEdit* pyValue;
+};
+class Vector3Dialog : public QDialog {
+  Q_OBJECT
+public:
+  Vector3Dialog(viewer::Property* prop, QWidget* parent = 0);
+  void setValueFromProperty(viewer::Property* prop);
+signals:
+  void valueChanged(const osgVector3& config);
+public slots:
+  void set(const osgVector3& v);
+private slots:
+  void updateValue();
+private:
+  void setPyValue();
+  QVector<QDoubleSpinBox*> spinBoxes;
+  QLineEdit* pyValue;
+};
+class Vector4Dialog : public QDialog {
+  Q_OBJECT
+public:
+  Vector4Dialog(viewer::Property* prop, QWidget* parent = 0);
+  void setValueFromProperty(viewer::Property* prop);
+signals:
+  void valueChanged(const osgVector4& config);
+public slots:
+  void set(const osgVector4& v);
+private slots:
+  void updateValue();
+private:
+  void setPyValue();
+  QVector<QDoubleSpinBox*> spinBoxes;
+  QLineEdit* pyValue;
+};
+class ConfigurationDialog : public QDialog {
+  Q_OBJECT
+public:
+  ConfigurationDialog(viewer::Property* prop, QWidget* parent = 0);
+  void setValueFromProperty(viewer::Property* prop);
+signals:
+  void valueChanged(const Configuration& config);
+public slots:
+  void set(const Configuration& v);
+private slots:
+  void updateValue();
+private:
+  void setPyValue();
+  QVector<QDoubleSpinBox*> spinBoxes;
+  QLineEdit* pyValue;
+};
 
-      private:
-        void setPyValue ();
+}  // namespace gui
+}  // namespace gepetto
 
-        viewer::Property* prop;
-        QVector<QDoubleSpinBox*> spinBoxes;
-        QLineEdit* pyValue;
-    };
-
-    class ConfigurationDialog : public QDialog
-    {
-      Q_OBJECT
-
-      public:
-        typedef viewer::Configuration Configuration;
-
-        ConfigurationDialog (viewer::Property* prop,
-            const QString& name, QWidget *parent = 0);
-
-      signals:
-        void configurationChanged (const Configuration& config);
-
-      private slots:
-        void updateConfig ();
-
-      protected:
-        void showEvent (QShowEvent* event);
-
-      private:
-        void setConfigFromProperty ();
-        void setPyValue ();
-
-        viewer::Property* prop;
-        Configuration cfg;
-
-        QDoubleSpinBox *x,*y,*z,
-                       *roll,*pitch,*yaw;
-        QLineEdit* pyValue;
-    };
-  } // namespace gui
-} // namespace gepetto
-
-#endif // GEPETTO_GUI_CONFIGURATION_DIALOG_HH
+#endif  // GEPETTO_GUI_CONFIGURATION_DIALOG_HH

@@ -155,7 +155,7 @@ namespace viewer {
         "  gui.callVoidProperty(nodeName,\"%1\")");
     QPushButton* button = new QPushButton(objectName());
     button->setToolTip (toolTip.arg(objectName()));
-    connect(button, SIGNAL(clicked()), SLOT(get(void)));
+    connect(button, SIGNAL(clicked()), SLOT(set(void)));
     return button;
   }
 
@@ -185,9 +185,10 @@ namespace viewer {
       bool value;
       /* bool success = */ prop->get(value);
       cb->setChecked(value);
-      if (prop->hasWriteAccess())
+      if (prop->hasWriteAccess()) {
         prop->connect(cb, SIGNAL(toggled(bool)), SLOT(set(bool)), Qt::DirectConnection);
-      else
+        cb->connect(prop, SIGNAL(valueChanged(bool)), SLOT(setChecked(bool)), Qt::DirectConnection);
+      } else
         cb->setEnabled(false);
       return cb;
     }
@@ -203,9 +204,10 @@ namespace viewer {
       std::string value;
       /* bool success = */ prop->get(value);
       le->setText(QString::fromStdString(value));
-      if (prop->hasWriteAccess())
+      if (prop->hasWriteAccess()) {
         prop->connect(le, SIGNAL(textChanged(QString)), SLOT(set(QString)), Qt::DirectConnection);
-      else
+        le->connect(prop, SIGNAL(valueChanged(QString)), SLOT(setText(QString)), Qt::DirectConnection);
+      } else
         le->setReadOnly(true);
       return le;
     }
@@ -225,8 +227,6 @@ namespace viewer {
       if (prop->hasWriteAccess()) {
         prop->connect(dsb, SIGNAL(valueChanged(double)), SLOT(set(double)), Qt::DirectConnection);
         dsb->connect(prop, SIGNAL(valueChanged(double)), SLOT(setValue(double)), Qt::DirectConnection);
-        prop->dumpObjectInfo();
-        dsb->dumpObjectInfo();
       } else
         dsb->setEnabled(false);
       setSpinBoxRange<float, double>(prop, dsb);
@@ -244,17 +244,25 @@ namespace viewer {
       int value;
       /* bool success = */ prop->get(value);
       dsb->setValue(value);
-      if (prop->hasWriteAccess())
+      if (prop->hasWriteAccess()) {
         prop->connect(dsb, SIGNAL(valueChanged(int)), SLOT(set(int)), Qt::DirectConnection);
-      else
+        dsb->connect(prop, SIGNAL(valueChanged(int)), SLOT(setValue(int)), Qt::DirectConnection);
+      } else
         dsb->setEnabled(false);
       setSpinBoxRange<int, int>(prop, dsb);
       return dsb;
     }
 
+    template<typename VectorType> struct traits { };
+    template<> struct traits <osgVector2> { typedef gui::Vector2Dialog Dialog_t; };
+    template<> struct traits <osgVector3> { typedef gui::Vector3Dialog Dialog_t; };
+    template<> struct traits <osgVector4> { typedef gui::Vector4Dialog Dialog_t; };
+
+    template<typename VectorType>
     QWidget* buildVectorNEditor (const QString& name, int N, Property* prop)
     {
-      QString toolTip (
+      typedef typename traits<VectorType>::Dialog_t Dialog_t;
+        QString toolTip (
           "Python:\n"
           "  gui.getVector3Property(nodeName,\"%1\")\n"
           "  gui.setVector3Property(nodeName,\"%1\",int)");
@@ -262,21 +270,25 @@ namespace viewer {
       button->setToolTip (toolTip.arg(name));
 
       /// Vector3 dialog should be opened in a different place
-      gui::VectorNDialog* cfgDialog = new gui::VectorNDialog(prop, N, name);
+      Dialog_t* cfgDialog = new Dialog_t(prop);
+      cfgDialog->setValueFromProperty(prop);
       switch (N) {
         case 2:
-          cfgDialog->setVector2FromProperty();
           prop->connect (cfgDialog, SIGNAL(valueChanged (osgVector2)),
+              SLOT(set(osgVector2)), Qt::DirectConnection);
+          cfgDialog->connect (prop, SIGNAL(valueChanged (osgVector2)),
               SLOT(set(osgVector2)), Qt::DirectConnection);
           break;
         case 3:
-          cfgDialog->setVector3FromProperty();
           prop->connect (cfgDialog, SIGNAL(valueChanged (osgVector3)),
+              SLOT(set(osgVector3)), Qt::DirectConnection);
+          cfgDialog->connect (prop, SIGNAL(valueChanged (osgVector3)),
               SLOT(set(osgVector3)), Qt::DirectConnection);
           break;
         case 4:
-          cfgDialog->setVector4FromProperty();
           prop->connect (cfgDialog, SIGNAL(valueChanged (osgVector4)),
+              SLOT(set(osgVector4)), Qt::DirectConnection);
+          cfgDialog->connect (prop, SIGNAL(valueChanged (osgVector4)),
               SLOT(set(osgVector4)), Qt::DirectConnection);
           break;
         default:
@@ -291,13 +303,13 @@ namespace viewer {
     template <> QWidget* buildEditor<osgVector2   > (PropertyTpl<osgVector2   >* prop)
     {
       if (!prop->hasWriteAccess()) return NULL;
-      return buildVectorNEditor (prop->objectName(), 2, prop);
+      return buildVectorNEditor<osgVector2> (prop->objectName(), 2, prop);
     }
 
     template <> QWidget* buildEditor<osgVector3   > (PropertyTpl<osgVector3   >* prop)
     {
       if (!prop->hasWriteAccess()) return NULL;
-      return buildVectorNEditor (prop->objectName(), 3, prop);
+      return buildVectorNEditor<osgVector3> (prop->objectName(), 3, prop);
     }
 
     QWidget* buildColorEditor (QString& name, Property* prop)
@@ -319,7 +331,15 @@ namespace viewer {
 
       colorDialog->setProperty("propertyName", name);
       colorDialog->connect(button, SIGNAL(clicked()), SLOT(open()));
+
       prop->connect (colorDialog, SIGNAL(colorSelected(QColor)), SLOT(set(QColor)), Qt::DirectConnection);
+#if __cplusplus >= 201103L
+      QObject::connect (prop,
+          QOverload<const QColor &>::of(&PropertyTpl<osgVector4>::valueChanged),
+            colorDialog, &QColorDialog::setCurrentColor,
+          //SLOT(set(QColor)),
+          Qt::DirectConnection);
+#endif
 
       return button;
     }
@@ -332,24 +352,28 @@ namespace viewer {
       if (name.contains ("color", Qt::CaseInsensitive))
         return buildColorEditor(name, prop);
 
-      return buildVectorNEditor (name, 4, prop);
+      return buildVectorNEditor<osgVector4> (prop->objectName(), 4, prop);
     }
 
     template <> QWidget* buildEditor<Configuration> (PropertyTpl<Configuration>* prop)
     {
+      // We could use buildVectorNEditor. The only bad point is that tooltip
+      // which will say setVector3Property instead of setConfigurationProperty...
       if (!prop->hasWriteAccess()) return NULL;
 
       QString name (QString::fromStdString(prop->name()));
       QPushButton* button = new QPushButton("Set transform");
 
       /// Color dialog should be opened in a different place
-      gui::ConfigurationDialog* cfgDialog =
-        new gui::ConfigurationDialog(prop, name);
+      gui::ConfigurationDialog* cfgDialog = new gui::ConfigurationDialog(prop);
+      cfgDialog->setValueFromProperty(prop);
+      prop->connect (cfgDialog, SIGNAL(valueChanged (Configuration)),
+          SLOT(set(Configuration)), Qt::DirectConnection);
+      cfgDialog->connect (prop, SIGNAL(valueChanged (Configuration)),
+          SLOT(set(Configuration)), Qt::DirectConnection);
 
       cfgDialog->setProperty("propertyName", name);
       cfgDialog->connect(button, SIGNAL(clicked()), SLOT(show()));
-      prop->connect (cfgDialog, SIGNAL(configurationChanged (const Configuration&)),
-          SLOT(set(Configuration)), Qt::DirectConnection);
 
       return button;
     }
