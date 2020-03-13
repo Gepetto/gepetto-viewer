@@ -403,7 +403,7 @@ namespace viewer {
         T value;
 
       protected:
-        bool impl_set(const T& v) { value = v; if (callback_) callback_(); return true; }
+        bool impl_set(const T& v) { bool c (callback_ && value != v); value = v; if (c) callback_(); return true; }
         bool impl_get(      T& v) { v = value; return true; }
 
         Callback_t callback_;
