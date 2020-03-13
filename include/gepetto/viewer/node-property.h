@@ -37,6 +37,7 @@ namespace viewer {
     typedef std::map<std::string, PropertyPtr_t> PropertyMap_t;
     class Property;
     template <typename T> class PropertyTpl;
+    template <typename T, typename RangeT = T> class RangedPropertyTpl;
 
     /// \cond
     namespace details {
@@ -53,15 +54,15 @@ namespace viewer {
       template <> struct property_type<osgVector4   > { static inline std::string to_string () { return "osgVector4"   ; } };
       template <> struct property_type<Configuration> { static inline std::string to_string () { return "Configuration"; } };
 
-      template <typename T> QWidget* buildEditor (PropertyTpl<T>* property) { return NULL; }
-      template <> QWidget* buildEditor<bool         > (PropertyTpl<bool         >* property);
-      template <> QWidget* buildEditor<int          > (PropertyTpl<int          >* property);
-      template <> QWidget* buildEditor<float        > (PropertyTpl<float        >* property);
-      template <> QWidget* buildEditor<std::string  > (PropertyTpl<std::string  >* property);
-      template <> QWidget* buildEditor<osgVector2   > (PropertyTpl<osgVector2   >* property);
-      template <> QWidget* buildEditor<osgVector3   > (PropertyTpl<osgVector3   >* property);
-      template <> QWidget* buildEditor<osgVector4   > (PropertyTpl<osgVector4   >* property);
-      template <> QWidget* buildEditor<Configuration> (PropertyTpl<Configuration>* property);
+      template <typename T> QWidget* buildEditor (Property* property) { return NULL; }
+      template <> QWidget* buildEditor<bool         > (Property* property);
+      template <> QWidget* buildEditor<int          > (Property* property);
+      template <> QWidget* buildEditor<float        > (Property* property);
+      template <> QWidget* buildEditor<std::string  > (Property* property);
+      template <> QWidget* buildEditor<osgVector2   > (Property* property);
+      template <> QWidget* buildEditor<osgVector3   > (Property* property);
+      template <> QWidget* buildEditor<osgVector4   > (Property* property);
+      template <> QWidget* buildEditor<Configuration> (Property* property);
     }
     /// \endcond
 
@@ -280,7 +281,7 @@ namespace viewer {
 
         virtual QWidget* guiEditor ()
         {
-          return details::buildEditor(this);
+          return details::buildEditor<T>(this);
         }
 
       protected:
@@ -322,7 +323,7 @@ namespace viewer {
       { min = minimum; max = maximum; step = _step;}
     };
 
-    template <typename T, typename RangeT = T>
+    template <typename T, typename RangeT>
     class RangedPropertyTpl : public PropertyTpl<T>, public Range<RangeT> {
       public:
         typedef boost::function<void(const T&)> Setter_t;

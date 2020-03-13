@@ -174,7 +174,7 @@ namespace viewer {
       }
     }
 
-    template <> QWidget* buildEditor<bool         > (PropertyTpl<bool         >* prop)
+    template <> QWidget* buildEditor<bool         > (Property* prop)
     {
       QString toolTip (
           "Python:\n"
@@ -193,7 +193,7 @@ namespace viewer {
       return cb;
     }
 
-    template <> QWidget* buildEditor<std::string  > (PropertyTpl<std::string  >* prop)
+    template <> QWidget* buildEditor<std::string  > (Property* prop)
     {
       QString toolTip (
           "Python:\n"
@@ -212,7 +212,7 @@ namespace viewer {
       return le;
     }
 
-    template <> QWidget* buildEditor<float> (PropertyTpl<float>* prop)
+    template <> QWidget* buildEditor<float> (Property* prop)
     {
       QString toolTip (
           "Python:\n"
@@ -233,7 +233,7 @@ namespace viewer {
       return dsb;
     }
 
-    template <> QWidget* buildEditor<int          > (PropertyTpl<int          >* prop)
+    template <> QWidget* buildEditor<int          > (Property* prop)
     {
       QString toolTip (
           "Python:\n"
@@ -300,13 +300,13 @@ namespace viewer {
       return button;
     }
 
-    template <> QWidget* buildEditor<osgVector2   > (PropertyTpl<osgVector2   >* prop)
+    template <> QWidget* buildEditor<osgVector2   > (Property* prop)
     {
       if (!prop->hasWriteAccess()) return NULL;
       return buildVectorNEditor<osgVector2> (prop->objectName(), 2, prop);
     }
 
-    template <> QWidget* buildEditor<osgVector3   > (PropertyTpl<osgVector3   >* prop)
+    template <> QWidget* buildEditor<osgVector3   > (Property* prop)
     {
       if (!prop->hasWriteAccess()) return NULL;
       return buildVectorNEditor<osgVector3> (prop->objectName(), 3, prop);
@@ -328,14 +328,15 @@ namespace viewer {
       /// Color dialog should be opened in a different place
       QColorDialog* colorDialog = new QColorDialog(color, button);
       colorDialog->setOption(QColorDialog::ShowAlphaChannel, true);
+      colorDialog->setOption(QColorDialog::NoButtons, true);
 
       colorDialog->setProperty("propertyName", name);
       colorDialog->connect(button, SIGNAL(clicked()), SLOT(open()));
 
-      prop->connect (colorDialog, SIGNAL(colorSelected(QColor)), SLOT(set(QColor)), Qt::DirectConnection);
+      prop->connect (colorDialog, SIGNAL(currentColorChanged(QColor)), SLOT(set(QColor)), Qt::DirectConnection);
 #if __cplusplus >= 201103L
       QObject::connect (prop,
-          QOverload<const QColor &>::of(&PropertyTpl<osgVector4>::valueChanged),
+          QOverload<const QColor &>::of(&Property::valueChanged),
             colorDialog, &QColorDialog::setCurrentColor,
           //SLOT(set(QColor)),
           Qt::DirectConnection);
@@ -344,7 +345,7 @@ namespace viewer {
       return button;
     }
 
-    template <> QWidget* buildEditor<osgVector4   > (PropertyTpl<osgVector4   >* prop)
+    template <> QWidget* buildEditor<osgVector4   > (Property* prop)
     {
       if (!prop->hasWriteAccess()) return NULL;
 
@@ -355,7 +356,7 @@ namespace viewer {
       return buildVectorNEditor<osgVector4> (prop->objectName(), 4, prop);
     }
 
-    template <> QWidget* buildEditor<Configuration> (PropertyTpl<Configuration>* prop)
+    template <> QWidget* buildEditor<Configuration> (Property* prop)
     {
       // We could use buildVectorNEditor. The only bad point is that tooltip
       // which will say setVector3Property instead of setConfigurationProperty...
@@ -368,9 +369,9 @@ namespace viewer {
       gui::ConfigurationDialog* cfgDialog = new gui::ConfigurationDialog(prop);
       cfgDialog->setValueFromProperty(prop);
       prop->connect (cfgDialog, SIGNAL(valueChanged (Configuration)),
-          SLOT(set(Configuration)), Qt::DirectConnection);
+          SLOT(set(Configuration)));
       cfgDialog->connect (prop, SIGNAL(valueChanged (Configuration)),
-          SLOT(set(Configuration)), Qt::DirectConnection);
+          SLOT(set(Configuration)));
 
       cfgDialog->setProperty("propertyName", name);
       cfgDialog->connect(button, SIGNAL(clicked()), SLOT(show()));
@@ -448,7 +449,7 @@ namespace viewer {
     const MetaEnum& me = *metaEnum();
     for (std::size_t i = 0; i < me.values.size(); ++i)
       if (me.values[i] == value)
-        return IntProperty::set(value);
+        return IntProperty::impl_set(value);
     std::ostringstream oss;
     oss << "Invalid value " << value << " for enum " << me.type << ". "
       "Possible values are ";
@@ -463,7 +464,7 @@ namespace viewer {
     const MetaEnum& me = *metaEnum();
     for (std::size_t i = 0; i < me.names.size(); ++i)
       if (me.names[i] == value)
-        return IntProperty::set(me.values[i]);
+        return IntProperty::impl_set(me.values[i]);
     std::ostringstream oss;
     oss << "Invalid value " << value << " for enum " << me.type << ". "
       "Possible values are ";
@@ -481,7 +482,7 @@ namespace viewer {
   bool EnumProperty::impl_get(std::string& str)
   {
     int value;
-    if (!IntProperty::get(value)) return false;
+    if (!IntProperty::impl_get(value)) return false;
     const MetaEnum& me = *metaEnum();
     for (std::size_t i = 0; i < me.names.size(); ++i)
       if (me.values[i] == value) {
@@ -509,9 +510,10 @@ namespace viewer {
     for (std::size_t i = 0; i < metaEnum_->values.size(); ++i)
       cb->addItem(metaEnum_->names[i].c_str(), metaEnum_->values[i]);
     cb->setCurrentText(QString::fromStdString(value));
-    if (hasWriteAccess())
-      connect(cb, SIGNAL(currentTextChanged(QString)), SLOT(set(QString)));
-    else
+    if (hasWriteAccess()) {
+      connect(cb, SIGNAL(currentTextChanged(QString)), SLOT(set(QString)), Qt::DirectConnection);
+      cb->connect(this, SIGNAL(valueChanged(QString)), SLOT(setCurrentText(QString)), Qt::DirectConnection);
+    } else
       cb->setEnabled(false);
     return cb;
   }

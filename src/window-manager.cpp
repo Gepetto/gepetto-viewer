@@ -301,6 +301,7 @@ namespace viewer {
         for (int j = 0; j < 3; ++j)
           if (textActive_[i][j]) return;
       asGroup()->removeChild(hud_camera_);
+      setDirty();
       return;
     }
 
@@ -318,6 +319,7 @@ namespace viewer {
 
       asGroup()->addChild(hud_camera_);
     }
+    setDirty();
   }
 
   void WindowManager::applyBackgroundColor()
