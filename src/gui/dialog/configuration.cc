@@ -186,7 +186,11 @@ namespace gepetto {
                                                                                \
     void Name::set (const Type& v)                                             \
     {                                                                          \
+      foreach (QDoubleSpinBox* sb, spinBoxes)                                  \
+        sb->blockSignals(true);                                                \
       setValues(v, spinBoxes);                                                 \
+      foreach (QDoubleSpinBox* sb, spinBoxes)                                  \
+        sb->blockSignals(false);                                               \
     }                                                                          \
                                                                                \
     void Name::setPyValue ()                                                   \
