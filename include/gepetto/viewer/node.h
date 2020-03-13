@@ -34,9 +34,9 @@ namespace viewer {
 
         /** PositionAttitudeTransform related to the global configuration */
         osg::MatrixTransformRefPtr transform_ptr_;
-        osgVector3 scale_;
+        RangedStoredPropertyTpl<osgVector3, float> scale_;
         osg::Matrixf Ms_;
-        Configuration M_;
+        StoredPropertyTpl<Configuration> M_;
         
         /** Associated switch node */
         /** TODO: The use of multiswitch may be better */
@@ -129,7 +129,7 @@ namespace viewer {
 
         /** Apply a new global configuration
          */
-        void applyConfiguration (const Configuration & cfg);
+        void applyConfiguration (const Configuration & cfg) { M_.set(cfg); }
         
 	/** Set Static transformation
          */
@@ -172,14 +172,14 @@ namespace viewer {
         }
         
         /** Set scale value of the OSG object */
-        virtual void setScale (float scale);
+        void setScale (float scale) { setScale(osgVector3(scale,scale,scale)); }
 
         /** Set scales value of the OSG object */
-        virtual void setScale (const osgVector3 & scale);
+        void setScale (const osgVector3 & scale) { scale_.set(scale); }
 
 	/** Get scale
         */
-        osgVector3 getScale() const;
+        osgVector3 getScale() const { return scale_.value; }
 
         /** Set the color of the object */
         virtual void setColor (const osgVector4& color) = 0;

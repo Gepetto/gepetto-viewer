@@ -34,7 +34,6 @@
 namespace gepetto {
 namespace viewer {
 
-    typedef std::map<std::string, PropertyPtr_t> PropertyMap_t;
     class Property;
     template <typename T> class PropertyTpl;
     template <typename T, typename RangeT = T> class RangedPropertyTpl;
@@ -379,6 +378,7 @@ namespace viewer {
     template <typename T>
     class StoredPropertyTpl : public Property {
       public:
+        typedef boost::function<void()> Callback_t;
         typedef shared_ptr<StoredPropertyTpl> Ptr_t;
 
         static Ptr_t create (const std::string& name) { return Ptr_t(new StoredPropertyTpl(name)); }
@@ -397,11 +397,16 @@ namespace viewer {
           return details::buildEditor<T>(this);
         }
 
+        const Callback_t& callback () const { return callback_; }
+        void callback (const Callback_t& s) { callback_ = s; }
+
         T value;
 
       protected:
-        bool impl_set(const T& v) { value = v; return true; }
+        bool impl_set(const T& v) { value = v; if (callback_) callback_(); return true; }
         bool impl_get(      T& v) { v = value; return true; }
+
+        Callback_t callback_;
     };
 
     template <typename T, typename RangeT>
@@ -484,21 +489,41 @@ namespace viewer {
 
     class Properties
     {
+      public:
+        struct Wrapper
+        {
+          Property* p;
+          PropertyPtr_t lock;
+          Wrapper (Property* p) : p(p) {}
+          Wrapper (PropertyPtr_t p) : p(p.get()), lock(p) {}
+          Property* operator->() const { return p; }
+        };
+        typedef std::map<std::string, Wrapper> PropertyMap_t;
+
       protected:
         PropertyMap_t properties_;
-
-        const PropertyPtr_t& property(const std::string& name) const;
 
         /// Called when a property is modified.
         virtual void setDirty (bool dirty=true) = 0;
 
       public:
+        /// Access a property
+        /// \note do not use this to set the property value as it won't set
+        /// the current node as dirty.
+        Property* property(const std::string& name) const;
+
+        bool callVoidProperty(const std::string& name) const
+        {
+          return property(name)->get();
+        }
+
         template <typename T>
         bool getProperty(const std::string& name, T& value) const
         {
           return property(name)->get(value);
         }
 
+        /// Set a property and set this object as dirty.
         template <typename T>
         bool setProperty(const std::string& name, const T& value)
         {
@@ -514,9 +539,17 @@ namespace viewer {
           return properties_;
         }
 
+        /// Add a property and take ownership.
         void addProperty(const PropertyPtr_t& prop);
 
+        /// Add a property and take ownership.
         void addProperty(const std::string& name, const PropertyPtr_t& prop);
+
+        /// Add a property and leave ownership.
+        void addProperty(Property* prop);
+
+        /// Add a property and leave ownership.
+        void addProperty(const std::string& name, Property* prop);
 
         QWidget* guiEditor ();
     };

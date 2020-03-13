@@ -1168,10 +1168,10 @@ namespace viewer {
   std::vector<std::string> WindowsManager::getPropertyNames(const std::string& nodeName) const
   {
     NodePtr_t node = getNode(nodeName, true);
-    const PropertyMap_t map = node->properties();
+    const Properties::PropertyMap_t& map = node->properties();
     std::vector<std::string> names;
     names.reserve(map.size());
-    for (PropertyMap_t::const_iterator _prop = map.begin(); _prop != map.end(); ++_prop)
+    for (Properties::PropertyMap_t::const_iterator _prop = map.begin(); _prop != map.end(); ++_prop)
       names.push_back(_prop->first);
     return names;
   }
@@ -1179,10 +1179,10 @@ namespace viewer {
   std::vector<std::string> WindowsManager::getPropertyTypes(const std::string& nodeName) const
   {
     NodePtr_t node = getNode(nodeName, true);
-    const PropertyMap_t map = node->properties();
+    const Properties::PropertyMap_t& map = node->properties();
     std::vector<std::string> types;
     types.reserve(map.size());
-    for (PropertyMap_t::const_iterator _prop = map.begin(); _prop != map.end(); ++_prop)
+    for (Properties::PropertyMap_t::const_iterator _prop = map.begin(); _prop != map.end(); ++_prop)
       types.push_back(_prop->second->type());
     return types;
   }
@@ -1240,8 +1240,7 @@ namespace viewer {
     ScopedLock lock(osgFrameMutex());
     if (!node->hasProperty(propName))
       throw std::invalid_argument ("Could not find the property");
-    PropertyPtr_t voidProp = node->properties().find(propName)->second;
-    voidProp->get();
+    node->callVoidProperty(propName);
   }
 } /* namespace viewer */
 

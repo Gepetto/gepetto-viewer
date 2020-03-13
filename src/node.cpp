@@ -215,7 +215,13 @@ namespace viewer {
        connected to the parent <- switch_node_ptr_                           <- auto_transform_ptr_ <- connection of children here
        <- normal_node_ptr_
     */
-    scale_ = osgVector3 (1, 1, 1);
+    scale_.value = osgVector3 (1, 1, 1);
+    scale_.min = 0.f;
+    scale_.step = 0.1f;
+    scale_.adaptiveDecimal = true;
+    scale_.callback(boost::bind(&Node::updateTransform, this));
+
+    M_.callback(scale_.callback());
 
     switch_node_ptr_ = new ::osg::Group;
     hl_switch_node_ptr_ = new ::osg::Group;
@@ -288,28 +294,24 @@ namespace viewer {
     alphaProp->setRange(0.f, 1.f, 0.1f);
     addProperty(alphaProp);
 
-    RangedVector3Property::Ptr_t scaleProp =
-        RangedVector3Property::create("Scale", this, &Node::getScale, &Node::setScale);
-    scaleProp->min = 0.f;
-    scaleProp->step = 0.1f;
-    scaleProp->adaptiveDecimal = true;
-    addProperty(scaleProp);
-
-    addProperty(
-        ConfigurationProperty::create("Transform", this,
-          &Node::getGlobalTransform, &Node::applyConfiguration));
+    addProperty(&scale_);
+    addProperty(&M_);
   }
 
   Node::Node (const std::string& name) :
     id_name_(name),
-    dirty_ (true)
+    dirty_ (true),
+    scale_ ("Scale"),
+    M_ ("Transform")
   {
     init();
   }
 
   Node::Node (const Node &other) :
     id_name_(other.getID()),
-    dirty_ (true)
+    dirty_ (true),
+    scale_ ("Scale"),
+    M_ ("Transform")
   {
     init();
   }
@@ -317,19 +319,11 @@ namespace viewer {
   void Node::updateTransform ()
   {
     osg::Matrixf M;
-    M.setRotate (M_.quat);
-    M.setTrans  (M_.position);
+    M.setRotate (M_.value.quat);
+    M.setTrans  (M_.value.position);
 
-    transform_ptr_->setMatrix (::osg::Matrix::scale(scale_)*Ms_*M);
+    transform_ptr_->setMatrix (::osg::Matrix::scale(scale_.value)*Ms_*M);
     dirty_ = true;
-  }
-
-  void Node::applyConfiguration (const Configuration & cfg)
-  {
-    if (!cfg.valid()) return;
-    M_ = cfg;
-
-    updateTransform ();
   }
 
   void Node::setStaticTransform(const osgVector3 & position, const osgQuat & quat)
@@ -352,23 +346,6 @@ namespace viewer {
     osgQuat q, so; osgVector3 t, s;
     Ms_.decompose(t, q, s, so);
     return t;
-  }
-
-  osgVector3 Node::getScale() const
-  {
-    return scale_;
-  }
-
-  void Node::setScale(float scale)
-  {
-    setScale (osgVector3(scale,scale,scale));
-  }
-
-  void Node::setScale(const osgVector3 &scale)
-  {
-    scale_ = scale;
-
-    updateTransform ();
   }
 
   void Node::setVisibilityMode (const VisibilityMode& mode)
@@ -667,7 +644,7 @@ namespace viewer {
   
   const Configuration& Node::getGlobalTransform() const
   {
-    return M_;
+    return M_.value;
   }
 
   void Node::traverse (NodeVisitor& /*visitor*/)

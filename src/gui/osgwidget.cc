@@ -268,38 +268,37 @@ namespace gepetto {
 
     bool OSGWidget::isFixedSize () const
     {
-      static const std::string name("WindowSize");
-      const viewer::PropertyMap_t& propMap = wm_->properties ();
-      viewer::PropertyMap_t::const_iterator _prop = propMap.find(name);
-      if (_prop == propMap.end()) return false;
-      viewer::PropertyPtr_t size = _prop->second;
-      if (!size) return false;
-      return size->hasWriteAccess();
+      try {
+        return wm_->property("WindowSize")->hasWriteAccess();
+      } catch (const std::invalid_argument&) {
+        return false;
+      }
     }
 
     void OSGWidget::setFixedSize (bool fixedSize)
     {
-      static const std::string name("WindowSize");
-      const viewer::PropertyMap_t& propMap = wm_->properties ();
-      viewer::PropertyMap_t::const_iterator _prop = propMap.find(name);
-      if (_prop == propMap.end()) return;
-      viewer::PropertyPtr_t size = _prop->second;
-      if (!size) return;
-      if (size->hasWriteAccess() == fixedSize) return;
-      // Cast to Vector2Property
-      viewer::Vector2Property::Ptr_t vsize = viewer::dynamic_pointer_cast<viewer::Vector2Property>(size);
-      if (!vsize) return;
-      osgQt::GLWidget* glWidget = graphicsWindow_->getGLWidget();
-      if (fixedSize) {
-        glWidget->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
-        // Add write access
-        vsize->setter (viewer::Vector2Property::Setter_t(
-              viewer::Vector2Property::setterFromMemberFunction (this, &OSGWidget::setWindowDimension)
-              ));
-      } else {
-        glWidget->setSizePolicy (QSizePolicy::Preferred, QSizePolicy::Preferred);
-        // Remove write access
-        vsize->setter (viewer::Vector2Property::Setter_t());
+      try {
+        viewer::Property& size(*wm_->property("WindowSize"));
+        if (size.hasWriteAccess() == fixedSize) return;
+
+        // Cast to Vector2Property
+        viewer::Vector2Property& vsize (dynamic_cast<viewer::Vector2Property&>(size));
+        osgQt::GLWidget* glWidget = graphicsWindow_->getGLWidget();
+        if (fixedSize) {
+          glWidget->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
+          // Add write access
+          vsize.setter (viewer::Vector2Property::Setter_t(
+                viewer::Vector2Property::setterFromMemberFunction (this, &OSGWidget::setWindowDimension)
+                ));
+        } else {
+          glWidget->setSizePolicy (QSizePolicy::Preferred, QSizePolicy::Preferred);
+          // Remove write access
+          vsize.setter (viewer::Vector2Property::Setter_t());
+        }
+      } catch (const std::invalid_argument&) {
+        return;
+      } catch (const std::bad_cast&) {
+        return;
       }
     }
 

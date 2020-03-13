@@ -34,9 +34,10 @@ namespace gepetto {
 namespace viewer {
   struct Initializer {
     Initializer() {
-      qRegisterMetaType<osgVector2>();
-      qRegisterMetaType<osgVector3>();
-      qRegisterMetaType<osgVector4>();
+      qRegisterMetaType<osgVector2>("osgVector2");
+      qRegisterMetaType<osgVector3>("osgVector3");
+      qRegisterMetaType<osgVector4>("osgVector4");
+      qRegisterMetaType<Configuration>("Configuration");
     }
   };
 
@@ -369,9 +370,9 @@ namespace viewer {
       gui::ConfigurationDialog* cfgDialog = new gui::ConfigurationDialog(prop);
       cfgDialog->setValueFromProperty(prop);
       prop->connect (cfgDialog, SIGNAL(valueChanged (Configuration)),
-          SLOT(set(Configuration)));
+          SLOT(set(Configuration)), Qt::DirectConnection);
       cfgDialog->connect (prop, SIGNAL(valueChanged (Configuration)),
-          SLOT(set(Configuration)));
+          SLOT(set(Configuration)), Qt::DirectConnection);
 
       cfgDialog->setProperty("propertyName", name);
       cfgDialog->connect(button, SIGNAL(clicked()), SLOT(show()));
@@ -518,15 +519,12 @@ namespace viewer {
     return cb;
   }
  
-  const PropertyPtr_t& Properties::property(const std::string& name) const
+  Property* Properties::property(const std::string& name) const
   {
     PropertyMap_t::const_iterator _prop = properties_.find(name);
     if (_prop == properties_.end())
       throw std::invalid_argument("Unknown property " + name);
-    const PropertyPtr_t& prop = _prop->second;
-    if (!prop)
-      throw std::invalid_argument("Unknown property " + name);
-    return prop;
+    return _prop->second.p;
   }
 
   bool Properties::hasProperty(const std::string& name) const
@@ -542,11 +540,21 @@ namespace viewer {
 
   void Properties::addProperty(const std::string& name, const PropertyPtr_t& prop)
   {
-    properties_[name] = prop;
+    properties_.insert(std::make_pair(name, Wrapper(prop)));
+  }
+
+  void Properties::addProperty(Property* prop)
+  {
+    addProperty(prop->name(), prop);
+  }
+
+  void Properties::addProperty(const std::string& name, Property* prop)
+  {
+    properties_.insert(std::make_pair(name, Wrapper(prop)));
   }
 
   void addPropertyEditor(QFormLayout* l, const std::string& _name,
-      const PropertyPtr_t& prop)
+      Property* prop)
   {
     QString name (QString::fromStdString(_name));
     QWidget* field = prop->guiEditor();
@@ -569,7 +577,7 @@ namespace viewer {
         _prop != properties_.end(); ++_prop)
     {
       if (!_prop->second->hasReadAccess()) continue;
-      addPropertyEditor (l, _prop->first,_prop->second);
+      addPropertyEditor (l, _prop->first,_prop->second.p);
     }
     return editor;
   }
