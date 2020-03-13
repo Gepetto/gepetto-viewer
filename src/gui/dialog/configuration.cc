@@ -33,6 +33,7 @@ namespace gepetto {
 
     void setSpinBoxRange(const viewer::Property* prop, QDoubleSpinBox* sb)
     {
+      sb->setRange(-std::numeric_limits<double>::max(), std::numeric_limits<double>::max());
       const viewer::Range<float>* range = dynamic_cast<const viewer::Range<float>*>(prop);
       if (range) {
         if (range->hasMin()) sb->setMinimum(static_cast<double>(range->min));
@@ -221,6 +222,19 @@ namespace gepetto {
       abort();
     }
 
+    template<typename Dialog>
+    void constructor_hook(Dialog*, QVector<QDoubleSpinBox*>) {}
+
+    void constructor_hook(ConfigurationDialog*, QVector<QDoubleSpinBox*> spinBoxes)
+    {
+      foreach (QDoubleSpinBox* sb, spinBoxes) {
+        sb->setSingleStep(0.01);
+        sb->setDecimals(4);
+      }
+      foreach (QDoubleSpinBox* sb, spinBoxes.mid(3))
+        sb->setRange(-osg::PI, osg::PI);
+    }
+
 #define DEFINE_PROPERTY_EDITOR_CONSTRUCTOR(Name,Type,N)                        \
     Name::Name (viewer::Property* property, QWidget *parent)                   \
       : QDialog (parent)                                                       \
@@ -251,6 +265,8 @@ namespace gepetto {
       layout->addRow(buttonBox);                                               \
                                                                                \
       setLayout (layout);                                                      \
+                                                                               \
+      constructor_hook(this, spinBoxes);                                       \
     }
 
     DEFINE_PROPERTY_EDITOR_CONSTRUCTOR(Vector2Dialog, osgVector2, 2)
