@@ -26,10 +26,12 @@
 #include <boost/mpl/if.hpp>
 #endif
 
-#include <QWidget>
+#include <QObject>
 
 #include <gepetto/viewer/fwd.h>
 #include <gepetto/viewer/config-osg.h>
+
+class QWidget;
 
 namespace gepetto {
 namespace viewer {
