@@ -458,7 +458,7 @@ namespace viewer {
       if (name.isNull()) throw std::logic_error ("A link has no name attribute.");
 
       std::string link_name = name.toStdString();
-      OUT( link_name );
+      OUT( link_name.c_str() );
 
       details::LinkNodePtr_t linkNode (details::LinkNode
           ::create (robotName + "/" + link_name));
