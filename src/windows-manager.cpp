@@ -576,6 +576,15 @@ namespace viewer {
     return true;
   }
 
+  bool WindowsManager::setCurveColors (const std::string& curveName,
+                                       const Vec4ArrayPtr_t& colors)
+  {
+    FIND_NODE_OF_TYPE_OR_THROW (LeafNodeLine, curve, curveName);
+    ScopedLock lock(osgFrameMutex());
+    curve->setColors(colors);
+    return true;
+  }
+
     bool WindowsManager::setCurveMode (const std::string& curveName, const GLenum mode)
     {
         FIND_NODE_OF_TYPE_OR_THROW (LeafNodeLine, curve, curveName);

@@ -52,6 +52,7 @@ namespace viewer {
             typedef osg::Vec3f::value_type value_type;
             typedef osgVector4 Color_t;
             typedef ::osg::Vec3ArrayRefPtr Vec3ArrayPtr_t;
+            typedef ::osg::Vec4ArrayRefPtr Vec4ArrayPtr_t;
             typedef std::string WindowID;
 
         private:
@@ -160,6 +161,7 @@ namespace viewer {
             virtual bool addCurve(const std::string& curveName, const Vec3ArrayPtr_t& pos, const Color_t& color);
       
             virtual bool setCurvePoints(const std::string& curveName, const Vec3ArrayPtr_t& pos);
+            virtual bool setCurveColors(const std::string& curveName, const Vec4ArrayPtr_t& colors);
 
             /// \param mode See LeafNodeLine::setMode for possible values
             virtual bool setCurveMode (const std::string& curveName, const GLenum mode);
