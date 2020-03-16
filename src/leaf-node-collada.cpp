@@ -425,7 +425,7 @@ namespace viewer {
   LeafNodeCollada::~LeafNodeCollada()
   {
     /* Proper deletion of all tree scene */
-    this->asQueue()->removeChild(collada_ptr_);
+    group_ptr_->removeChild(collada_ptr_);
 
     if (collada_ptr_->referenceCount() == 2) {
       // If the object is only referenced by this node and the cache,
