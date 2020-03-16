@@ -15,7 +15,7 @@ namespace gepetto {
 namespace viewer {
     DEF_CLASS_SMART_PTR(LeafNodeLine)
     
-    class LeafNodeLine : public NodeDrawable
+    class LeafNodeLine : public Node
     {
     private:
 

@@ -11,6 +11,7 @@
 #include <osg/Point>
 #include <osg/CullFace>
 #include <osg/LineWidth>
+#include <osgUtil/SmoothingVisitor>
 #include <gepetto/viewer/node.h>
 
 namespace gepetto {
@@ -50,7 +51,7 @@ namespace viewer {
         color_ptr_ = new ::osg::Vec4Array(1);
         
         beam_ptr_->setVertexArray(points_ptr_.get());
-        beam_ptr_->setColorArray(color_ptr_.get(), ::osg::Array::BIND_PER_PRIMITIVE_SET);
+        beam_ptr_->setColorArray(color_ptr_.get(), ::osg::Array::BIND_OVERALL);
         drawArray_ptr_ = new osg::DrawArrays(GL_LINE_STRIP,0,2);
         beam_ptr_->addPrimitiveSet(drawArray_ptr_.get());
         
@@ -84,10 +85,12 @@ namespace viewer {
         addProperty(EnumProperty::create("ImmediateMode", glImmediateModeEnum(),
               EnumProperty::Getter_t(boost::bind(getNodeMode, this)),
               EnumProperty::Setter_t(boost::bind(setNodeMode, this, _1))));
+        addProperty(Vector4Property::create("Color", this,
+              &LeafNodeLine::getColor, &LeafNodeLine::setColor));
     }
     
     LeafNodeLine::LeafNodeLine (const std::string& name, const osgVector3& start_point, const osgVector3& end_point) :
-        NodeDrawable (name)
+        Node (name)
     {
         init ();
         setStartPoint(start_point);
@@ -96,7 +99,7 @@ namespace viewer {
     }
 
     LeafNodeLine::LeafNodeLine (const std::string& name, const osgVector3& start_point, const osgVector3& end_point, const osgVector4& color) :
-        NodeDrawable (name)
+        Node (name)
     {
         init ();
         setStartPoint(start_point);
@@ -105,7 +108,7 @@ namespace viewer {
     }
 
     LeafNodeLine::LeafNodeLine (const std::string& name, const ::osg::Vec3ArrayRefPtr& points, const osgVector4& color) :
-        NodeDrawable (name)
+        Node (name)
     {
         init ();
         setPoints(points);
@@ -113,7 +116,7 @@ namespace viewer {
     }
 
     LeafNodeLine::LeafNodeLine (const LeafNodeLine& other) :
-        NodeDrawable (other)
+        Node (other)
     {
         init();
         setPoints (other.points_ptr_);
@@ -209,6 +212,7 @@ namespace viewer {
     void LeafNodeLine::setMode (const GLenum& mode)
     {
       drawArray_ptr_->set (mode, 0, (GLsizei)points_ptr_->size ());
+      osgUtil::SmoothingVisitor::smooth( *beam_ptr_ );
       beam_ptr_->dirtyDisplayList();
       setDirty();
     }
@@ -250,6 +254,7 @@ namespace viewer {
     void LeafNodeLine::setColor (const osgVector4& color)
     {      
         color_ptr_->at(0) = color;
+        beam_ptr_->setColorArray(color_ptr_.get(), ::osg::Array::BIND_OVERALL);
         beam_ptr_->dirtyDisplayList();
         setTransparentRenderingBin (color[3] < Node::TransparencyRenderingBinThreshold);
         setDirty();
@@ -258,6 +263,7 @@ namespace viewer {
     void LeafNodeLine::setColors (const ::osg::Vec4ArrayRefPtr & colors)
     {
       color_ptr_ = colors;
+      beam_ptr_->setColorArray(color_ptr_.get(), ::osg::Array::BIND_PER_VERTEX);
       beam_ptr_->dirtyDisplayList();
       bool transparent = false;
       for (std::size_t i = 0; i < colors->size(); ++i) {
