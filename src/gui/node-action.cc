@@ -47,11 +47,13 @@ namespace gepetto {
     NodeAction::NodeAction(const NodeAction::Type& t, const QString& text, NodePtr_t node, QWidget* parent)
       : NodeActionBase (text, node, parent)
       , type_ (t)
+      , window_ (NULL)
     {}
 
     NodeAction::NodeAction(const NodeAction::Type& t, const QString& text, QWidget* parent)
       : NodeActionBase (text, NodePtr_t(), parent)
       , type_ (t)
+      , window_ (NULL)
     {}
 
     NodeAction::NodeAction(const QString& text, NodePtr_t node, OSGWidget* window, QWidget* parent)
@@ -70,6 +72,7 @@ namespace gepetto {
     {
       NodePtr_t n = node();
       if (!n) return;
+      MainWindow* main = MainWindow::instance();
       switch (type_) {
         case VISIBILITY_ON:
           n->setVisibilityMode(viewer::VISIBILITY_ON);
@@ -87,6 +90,9 @@ namespace gepetto {
           window_->osg()->osgFrameMutex().lock();
           window_->window()->attachCameraToNode(n);
           window_->osg()->osgFrameMutex().unlock();
+          break;
+        case REMOVE_NODE:
+          main->osg()->deleteNode(n->getID(), false);
           break;
       }
     }

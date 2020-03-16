@@ -50,7 +50,8 @@ namespace gepetto {
           VISIBILITY_OFF,
           ALWAYS_ON_TOP,
           ATTACH_TO_WINDOW,
-          ATTACH_CAMERA_TO_NODE
+          ATTACH_CAMERA_TO_NODE,
+          REMOVE_NODE
         };
 
         NodeAction(const Type& t, const QString& text, NodePtr_t node, QWidget* parent);

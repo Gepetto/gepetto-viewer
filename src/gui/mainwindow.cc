@@ -520,6 +520,7 @@ namespace gepetto {
       actionSearchBar_->addAction(new NodeAction(NodeAction::VISIBILITY_ON,  "Show node", this));
       actionSearchBar_->addAction(new NodeAction(NodeAction::VISIBILITY_OFF, "Hide node", this));
       actionSearchBar_->addAction(new NodeAction(NodeAction::ALWAYS_ON_TOP, "Always on top", this));
+      actionSearchBar_->addAction(new NodeAction(NodeAction::REMOVE_NODE, "Remove node", this));
       actionSearchBar_->addAction(ui_->actionFetch_configuration);
       actionSearchBar_->addAction(ui_->actionSend_configuration);
       actionSearchBar_->addAction(ui_->actionClose_connections);
