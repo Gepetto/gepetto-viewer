@@ -26,7 +26,11 @@
 #include <gepetto/viewer/node-property.h>
 
 #include <gepetto/gui/safeapplication.hh>
+#if (QT_VERSION >= QT_VERSION_CHECK(5,0,0))
 #include <QtConcurrent>
+#else
+#include <QtCore>
+#endif
 #include <QApplication>
 #include <QDoubleSpinBox>
 #include <QCoreApplication>
@@ -185,7 +189,9 @@ BOOST_AUTO_TEST_CASE (pfloat5) {
 QDoubleSpinBox* pfloat6_multithreaded (QDoubleSpinBox* dsb)
 {
   dsb->setValue(2.);
+#if (QT_VERSION >= QT_VERSION_CHECK(5,0,0))
   QThread::sleep(1);
+#endif
   return dsb;
 }
 
@@ -193,7 +199,9 @@ QDoubleSpinBox* pfloat6_multithreaded1 (StoredPropertyTpl<float>::Ptr_t property
 {
   QDoubleSpinBox* dsb = qobject_cast<QDoubleSpinBox*>(property->guiEditor());
   dsb->setValue(2.);
+#if (QT_VERSION >= QT_VERSION_CHECK(5,0,0))
   QThread::sleep(1);
+#endif
   QCoreApplication::quit();
   return dsb;
 }
@@ -205,7 +213,7 @@ BOOST_AUTO_TEST_CASE (pfloat6) {
 
   StoredPropertyTpl<float>::Ptr_t property (new StoredPropertyTpl<float> ("float"));
   property->value = 0.;
-  QDoubleSpinBox* dsb = qobject_cast<QDoubleSpinBox*>(property->guiEditor());
+  //QDoubleSpinBox* dsb = qobject_cast<QDoubleSpinBox*>(property->guiEditor());
 
   QFuture<QDoubleSpinBox*> future =
     //QtConcurrent::run(boost::bind(pfloat6_multithreaded, dsb));

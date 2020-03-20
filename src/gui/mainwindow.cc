@@ -567,7 +567,9 @@ namespace gepetto {
     {
       if (registeredSignals_.find(signal) == registeredSignals_.end())
         {
+#if (QT_VERSION >= QT_VERSION_CHECK(5,5,0))
           qInfo() << "signal " << signal << "isn't registered";
+#endif
           return NULL;
         }
       return registeredSignals_[signal];
@@ -596,7 +598,9 @@ namespace gepetto {
     {
       if (registeredSlots_.find(slot) == registeredSlots_.end())
         {
+#if (QT_VERSION >= QT_VERSION_CHECK(5,5,0))
           qInfo() << "slot" << slot << "isn't registered";
+#endif
           return NULL;
         }
       return registeredSlots_[slot];

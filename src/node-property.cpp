@@ -335,7 +335,7 @@ namespace viewer {
       colorDialog->connect(button, SIGNAL(clicked()), SLOT(open()));
 
       prop->connect (colorDialog, SIGNAL(currentColorChanged(QColor)), SLOT(set(QColor)), Qt::DirectConnection);
-#if __cplusplus >= 201103L
+#if __cplusplus >= 201103L and (QT_VERSION >= QT_VERSION_CHECK(5,7,0))
       QObject::connect (prop,
           QOverload<const QColor &>::of(&Property::valueChanged),
             colorDialog, &QColorDialog::setCurrentColor,
@@ -508,12 +508,17 @@ namespace viewer {
     cb->setToolTip (toolTip.arg(name().c_str()));
     std::string value;
     /* bool success = */ get(value);
-    for (std::size_t i = 0; i < metaEnum_->values.size(); ++i)
+    for (std::size_t i = 0; i < metaEnum_->values.size(); ++i) {
       cb->addItem(metaEnum_->names[i].c_str(), metaEnum_->values[i]);
-    cb->setCurrentText(QString::fromStdString(value));
+      if (value == metaEnum_->names[i])
+        cb->setCurrentIndex(i);
+    }
     if (hasWriteAccess()) {
       connect(cb, SIGNAL(currentTextChanged(QString)), SLOT(set(QString)), Qt::DirectConnection);
+      // On Qt4, the combo box will not be updated.
+#if (QT_VERSION > QT_VERSION_CHECK(5, 0, 0))
       cb->connect(this, SIGNAL(valueChanged(QString)), SLOT(setCurrentText(QString)), Qt::DirectConnection);
+#endif
     } else
       cb->setEnabled(false);
     return cb;
