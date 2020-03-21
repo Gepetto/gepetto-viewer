@@ -78,7 +78,11 @@ namespace viewer {
 
       node->setDirty (false);
       node->applyConfiguration (osgVector3(0.f,0.f,0.f), osgQuat (0.f,0.f,0.f,1.f));
+      // Not dirty since configuration did not change.
+      BOOST_CHECK (!node->isDirty ());
+      node->applyConfiguration (osgVector3(0.f,0.f,1.f), osgQuat (0.f,0.f,0.f,1.f));
       BOOST_CHECK (node->isDirty ());
+      node->applyConfiguration (osgVector3(0.f,0.f,0.f), osgQuat (0.f,0.f,0.f,1.f));
 
       const osg::MatrixTransform* matrixTransform = dynamic_cast<osg::MatrixTransform*>(node->asQueue ().get());
       BOOST_REQUIRE (matrixTransform != NULL);
