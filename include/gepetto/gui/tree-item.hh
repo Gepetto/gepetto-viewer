@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018, LAAS-CNRS
+// Copyright (c) 2015-2020, LAAS-CNRS
 // Authors: Joseph Mirabel (joseph.mirabel@laas.fr)
 //
 // This file is part of gepetto-viewer.
@@ -39,7 +39,7 @@ namespace gepetto {
 
         virtual QStandardItem* clone () const;
 
-        virtual int type() {
+        virtual int type() const {
           return QStandardItem::UserType+1;
         }
 
