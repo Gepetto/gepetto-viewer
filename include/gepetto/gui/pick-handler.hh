@@ -19,12 +19,17 @@
 
 #include <gepetto/gui/fwd.hh>
 
+#include <osg/ref_ptr>
 #include <osgGA/GUIEventHandler>
 
 #include <QObject>
 #include <QModelIndex>
 
 #include <gepetto/gui/qt-osg-keyboard.hh>
+
+namespace osgUtil {
+  class LineSegmentIntersector;
+}
 
 namespace gepetto {
   namespace gui {
