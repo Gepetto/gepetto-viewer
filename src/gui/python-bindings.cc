@@ -16,8 +16,10 @@
 
 #include "../../src/gui/python-bindings.hh"
 
+#ifndef Q_MOC_RUN
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
+#endif
 
 #include <gepetto/viewer/windows-manager.h>
 #include <gepetto/gui/windows-manager.hh>

@@ -24,7 +24,9 @@
 #include <PythonQtClassInfo.h>
 #include <PythonQt_QtBindings.h>
 
+#ifndef Q_MOC_RUN
 #include <boost/python.hpp>
+#endif
 
 #include "gepetto/gui/osgwidget.hh"
 #include "gepetto/gui/mainwindow.hh"

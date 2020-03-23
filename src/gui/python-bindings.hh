@@ -14,7 +14,9 @@
 // received a copy of the GNU Lesser General Public License along with
 // gepetto-viewer. If not, see <http://www.gnu.org/licenses/>.
 
+#ifndef Q_MOC_RUN
 #include <boost/python.hpp>
+#endif
 
 void exposeOSG ();
 

@@ -18,7 +18,9 @@
 #define GEPETTO_GUI_PYTHON_DECORATOR_HH
 
 #include <PythonQt.h>
+#ifndef Q_MOC_RUN
 #include <boost/python.hpp>
+#endif
 
 #include <gepetto/gui/mainwindow.hh>
 #include <gepetto/gui/osgwidget.hh>
