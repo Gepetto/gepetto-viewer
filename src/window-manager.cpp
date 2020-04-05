@@ -99,6 +99,28 @@ namespace viewer {
       osg::ref_ptr<osgText::Text>   texts_[3][3];
       osg::observer_ptr<osg::Camera> camera_;
     };
+
+    struct WriteToFile : osgViewer::ScreenCaptureHandler::CaptureOperation
+    {
+      WriteToFile(const std::string& filename, const std::string& extension)
+        : basename(filename), ext(extension), counter(0)
+      {}
+
+
+      virtual void operator()(const osg::Image& image, const unsigned int context_id)
+      {
+        std::stringstream filename;
+        filename << basename << "_" << counter++ << '.' << ext;
+
+        osgDB::writeImageFile(image, filename.str());
+
+        OSG_INFO<<"ScreenCaptureHandler: Taking a screenshot, saved as '"<<filename.str()<<"'"<<std::endl;
+      }
+
+      const std::string basename;
+      const std::string ext;
+      unsigned int counter;
+    };
   }
 
     void WindowManager::createManipulator()
@@ -626,9 +648,7 @@ namespace viewer {
     }
     /* Create an handler to save video */
     typedef osgViewer::ScreenCaptureHandler SCH_t;
-    typedef SCH_t::WriteToFile WriteToFile;
-    osg::ref_ptr<WriteToFile> wtf = 
-        new WriteToFile (filename, extension, WriteToFile::SEQUENTIAL_NUMBER);
+    osg::ref_ptr<WriteToFile> wtf = new WriteToFile (filename, extension);
     screen_capture_ptr_ = new SCH_t (wtf.get(), -1);
     /* Screen capture can be stopped with stopCapture */
     screen_capture_ptr_->setKeyEventTakeScreenShot (0);

@@ -80,6 +80,7 @@ namespace gepetto {
     , wm_ ()
     , viewer_ (new osgViewer::Viewer)
     , screenCapture_ ()
+    , tmpDirectory_ (NULL)
     , toolBar_ (new QToolBar (QString::fromStdString(name) + " tool bar"))
     , process_ (new QProcess (this))
     , showPOutput_ (new QDialog (this, Qt::Dialog | Qt::WindowCloseButtonHint | Qt::WindowMinMaxButtonsHint))
@@ -170,15 +171,25 @@ namespace gepetto {
     {
       MainWindow* main = MainWindow::instance();
       if (active) {
-        QDir tmp ("/tmp");
-        tmp.mkpath ("gepetto-gui/record"); tmp.cd("gepetto-gui/record");
-        foreach (QString f, tmp.entryList(QStringList() << "img_0_*.jpeg", QDir::Files))
-          tmp.remove(f);
-        QString path = tmp.absoluteFilePath("img");
-        const char* ext = "jpeg";
-        osg ()->startCapture(windowID(), path.toLocal8Bit().data(), ext);
-        main->log("Saving images to " + path + "_*." + ext);
+        if (tmpDirectory_ != NULL) {
+          qDebug() << "A temporary directory already exists: " << tmpDirectory_;
+          delete tmpDirectory_;
+        }
+        tmpDirectory_ = new QTemporaryDir (QDir::temp().absoluteFilePath("gepetto-gui."));
+        if (!tmpDirectory_->isValid()) {
+          main->logError(tmpDirectory_->errorString());
+          delete tmpDirectory_;
+          tmpDirectory_ = NULL;
+          recordMovie_->setChecked(false);
+        } else {
+          tmpDirectory_->setAutoRemove(false);
+          QString path = tmpDirectory_->filePath("img");
+          const char* ext = "jpeg";
+          osg ()->startCapture(windowID(), path.toLocal8Bit().data(), ext);
+          main->log("Saving images to " + path + "_<number>." + ext);
+        }
       } else {
+        if (tmpDirectory_ == NULL) return;
         osg()->stopCapture(windowID());
         QString outputFile = QFileDialog::getSaveFileName(this, tr("Save video to"), "untitled.mp4");
         if (!outputFile.isNull()) {
@@ -187,7 +198,7 @@ namespace gepetto {
           QString avconv = main->settings_->avconv;
 
           QStringList args;
-          QString input = "/tmp/gepetto-gui/record/img_0_%d.jpeg";
+          QString input (tmpDirectory_->filePath("img_%d.jpeg"));
           args << main->settings_->avConvInputOptions
             << "-i" << input
             << main->settings_->avConvOutputOptions
@@ -221,6 +232,8 @@ namespace gepetto {
             main->logError ("You can manually run\n" + avconv + " " + args.join(" "));
           }
         }
+        delete tmpDirectory_;
+        tmpDirectory_ = NULL;
       }
     }
 
@@ -345,10 +358,10 @@ namespace gepetto {
           this, SLOT(captureFrame()))
         ->setToolTip("Take a snapshot");
 
-      QAction* recordMovie = toolBar_->addAction(iconFromTheme("media-record"), "Record movie");
-      connect(recordMovie, SIGNAL(triggered(bool)), SLOT(toggleCapture(bool)), Qt::QueuedConnection);
-      recordMovie->setCheckable (true);
-      recordMovie->setToolTip("Record the central widget as a sequence of images. You can find the images in /tmp/gepetto-gui/record/img_%d.jpeg");
+      recordMovie_ = toolBar_->addAction(iconFromTheme("media-record"), "Record movie");
+      connect(recordMovie_, SIGNAL(triggered(bool)), SLOT(toggleCapture(bool)), Qt::QueuedConnection);
+      recordMovie_->setCheckable (true);
+      recordMovie_->setToolTip("Record the central widget as a sequence of images. You can find the images in /tmp/gepetto-gui/record/img_%d.jpeg");
 
       QAction* toggleFullscreen = new QAction(iconFromTheme("view-fullscreen"),
           "Toggle fullscreen mode", this);

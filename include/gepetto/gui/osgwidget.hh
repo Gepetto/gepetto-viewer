@@ -34,6 +34,7 @@
 class QToolBar;
 class QProcess;
 class QTextBrowser;
+class QTemporaryDir;
 
 namespace gepetto {
   namespace gui {
@@ -97,8 +98,10 @@ namespace gepetto {
         QTimer timer_;
         osgViewer::ViewerRefPtr viewer_;
         osg::ref_ptr <osgViewer::ScreenCaptureHandler> screenCapture_;
+        QTemporaryDir* tmpDirectory_;
 
         QToolBar* toolBar_;
+        QAction* recordMovie_;
 
         // To record movies.
         QProcess* process_;
