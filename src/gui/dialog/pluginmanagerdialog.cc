@@ -131,6 +131,7 @@ namespace gepetto {
       QPluginLoader* p = plugins_[name];
       if (!p->isLoaded()) {
         qDebug () << "Plugin" << name << "not loaded:" << p->errorString();
+        qDebug () << "If it was not found, you can add its path to the GEPETTO_GUI_PLUGIN_DIRS environment variable.";
         return false;
       }
       PluginInterface* pi = qobject_cast <PluginInterface*> (p->instance());
