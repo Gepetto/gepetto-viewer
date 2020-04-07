@@ -93,6 +93,7 @@ namespace gepetto {
       foreach (QString p, env.value("LD_LIBRARY_PATH").split(':')) {
         PluginManager::addPluginDir (p + "/gepetto-gui-plugins");
       }
+      PluginManager::addPluginDir (installDirectory + "/lib/gepetto-gui-plugins");
     }
 
     int Settings::initSettings (int argc, char * argv[])

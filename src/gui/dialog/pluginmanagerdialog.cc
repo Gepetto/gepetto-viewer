@@ -69,11 +69,10 @@ namespace gepetto {
     void PluginManager::addPluginDir(const QString &path)
     {
       QDir dir (QDir::cleanPath(path));
+      if (!dir.exists() || !dir.isReadable()) return;
       QDir can (dir.canonicalPath());
-      if (can.exists() && can.isReadable())
-	{
-	  pluginDirs_.append (can);
-	}
+      if (can.exists() && can.isReadable() && !pluginDirs_.contains(can))
+        pluginDirs_.append (can);
     }
 
     void PluginManager::declareAllPlugins (QWidget *parent)
@@ -116,7 +115,16 @@ namespace gepetto {
         return false;
       }
       if (!plugins_[name]->load()) {
+        static bool hasShownErrorMessage = false;
         qDebug() << name << ": " << plugins_[name]->errorString();
+        if (!hasShownErrorMessage) {
+          qDebug() << "The list of paths where plugins are searched for is:";
+          foreach (const QDir& dir, pluginDirs_) {
+            qDebug() << dir.absolutePath();
+          }
+          qDebug() << "Use GEPETTO_GUI_PLUGIN_DIRS environment variable to add a path.";
+          hasShownErrorMessage = true;
+        }
         return false;
       }
       return true;
