@@ -85,6 +85,7 @@ namespace gepetto {
             QSettings::SystemScope, installDirectory + "/etc");
       }
 
+      PluginManager::addPluginDir (CMAKE_INSTALL_PREFIX "/lib/gepetto-gui-plugins");
       if (env.contains ("GEPETTO_GUI_PLUGIN_DIRS")) {
         foreach (QString p, env.value("GEPETTO_GUI_PLUGIN_DIRS").split(':')) {
           PluginManager::addPluginDir (p + "/gepetto-gui-plugins");
