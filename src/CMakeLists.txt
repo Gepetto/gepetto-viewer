@@ -73,6 +73,7 @@ SET(${LIBRARY_NAME}_SOURCES
   gui/shortcut-factory.cc
   gui/tree-item.cc
   gui/windows-manager.cc
+  gui/point-intersector.cc
 )
 
 SET(HEADERS)

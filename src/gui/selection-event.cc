@@ -39,6 +39,7 @@ namespace gepetto {
     void SelectionEvent::setupIntersection(const osgUtil::LineSegmentIntersector::Intersection& it)
     {
       hasIntersection_ = true;
+      primitiveIndex_ = it.primitiveIndex;
       toQVector3(it.getLocalIntersectPoint(),  localPoint_);
       toQVector3(it.getWorldIntersectPoint(),  worldPoint_);
       toQVector3(it.getLocalIntersectNormal(), localNormal_);
