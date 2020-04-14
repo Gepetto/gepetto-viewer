@@ -197,11 +197,14 @@ namespace gepetto {
               mapper_.getQtModKey(modKeyMask));
           event->setupIntersection(intersection);
           bt->emitBodySelected(event);
-          if (osg::dynamic_pointer_cast<PointIntersector>(li)) {
-            MainWindow::instance()->statusBar()->clearMessage();
-            MainWindow::instance()->statusBar()->showMessage(
-                QString("Vectex index: ") + QString::number(intersection.primitiveIndex));
-          }
+
+          QStatusBar* statusBar = MainWindow::instance()->statusBar();
+          statusBar->clearMessage();
+          if (osg::dynamic_pointer_cast<PointIntersector>(li))
+            statusBar->showMessage(QString::fromStdString(n->getID()) +
+                QString(" - Vectex index: ") + QString::number(intersection.primitiveIndex));
+          else
+            statusBar->showMessage(QString::fromStdString(n->getID()));
           return;
         }
       }
