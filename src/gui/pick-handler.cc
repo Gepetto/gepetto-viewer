@@ -136,7 +136,6 @@ namespace gepetto {
 
           osgUtil::IntersectionVisitor iv( lineIntersector_ );
           iv.setTraversalMask(viewer::IntersectionBit);
-          //iv.setTraversalMask(viewer::IntersectionBit | viewer::EditionBit);
 
           osg::Camera* camera = viewer->getCamera();
           camera->accept( iv );
@@ -156,7 +155,6 @@ namespace gepetto {
       {
         osgUtil::IntersectionVisitor iv( lineIntersector_ );
         iv.setTraversalMask(viewer::IntersectionBit);
-        //iv.setTraversalMask(viewer::IntersectionBit | viewer::EditionBit);
         camera->accept( iv );
       }
       if (lineIntersector_->containsIntersections()) return lineIntersector_;

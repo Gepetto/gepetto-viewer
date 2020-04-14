@@ -185,6 +185,14 @@ namespace viewer {
     int getNodeHighlightState (Node* node) { return (int)node->getHighlightState(); }
     void setNodeHighlightState (Node* node, const int& v) { node->setHighlightState(v); }
 
+    void setFlag(::osg::Node* node, osg::Node::NodeMask bit, bool on)
+    {
+      if (on)
+        node->setNodeMask(node->getNodeMask() | bit);
+      else
+        node->setNodeMask(node->getNodeMask() & ~bit);
+    }
+
     MetaEnum* highlightStateEnum ()
     {
       static MetaEnum hs;
@@ -228,7 +236,7 @@ namespace viewer {
     transform_ptr_ = new ::osg::MatrixTransform;
     transform_ptr_ ->setName ("positionInParentNode");
 
-    switch_node_ptr_->setNodeMask(NodeBit | IntersectionBit);
+    switch_node_ptr_->setNodeMask(VisibilityBit | NodeBit | IntersectionBit);
     switch_node_ptr_->setName (id_name_);
     wireframe_modes_.resize(2);
     wireframe_modes_[FILL]      = new ::osg::Group;
@@ -286,6 +294,8 @@ namespace viewer {
         BoolProperty::create("Landmark",
           BoolProperty::getterFromMemberFunction (this, &Node::hasLandmark),
           BoolProperty::Setter_t(boost::bind(setNodeLandmark, this, _1))));
+    addProperty(
+        BoolProperty::create("Selectable", this, &Node::isSelectable, &Node::setSelectable));
     addProperty(StringProperty::createRO("Name", this, &Node::getID));
     addProperty(Vector4Property::createWO("Color", this, &Node::setColor));
 
@@ -314,6 +324,11 @@ namespace viewer {
     M_ ("Transform")
   {
     init();
+  }
+
+  void Node::setSelectable(bool selectable)
+  {
+    setFlag(transform_ptr_.get(), IntersectionBit, selectable);
   }
 
   void Node::updateTransform ()
@@ -354,15 +369,15 @@ namespace viewer {
     visibilityMode_ = mode;
     switch (mode) {
       case VISIBILITY_ON:
-        transform_ptr_->setNodeMask(0xffffffff);
+        setFlag(transform_ptr_.get(), VisibilityBit, true);
         transform_ptr_->setStateSet (getVisibleStateSet(lightingMode_));
         break;
       case VISIBILITY_OFF:
-        transform_ptr_->setNodeMask(0x0);
+        setFlag(transform_ptr_.get(), VisibilityBit, false);
         transform_ptr_->setStateSet (getVisibleStateSet(lightingMode_));
         break;
       case ALWAYS_ON_TOP:
-        transform_ptr_->setNodeMask(0xffffffff);
+        setFlag(transform_ptr_.get(), VisibilityBit, true);
         transform_ptr_->setStateSet (getAlwaysOnTopStateSet(lightingMode_));
         break;
 
@@ -485,7 +500,7 @@ namespace viewer {
     landmark_geode_ptr_->addDrawable(geom_ptr);
 
     //set Landmark as ALWAYS ON TOP
-    landmark_geode_ptr_->setNodeMask(0xffffffff);
+    setFlag(landmark_geode_ptr_.get(), VisibilityBit, true);
     landmark_geode_ptr_->setStateSet (getAlwaysOnTopStateSet (LIGHT_INFLUENCE_OFF));
 
     transform_ptr_->addChild(landmark_geode_ptr_);

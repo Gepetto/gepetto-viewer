@@ -137,11 +137,13 @@ namespace viewer {
   void WindowManager::createBackground()
   {
     // Enable Outline highlight state.
+    main_camera_->setCullMask(VisibilityBit);
     main_camera_->setClearMask(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     main_camera_->setClearColor(osg::Vec4(0.,0.,0.,0.));
     // Create background camera
     bg_camera_ = new osg::Camera;
     bg_camera_->setName("bg_camera");
+    bg_camera_->setCullMask(VisibilityBit);
     const osg::Node::NodeMask mask = ~IntersectionBit;
     bg_camera_->setNodeMask(mask);
     
