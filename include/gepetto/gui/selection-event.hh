@@ -70,6 +70,7 @@ namespace gepetto {
         Qt::KeyboardModifiers modKey  () const { return modKey_; }
 
         bool hasIntersection () { return hasIntersection_; }
+        const unsigned int& primitiveIndex () const { return primitiveIndex_; }
         QVector3D normal(bool local) const { return (local ? localNormal_ : worldNormal_); }
         QVector3D point (bool local) const { return (local ? localPoint_  : worldPoint_ ); }
         /// User must call this in slots using SelectionEvent.
@@ -85,6 +86,7 @@ namespace gepetto {
         Qt::KeyboardModifiers modKey_;
 
         bool hasIntersection_;
+        unsigned int primitiveIndex_;
         QVector3D localPoint_, localNormal_, worldPoint_, worldNormal_;
         QAtomicInt c_;
     };

@@ -33,6 +33,8 @@ namespace osgUtil {
 
 namespace gepetto {
   namespace gui {
+    class PointIntersector;
+
     class PickHandler : public osgGA::GUIEventHandler
     {
     public:
@@ -46,8 +48,14 @@ namespace gepetto {
       void getUsage (osg::ApplicationUsage &usage) const;
 
     private:
-      void computeIntersection (osgGA::GUIActionAdapter& aa,
+      typedef osg::ref_ptr<osgUtil::LineSegmentIntersector> LineSegmentIntersector;
+
+      void computeLineIntersection (osgGA::GUIActionAdapter& aa,
           const float& x, const float& y);
+
+      /// \return the intersector that has an intersection (if one has).
+      LineSegmentIntersector computeLineOrPointIntersection (
+          osgGA::GUIActionAdapter& aa, const float& x, const float& y);
 
       void selectionNodeUnderCursor (osgGA::GUIActionAdapter& aa,
           const float& x, const float& y, int modMask);
@@ -63,7 +71,8 @@ namespace gepetto {
       bool pushed_;
       float lastX_, lastY_;
 
-      osg::ref_ptr<osgUtil::LineSegmentIntersector> intersector_;
+      LineSegmentIntersector lineIntersector_;
+      osg::ref_ptr<PointIntersector> pointIntersector_;
     };
   }
 }

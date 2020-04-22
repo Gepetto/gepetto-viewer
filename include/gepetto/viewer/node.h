@@ -19,8 +19,9 @@ namespace gepetto {
 namespace viewer {
     
     enum {
-      IntersectionBit = 0x1,
-      NodeBit         = 0x2
+      VisibilityBit   = 1 << 0,
+      IntersectionBit = 1 << 1,
+      NodeBit         = 1 << 2
     };
     
     /// Abstract base class of 3D objects in a scene.
@@ -119,7 +120,18 @@ namespace viewer {
         {
           dirty_ = dirty;
         }
-        
+
+        /** Whether this node (and its children) can be selected from mouse.
+         */
+        bool isSelectable () const
+        {
+          return transform_ptr_->getNodeMask() & IntersectionBit;
+        }
+
+        /** Set whether this node (and its children) can be selected from mouse.
+         */
+        void setSelectable (bool selectable=true);
+
         /** Apply a new global configuration
          */
         inline void applyConfiguration (const osgVector3 & position, const osgQuat & quat)

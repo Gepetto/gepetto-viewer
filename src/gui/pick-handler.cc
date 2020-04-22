@@ -16,8 +16,9 @@
 
 #include "gepetto/gui/pick-handler.hh"
 
-#include <QDebug>
 #include <QApplication>
+#include <QDebug>
+#include <QStatusBar>
 
 #include <osg/io_utils>
 
@@ -39,6 +40,8 @@
 #include <gepetto/gui/tree-item.hh>
 #include <gepetto/gui/selection-handler.hh>
 
+#include "point-intersector.hh"
+
 namespace gepetto {
   namespace gui {
     PickHandler::PickHandler(OSGWidget *parent, WindowsManagerPtr_t wsm)
@@ -48,9 +51,12 @@ namespace gepetto {
       , pushed_ (false)
       , lastX_ (0)
       , lastY_ (0)
-      , intersector_ (new osgUtil::LineSegmentIntersector(osgUtil::Intersector::WINDOW, 0., 0.))
+      , lineIntersector_ (new osgUtil::LineSegmentIntersector(osgUtil::Intersector::WINDOW, 0., 0.))
+      , pointIntersector_ (new PointIntersector(osgUtil::Intersector::WINDOW, 0., 0.))
     {
-      intersector_->setIntersectionLimit( osgUtil::Intersector::LIMIT_NEAREST );
+      lineIntersector_->setIntersectionLimit( osgUtil::Intersector::LIMIT_NEAREST );
+      pointIntersector_->setPickBias(0.01f);
+      pointIntersector_->setIntersectionLimit( osgUtil::Intersector::LIMIT_NEAREST );
     }
 
     PickHandler::~PickHandler()
@@ -109,12 +115,12 @@ namespace gepetto {
       usage.addKeyboardMouseBinding ('f', "Center view to mouse");
     }
 
-    void PickHandler::computeIntersection(osgGA::GUIActionAdapter &aa,
+    void PickHandler::computeLineIntersection(osgGA::GUIActionAdapter &aa,
         const float &x, const float &y)
     {
-      intersector_->reset();
-      intersector_->setStart (osg::Vec3d(x,y,0.));
-      intersector_->setEnd   (osg::Vec3d(x,y,1.));
+      lineIntersector_->reset();
+      lineIntersector_->setStart (osg::Vec3d(x,y,0.));
+      lineIntersector_->setEnd   (osg::Vec3d(x,y,1.));
 
       osgViewer::View* viewer = dynamic_cast<osgViewer::View*>( &aa );
       if( viewer )
@@ -128,22 +134,51 @@ namespace gepetto {
               //new osgUtil::LineSegmentIntersector(osgUtil::Intersector::WINDOW, x, y);
           //intersector->setIntersectionLimit( osgUtil::Intersector::LIMIT_NEAREST );
 
-          osgUtil::IntersectionVisitor iv( intersector_ );
+          osgUtil::IntersectionVisitor iv( lineIntersector_ );
           iv.setTraversalMask(viewer::IntersectionBit);
-          //iv.setTraversalMask(viewer::IntersectionBit | viewer::EditionBit);
 
           osg::Camera* camera = viewer->getCamera();
           camera->accept( iv );
       }
     }
 
+    PickHandler::LineSegmentIntersector PickHandler::computeLineOrPointIntersection(osgGA::GUIActionAdapter &aa,
+        const float &x, const float &y)
+    {
+      osgViewer::View* viewer = dynamic_cast<osgViewer::View*>( &aa );
+      if(!viewer) return LineSegmentIntersector();
+      osg::Camera* camera = viewer->getCamera();
+
+      lineIntersector_->reset();
+      lineIntersector_->setStart (osg::Vec3d(x,y,0.));
+      lineIntersector_->setEnd   (osg::Vec3d(x,y,1.));
+      {
+        osgUtil::IntersectionVisitor iv( lineIntersector_ );
+        iv.setTraversalMask(viewer::IntersectionBit);
+        camera->accept( iv );
+      }
+      if (lineIntersector_->containsIntersections()) return lineIntersector_;
+
+      pointIntersector_->reset();
+      pointIntersector_->setStart (osg::Vec3d(x,y,0.));
+      pointIntersector_->setEnd   (osg::Vec3d(x,y,1.));
+      {
+        osgUtil::IntersectionVisitor iv( pointIntersector_ );
+        iv.setTraversalMask(viewer::IntersectionBit);
+        //iv.setTraversalMask(viewer::IntersectionBit | viewer::EditionBit);
+        camera->accept( iv );
+      }
+      if (pointIntersector_->containsIntersections()) return pointIntersector_;
+      return LineSegmentIntersector();
+    }
+
     void PickHandler::selectionNodeUnderCursor (osgGA::GUIActionAdapter &aa,
         const float &x, const float &y, int modKeyMask)
     {
-      computeIntersection (aa, x, y);
+      LineSegmentIntersector li = computeLineOrPointIntersection (aa, x, y);
       BodyTreeWidget* bt = MainWindow::instance()->bodyTree();
 
-      if( !intersector_->containsIntersections() ) {
+      if( !li || !li->containsIntersections() ) {
         bt->emitBodySelected(new SelectionEvent(SelectionEvent::FromOsgWindow,
               QApplication::keyboardModifiers()));
         return;
@@ -152,13 +187,8 @@ namespace gepetto {
       // Only one intersection. Otherwise, one has to loop on elements of
       // intersector->getIntersections();
       const osgUtil::LineSegmentIntersector::Intersection&
-        intersection = intersector_->getFirstIntersection();
+        intersection = li->getFirstIntersection();
       for (int i = (int) intersection.nodePath.size()-1; i >= 0 ; --i) {
-        //if (intersection.nodePath[i]->getNodeMask() == viewer::EditionBit) {
-          // TODO start editing node configuration.
-          // qDebug() << "edition bit";
-          //break;
-        //}
         if (!(intersection.nodePath[i]->getNodeMask() & viewer::NodeBit)) continue;
         NodePtr_t n = wsm_->getNode(intersection.nodePath[i]->getName ());
         if (n) {
@@ -167,6 +197,14 @@ namespace gepetto {
               mapper_.getQtModKey(modKeyMask));
           event->setupIntersection(intersection);
           bt->emitBodySelected(event);
+
+          QStatusBar* statusBar = MainWindow::instance()->statusBar();
+          statusBar->clearMessage();
+          if (osg::dynamic_pointer_cast<PointIntersector>(li))
+            statusBar->showMessage(QString::fromStdString(n->getID()) +
+                QString(" - Vectex index: ") + QString::number(intersection.primitiveIndex));
+          else
+            statusBar->showMessage(QString::fromStdString(n->getID()));
           return;
         }
       }
@@ -178,13 +216,13 @@ namespace gepetto {
       osgViewer::View* viewer = dynamic_cast<osgViewer::View*>( &aa );
       if(!viewer) return;
 
-      computeIntersection (aa, x, y);
-      if( !intersector_->containsIntersections() ) return;
+      computeLineIntersection (aa, x, y);
+      if( !lineIntersector_->containsIntersections() ) return;
 
       // Only one intersection. Otherwise, one has to loop on elements of
       // intersector->getIntersections();
       const osgUtil::LineSegmentIntersector::Intersection&
-        intersection = intersector_->getFirstIntersection();
+        intersection = lineIntersector_->getFirstIntersection();
 
       osg::Vec3f P (intersection.getWorldIntersectPoint());
 
