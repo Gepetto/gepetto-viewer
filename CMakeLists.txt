@@ -1,6 +1,6 @@
 #
 # Copyright (c) 2014, 2020 LAAS-CNRS
-# Authors: Mathieu Geisert, Guilhem Saurel
+# Authors: Mathieu Geisert, Joseph Mirabel, Guilhem Saurel
 #
 #
 # This file is part of gepetto-viewer.
