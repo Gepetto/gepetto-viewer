@@ -16,7 +16,7 @@
 # gepetto-viewer  If not, see
 # <http://www.gnu.org/licenses/>.
 
-IF(USE_QT4)
+IF(PROJECT_USE_QT4)
   SET(QT4 "QT4")
 ELSE()
   SET(QT4 "")
