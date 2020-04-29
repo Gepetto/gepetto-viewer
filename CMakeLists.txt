@@ -1,6 +1,6 @@
 #
-# Copyright (c) 2014 LAAS-CNRS
-# Authors: Mathieu Geisert
+# Copyright (c) 2014, 2020 LAAS-CNRS
+# Authors: Mathieu Geisert, Joseph Mirabel, Guilhem Saurel
 #
 #
 # This file is part of gepetto-viewer.
@@ -17,13 +17,13 @@
 # gepetto-viewer  If not, see
 # <http://www.gnu.org/licenses/>.
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8.6)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.1)
 
 SET(PROJECT_NAME gepetto-viewer)
 SET(PROJECT_DESCRIPTION "An user-friendly Graphical Interface")
 SET(PROJECT_URL "https://github.com/Gepetto/gepetto-viewer")
-SET(PROJECT_USE_CMAKE_EXPORT TRUE)
 
+SET(PROJECT_USE_CMAKE_EXPORT TRUE)
 SET(CXX_DISABLE_WERROR TRUE)
 
 INCLUDE(cmake/base.cmake)
@@ -31,7 +31,6 @@ INCLUDE(cmake/boost.cmake)
 INCLUDE(cmake/ide.cmake)
 INCLUDE(cmake/apple.cmake)
 INCLUDE(cmake/python.cmake)
-INCLUDE(cmake/test.cmake)
 INCLUDE(cmake-module/qt.cmake)
 INCLUDE(cmake-module/osgqt.cmake)
 
@@ -185,10 +184,14 @@ ADD_SUBDIRECTORY(pyplugins)
 ADD_SUBDIRECTORY(tests)
 
 # {{{ Packaging
-INSTALL(FILES cmake-module/gepetto-viewer-plugin.cmake
-  DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/cmake/
+SET(GEPETTO_VIEWER_CMAKE_PLUGIN "${CMAKE_INSTALL_PREFIX}/lib/cmake/${PROJECT_NAME}/${PROJECT_NAME}-plugin.cmake")
+SET(PKG_CONFIG_EXTRA "${PKG_CONFIG_EXTRA}\ncmake_plugin=${GEPETTO_VIEWER_CMAKE_PLUGIN}")
+SET(PACKAGE_EXTRA_MACROS "${PACKAGE_EXTRA_MACROS}\nset(GEPETTO_VIEWER_CMAKE_PLUGIN ${GEPETTO_VIEWER_CMAKE_PLUGIN})")
+SET(PACKAGE_EXTRA_MACROS "${PACKAGE_EXTRA_MACROS}\nINCLUDE(${GEPETTO_VIEWER_CMAKE_PLUGIN})")
+SET(PACKAGE_EXTRA_MACROS "${PACKAGE_EXTRA_MACROS}\nset(GEPETTO_VIEWER_INCLUDEDIR ${CMAKE_INSTALL_PREFIX}/include)")
+INSTALL(FILES cmake-module/${PROJECT_NAME}-plugin.cmake
+  DESTINATION lib/cmake/${PROJECT_NAME}
   PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE)
-SET(PKG_CONFIG_EXTRA "${PKG_CONFIG_EXTRA}\ncmake_plugin=${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/cmake/gepetto-viewer-plugin.cmake")
 
 FOREACH(lib ${X11_INCLUDE_DIR})
   PKG_CONFIG_APPEND_CFLAGS("-I${lib}")
