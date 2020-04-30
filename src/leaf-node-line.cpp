@@ -37,13 +37,14 @@ namespace viewer {
       geom->dirtyDisplayList();
     }
 
-    
     /* Declaration of private function members */
     void LeafNodeLine::init ()
     {
         /* Init the beam as a Geometry */
         beam_ptr_ = new ::osg::Geometry();
-        
+        backfaceDrawing_.node(beam_ptr_);
+        backfaceDrawing_.set(false);
+
         /* Define points of the beam */
         points_ptr_ = new ::osg::Vec3Array(2);
         
@@ -87,6 +88,7 @@ namespace viewer {
               EnumProperty::Setter_t(boost::bind(setNodeMode, this, _1))));
         addProperty(Vector4Property::create("Color", this,
               &LeafNodeLine::getColor, &LeafNodeLine::setColor));
+        addProperty(&backfaceDrawing_);
     }
     
     LeafNodeLine::LeafNodeLine (const std::string& name, const osgVector3& start_point, const osgVector3& end_point) :

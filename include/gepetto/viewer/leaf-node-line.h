@@ -10,6 +10,7 @@
 #define GEPETTO_VIEWER_LEAFNODELINE_HH
 
 #include <gepetto/viewer/node-drawable.h>
+#include <gepetto/viewer/properties.h>
 
 namespace gepetto {
 namespace viewer {
@@ -27,6 +28,8 @@ namespace viewer {
         ::osg::ref_ptr< ::osg::DrawArrays > drawArray_ptr_;
         ::osg::Vec3ArrayRefPtr points_ptr_;
         ::osg::Vec4ArrayRefPtr color_ptr_;
+
+        BackfaceDrawingProperty backfaceDrawing_;
         
         void init ();
         

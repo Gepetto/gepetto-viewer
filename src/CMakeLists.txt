@@ -55,6 +55,7 @@ SET(${LIBRARY_NAME}_SOURCES
   blender-geom-writer.cc
   OSGManipulator/keyboard-manipulator.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/internal/configuration.cc
+  properties.cpp
 
   gui/action-search-bar.cc
   gui/bodytreewidget.cc

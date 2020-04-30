@@ -101,6 +101,7 @@ SET(${PROJECT_NAME}_HEADERS_NO_MOC
   ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/transform-writer.h
   ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/blender-geom-writer.h
   ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/OSGManipulator/keyboard-manipulator.h
+  ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/properties.h
 )
 
 SET(${PROJECT_NAME}_RESOURCES ${CMAKE_SOURCE_DIR}/res/images.qrc)
