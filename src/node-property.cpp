@@ -545,7 +545,11 @@ namespace viewer {
 
   void Properties::addProperty(const std::string& name, const PropertyPtr_t& prop)
   {
-    properties_.insert(std::make_pair(name, Wrapper(prop)));
+    Wrapper wrapped (prop);
+    std::pair<PropertyMap_t::iterator, bool> res =
+      properties_.insert(std::make_pair(name, Wrapper(prop)));
+    if (!res.second)
+      res.first->second = prop;
   }
 
   void Properties::addProperty(Property* prop)
@@ -555,7 +559,11 @@ namespace viewer {
 
   void Properties::addProperty(const std::string& name, Property* prop)
   {
-    properties_.insert(std::make_pair(name, Wrapper(prop)));
+    Wrapper wrapped (prop);
+    std::pair<PropertyMap_t::iterator, bool> res =
+      properties_.insert(std::make_pair(name, Wrapper(prop)));
+    if (!res.second)
+      res.first->second = prop;
   }
 
   void addPropertyEditor(QFormLayout* l, const std::string& _name,
