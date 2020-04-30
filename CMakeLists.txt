@@ -24,6 +24,7 @@ SET(PROJECT_DESCRIPTION "An user-friendly Graphical Interface")
 SET(PROJECT_URL "https://github.com/Gepetto/gepetto-viewer")
 
 SET(PROJECT_USE_CMAKE_EXPORT TRUE)
+SET(PROJECT_USE_KEYWORD_LINK_LIBRARIES TRUE)
 SET(CXX_DISABLE_WERROR TRUE)
 
 INCLUDE(cmake/base.cmake)
