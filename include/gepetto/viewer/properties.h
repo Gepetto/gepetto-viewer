@@ -28,6 +28,11 @@ class BackfaceDrawingProperty : public Property
     void node (const NodeRefPtr& node) { node_ = node; }
     NodeRefPtr node () const { return node_; }
 
+    virtual QWidget* guiEditor ()
+    {
+      return details::buildEditor<bool>(this);
+    }
+
   protected:
     bool impl_set(const bool& value);
     bool impl_get(      bool& value);
