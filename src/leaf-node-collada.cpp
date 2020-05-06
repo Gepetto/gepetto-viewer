@@ -31,27 +31,6 @@ namespace viewer {
     return std::string();
   }
 
-  bool getBackfaceDrawing (LeafNodeCollada* node) {
-    return (bool)(node->getColladaPtr()->getOrCreateStateSet()
-        ->getMode(GL_CULL_FACE) & osg::StateAttribute::ON);
-  }
-  void setBackfaceDrawing (LeafNodeCollada* node, bool on) {
-    osg::StateSet* ss = node->getColladaPtr()->getOrCreateStateSet();
-
-    ss->setMode(GL_CULL_FACE,
-          (on ?  osg::StateAttribute::ON : osg::StateAttribute::OFF));
-
-    if (on) {
-      osg::LightModel* ltModel = new osg::LightModel;
-      ltModel->setTwoSided(on);
-      ss->setAttribute(ltModel);
-      ss->setMode(GL_CULL_FACE, osg::StateAttribute::OFF);
-    } else {
-      ss->removeAttribute(osg::StateAttribute::LIGHTMODEL);
-      ss->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
-    }
-  }
-
   class LightSourceRemoving : public osg::NodeVisitor
   {
     public:
@@ -190,6 +169,8 @@ namespace viewer {
       collada_ptr_->setDataVariance(osg::Object::STATIC);
     }
     collada_ptr_->setName ("meshfile");
+    backfaceDrawing_.stateSet(collada_ptr_->getOrCreateStateSet());
+    backfaceDrawing_.set(false);
 
     /* Create PositionAttitudeTransform */
     group_ptr_->addChild(collada_ptr_);
@@ -198,9 +179,7 @@ namespace viewer {
     addProperty(StringProperty::create("Mesh file",
           StringProperty::getterFromMemberFunction(this, &LeafNodeCollada::meshFilePath),
           StringProperty::Setter_t()));
-    addProperty(BoolProperty::create("BackfaceDrawing",
-          EnumProperty::Getter_t(boost::bind(getBackfaceDrawing, this)),
-          EnumProperty::Setter_t(boost::bind(setBackfaceDrawing, this, _1))));
+    addProperty(&backfaceDrawing_);
     addProperty(StringProperty::create("Texture file",
           StringProperty::getterFromMemberFunction(this, &LeafNodeCollada::textureFilePath),
           StringProperty::Setter_t()));

@@ -55,6 +55,7 @@ SET(${LIBRARY_NAME}_SOURCES
   blender-geom-writer.cc
   OSGManipulator/keyboard-manipulator.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/internal/configuration.cc
+  properties.cpp
 
   gui/action-search-bar.cc
   gui/bodytreewidget.cc
@@ -135,7 +136,7 @@ PKG_CONFIG_USE_DEPENDENCY(${LIBRARY_NAME} openthreads)
 TARGET_COMPILE_DEFINITIONS(${LIBRARY_NAME}
   PRIVATE -DAVCONV="${AVCONV}"
   PUBLIC ${QT_DEFINITIONS})
-TARGET_LINK_LIBRARIES(${LIBRARY_NAME}
+TARGET_LINK_LIBRARIES(${LIBRARY_NAME} PUBLIC
   ${Boost_LIBRARIES}
   ${X11_LIBRARIES}
   ${OPENGL_LIBRARIES}
@@ -163,7 +164,7 @@ ADD_EXECUTABLE(gepetto-gui ${CMAKE_CURRENT_BINARY_DIR}/gui/main.cc)
 TARGET_COMPILE_DEFINITIONS(gepetto-gui
   PUBLIC ${QT_DEFINITIONS})
 PKG_CONFIG_USE_DEPENDENCY(gepetto-gui openscenegraph)
-TARGET_LINK_LIBRARIES(gepetto-gui ${LIBRARY_NAME})
+TARGET_LINK_LIBRARIES(gepetto-gui PUBLIC ${LIBRARY_NAME})
 
 INSTALL(TARGETS gepetto-gui
   EXPORT ${TARGETS_EXPORT_NAME}
@@ -173,7 +174,7 @@ INSTALL(TARGETS gepetto-gui
 # {{{ gvtools
 ADD_EXECUTABLE(gvtools gvtools.cpp)
 PKG_CONFIG_USE_DEPENDENCY(gvtools openscenegraph)
-TARGET_LINK_LIBRARIES(gvtools ${Boost_LIBRARIES} ${OPENGL_LIBRARIES})
+TARGET_LINK_LIBRARIES(gvtools PUBLIC ${Boost_LIBRARIES} ${OPENGL_LIBRARIES})
 
 INSTALL(TARGETS gvtools DESTINATION bin)
 # }}}

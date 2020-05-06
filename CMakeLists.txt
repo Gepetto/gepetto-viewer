@@ -24,6 +24,7 @@ SET(PROJECT_DESCRIPTION "An user-friendly Graphical Interface")
 SET(PROJECT_URL "https://github.com/Gepetto/gepetto-viewer")
 
 SET(PROJECT_USE_CMAKE_EXPORT TRUE)
+SET(PROJECT_USE_KEYWORD_LINK_LIBRARIES TRUE)
 SET(CXX_DISABLE_WERROR TRUE)
 
 INCLUDE(cmake/base.cmake)
@@ -101,6 +102,7 @@ SET(${PROJECT_NAME}_HEADERS_NO_MOC
   ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/transform-writer.h
   ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/blender-geom-writer.h
   ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/OSGManipulator/keyboard-manipulator.h
+  ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/properties.h
 )
 
 SET(${PROJECT_NAME}_RESOURCES ${CMAKE_SOURCE_DIR}/res/images.qrc)

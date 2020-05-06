@@ -9,8 +9,10 @@
 #ifndef GEPETTO_VIEWER_LEAFNODECOLLADA_HH
 #define GEPETTO_VIEWER_LEAFNODECOLLADA_HH
 
-#include <gepetto/viewer/node.h>
 #include <osgDB/ReadFile>
+
+#include <gepetto/viewer/node.h>
+#include <gepetto/viewer/properties.h>
 
 
 namespace gepetto {
@@ -31,6 +33,8 @@ namespace viewer {
         /** Associated Node Shape */
         ::osg::GroupRefPtr group_ptr_;
         ::osg::NodeRefPtr collada_ptr_;
+
+        BackfaceDrawingProperty backfaceDrawing_;
         
         void init();
         

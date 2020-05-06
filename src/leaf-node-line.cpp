@@ -37,13 +37,14 @@ namespace viewer {
       geom->dirtyDisplayList();
     }
 
-    
     /* Declaration of private function members */
     void LeafNodeLine::init ()
     {
         /* Init the beam as a Geometry */
         beam_ptr_ = new ::osg::Geometry();
-        
+        backfaceDrawing_.stateSet(beam_ptr_->getOrCreateStateSet());
+        backfaceDrawing_.set(false);
+
         /* Define points of the beam */
         points_ptr_ = new ::osg::Vec3Array(2);
         
@@ -71,10 +72,10 @@ namespace viewer {
         /* Set a default line width */
         osg::LineWidth* linewidth = new osg::LineWidth();
         linewidth->setWidth(1.0f);
-        beam_ptr_->getOrCreateStateSet()->setAttributeAndModes(linewidth, osg::StateAttribute::ON);
+        beam_ptr_->getStateSet()->setAttributeAndModes(linewidth, osg::StateAttribute::ON);
 
         osg::Point* point = new osg::Point(3.f);
-        beam_ptr_->getOrCreateStateSet()->setAttribute(point, osg::StateAttribute::ON);
+        beam_ptr_->getStateSet()->setAttribute(point, osg::StateAttribute::ON);
 
         addProperty(FloatProperty::create("PointSize",
               FloatProperty::getterFromMemberFunction(point, &osg::Point::getSize),
@@ -87,6 +88,7 @@ namespace viewer {
               EnumProperty::Setter_t(boost::bind(setNodeMode, this, _1))));
         addProperty(Vector4Property::create("Color", this,
               &LeafNodeLine::getColor, &LeafNodeLine::setColor));
+        addProperty(&backfaceDrawing_);
     }
     
     LeafNodeLine::LeafNodeLine (const std::string& name, const osgVector3& start_point, const osgVector3& end_point) :

@@ -508,7 +508,7 @@ namespace viewer {
     cb->setToolTip (toolTip.arg(name().c_str()));
     std::string value;
     /* bool success = */ get(value);
-    for (std::size_t i = 0; i < metaEnum_->values.size(); ++i) {
+    for (unsigned i = 0; i < metaEnum_->values.size(); ++i) {
       cb->addItem(metaEnum_->names[i].c_str(), metaEnum_->values[i]);
       if (value == metaEnum_->names[i])
         cb->setCurrentIndex(i);
@@ -545,7 +545,11 @@ namespace viewer {
 
   void Properties::addProperty(const std::string& name, const PropertyPtr_t& prop)
   {
-    properties_.insert(std::make_pair(name, Wrapper(prop)));
+    Wrapper wrapped (prop);
+    std::pair<PropertyMap_t::iterator, bool> res =
+      properties_.insert(std::make_pair(name, Wrapper(prop)));
+    if (!res.second)
+      res.first->second = prop;
   }
 
   void Properties::addProperty(Property* prop)
@@ -555,7 +559,11 @@ namespace viewer {
 
   void Properties::addProperty(const std::string& name, Property* prop)
   {
-    properties_.insert(std::make_pair(name, Wrapper(prop)));
+    Wrapper wrapped (prop);
+    std::pair<PropertyMap_t::iterator, bool> res =
+      properties_.insert(std::make_pair(name, Wrapper(prop)));
+    if (!res.second)
+      res.first->second = prop;
   }
 
   void addPropertyEditor(QFormLayout* l, const std::string& _name,
