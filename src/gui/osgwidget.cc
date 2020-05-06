@@ -171,6 +171,7 @@ namespace gepetto {
     {
       MainWindow* main = MainWindow::instance();
       if (active) {
+#if (QT_VERSION >= QT_VERSION_CHECK(5,0,0))
         if (tmpDirectory_ != NULL) {
           qDebug() << "A temporary directory already exists: " << tmpDirectory_;
           delete tmpDirectory_;
@@ -188,8 +189,23 @@ namespace gepetto {
           osg ()->startCapture(windowID(), path.toLocal8Bit().data(), ext);
           main->log("Saving images to " + path + "_<number>." + ext);
         }
+#else
+        QDir tmp ("/tmp");
+        tmp.mkpath ("gepetto-gui/record"); tmp.cd("gepetto-gui/record");
+        foreach (QString f, tmp.entryList(QStringList() << "img_0_*.jpeg", QDir::Files))
+          tmp.remove(f);
+        QString path = tmp.absoluteFilePath("img");
+        const char* ext = "jpeg";
+        osg ()->startCapture(windowID(), path.toLocal8Bit().data(), ext);
+        main->log("Saving images to " + path + "_*." + ext);
+#endif
       } else {
+#if (QT_VERSION >= QT_VERSION_CHECK(5,0,0))
         if (tmpDirectory_ == NULL) return;
+        QString input (tmpDirectory_->filePath("img_%d.jpeg"));
+#else
+        QString input = "/tmp/gepetto-gui/record/img_0_%d.jpeg";
+#endif
         osg()->stopCapture(windowID());
         QString outputFile = QFileDialog::getSaveFileName(this, tr("Save video to"), "untitled.mp4");
         if (!outputFile.isNull()) {
@@ -198,7 +214,6 @@ namespace gepetto {
           QString avconv = main->settings_->avconv;
 
           QStringList args;
-          QString input (tmpDirectory_->filePath("img_%d.jpeg"));
           args << main->settings_->avConvInputOptions
             << "-i" << input
             << main->settings_->avConvOutputOptions
@@ -232,8 +247,10 @@ namespace gepetto {
             main->logError ("You can manually run\n" + avconv + " " + args.join(" "));
           }
         }
+#if (QT_VERSION >= QT_VERSION_CHECK(5,0,0))
         delete tmpDirectory_;
         tmpDirectory_ = NULL;
+#endif
       }
     }
 
