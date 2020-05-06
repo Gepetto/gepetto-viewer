@@ -1,0 +1,18 @@
+<?xml version='1.0'?>
+ <package format='2'>
+ <name>gepetto-viewer</name>
+ <version>4.9.0</version>
+ <description>An user-friendly Graphical Interface </description>
+
+ <maintainer email='hpp@laas.fr'>Joseph Mirabel</maintainer>
+ <license>LGPL</license>
+
+ <!-- <url type='website'>https://github.com/Gepetto/gepetto-viewer </url> -->
+
+ <author>Joseph Mirabel</author>
+ <author>Florent Lamiraux et al.</author>
+
+ <buildtool_depend>catkin</buildtool_depend>
+ <depend>openscenegraph</depend>
+ <depend>openthreads</depend>
+</package>
