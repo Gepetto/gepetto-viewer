@@ -11,8 +11,8 @@ namespace viewer {
 bool BackfaceDrawingProperty::impl_get(bool& value)
 {
   if (!hasReadAccess ()) { invalidGet(); return false; }
-  value = static_cast<bool>(node_->getOrCreateStateSet()
-      ->getMode(GL_CULL_FACE) & osg::StateAttribute::ON);
+  value = static_cast<bool>(stateSet_->getMode(GL_CULL_FACE)
+      & osg::StateAttribute::ON);
   return true;
 }
 
@@ -20,19 +20,17 @@ bool BackfaceDrawingProperty::impl_set (const bool& on)
 {
   if (!hasWriteAccess()) { invalidSet(); return false; }
 
-  osg::StateSet* ss = node_->getOrCreateStateSet();
-
-  ss->setMode(GL_CULL_FACE,
+  stateSet_->setMode(GL_CULL_FACE,
       (on ?  osg::StateAttribute::ON : osg::StateAttribute::OFF));
 
   if (on) {
     osg::LightModel* ltModel = new osg::LightModel;
     ltModel->setTwoSided(on);
-    ss->setAttribute(ltModel);
-    ss->setMode(GL_CULL_FACE, osg::StateAttribute::OFF);
+    stateSet_->setAttribute(ltModel);
+    stateSet_->setMode(GL_CULL_FACE, osg::StateAttribute::OFF);
   } else {
-    ss->removeAttribute(osg::StateAttribute::LIGHTMODEL);
-    ss->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
+    stateSet_->removeAttribute(osg::StateAttribute::LIGHTMODEL);
+    stateSet_->setMode(GL_CULL_FACE, osg::StateAttribute::ON);
   }
   return true;
 }

@@ -5,6 +5,7 @@
 
 #include <osg/Geometry>
 #include <osg/TemplatePrimitiveFunctor>
+#include <osg/Version>
 
 #include "point-intersector.hh"
 
@@ -71,7 +72,12 @@ osgUtil::Intersector* PointIntersector::clone( osgUtil::IntersectionVisitor& iv 
 
 void PointIntersector::intersect( osgUtil::IntersectionVisitor& iv, osg::Drawable* drawable )
 {
-    osg::BoundingBox bb = drawable->getBoundingBox();
+    osg::BoundingBox bb =
+#if OSG_VERSION_LESS_THAN(3,3,3)
+      drawable->getBound();
+#else
+      drawable->getBoundingBox();
+#endif
     bb.xMin() -= _pickBias; bb.xMax() += _pickBias;
     bb.yMin() -= _pickBias; bb.yMax() += _pickBias;
     bb.zMin() -= _pickBias; bb.zMax() += _pickBias;

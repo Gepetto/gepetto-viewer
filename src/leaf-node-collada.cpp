@@ -169,7 +169,7 @@ namespace viewer {
       collada_ptr_->setDataVariance(osg::Object::STATIC);
     }
     collada_ptr_->setName ("meshfile");
-    backfaceDrawing_.node(collada_ptr_);
+    backfaceDrawing_.stateSet(collada_ptr_->getOrCreateStateSet());
     backfaceDrawing_.set(false);
 
     /* Create PositionAttitudeTransform */

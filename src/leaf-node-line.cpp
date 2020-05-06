@@ -42,7 +42,7 @@ namespace viewer {
     {
         /* Init the beam as a Geometry */
         beam_ptr_ = new ::osg::Geometry();
-        backfaceDrawing_.node(beam_ptr_);
+        backfaceDrawing_.stateSet(beam_ptr_->getOrCreateStateSet());
         backfaceDrawing_.set(false);
 
         /* Define points of the beam */
@@ -72,10 +72,10 @@ namespace viewer {
         /* Set a default line width */
         osg::LineWidth* linewidth = new osg::LineWidth();
         linewidth->setWidth(1.0f);
-        beam_ptr_->getOrCreateStateSet()->setAttributeAndModes(linewidth, osg::StateAttribute::ON);
+        beam_ptr_->getStateSet()->setAttributeAndModes(linewidth, osg::StateAttribute::ON);
 
         osg::Point* point = new osg::Point(3.f);
-        beam_ptr_->getOrCreateStateSet()->setAttribute(point, osg::StateAttribute::ON);
+        beam_ptr_->getStateSet()->setAttribute(point, osg::StateAttribute::ON);
 
         addProperty(FloatProperty::create("PointSize",
               FloatProperty::getterFromMemberFunction(point, &osg::Point::getSize),

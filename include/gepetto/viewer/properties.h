@@ -16,17 +16,17 @@ namespace viewer {
 class BackfaceDrawingProperty : public Property
 {
   public:
-    typedef osg::NodeRefPtr NodeRefPtr;
+    typedef osg::StateSetRefPtr StateSetRefPtr;
 
-    bool hasReadAccess () const { return static_cast<bool>(node_); }
-    bool hasWriteAccess() const { return static_cast<bool>(node_); }
+    bool hasReadAccess () const { return static_cast<bool>(stateSet_); }
+    bool hasWriteAccess() const { return static_cast<bool>(stateSet_); }
 
     std::string type() { return details::property_type<bool>::to_string(); }
 
     BackfaceDrawingProperty () : Property("BackfaceDrawing") {}
 
-    void node (const NodeRefPtr& node) { node_ = node; }
-    NodeRefPtr node () const { return node_; }
+    void stateSet (const StateSetRefPtr& stateSet) { stateSet_ = stateSet; }
+    StateSetRefPtr stateSet () const { return stateSet_; }
 
     virtual QWidget* guiEditor ()
     {
@@ -38,7 +38,7 @@ class BackfaceDrawingProperty : public Property
     bool impl_get(      bool& value);
 
   private:
-    NodeRefPtr node_;
+    osg::StateSetRefPtr stateSet_;
 
 };
 } /* namespace viewer */
