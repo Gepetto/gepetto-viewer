@@ -107,7 +107,7 @@ namespace viewer {
       {}
 
 
-      virtual void operator()(const osg::Image& image, const unsigned int context_id)
+      virtual void operator()(const osg::Image& image, const unsigned int /*context_id*/)
       {
         std::stringstream filename;
         filename << basename << "_" << counter++ << '.' << ext;

@@ -508,7 +508,7 @@ namespace viewer {
     cb->setToolTip (toolTip.arg(name().c_str()));
     std::string value;
     /* bool success = */ get(value);
-    for (std::size_t i = 0; i < metaEnum_->values.size(); ++i) {
+    for (unsigned i = 0; i < metaEnum_->values.size(); ++i) {
       cb->addItem(metaEnum_->names[i].c_str(), metaEnum_->values[i]);
       if (value == metaEnum_->names[i])
         cb->setCurrentIndex(i);
