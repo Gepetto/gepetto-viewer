@@ -15,6 +15,15 @@ ENDIF()
 FIND_PATH(PYTHONQT_INCLUDE_DIR PythonQt.h
   PATHS "${PYTHONQT_INSTALL_DIR}/include/PythonQt"
   DOC "Path to the PythonQt include directory")
+FIND_PATH(PYTHONQT_QTALL_INCLUDE_DIR PythonQt_QtAll.h
+  PATHS "${PYTHONQT_INSTALL_DIR}/include/PythonQt"
+  PATH_SUFFIXES "extensions/PythonQt_QtAll"
+  DOC "Path to the PythonQt QtAll extension include directory")
+
+SET(PYTHONQT_INCLUDE_DIR
+  ${PYTHONQT_INCLUDE_DIR}
+  ${PYTHONQT_QTALL_INCLUDE_DIR}
+  )
 
 SET(PYTHONQT_LIBRARIES)
 IF(PROJECT_USE_QT4)
