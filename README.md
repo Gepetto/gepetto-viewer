@@ -1,8 +1,8 @@
 # Graphical Interface for Pinocchio and hpp
 
 [![Building Status](https://travis-ci.org/gepetto/gepetto-viewer.svg?branch=master)](https://travis-ci.org/gepetto/gepetto-viewer)
-[![Pipeline status](https://gepgitlab.laas.fr/gepetto/gepetto-viewer/badges/master/pipeline.svg)](https://gepgitlab.laas.fr/gepetto/gepetto-viewer/commits/master)
-[![Coverage report](https://gepgitlab.laas.fr/gepetto/gepetto-viewer/badges/master/coverage.svg?job=doc-coverage)](http://projects.laas.fr/gepetto/doc/gepetto/gepetto-viewer/master/coverage/)
+[![Pipeline status](https://gitlab.laas.fr/gepetto/gepetto-viewer/badges/master/pipeline.svg)](https://gitlab.laas.fr/gepetto/gepetto-viewer/commits/master)
+[![Coverage report](https://gitlab.laas.fr/gepetto/gepetto-viewer/badges/master/coverage.svg?job=doc-coverage)](http://projects.laas.fr/gepetto/doc/gepetto/gepetto-viewer/master/coverage/)
 
 ## Setup
 
