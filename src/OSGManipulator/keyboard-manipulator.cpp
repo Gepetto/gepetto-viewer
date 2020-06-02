@@ -228,12 +228,6 @@ bool KeyboardManipulator::handleKeyDown( const GUIEventAdapter& ea, GUIActionAda
 /// Releasing the key
 bool KeyboardManipulator::handleKeyUp( const GUIEventAdapter& ea, GUIActionAdapter& /*us*/ )
 {
-  //std::cout<<"key : "<<ea.getKey()<<" unmodified code : "<<ea.getUnmodifiedKey()<<" keyMask : "<<ea.getModKeyMask()<<std::endl;
-
-
- // keycode_ = XKeysymToKeycode(display_,ea.getUnmodifiedKey());
- // std::cout<<"keycode = "<<keycode_<<std::endl;
-
   int keySym = ea.getUnmodifiedKey();
   if(keySym == 0){ // issue with getUnmodifiedKey() and hpp-gui (always return 0 because not initialised in osgQT)
     keySym = ea.getKey();

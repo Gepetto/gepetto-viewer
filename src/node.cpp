@@ -18,6 +18,8 @@
 #include <gepetto/viewer/window-manager.h>
 #include <gepetto/viewer/node-visitor.h>
 
+#include "log.hh"
+
 namespace gepetto {
 namespace viewer {
   namespace {
@@ -590,7 +592,7 @@ namespace viewer {
   {
     if (geode_ptr_.get() == NULL)
       {
-	std::cout << "You must initialize a Geode on " << id_name_ << " to use Alpha" << std::endl;
+	log() << "You must initialize a Geode on " << id_name_ << " to use Alpha" << std::endl;
 	return ;
       }
     osg::StateSet* ss = geode_ptr_.get()->getStateSet();
@@ -629,7 +631,7 @@ namespace viewer {
   {
     if (ss == NULL) {
       if (geode_ptr_.get() == NULL) {
-        std::cout << "You must initialize a Geode on " << id_name_ <<
+        log() << "You must initialize a Geode on " << id_name_ <<
           " to use Alpha" << std::endl;
         return;
       }

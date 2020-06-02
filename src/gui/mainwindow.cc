@@ -45,6 +45,8 @@
 # include <gepetto/gui/pythonwidget.hh>
 #endif
 
+#include "../log.hh"
+
 namespace gepetto {
   namespace gui {
     MainWindow* MainWindow::instance_ = NULL;
@@ -557,10 +559,10 @@ namespace gepetto {
       if (registeredSignals_.find(signal) == registeredSignals_.end())
         {
           registeredSignals_[signal] = obj;
-          qDebug() << signal << " registered";
+          gepetto::log() << signal << " registered" << std::endl;
         }
       else
-        qWarning() << "Signal" << signal << "already registered.";
+        gepetto::log() << "Signal" << signal << "already registered." << std::endl;
     }
 
     QObject* MainWindow::getFromSignal(const char* signal)
@@ -568,7 +570,7 @@ namespace gepetto {
       if (registeredSignals_.find(signal) == registeredSignals_.end())
         {
 #if (QT_VERSION >= QT_VERSION_CHECK(5,5,0))
-          qInfo() << "signal " << signal << "isn't registered";
+          gepetto::log() << "signal " << signal << "isn't registered" << std::endl;
 #endif
           return NULL;
         }
@@ -588,19 +590,17 @@ namespace gepetto {
       if (registeredSlots_.find(slot) == registeredSlots_.end())
         {
           registeredSlots_[slot] = obj;
-          qDebug() << slot << " registered";
+          gepetto::log() << slot << " registered" << std::endl;
         }
       else
-        qWarning() << "Slot " << slot << "already registered.";
+        gepetto::log() << "Slot " << slot << "already registered." << std::endl;
     }
 
     QObject* MainWindow::getFromSlot(const char* slot)
     {
       if (registeredSlots_.find(slot) == registeredSlots_.end())
         {
-#if (QT_VERSION >= QT_VERSION_CHECK(5,5,0))
-          qInfo() << "slot" << slot << "isn't registered";
-#endif
+          gepetto::log() << "slot" << slot << "isn't registered" << std::endl;
           return NULL;
         }
       return registeredSlots_[slot];

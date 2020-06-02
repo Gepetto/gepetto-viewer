@@ -11,6 +11,8 @@
 #include <osg/Texture2D>
 #include <osgDB/ReadFile>
 
+#include "log.hh"
+
 namespace gepetto {
 namespace viewer {
     
@@ -174,7 +176,7 @@ namespace viewer {
     osg::ref_ptr<osg::Image> image = osgDB::readImageFile(image_path);
     if (!image)
     {
-      std::cout << " couldn't find texture, quiting." << std::endl;
+      log() << "couldn't find texture " << image_path << ", quiting." << std::endl;
       return;
     } 
     texture->setImage(image);

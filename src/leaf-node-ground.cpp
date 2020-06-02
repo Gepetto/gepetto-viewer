@@ -100,10 +100,6 @@ namespace viewer {
         addProperty(Vector4Property::create("Color2",
               Vector4Property::getterFromMemberFunction(this, &LeafNodeGround::getColor2),
               Vector4Property::setterFromMemberFunction(this, &LeafNodeGround::setColor2)));
-        
-#ifdef DEBUG
-        std::cout << getID() << " created" << std::endl;
-#endif
     }
     
     void LeafNodeGround::initWeakPtr( const LeafNodeGroundWeakPtr &other_weak_ptr )

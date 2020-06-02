@@ -56,6 +56,8 @@ SET(${LIBRARY_NAME}_SOURCES
   OSGManipulator/keyboard-manipulator.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/internal/configuration.cc
   properties.cpp
+  log.hh
+  log.cc
 
   gui/action-search-bar.cc
   gui/bodytreewidget.cc
