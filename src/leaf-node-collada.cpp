@@ -16,6 +16,8 @@
 #include <osgDB/FileNameUtils>
 #include <gepetto/viewer/leaf-node-collada.h>
 
+#include "log.hh"
+
 namespace gepetto {
 namespace viewer {
   inline bool fileExists (const char* fn)
@@ -130,7 +132,7 @@ namespace viewer {
           osg::PositionAttitudeTransform* pat =
             dynamic_cast<osg::PositionAttitudeTransform*> (collada_ptr_.get());
           if (pat != NULL) {
-            std::cout << "Reset up_axis to Z_UP." << std::endl;
+            log() << "Reset up_axis to Z_UP." << std::endl;
             pat->setAttitude (osgQuat());
           }
 

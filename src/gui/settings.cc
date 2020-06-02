@@ -32,6 +32,8 @@
 # include <gepetto/gui/pythonwidget.hh>
 #endif
 
+#include "../log.hh"
+
 namespace gepetto {
   namespace gui {
     Settings::Settings (const char* installDir)
@@ -107,6 +109,7 @@ namespace gepetto {
       au->addCommandLineOption("-v or --verbose",  "Activate verbose output");
       au->addCommandLineOption("-g or --generate-config-files", "generate configuration files in " + installDirectory.toStdString() + "/etc and quit");
       au->addCommandLineOption("-c or --config-file", "set the configuration file (do not include .conf)", configurationFile);
+      au->addCommandLineOption("--log", "set the file where logs are written", logFile);
       au->addCommandLineOption("--predefined-robots", "set the predefined robots configuration file (do not include .conf)", predifinedRobotConf);
       au->addCommandLineOption("--predefined-environments", "set the predefined environments configuration file (do not include .conf)", predifinedEnvConf);
       au->addCommandLineOption("--add-robot", "Add a robot (a list of comma sperated string)");
@@ -126,6 +129,7 @@ namespace gepetto {
       if (arguments.read("--predefined-robots",       predifinedRobotConf)) {}
       if (arguments.read("--predefined-environments", predifinedEnvConf)) {}
       fromFiles ();
+      arguments.read("--log", logFile);
 
       // 3. Read other command line arguments
       bool genAndQuit = false;
@@ -190,6 +194,9 @@ namespace gepetto {
       }
       if (verbose) print (std::cout) << std::endl;
       if (genAndQuit) writeSettings ();
+
+      if (!logFile.empty())
+        setLogFile(logFile.c_str());
 
       return retVal;
     }
@@ -295,6 +302,7 @@ namespace gepetto {
       os
         << nl <<     "Configuration:"
         << nl << tab << "Configuration file:     " << tab << configurationFile
+        << nl << tab << "Log file:               " << tab << (logFile.empty() ? "standard output" : logFile)
         << nl << tab << "Predefined robots:      " << tab << predifinedRobotConf
         << nl << tab << "Predefined environments:" << tab << predifinedEnvConf
 
@@ -445,6 +453,10 @@ namespace gepetto {
         avConvOutputOptions = env.value ("output_options",
             avConvOutputOptions).toStringList();
         env.endGroup ();
+
+        env.beginGroup("settings");
+        logFile = env.value ("log", QString::fromStdString(logFile)).toString().toStdString();
+        env.endGroup();
         log (QString ("Read configuration file ") + env.fileName());
       }
     }
@@ -520,7 +532,8 @@ namespace gepetto {
       env.beginGroup("pyplugins");
       for (PluginManager::PyMap::const_iterator p = pluginManager_.pyplugins ().constBegin();
           p != pluginManager_.pyplugins().constEnd(); p++) {
-        env.setValue(p.key(), (noPlugin)?false:pluginManager_.isPyPluginLoaded (p.key()));
+        env.setValue(p.key(), (noPlugin)?false:
+            pluginManager_.isPyPluginLoaded (p.key()) || pyplugins_.contains(p.key()));
       }
       env.endGroup ();
 
@@ -534,6 +547,10 @@ namespace gepetto {
       env.setValue ("input_options", avConvInputOptions);
       env.setValue ("output_options", avConvInputOptions);
       env.endGroup ();
+
+      env.beginGroup("settings");
+      env.setValue ("log", QString::fromStdString(logFile));
+      env.endGroup();
       log (QString ("Wrote configuration file ") + env.fileName());
     }
 
@@ -617,7 +634,7 @@ namespace gepetto {
     {
       if (!verbose) return;
       if (mw) mw->log(t);
-      else    std::cout << t.toLocal8Bit().constData() << std::endl;
+      else    gepetto::log() << t.toLocal8Bit().constData() << std::endl;
     }
 
     void Settings::logError(const QString &t)

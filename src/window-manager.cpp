@@ -17,8 +17,9 @@
 #include <osgGA/NodeTrackerManipulator>
 #include <osgDB/WriteFile>
 
-#include <../src/is-dirty-visitor.h>
-#include <../src/internal/configuration.hh>
+#include "is-dirty-visitor.h"
+#include "internal/configuration.hh"
+#include "log.hh"
 
 namespace gepetto {
 namespace viewer {
@@ -56,7 +57,7 @@ namespace viewer {
         std::cerr << "Failed to write image " << fn_ << std::endl;
       } else {
         osg::Timer_t tick_end = timer->tick();
-        std::cout<<"Time to generate image " << fn_ << " = "
+        log()<<"Time to generate image " << fn_ << " = "
           << timer->delta_s(tick_start, tick_end) << " seconds"<<std::endl;
       }
     }
@@ -697,7 +698,7 @@ namespace viewer {
 	manipulator_ptr->selectMatrixManipulator(nodeTrackerManipulatorIndex);
       }
     else
-      std::cout << "Unexpected manipulator in viewer" << std::endl;
+      log() << "Unexpected manipulator in viewer" << std::endl;
   }
 
   void WindowManager::detachCamera()

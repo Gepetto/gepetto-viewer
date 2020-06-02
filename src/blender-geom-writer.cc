@@ -37,6 +37,8 @@
 #include <gepetto/viewer/leaf-node-xyzaxis.h>
 //#include <gepetto/viewer/node-rod.h>
 
+#include "log.hh"
+
 namespace gepetto {
 namespace viewer {
   namespace {
@@ -120,7 +122,7 @@ namespace viewer {
       } else if (ext == "stl") {
         os << "bpy.ops.import_mesh.stl (filepath=\"" << fn << "\")" << end;
       } else {
-        std::cout << "Extension of file " << fn << " with name " << nodeName
+        log() << "Extension of file " << fn << " with name " << nodeName
           << " is not known." << end
           << "You can load the file manually and add it to the empty object called " << nodeName << end
           << "To fix the issue, upate" __FILE__ ":" << __LINE__ << std::endl;
@@ -370,7 +372,7 @@ namespace viewer {
 
   void BlenderGeomWriterVisitor::unimplemented(const char* type, Node& node)
   {
-    std::cout << type << " is not implemented. " << node.getID()
+    log() << type << " is not implemented. " << node.getID()
       << " not added" << std::endl;
     out() << varShape << " = makeEmpty(\"" << node.getID() << "\")" << end;
     standardApply(node);

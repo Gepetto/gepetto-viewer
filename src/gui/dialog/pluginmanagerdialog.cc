@@ -104,7 +104,8 @@ namespace gepetto {
         plugins_[name] = new QPluginLoader (filename, parent);
         return true;
       }
-      qDebug () << "Plugin" << name << "already declared.";
+      if (name != "omniorbserver.so")
+        qDebug () << "Plugin" << name << "already declared.";
       return false;
     }
 
@@ -256,8 +257,9 @@ namespace gepetto {
 
     bool PluginManager::isPyPluginLoaded (const QString& name)
     {
-      MainWindow* main = MainWindow::instance();
 #if GEPETTO_GUI_HAS_PYTHONQT
+      MainWindow* main = MainWindow::instance();
+      if (!main) return false;
       PythonWidget* pw = main->pythonWidget();
       return pw->hasPlugin (name);
 #else

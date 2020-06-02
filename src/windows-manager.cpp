@@ -50,6 +50,8 @@
 #include <gepetto/viewer/urdf-parser.h>
 #include <gepetto/viewer/blender-geom-writer.h>
 
+#include "log.hh"
+
 #define RETURN_FALSE_IF_NODE_EXISTS(name)                                      \
   if (nodeExists(name)) {                                                      \
     std::cerr << "Node \"" << name << "\" already exists." << std::endl;       \
@@ -166,9 +168,10 @@ namespace viewer {
         else if (vName == "ON")
             return VISIBILITY_ON;
         else {
-            std::cout << "Visibility mode not known, visibility mode can be"
-                " \"ON\",\"OFF\" or \"ALWAYS_ON_TOP\"." << std::endl;
-            std::cout << "Visibility mode set to default = \"ON\"." << std::endl;
+            log() <<
+              "Visibility mode not known, visibility mode can be"
+              " \"ON\",\"OFF\" or \"ALWAYS_ON_TOP\".\n"
+              "Visibility mode set to default = \"ON\"." << std::endl;
             return VISIBILITY_ON;
         }
     }
@@ -182,9 +185,9 @@ namespace viewer {
         else if (wireName == "FILL")
             return FILL;
         else {
-            std::cout << "Wire mode not known, wire mode can be \"FILL\","
-                "\"WIREFRAME\" or \"FILL_AND_WIREFRAME\"." << std::endl;
-            std::cout << "Wire mode set to default = \"FILL\"." << std::endl;
+            log() << "Wire mode not known, wire mode can be \"FILL\","
+              "\"WIREFRAME\" or \"FILL_AND_WIREFRAME\".\n"
+              "Wire mode set to default = \"FILL\"." << std::endl;
             return FILL;
         }
     }
@@ -196,9 +199,9 @@ namespace viewer {
         else if (lightName == "ON")
             return LIGHT_INFLUENCE_ON;
         else {
-            std::cout << "Lighting mode not known, lighting mode can be "
-                "\"ON\" or \"OFF\"." << std::endl;
-            std::cout << "Lighting mode set to default = \"ON\"." << std::endl;
+            log() << "Lighting mode not known, lighting mode can be "
+              "\"ON\" or \"OFF\".\n"
+              "Lighting mode set to default = \"ON\"." << std::endl;
             return LIGHT_INFLUENCE_ON;
         }
     }
@@ -255,7 +258,7 @@ namespace viewer {
         std::string name (*it);
         NodePtr_t n = getNode (name);
         if (n) nodes.push_back (n);
-        else std::cout << "Node \"" << name << "\" doesn't exist." << std::endl;
+        else log() << "Node \"" << name << "\" doesn't exist." << std::endl;
       }
       return nodes.size() - l;
     }
@@ -436,7 +439,7 @@ namespace viewer {
           mesh = LeafNodeCollada::create (meshName,
               urdfParser::getFilename(meshPath));
         } catch (const std::exception& exc) {
-          std::cout << exc.what() << std::endl;
+          log() << exc.what() << std::endl;
           return false;
         }
         ScopedLock lock(osgFrameMutex());
@@ -680,7 +683,7 @@ namespace viewer {
     {
         if (roadmapNodes_.find (nameRoadmap) == roadmapNodes_.end ()) {
             //no node named nodeName
-            std::cout << "No roadmap named \"" << nameRoadmap << "\"" << std::endl;
+            log() << "No roadmap named \"" << nameRoadmap << "\"" << std::endl;
             return false;
         }
         else {
@@ -695,7 +698,7 @@ namespace viewer {
     {
         if (roadmapNodes_.find (nameRoadmap) == roadmapNodes_.end ()) {
             //no node named nodeName
-            std::cout << "No roadmap named \"" << nameRoadmap << "\"" << std::endl;
+            log() << "No roadmap named \"" << nameRoadmap << "\"" << std::endl;
             return false;
         }
         else {
@@ -842,7 +845,7 @@ namespace viewer {
     {
         if (nodes_.find (nodeName) == nodes_.end () ||
                 groupNodes_.find (groupName) == groupNodes_.end ()) {
-            std::cout << "Node name \"" << nodeName << "\" and/or groupNode \""
+            log() << "Node name \"" << nodeName << "\" and/or groupNode \""
                 << groupName << "\" doesn't exist." << std::endl;
             return false;
         }

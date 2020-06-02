@@ -60,7 +60,6 @@ namespace viewer {
     if(!prop.hasReadAccess()) return true;
     T current;
     if(!prop.get(current)) return true;
-    //std::cout << "current " << current << std::endl;
     return current != v;
   }
 

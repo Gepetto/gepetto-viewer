@@ -9,6 +9,8 @@
 
 #include <sstream>
 
+#include "log.hh"
+
 namespace gepetto {
 namespace viewer {
 
@@ -106,7 +108,7 @@ namespace viewer {
       */
     void NodeRod::applyConfiguration(std::vector<std::vector<value_type> > params){
       if(params.size() != (size_t) maxCapsule_)
-        std::cout<<"Error in rod Applyconfiguration : the size of the sequence must be the same as the number of capsules"<<std::endl;
+        log()<<"Error in rod Applyconfiguration : the size of the sequence must be the same as the number of capsules"<<std::endl;
 
       for(size_t i = 0; i < params.size(); i++) {
           if(params.at(i).size() == 8){
@@ -121,7 +123,7 @@ namespace viewer {
               list_of_capsule_.at(i)->applyConfiguration(pos,quat);
 
             }else
-            std::cout<<"Parameter must have 7 or 8 elements"<<std::endl;
+            log()<<"Parameter must have 7 or 8 elements"<<std::endl;
       }
 
     }

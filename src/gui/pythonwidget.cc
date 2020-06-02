@@ -30,8 +30,9 @@
 #include "gepetto/gui/mainwindow.hh"
 #include "gepetto/gui/plugin-interface.hh"
 
-#include "../../src/gui/python-decorator.hh"
-#include "../../src/gui/python-bindings.hh"
+#include "python-decorator.hh"
+#include "python-bindings.hh"
+#include "../log.hh"
 
 namespace bp = boost::python;
 
@@ -52,16 +53,16 @@ namespace gepetto {
           PythonQt* pqt = PythonQt::self();
           PythonQtObjectPtr call = pqt->lookupCallable(obj, callable);
           if (call.isNull()) {
-            qDebug() << "Callable" << callable << "not found.";
+            log() << "Callable" << callable << "not found." << std::endl;
             return;
           }
           if (!pqt->addSignalHandler(sender, signal, call)) {
-            qDebug() << "Signal" << signal << "not found in object"
-              << sender->objectName();
+            log() << "Signal" << signal << "not found in object"
+              << sender->objectName() << std::endl;
           } else {
-            qDebug() << "Connected"
+            log() << "Connected"
               << signal << "of" << sender->objectName()
-              << "to" << callable;
+              << "to" << callable << std::endl;
           }
         }
 
@@ -271,15 +272,15 @@ namespace gepetto {
           addSignalHandler(plugin, "resetConnection",
               reconnect, SIGNAL(triggered()));
         else
-          qDebug() << "Could not find actionReconnect button. The plugin will"
-            << "not be able to reset CORBA connections";
+          log() << "Could not find actionReconnect button. The plugin will"
+            << "not be able to reset CORBA connections" << std::endl;
         QAction* refresh = main->findChild<QAction*>("actionRefresh");
         if (refresh)
           addSignalHandler(plugin, "refreshInterface",
               refresh, SIGNAL(triggered()));
         else
-          qDebug() << "Could not find actionRefresh button. The plugin will"
-            << "not be able to refresh interface.";
+          log() << "Could not find actionRefresh button. The plugin will"
+            << "not be able to refresh interface." << std::endl;
       }
 
       QVariantList PythonWidget::callPluginMethod (const QString& method,

@@ -40,6 +40,8 @@ namespace gepetto {
       std::string predifinedEnvConf;
       std::string stateConf;
 
+      std::string logFile;
+
       bool verbose;
       bool noPlugin;
       bool autoWriteSettings;
