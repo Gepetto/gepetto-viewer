@@ -22,7 +22,7 @@
 #include <PythonQt.h>
 #include <gui/PythonQtScriptingConsole.h>
 #include <PythonQtClassInfo.h>
-#include <PythonQt_QtBindings.h>
+#include <PythonQt_QtAll.h>
 
 #include <boost/python.hpp>
 
@@ -81,7 +81,7 @@ namespace gepetto {
 
         setObjectName ("gepetto-gui.pythonqtconsole");
         PythonQt::init(PythonQt::RedirectStdOut);
-        PythonQt_init_QtBindings();
+        PythonQt_QtAll::init();
         PythonQtObjectPtr mainContext = PythonQt::self()->getMainModule();
         PythonQtObjectPtr sys = PythonQt::self()->importModule ("sys");
         sys.evalScript ("argv = ['gepetto-gui']");
