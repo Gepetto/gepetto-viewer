@@ -940,7 +940,7 @@ namespace viewer {
     bool WindowsManager::addLandmark (const std::string& nodeName,
             float size)
     {
-        THROW_IF_NODE_DOES_NOT_EXIST(nodeName);
+        RETURN_FALSE_IF_NODE_DOES_NOT_EXIST(nodeName);
 	ScopedLock lock(osgFrameMutex());
         nodes_[nodeName]->addLandmark (size);
         return true;
@@ -948,7 +948,7 @@ namespace viewer {
 
     bool WindowsManager::deleteLandmark (const std::string& nodeName)
     {
-        THROW_IF_NODE_DOES_NOT_EXIST(nodeName);
+        RETURN_FALSE_IF_NODE_DOES_NOT_EXIST(nodeName);
 	ScopedLock lock(osgFrameMutex());
         nodes_[nodeName]->deleteLandmark ();
         return true;
@@ -982,7 +982,7 @@ namespace viewer {
 
     bool WindowsManager::setScale(const std::string& nodeName, const osgVector3& scale)
     {
-        THROW_IF_NODE_DOES_NOT_EXIST(nodeName);
+        RETURN_FALSE_IF_NODE_DOES_NOT_EXIST(nodeName);
         ScopedLock lock(osgFrameMutex());
         nodes_[nodeName]->setScale(scale);
         return true;
