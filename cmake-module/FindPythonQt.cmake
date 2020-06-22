@@ -4,7 +4,7 @@
 #
 
 IF(NOT EXISTS "${PYTHONQT_INSTALL_DIR}")
-  FIND_PATH(PYTHONQT_INSTALL_DIR include/PythonQt/PythonQt.h
+  FIND_PATH(PYTHONQT_INSTALL_DIR NAMES include/PythonQt/PythonQt.h include/PythonQt5/PythonQt.h
     DOC "Directory where PythonQt was installed.")
 ENDIF()
 # XXX Since PythonQt 3.0 is not yet cmakeified, depending
@@ -13,10 +13,10 @@ ENDIF()
 #     is added as an option. See [1] for more details.
 #     [1] https://github.com/commontk/CTK/pull/538#issuecomment-86106367
 FIND_PATH(PYTHONQT_INCLUDE_DIR PythonQt.h
-  PATHS "${PYTHONQT_INSTALL_DIR}/include/PythonQt"
+  PATHS "${PYTHONQT_INSTALL_DIR}/include/PythonQt" "${PYTHONQT_INSTALL_DIR}/include/PythonQt5"
   DOC "Path to the PythonQt include directory")
 FIND_PATH(PYTHONQT_QTALL_INCLUDE_DIR PythonQt_QtAll.h
-  PATHS "${PYTHONQT_INSTALL_DIR}/include/PythonQt"
+  PATHS "${PYTHONQT_INSTALL_DIR}/include/PythonQt" "${PYTHONQT_INSTALL_DIR}/include/PythonQt5"
   PATH_SUFFIXES "extensions/PythonQt_QtAll"
   DOC "Path to the PythonQt QtAll extension include directory")
 
