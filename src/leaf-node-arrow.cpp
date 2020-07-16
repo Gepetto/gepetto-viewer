@@ -41,17 +41,18 @@ namespace viewer {
         if (cone_drawable_    ) geode_ptr_->removeDrawable(cone_drawable_);
 
          /* create the axis : */
-        float radiusCyl = getRadius();
-        float lengthCyl = getSize();
+        float R = getRadius();
+        float L = getSize();
+        float Lcone = std::min(L, 4.f*R);
 
         /* Create cylinder */
         ::osg::CylinderRefPtr cylinder_shape_x_ptr = new ::osg::Cylinder();
-        cylinder_shape_x_ptr->set(osgVector3(lengthCyl/2.f,0.f,0.f) , radiusCyl ,lengthCyl);
-        cylinder_shape_x_ptr->setRotation(osgQuat( 0.f , ::osg::X_AXIS , M_PI_2 , ::osg::Y_AXIS , 0.f , ::osg::Z_AXIS ));
+        cylinder_shape_x_ptr->set(osgVector3((L-Lcone)/2.f,0.f,0.f), R, L-Lcone);
+        cylinder_shape_x_ptr->setRotation(osgQuat( 0.f, ::osg::X_AXIS, M_PI_2, ::osg::Y_AXIS, 0.f, ::osg::Z_AXIS ));
         /* Create cone */
         ::osg::ConeRefPtr cone_shape_x_ptr = new ::osg::Cone();
-        cone_shape_x_ptr->set(osgVector3(lengthCyl+getRadius(),0.f,0.f) , 2.f * radiusCyl , 4.f * radiusCyl );
-        cone_shape_x_ptr->setRotation(osgQuat( 0.f , ::osg::X_AXIS , M_PI_2 , ::osg::Y_AXIS , 0.f , ::osg::Z_AXIS ));
+        cone_shape_x_ptr->set(osgVector3(L-3*Lcone/4,0.f,0.f), 2.f * R, Lcone);
+        cone_shape_x_ptr->setRotation(osgQuat( 0.f, ::osg::X_AXIS, M_PI_2, ::osg::Y_AXIS, 0.f, ::osg::Z_AXIS));
 
         /* create drawable and add them to geode */
         cylinder_drawable_ = new ::osg::ShapeDrawable( cylinder_shape_x_ptr );
@@ -66,8 +67,8 @@ namespace viewer {
         NodeDrawable(name),
         color_(color)
     {
-        setRadius(radius);
-        setSize(size);
+        radius_ = radius;
+        size_ = size;
 
         init();
     }
@@ -100,9 +101,7 @@ namespace viewer {
 
     LeafNodeArrowPtr_t LeafNodeArrow::create (const std::string& name, const osgVector4& color, float radiusCenter)
     {
-        //const float& size = new float;
-        //*size = 0;
-        LeafNodeArrowPtr_t shared_ptr(new LeafNodeArrow(name, color, radiusCenter,0));
+        LeafNodeArrowPtr_t shared_ptr(new LeafNodeArrow(name, color, radiusCenter,4*radiusCenter));
 
         // Add reference to itself
         shared_ptr->initWeakPtr(shared_ptr);
@@ -136,7 +135,10 @@ namespace viewer {
 
     void LeafNodeArrow::setRadius (const float& radius)
     {
+      if(radius != getRadius()) { // avoid useless resize
         radius_=radius;
+        resetGeodeContent();
+      }
     }
 
     float LeafNodeArrow::getRadius() const
@@ -144,8 +146,12 @@ namespace viewer {
         return radius_;
     }
 
-    void LeafNodeArrow::setSize(const float& size){
+    void LeafNodeArrow::setSize(const float& size)
+    {
+      if (size != getSize()) { // avoid useless resize
         size_ = size;
+        resetGeodeContent();
+      }
     }
 
     float LeafNodeArrow::getSize() const
@@ -175,8 +181,8 @@ namespace viewer {
     {
         if(length != getSize() || radius != getRadius())
         { // avoid useless resize
-            setSize(length);
-            setRadius(radius);
+            size_ = length;
+            radius_ = radius;
 
             resetGeodeContent ();
         }
