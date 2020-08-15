@@ -234,6 +234,7 @@ namespace viewer {
             virtual bool setBackgroundColor2(const WindowID windowId,const Color_t& color);
             virtual Configuration getCameraTransform(const WindowID windowId);
             virtual bool setCameraTransform(const WindowID windowId, const Configuration &configuration);
+            virtual bool setCameraToBestFit(const WindowID windowId);
 
             virtual std::vector<std::string> getPropertyNames(const std::string& nodeName) const;
             virtual std::vector<std::string> getPropertyTypes(const std::string& nodeName) const;
