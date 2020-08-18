@@ -301,26 +301,26 @@ namespace gepetto {
       const char nl = '\n';
       os
         << nl <<     "Configuration:"
-        << nl << tab << "Configuration file:     " << tab << configurationFile
-        << nl << tab << "Log file:               " << tab << (logFile.empty() ? "standard output" : logFile)
-        << nl << tab << "Predefined robots:      " << tab << predifinedRobotConf
-        << nl << tab << "Predefined environments:" << tab << predifinedEnvConf
+        << nl << tab << "Configuration file:              " << tab << configurationFile
+        << nl << tab << "Log file:                        " << tab << (logFile.empty() ? "standard output" : logFile)
+        << nl << tab << "Predefined robots:               " << tab << predifinedRobotConf
+        << nl << tab << "Predefined environments:         " << tab << predifinedEnvConf
         << nl << tab << "User configuration search path:  " << tab << QFileInfo(QSettings(QSettings::UserScope, QCoreApplication::organizationName (), " ").fileName()).absolutePath().toStdString()
         << nl << tab << "System configuration search path:" << tab << QFileInfo(QSettings(QSettings::SystemScope, QCoreApplication::organizationName (), " ").fileName()).absolutePath().toStdString()
 
         << nl << nl << "Options:"
-        << nl << tab << "Verbose:                " << tab << verbose
-        << nl << tab << "No plugin:              " << tab << noPlugin
-        << nl << tab << "Use omni name service:  " << tab << useNameService
-        << nl << tab << "Refresh rate:           " << tab << refreshRate
+        << nl << tab << "Verbose:                          " << tab << verbose
+        << nl << tab << "No plugin:                        " << tab << noPlugin
+        << nl << tab << "Use omni name service:            " << tab << useNameService
+        << nl << tab << "Refresh rate:                     " << tab << refreshRate
 
         << nl << nl << "Screen capture options:"
-        << nl << tab << "Directory:              " << tab << captureDirectory
-        << nl << tab << "Filename:               " << tab << captureFilename
-        << nl << tab << "Extension:              " << tab << captureExtension
-        << nl << tab << "Avconv command:         " << tab << avconv.toStdString()
-        << nl << tab << "Avconv input options:   " << tab << avConvInputOptions .join(" ").toStdString()
-        << nl << tab << "Avconv output options:  " << tab << avConvOutputOptions.join(" ").toStdString()
+        << nl << tab << "Directory:                        " << tab << captureDirectory
+        << nl << tab << "Filename:                         " << tab << captureFilename
+        << nl << tab << "Extension:                        " << tab << captureExtension
+        << nl << tab << "Avconv command:                   " << tab << avconv.toStdString()
+        << nl << tab << "Avconv input options:             " << tab << avConvInputOptions .join(" ").toStdString()
+        << nl << tab << "Avconv output options:            " << tab << avConvOutputOptions.join(" ").toStdString()
 
         << nl
         << nl << "omniORB configuration" ;
