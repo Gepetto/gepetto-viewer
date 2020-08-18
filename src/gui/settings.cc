@@ -305,6 +305,8 @@ namespace gepetto {
         << nl << tab << "Log file:               " << tab << (logFile.empty() ? "standard output" : logFile)
         << nl << tab << "Predefined robots:      " << tab << predifinedRobotConf
         << nl << tab << "Predefined environments:" << tab << predifinedEnvConf
+        << nl << tab << "User configuration search path:  " << tab << QFileInfo(QSettings(QSettings::UserScope, QCoreApplication::organizationName (), " ").fileName()).absolutePath().toStdString()
+        << nl << tab << "System configuration search path:" << tab << QFileInfo(QSettings(QSettings::SystemScope, QCoreApplication::organizationName (), " ").fileName()).absolutePath().toStdString()
 
         << nl << nl << "Options:"
         << nl << tab << "Verbose:                " << tab << verbose
