@@ -53,9 +53,12 @@ namespace viewer {
     protected:
     public:
         void addVertex (const osgVector3& vertex);
-        /** Static method which create a new XYZ axis defined by the radius of the sphere (center) and size of the axis (0 by default)
+        /** Static method which create a new arrow defined by the radius and length of the arrow.
+         * See \ref getSize and \ref getRadius
          */
         static LeafNodeArrowPtr_t create(const std::string& name, const osgVector4& color, float radiusCenter, float sizeAxis);
+        /** Static method which create a new arrow without cylindrical base.
+         */
         static LeafNodeArrowPtr_t create (const std::string& name, const osgVector4& color, float radiusCenter);
 
         /** Static method for creating a clone of box other with the copy constructor
@@ -81,9 +84,13 @@ namespace viewer {
         {
           return color_;
         }
+        /// Get the radius of the arrow.
+        /// It is the cylinder radius. The cone base radius is twice larger.
         float getRadius() const;
         void setRadius (const float& radius);
         void setSize(const float& size);
+        /// Get the length of the arrow.
+        /// It is the sum of the cylinder and cone length.
         float getSize() const;
         void resize(float radius,float length);
 

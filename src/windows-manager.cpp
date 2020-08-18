@@ -1177,6 +1177,14 @@ namespace viewer {
     return true;
   }
 
+  bool WindowsManager::setCameraToBestFit(const WindowID windowId)
+  {
+    WindowManagerPtr_t wm = getWindowManager(windowId, true);
+    ScopedLock lock(osgFrameMutex());
+    wm->getViewerClone()->home();
+    return true;
+  }
+
   std::vector<std::string> WindowsManager::getPropertyNames(const std::string& nodeName) const
   {
     NodePtr_t node = getNode(nodeName, true);

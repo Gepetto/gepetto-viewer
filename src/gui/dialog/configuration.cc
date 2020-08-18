@@ -126,7 +126,7 @@ namespace gepetto {
         *roll = spinBoxes[3], *pitch = spinBoxes[4], *yaw = spinBoxes[5];
 
       double _r,_p,_y;
-      getEulerFromQuat (cfg.quat,_p,_y,_r);
+      getEulerFromQuat (cfg.quat,_p,_r,_y);
 
       x->setValue(cfg.position[0]);
       y->setValue(cfg.position[1]);

@@ -190,6 +190,16 @@ namespace gepetto {
 
       if (help != osg::ApplicationUsage::NO_HELP) {
         arguments.getApplicationUsage()->write(std::cout, help, 80, true);
+        if (help & osg::ApplicationUsage::ENVIRONMENTAL_VARIABLE) {
+          const std::string tab ("  ");
+          const char nl = '\n';
+          std::cout << "---------- gepetto-gui specific variables ---------"
+            << nl << nl << tab << "GEPETTO_GUI_SETTINGS_DIR"
+            << nl << nl << tab << tab << "Configure the system configuration directory."
+            << nl << nl << tab << "GEPETTO_GUI_PLUGIN_DIRS"
+            << nl << nl << tab << tab << "Configure the plugin search directories."
+            << std::endl;
+        }
         if (retVal < 1) retVal = 1;
       }
       if (verbose) print (std::cout) << std::endl;
@@ -301,24 +311,26 @@ namespace gepetto {
       const char nl = '\n';
       os
         << nl <<     "Configuration:"
-        << nl << tab << "Configuration file:     " << tab << configurationFile
-        << nl << tab << "Log file:               " << tab << (logFile.empty() ? "standard output" : logFile)
-        << nl << tab << "Predefined robots:      " << tab << predifinedRobotConf
-        << nl << tab << "Predefined environments:" << tab << predifinedEnvConf
+        << nl << tab << "Configuration file:              " << tab << configurationFile
+        << nl << tab << "Log file:                        " << tab << (logFile.empty() ? "standard output" : logFile)
+        << nl << tab << "Predefined robots:               " << tab << predifinedRobotConf
+        << nl << tab << "Predefined environments:         " << tab << predifinedEnvConf
+        << nl << tab << "User configuration search path:  " << tab << QFileInfo(QSettings(QSettings::UserScope, QCoreApplication::organizationName (), " ").fileName()).absolutePath().toStdString()
+        << nl << tab << "System configuration search path:" << tab << QFileInfo(QSettings(QSettings::SystemScope, QCoreApplication::organizationName (), " ").fileName()).absolutePath().toStdString()
 
         << nl << nl << "Options:"
-        << nl << tab << "Verbose:                " << tab << verbose
-        << nl << tab << "No plugin:              " << tab << noPlugin
-        << nl << tab << "Use omni name service:  " << tab << useNameService
-        << nl << tab << "Refresh rate:           " << tab << refreshRate
+        << nl << tab << "Verbose:                          " << tab << verbose
+        << nl << tab << "No plugin:                        " << tab << noPlugin
+        << nl << tab << "Use omni name service:            " << tab << useNameService
+        << nl << tab << "Refresh rate:                     " << tab << refreshRate
 
         << nl << nl << "Screen capture options:"
-        << nl << tab << "Directory:              " << tab << captureDirectory
-        << nl << tab << "Filename:               " << tab << captureFilename
-        << nl << tab << "Extension:              " << tab << captureExtension
-        << nl << tab << "Avconv command:         " << tab << avconv.toStdString()
-        << nl << tab << "Avconv input options:   " << tab << avConvInputOptions .join(" ").toStdString()
-        << nl << tab << "Avconv output options:  " << tab << avConvOutputOptions.join(" ").toStdString()
+        << nl << tab << "Directory:                        " << tab << captureDirectory
+        << nl << tab << "Filename:                         " << tab << captureFilename
+        << nl << tab << "Extension:                        " << tab << captureExtension
+        << nl << tab << "Avconv command:                   " << tab << avconv.toStdString()
+        << nl << tab << "Avconv input options:             " << tab << avConvInputOptions .join(" ").toStdString()
+        << nl << tab << "Avconv output options:            " << tab << avConvOutputOptions.join(" ").toStdString()
 
         << nl
         << nl << "omniORB configuration" ;

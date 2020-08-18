@@ -230,6 +230,7 @@ namespace viewer {
       } else
         dsb->setEnabled(false);
       setSpinBoxRange<float, double>(prop, dsb);
+      dsb->setDecimals(15);
       return dsb;
     }
 
