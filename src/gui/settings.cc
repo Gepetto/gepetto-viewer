@@ -190,6 +190,16 @@ namespace gepetto {
 
       if (help != osg::ApplicationUsage::NO_HELP) {
         arguments.getApplicationUsage()->write(std::cout, help, 80, true);
+        if (help & osg::ApplicationUsage::ENVIRONMENTAL_VARIABLE) {
+          const std::string tab ("  ");
+          const char nl = '\n';
+          std::cout << "---------- gepetto-gui specific variables ---------"
+            << nl << nl << tab << "GEPETTO_GUI_SETTINGS_DIR"
+            << nl << nl << tab << tab << "Configure the system configuration directory."
+            << nl << nl << tab << "GEPETTO_GUI_PLUGIN_DIRS"
+            << nl << nl << tab << tab << "Configure the plugin search directories."
+            << std::endl;
+        }
         if (retVal < 1) retVal = 1;
       }
       if (verbose) print (std::cout) << std::endl;
