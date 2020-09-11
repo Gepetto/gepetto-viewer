@@ -149,8 +149,8 @@ IF(GEPETTO_GUI_HAS_PYTHONQT)
 ENDIF(GEPETTO_GUI_HAS_PYTHONQT)
 # }}}
 
-SET(BOOST_COMPONENTS python unit_test_framework system)
-SEARCH_FOR_BOOST()
+FIND_PACKAGE(Boost REQUIRED COMPONENTS COMPONENTS unit_test_framework)
+SEARCH_FOR_BOOST_PYTHON(REQUIRED)
 
 # Check if we are on a platform with ffmpeg or avconv
 FIND_PROGRAM(AVCONV avconv)
