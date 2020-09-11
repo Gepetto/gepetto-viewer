@@ -1,4 +1,10 @@
                                                                 -*- outline -*-
+New in v4.10.0
+* Compatibility with PythonQt 3.2.
+* Fix error when recording several movies consecutively.
+* Fix paths where plugins are search for.
+* Add documentation for GEPETTO_GUI_PLUGIN_DIRS
+
 New in v4.6.0
 * Install safeapplication.hh again.
 * Enforce compatibility with Qt4.
