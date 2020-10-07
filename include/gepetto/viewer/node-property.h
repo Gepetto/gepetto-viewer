@@ -55,7 +55,7 @@ namespace viewer {
       template <> struct property_type<osgVector4   > { static inline std::string to_string () { return "osgVector4"   ; } };
       template <> struct property_type<Configuration> { static inline std::string to_string () { return "Configuration"; } };
 
-      template <typename T> QWidget* buildEditor (Property* property) { return NULL; }
+      template <typename T> QWidget* buildEditor (Property* /*property*/) { return NULL; }
       template <> QWidget* buildEditor<bool         > (Property* property);
       template <> QWidget* buildEditor<int          > (Property* property);
       template <> QWidget* buildEditor<float        > (Property* property);
