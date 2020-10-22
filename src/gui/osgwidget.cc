@@ -178,13 +178,24 @@ namespace gepetto {
         }
         tmpDirectory_ = new QTemporaryDir (QDir::temp().absoluteFilePath("gepetto-gui."));
         if (!tmpDirectory_->isValid()) {
-          main->logError(tmpDirectory_->errorString());
+          main->logError(
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 0))
+              tmpDirectory_->errorString()
+#else
+              "A temporary directory is not valid"
+#endif
+          );
           delete tmpDirectory_;
           tmpDirectory_ = NULL;
           recordMovie_->setChecked(false);
         } else {
           tmpDirectory_->setAutoRemove(false);
-          QString path = tmpDirectory_->filePath("img");
+          QString path =
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 9, 0))
+              tmpDirectory_->filePath("img");
+#else
+              tmpDirectory_->path() + "/img";
+#endif
           const char* ext = "jpeg";
           osg ()->startCapture(windowID(), path.toLocal8Bit().data(), ext);
           main->log("Saving images to " + path + "_<number>." + ext);
@@ -202,7 +213,12 @@ namespace gepetto {
       } else {
 #if (QT_VERSION >= QT_VERSION_CHECK(5,0,0))
         if (tmpDirectory_ == NULL) return;
-        QString input (tmpDirectory_->filePath("img_%d.jpeg"));
+        QString input =
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 9, 0))
+            tmpDirectory_->filePath("img_%d.jpeg");
+#else
+            tmpDirectory_->path() + "/img_%d.jpeg";
+#endif
 #else
         QString input = "/tmp/gepetto-gui/record/img_0_%d.jpeg";
 #endif
