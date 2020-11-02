@@ -43,8 +43,9 @@ namespace viewer {
       osg::GraphicsContext* gc = renderInfo.getState()->getGraphicsContext();
       assert(gc);
 
-      glReadBuffer(GL_BACK);
-      //osg::Camera* camera = renderInfo.getCurrentCamera();
+      //glReadBuffer(GL_BACK);
+      osg::Camera* camera = renderInfo.getCurrentCamera();
+      camera->setReadBuffer(GL_BACK);
       //osg::Viewport* viewport = camera ? camera->getViewport() : 0;
       //image->readPixels(viewport->x(),viewport->y(),viewport->width(),viewport->height(),
       image->readPixels(0, 0, gc->getTraits()->width, gc->getTraits()->height,
