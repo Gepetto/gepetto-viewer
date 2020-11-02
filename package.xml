@@ -10,6 +10,8 @@
  <!-- <url type='website'>https://github.com/Gepetto/gepetto-viewer </url> -->
 
  <author>Joseph Mirabel</author>
+ <author>Justin Carpentier</author>
+ <author>Mathieu Geisert</author>
  <author>Florent Lamiraux et al.</author>
 
  <buildtool_depend>catkin</buildtool_depend>
