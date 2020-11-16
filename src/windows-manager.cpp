@@ -46,6 +46,7 @@
 #include <gepetto/viewer/macros.h>
 #include <gepetto/viewer/config-osg.h>
 #include <gepetto/viewer/leaf-node-ground.h>
+#include <gepetto/viewer/leaf-node-point-cloud.h>
 #include <gepetto/viewer/leaf-node-collada.h>
 #include <gepetto/viewer/urdf-parser.h>
 #include <gepetto/viewer/blender-geom-writer.h>
@@ -610,6 +611,53 @@ namespace viewer {
         FIND_NODE_OF_TYPE_OR_THROW (LeafNodeLine, curve, curveName);
         setFloatProperty(curveName, "LineWidth", width);
         return true;
+    }
+
+    bool WindowsManager::addPointCloud(const std::string & pointCloudName,
+                                       const Vec3ArrayPtr_t & points,
+                                       const Vec4ArrayPtr_t & point_colors)
+    {
+      RETURN_FALSE_IF_NODE_EXISTS(pointCloudName);
+      
+      LeafNodePointCloudPtr_t point_cloud
+        = LeafNodePointCloud::create(pointCloudName, points, point_colors);
+      ScopedLock lock(osgFrameMutex());
+      addNode(pointCloudName, point_cloud, true);
+      return true;
+    }
+
+    bool WindowsManager::addPointCloud(const std::string & pointCloudName,
+                                       const Vec3ArrayPtr_t & points,
+                                       const osgVector4 & color)
+    {
+      RETURN_FALSE_IF_NODE_EXISTS(pointCloudName);
+      
+      LeafNodePointCloudPtr_t point_cloud
+        = LeafNodePointCloud::create(pointCloudName, points, color);
+      ScopedLock lock(osgFrameMutex());
+      addNode(pointCloudName, point_cloud, true);
+      return true;
+    }
+
+    bool WindowsManager::setPointCloudPoints(const std::string & pointCloudName,
+                                             const Vec3ArrayPtr_t & points,
+                                             const Vec4ArrayPtr_t & colors_array)
+    {
+      FIND_NODE_OF_TYPE_OR_THROW(LeafNodePointCloud, point_cloud, pointCloudName);
+      
+      ScopedLock lock(osgFrameMutex());
+      point_cloud->setPoints(points,colors_array);
+      return true;
+    }
+
+    bool WindowsManager::setPointCloudColors(const std::string & pointCloudName,
+                                             const Vec4ArrayPtr_t & colors_array)
+    {
+      FIND_NODE_OF_TYPE_OR_THROW(LeafNodePointCloud, point_cloud, pointCloudName);
+      
+      ScopedLock lock(osgFrameMutex());
+      point_cloud->setColors(colors_array);
+      return true;
     }
 
     bool WindowsManager::addTriangleFace (const std::string& faceName,

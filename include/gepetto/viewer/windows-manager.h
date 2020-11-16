@@ -167,6 +167,12 @@ namespace viewer {
             virtual bool setCurveMode (const std::string& curveName, const GLenum mode);
             virtual bool setCurvePointsSubset (const std::string& curveName, const int first, const std::size_t count);
             virtual bool setCurveLineWidth (const std::string& curveName, const float& width);
+      
+            virtual bool addPointCloud(const std::string & pointCloudName, const Vec3ArrayPtr_t & points, const Vec4ArrayPtr_t & point_colors);
+            virtual bool addPointCloud(const std::string & pointCloudName, const Vec3ArrayPtr_t & points, const osgVector4 & color);
+      
+            virtual bool setPointCloudPoints(const std::string & pointCloudName, const Vec3ArrayPtr_t & points, const Vec4ArrayPtr_t & colors_array);
+            virtual bool setPointCloudColors(const std::string & pointCloudName, const Vec4ArrayPtr_t & colors_array);
 
             virtual bool addSquareFace(const std::string& faceName, const osgVector3& pos1, const osgVector3& pos2, const osgVector3& pos3, const osgVector3& pos4, const Color_t& color);
             virtual bool setTexture (const std::string& nodeName, const std::string& filename);

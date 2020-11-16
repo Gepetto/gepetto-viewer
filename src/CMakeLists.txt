@@ -42,6 +42,7 @@ SET(${LIBRARY_NAME}_SOURCES
   leaf-node-sphere.cpp
   leaf-node-capsule.cpp
   leaf-node-ground.cpp
+  leaf-node-point-cloud.cpp
   leaf-node-collada.cpp
   leaf-node-light.cpp
   leaf-node-mesh.cpp
