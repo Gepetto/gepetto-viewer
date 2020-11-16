@@ -15,10 +15,6 @@
 #include <osgViewer/Viewer>
 #include <osg/Camera>
 #include <osgViewer/GraphicsWindow>
-#include <X11/Xlib.h>
-
-
-
 
 namespace osgGA {
 

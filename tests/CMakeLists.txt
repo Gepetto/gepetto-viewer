@@ -30,6 +30,10 @@ ADD_TEST_CFLAGS(nodes "-DBOOST_TEST_DYN_LINK")
 TARGET_LINK_LIBRARIES(nodes PRIVATE ${PROJECT_NAME})
 PKG_CONFIG_USE_DEPENDENCY(nodes openscenegraph)
 TARGET_LINK_LIBRARIES(nodes PRIVATE Boost::unit_test_framework)
+ADD_EXECUTABLE(test-gl gl.cpp)
+TARGET_LINK_LIBRARIES(test-gl PRIVATE ${PROJECT_NAME})
+PKG_CONFIG_USE_DEPENDENCY(test-gl openscenegraph)
+
 
 IF($ENV{DISPLAY})
   ADD_UNIT_TEST(properties properties)
