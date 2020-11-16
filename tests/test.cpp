@@ -18,8 +18,11 @@
 #include <gepetto/viewer/leaf-node-face.h>
 #include <gepetto/viewer/leaf-node-sphere.h>
 #include <gepetto/viewer/leaf-node-ground.h>
+#include <gepetto/viewer/leaf-node-point-cloud.h>
 #include <gepetto/viewer/leaf-node-collada.h>
 #include <gepetto/viewer/urdf-parser.h>
+
+#define UNIFORM(a,b) ((((double)rand() / (double)RAND_MAX) * ((b)-(a))) + (a))
 
   int main(int, const char**)
 
@@ -44,8 +47,15 @@
     //std::string("/home/ostasse/devel/ros-indigo-1/install/share/hrp2_14_description/urdf/hrp2_14.urdf"),
     //std::string("/home/ostasse/devel/ros-indigo-1/install/share/"));
 
+    osgVector4 color(1.f,0.2f,0.3f,1.f);
+    unsigned int num_points = 100000;
+    osg::Vec3ArrayRefPtr points = new osg::Vec3Array(num_points);
+    for(size_t k = 0; k < num_points; ++k)
+      (*points)[k] = osgVector3((float)UNIFORM(-1.,1.),(float)UNIFORM(-1.,1.),(float)UNIFORM(-1.,1.));
+    LeafNodePointCloudPtr_t point_cloud = LeafNodePointCloud::create("point_cloud",points,color);
 
     world->addChild(box);
+    world->addChild(point_cloud);
     /*world->addChild(obstacle);
 
     DefVector3 position1(2.,0.,0.);

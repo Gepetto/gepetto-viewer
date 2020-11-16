@@ -84,6 +84,7 @@ SET(${PROJECT_NAME}_HEADERS_NO_MOC
   ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/leaf-node-cylinder.h
   ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/leaf-node-face.h
   ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/leaf-node-ground.h
+  ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/leaf-node-point-cloud.h
   ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/leaf-node-line.h
   ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/leaf-node-mesh.h
   ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/leaf-node-sphere.h
