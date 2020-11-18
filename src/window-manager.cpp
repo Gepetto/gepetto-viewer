@@ -443,6 +443,14 @@ namespace viewer {
       createBackground();
       createManipulator();
       createHUDcamera();
+
+      main_camera_->setNearFarRatio(0.1);
+
+      auto prop = RangedFloatProperty::create("Camera/NearFarRatio",
+            [this]() -> float { return (float)main_camera_->getNearFarRatio(); },
+            [this](const float& ratio) { main_camera_->setNearFarRatio(ratio); });
+      prop->setRange(0., 1., 0.05f);
+      addProperty (prop);
     }
 
     WindowManager::WindowManager ()
