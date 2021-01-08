@@ -115,6 +115,7 @@ namespace gepetto {
           viewer::Vector2Property::getterFromMemberFunction (wm_.get(), &viewer::WindowManager::getWindowDimension),
           viewer::Vector2Property::Setter_t()));
 
+      nSuccessiveStaticFrames_ = 0;
       connect( &timer_, SIGNAL(timeout()), this, SLOT(update()) );
       timer_.start(parent->settings_->refreshRate);
 
@@ -139,7 +140,20 @@ namespace gepetto {
     void OSGWidget::paintEvent(QPaintEvent*)
     {
       viewer::ScopedLock lock(wsm_->osgFrameMutex());
-      wm_->frame();
+      int refreshRate = MainWindow::instance()->settings_->refreshRate;
+      int sleepModeThr = int(6000. / refreshRate); // ~60 seconds.
+      if (wm_->frame()) {
+        // go back to active mode if necessary
+        if (nSuccessiveStaticFrames_ >= sleepModeThr)
+          timer_.setInterval(MainWindow::instance()->settings_->refreshRate);
+        nSuccessiveStaticFrames_ = 0;
+      } else if (nSuccessiveStaticFrames_ < sleepModeThr)
+        nSuccessiveStaticFrames_++;
+      else if (nSuccessiveStaticFrames_ == sleepModeThr) {
+        // go into sleep mode: check for updates every second only.
+        timer_.setInterval(1000);
+        nSuccessiveStaticFrames_++; // becomes > sleepModeThr
+      }
     }
 
     WindowsManager::WindowID OSGWidget::windowID() const

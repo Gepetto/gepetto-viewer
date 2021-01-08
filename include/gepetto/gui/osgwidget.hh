@@ -96,6 +96,7 @@ namespace gepetto {
         WindowID wid_;
         WindowManagerPtr_t wm_;
         QTimer timer_;
+        int nSuccessiveStaticFrames_;
         osgViewer::ViewerRefPtr viewer_;
         osg::ref_ptr <osgViewer::ScreenCaptureHandler> screenCapture_;
         QTemporaryDir* tmpDirectory_;
