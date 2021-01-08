@@ -34,9 +34,7 @@
 #include <gepetto/viewer/leaf-node-cylinder.h>
 #include <gepetto/viewer/leaf-node-sphere.h>
 
-
-#define OUT(x) qDebug() << x;
-// #define OUT(x) (void)0
+#include "log.hh"
 
 namespace gepetto {
 namespace viewer {
@@ -287,7 +285,8 @@ namespace viewer {
         // Parse material
         mat = parseMaterial (material);
         if (!mat.hasColor && !mat.hasTexture) {
-          qDebug() << "material tag " << name << " must have either a color or a texture.";
+          log() << "material tag " << name << " must have either a color or a "
+            "texture.\n";
           mat.color = osgVector4 (0.9f,0.9f,0.9f,1.f);
           mat.hasColor = true;
         }
@@ -461,7 +460,7 @@ namespace viewer {
       if (name.isNull()) throw std::logic_error ("A link has no name attribute.");
 
       std::string link_name = name.toStdString();
-      OUT( link_name.c_str() );
+      log() << name << '\n';
 
       details::LinkNodePtr_t linkNode (details::LinkNode
           ::create (robotName + "/" + link_name));

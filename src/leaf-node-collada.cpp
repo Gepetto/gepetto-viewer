@@ -100,7 +100,7 @@ namespace viewer {
 
       std::string osgname = getCachedFileName(collada_file_path_);
       if (!osgname.empty()) {
-        std::cout << "Using " << osgname << std::endl;
+        log() << "Using " << osgname << std::endl;
         collada_ptr_ = osgDB::readNodeFile(osgname, options);
       } else {
         // get the extension of the meshs file
@@ -139,15 +139,15 @@ namespace viewer {
 
           bool error = false;
           if (!collada_ptr_) {
-            std::cout << "File: " << collada_file_path_ << " could not be loaded\n";
+            log() << "File: " << collada_file_path_ << " could not be loaded\n";
             error = true;
           } else if (strncasecmp(collada_ptr_->getName().c_str(), "empty", 5) == 0) {
-            std::cout << "File: " << collada_file_path_ << " could not be loaded:\n"
+            log() << "File: " << collada_file_path_ << " could not be loaded:\n"
               << collada_ptr_->getName() << '\n';
             error = true;
           }
           if (error) {
-            std::cout << "You may try to convert the file with the following command:\n"
+            log() << "You may try to convert the file with the following command:\n"
               "osgconv " << collada_file_path_ << ' ' << collada_file_path_ << ".osgb" << std::endl;
           }
           // Apply scale
@@ -356,7 +356,7 @@ namespace viewer {
     osg::ref_ptr<osg::Image> image = osgDB::readImageFile(image_path);
     if (!image)
     {
-      std::cout << " couldn't find texture, quiting." << std::endl;
+      log() << " couldn't find texture, quiting." << std::endl;
       return;
     } 
     texture->setImage(image);
