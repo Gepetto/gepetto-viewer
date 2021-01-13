@@ -14,6 +14,7 @@
 #include <osg/Texture2D>
 #include <osg/Version>
 #include <osgDB/FileNameUtils>
+#include <osgUtil/Optimizer>
 #include <gepetto/viewer/leaf-node-collada.h>
 
 #include "log.hh"
@@ -169,6 +170,9 @@ namespace viewer {
       /* Allow transparency */
       collada_ptr_->getOrCreateStateSet()->setMode(GL_BLEND, ::osg::StateAttribute::ON);
       collada_ptr_->setDataVariance(osg::Object::STATIC);
+
+      osgUtil::Optimizer optimizer;
+      optimizer.optimize(collada_ptr_, osgUtil::Optimizer::DEFAULT_OPTIMIZATIONS);
     }
     collada_ptr_->setName ("meshfile");
     backfaceDrawing_.stateSet(collada_ptr_->getOrCreateStateSet());
@@ -190,6 +194,8 @@ namespace viewer {
           Vector4Property::setterFromMemberFunction(this, &LeafNodeCollada::setColor)));
     addProperty(VoidProperty::create("RemoveLightSources",
           VoidProperty::memberFunction(this, &LeafNodeCollada::removeLightSources)));
+    addProperty(VoidProperty::create("ApplyScale",
+          VoidProperty::memberFunction(this, &LeafNodeCollada::applyScale)));
   }
     
   LeafNodeCollada::LeafNodeCollada(const std::string& name, const std::string& collada_file_path) :
@@ -401,6 +407,28 @@ namespace viewer {
   {
     LightSourceRemoving lsRemoving;
     collada_ptr_->traverse (lsRemoving);
+  }
+
+  void LeafNodeCollada::applyScale()
+  {
+    osgVector3 scale (getScale());
+    setScale(1.);
+
+    // Do not remove this brackets. See https://github.com/openscenegraph/OpenSceneGraph/issues/1020
+    {
+      osg::ref_ptr<osg::MatrixTransform> xform = new osg::MatrixTransform;
+      xform->setMatrix( osg::Matrix::scale( scale ) );
+      xform->setDataVariance( osg::Object::STATIC );
+
+      group_ptr_->removeChild(collada_ptr_);
+      xform->addChild( collada_ptr_ );
+      collada_ptr_ = xform;
+    }
+
+    osgUtil::Optimizer optimizer;
+    optimizer.optimize(collada_ptr_, osgUtil::Optimizer::FLATTEN_STATIC_TRANSFORMS);
+
+    group_ptr_->addChild(collada_ptr_);
   }
 
   LeafNodeCollada::~LeafNodeCollada()

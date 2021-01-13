@@ -94,6 +94,9 @@ namespace viewer {
         /// Remove any osg::LightSource of this mesh.
         void removeLightSources ();
 
+        /// Apply the current scale permanently to the node.
+        void applyScale ();
+
         SCENE_VIEWER_ACCEPT_VISITOR;
 
         /** Destructor */
