@@ -222,7 +222,10 @@ namespace viewer {
       if (mesh.hasAttribute ("scale")) {
         osgVector3 scale (1,1,1);
         toFloats (mesh.attribute("scale"), scale);
-        meshNode->setScale(scale);
+        if (scale != osgVector3 (1,1,1)) {
+          meshNode->setScale(scale);
+          meshNode->applyScale();
+        }
       }
 
       return meshNode;
