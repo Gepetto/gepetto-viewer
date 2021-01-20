@@ -33,11 +33,14 @@ INCLUDE(cmake/boost.cmake)
 INCLUDE(cmake/ide.cmake)
 INCLUDE(cmake/apple.cmake)
 INCLUDE(cmake/python.cmake)
+INCLUDE(cmake/cxx-standard.cmake)
 INCLUDE(cmake-module/qt.cmake)
 INCLUDE(cmake-module/osgqt.cmake)
 
 COMPUTE_PROJECT_ARGS(PROJECT_ARGS LANGUAGES CXX)
 PROJECT(${PROJECT_NAME} ${PROJECT_ARGS})
+
+CHECK_MINIMAL_CXX_STANDARD(11 ENFORCE)
 
 OPTION(ENABLE_QT_DEBUG "Enable Qt debug output." FALSE)
 
