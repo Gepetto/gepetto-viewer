@@ -155,7 +155,7 @@ namespace viewer {
         "  gui.callVoidProperty(nodeName,\"%1\")");
     QPushButton* button = new QPushButton(objectName());
     button->setToolTip (toolTip.arg(objectName()));
-    connect(button, SIGNAL(clicked()), SLOT(set(void)));
+    QObject::connect(button, &QAbstractButton::clicked, [this]() { get(); });
     return button;
   }
 
