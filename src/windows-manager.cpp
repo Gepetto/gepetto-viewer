@@ -914,11 +914,11 @@ namespace viewer {
         if (nodeNames.size() != configurations.size())
           throw std::invalid_argument ("Number of node names and configurations must be equal.");
 
+        ScopedLock lock(configListMtx_);
         newNodeConfigurations_.reserve (
             newNodeConfigurations_.capacity() + nodeNames.size());
 
         bool success = true;
-        ScopedLock lock(configListMtx_);
         for (std::size_t i = 0; i < nodeNames.size(); ++i) {
           NodePtr_t updatedNode = getNode (nodeNames[i], false);
           if (!updatedNode) {
