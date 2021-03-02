@@ -19,10 +19,10 @@ namespace viewer {
     {
     private:
       
-        float length_;
-        float width_;
-        float square_length_;
-        float square_width_;
+        RangedStoredPropertyTpl<float, float> square_size_x_;
+        RangedStoredPropertyTpl<float, float> square_size_y_;
+        RangedStoredPropertyTpl<int, int> nX_;
+        RangedStoredPropertyTpl<int, int> nY_;
 
         osgVector4 color1_;
         osgVector4 color2_;
@@ -31,13 +31,17 @@ namespace viewer {
         LeafNodeGroundWeakPtr weak_ptr_;
       
         /** Array of colors */
+        ::osg::Vec3ArrayRefPtr vertices_array_ptr_;
         ::osg::Vec4ArrayRefPtr colors_array_ptr_;
 
         /** Associated Geometry for LeafNodeGround */
         ::osg::GeometryRefPtr grid_geometry_ptr_;
+        ::osg::ref_ptr< ::osg::DrawArrays > draw_array_ptr_;
       
         /** Init method */
         void init();
+
+        void updateVertices();
 
         /** Constructor
          \brief Constructor with all useful parameters
@@ -46,23 +50,14 @@ namespace viewer {
          \param square_length : length of a basic square
          \param square_width : width of a basic square
          */
-        LeafNodeGround(const std::string& name, const float& length, const float& width,
-                  const float& square_length, const float& square_width, const osgVector4& color1, const osgVector4& color2);
+        LeafNodeGround(const std::string& name, int nX, int nY,
+                  float square_length, float square_width, const osgVector4& color1, const osgVector4& color2);
         
-        /** Copy constructor */
-        LeafNodeGround(const LeafNodeGround& other);
-      
         /** Initialize weak_ptr */
         void initWeakPtr( const LeafNodeGroundWeakPtr& other_weak_ptr );
         
     protected:
     public:
-        
-        /** Builder
-         \param length : length of plane
-         \param width : width of plane
-         */
-        static LeafNodeGroundPtr_t create(const std::string& name, const float &length, const float &width);
         
         /** Builder
          \brief Constructor with all useful parameters
@@ -72,26 +67,13 @@ namespace viewer {
          \param square_width : width of a basic square
          \param configuration_ptr : configuration of plane
          */
-        static LeafNodeGroundPtr_t create(const std::string& name, const float &length, const float &width,
-                                         const float &square_length, const float &square_width);
+        static LeafNodeGroundPtr_t create(const std::string& name, int nX, int nY,
+                                         float square_length, float square_width);
 
-        static LeafNodeGroundPtr_t create(const std::string& name, const float &length, const float &width, const float &square_length, const float &square_width, const osgVector4& color1, const osgVector4& color2);
+        static LeafNodeGroundPtr_t create(const std::string& name, int nX, int nY, float square_length, float square_width, const osgVector4& color1, const osgVector4& color2);
 
         static LeafNodeGroundPtr_t create(const std::string& name);
         
-        /** Create copy */
-        static LeafNodeGroundPtr_t createCopy( const LeafNodeGroundPtr_t &other );
-        
-        /** Clone
-         \brief Returns a shared pointer to a newly allocated copy of the object.
-         */
-        virtual LeafNodeGroundPtr_t clone(void) const;
-      
-      
-        /** Copy
-         \brief Proceed to a copy of the currend object as clone
-         */
-        virtual LeafNodeGroundPtr_t copy() const { return clone(); }
       
         /**
          \brief Returns a shared pointer of the object itself.
