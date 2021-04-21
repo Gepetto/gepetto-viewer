@@ -195,4 +195,5 @@ INSTALL(FILES cmake-module/${PROJECT_NAME}-plugin.cmake
 PKG_CONFIG_APPEND_LIBS(${PROJECT_NAME})
 # }}}
 
-# vim: foldmethod=marker foldlevel=0 
+INSTALL(FILES package.xml DESTINATION share/${PROJECT_NAME})
+# vim: foldmethod=marker foldlevel=0
