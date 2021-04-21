@@ -25,7 +25,7 @@ ADD_EXECUTABLE(testing test.cpp)
 TARGET_LINK_LIBRARIES(testing PRIVATE ${PROJECT_NAME})
 PKG_CONFIG_USE_DEPENDENCY(testing openscenegraph)
 
-ADD_UNIT_TEST(nodes nodes)
+ADD_UNIT_TEST(nodes nodes.cpp)
 ADD_TEST_CFLAGS(nodes "-DBOOST_TEST_DYN_LINK")
 TARGET_LINK_LIBRARIES(nodes PRIVATE ${PROJECT_NAME})
 PKG_CONFIG_USE_DEPENDENCY(nodes openscenegraph)
@@ -36,11 +36,11 @@ PKG_CONFIG_USE_DEPENDENCY(test-gl openscenegraph)
 
 
 IF($ENV{DISPLAY})
-  ADD_UNIT_TEST(properties properties)
+  ADD_UNIT_TEST(properties properties.cpp)
   ADD_TEST_CFLAGS(properties "-DBOOST_TEST_DYN_LINK")
   TARGET_LINK_LIBRARIES(properties PRIVATE ${PROJECT_NAME} Boost::unit_test_framework)
 
-  ADD_UNIT_TEST(safe-application safe-application)
+  ADD_UNIT_TEST(safe-application safe-application.cpp)
   ADD_TEST_CFLAGS(safe-application "-DBOOST_TEST_DYN_LINK")
   TARGET_LINK_LIBRARIES(safe-application PRIVATE ${PROJECT_NAME})
   TARGET_LINK_LIBRARIES(safe-application PRIVATE Boost::unit_test_framework)
