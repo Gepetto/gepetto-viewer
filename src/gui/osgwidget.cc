@@ -241,40 +241,40 @@ namespace gepetto {
         if (!outputFile.isNull()) {
           if (QFile::exists(outputFile))
             QFile::remove(outputFile);
-          QString avconv = main->settings_->avconv;
+          QString ffmpeg = main->settings_->ffmpeg;
 
           QStringList args;
-          args << main->settings_->avConvInputOptions
+          args << main->settings_->ffmpegInputOptions
             << "-i" << input
-            << main->settings_->avConvOutputOptions
+            << main->settings_->ffmpegOutputOptions
             << outputFile;
           qDebug () << args;
 
-          showPOutput_->setWindowTitle(avconv + " " + args.join(" "));
+          showPOutput_->setWindowTitle(ffmpeg + " " + args.join(" "));
           pOutput_->clear();
           showPOutput_->resize(main->size() / 2);
           showPOutput_->show();
-          process_->start(avconv, args);
+          process_->start(ffmpeg, args);
           bool started = process_->waitForStarted(-1);
           if (!started) {
             showPOutput_->hide();
             switch (process_->error()) {
               case QProcess::FailedToStart:
-                main->logError ("Failed to start " + avconv + ". Either it is missing, "
+                main->logError ("Failed to start " + ffmpeg + ". Either it is missing, "
                     "or you may have insufficient permissions to invoke it.\n");
                 break;
               case QProcess::Crashed      :
-                main->logError ("" + avconv + " crashed some time after starting successfully.");
+                main->logError ("" + ffmpeg + " crashed some time after starting successfully.");
                 break;
               case QProcess::Timedout     :
               case QProcess::WriteError   :
               case QProcess::ReadError    :
               case QProcess::UnknownError :
-                main->logError ("An unknown error made " + avconv + " stopped before "
+                main->logError ("An unknown error made " + ffmpeg + " stopped before "
                     "finishing.");
                 break;
             }
-            main->logError ("You can manually run\n" + avconv + " " + args.join(" "));
+            main->logError ("You can manually run\n" + ffmpeg + " " + args.join(" "));
           }
         }
 #if (QT_VERSION >= QT_VERSION_CHECK(5,0,0))
