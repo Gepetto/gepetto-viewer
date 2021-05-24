@@ -154,19 +154,19 @@ FIND_PACKAGE(Boost REQUIRED COMPONENTS COMPONENTS unit_test_framework)
 SEARCH_FOR_BOOST_PYTHON(REQUIRED)
 
 # Check if we are on a platform with ffmpeg or avconv
-FIND_PROGRAM(AVCONV avconv)
-IF(NOT AVCONV)
-  FIND_PROGRAM(FFMPEG ffmpeg)
-  IF(FFMPEG)
-    SET(AVCONV "${FFMPEG}")
-  ELSE(FFMPEG)
-    MESSAGE(WARNING "neither avconv nor ffmpeg have been found.")
+FIND_PROGRAM(FFMPEG ffmpeg)
+IF(NOT FFMPEG)
+  FIND_PROGRAM(AVCONV avconv)
+  IF(AVCONV)
+    SET(FFMPEG "${AVCONV}")
+  ELSE(AVCONV)
+    MESSAGE(WARNING "neither ffmpeg nor avconv have been found.")
     # Fallback to old behavior:
     # ffmpeg / avconv non-availability at configure time
     # doesn't mean anything at run time.
-    SET(AVCONV "avconv")
+    SET(FFMPEG "ffmpeg")
   ENDIF(FFMPEG)
-ENDIF(NOT AVCONV)
+ENDIF(NOT FFMPEG)
 
 CONFIGURE_FILE(
   ${CMAKE_SOURCE_DIR}/include/gepetto/gui/config-dep.hh.in

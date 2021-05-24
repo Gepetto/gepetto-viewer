@@ -48,7 +48,7 @@ namespace gepetto {
       , captureDirectory ()
       , captureFilename ("screenshot")
       , captureExtension ("png")
-      , avconv (AVCONV)
+      , ffmpeg (FFMPEG)
       , installDirectory (installDir)
 #if (QT_VERSION < QT_VERSION_CHECK(5,0,0))
       , appStyle ("cleanlooks")
@@ -64,9 +64,9 @@ namespace gepetto {
       user.cd (path);
       captureDirectory = user.absolutePath().toStdString();
 
-      avConvInputOptions
+      ffmpegInputOptions
             << "-r" << "25";
-      avConvOutputOptions
+      ffmpegOutputOptions
             << "-vf" << "scale=trunc(iw/2)*2:trunc(ih/2)*2"
             << "-r" << "25"
             << "-vcodec" << "libx264";
@@ -328,9 +328,9 @@ namespace gepetto {
         << nl << tab << "Directory:                        " << tab << captureDirectory
         << nl << tab << "Filename:                         " << tab << captureFilename
         << nl << tab << "Extension:                        " << tab << captureExtension
-        << nl << tab << "Avconv command:                   " << tab << avconv.toStdString()
-        << nl << tab << "Avconv input options:             " << tab << avConvInputOptions .join(" ").toStdString()
-        << nl << tab << "Avconv output options:            " << tab << avConvOutputOptions.join(" ").toStdString()
+        << nl << tab << "ffmpeg command:                   " << tab << ffmpeg.toStdString()
+        << nl << tab << "ffmpeg input options:             " << tab << ffmpegInputOptions .join(" ").toStdString()
+        << nl << tab << "ffmpeg output options:            " << tab << ffmpegOutputOptions.join(" ").toStdString()
 
         << nl
         << nl << "omniORB configuration" ;
@@ -458,12 +458,12 @@ namespace gepetto {
         }
         env.endGroup ();
 
-        env.beginGroup("avconv");
-        avconv = env.value ("command", avconv).toString();
-        avConvInputOptions  = env.value ("input_options" ,
-            avConvInputOptions).toStringList();
-        avConvOutputOptions = env.value ("output_options",
-            avConvOutputOptions).toStringList();
+        env.beginGroup("ffmpeg");
+        ffmpeg = env.value ("command", ffmpeg).toString();
+        ffmpegInputOptions  = env.value ("input_options" ,
+            ffmpegInputOptions).toStringList();
+        ffmpegOutputOptions = env.value ("output_options",
+            ffmpegOutputOptions).toStringList();
         env.endGroup ();
 
         env.beginGroup("settings");
@@ -554,10 +554,10 @@ namespace gepetto {
         env.setValue (omniORBargv_[i-1].mid(4), omniORBargv_[i]);
       env.endGroup ();
 
-      env.beginGroup("avconv");
-      env.setValue ("command", avconv);
-      env.setValue ("input_options", avConvInputOptions);
-      env.setValue ("output_options", avConvInputOptions);
+      env.beginGroup("ffmpeg");
+      env.setValue ("command", ffmpeg);
+      env.setValue ("input_options", ffmpegInputOptions);
+      env.setValue ("output_options", ffmpegInputOptions);
       env.endGroup ();
 
       env.beginGroup("settings");
