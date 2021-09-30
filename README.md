@@ -4,7 +4,19 @@
 [![Pipeline status](https://gitlab.laas.fr/gepetto/gepetto-viewer/badges/master/pipeline.svg)](https://gitlab.laas.fr/gepetto/gepetto-viewer/commits/master)
 [![Coverage report](https://gitlab.laas.fr/gepetto/gepetto-viewer/badges/master/coverage.svg?job=doc-coverage)](http://projects.laas.fr/gepetto/doc/gepetto/gepetto-viewer/master/coverage/)
 
-## Setup
+## Setup Conda Environment
+
+To try this package in an [conda](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#creating-an-environment-with-commands) environment without compiling:
+```sh
+conda install gepetto-viewer gepetto-viewer-corba -c conda-forge
+```
+
+After installation, you can launch the viewer from a terminal with:
+```sh
+gepetto-gui
+```
+
+## Compilation Instructions
 
 To compile this package, it is recommended to create a separate build
 directory:
