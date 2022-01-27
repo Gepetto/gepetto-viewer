@@ -887,6 +887,10 @@ namespace viewer {
                 itg->second->removeChild(n);
             }
             nodes_.erase (nodeName);
+	    // if node is of type collada, explicitely remove it from cache
+	    LeafNodeColladaPtr_t lnc(dynamic_pointer_cast<LeafNodeCollada>
+				     (n));
+	    if (lnc) lnc->removeFromCache();
             return true;
         }
     }
