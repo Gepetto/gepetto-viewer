@@ -204,6 +204,7 @@ namespace viewer {
             virtual bool removeFromGroup (const std::string& nodeName, const std::string& groupName);
             virtual bool deleteNode (const std::string& nodeName, bool all);
 
+            virtual bool removeObjectFromCache(const std::string& nodeName);
             virtual bool applyConfiguration(const std::string& nodeName, const Configuration& configuration);
             virtual bool applyConfigurations(const std::vector<std::string>& nodeName, const std::vector<Configuration>& configuration);
 
