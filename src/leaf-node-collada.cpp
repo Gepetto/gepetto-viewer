@@ -89,11 +89,11 @@ namespace viewer {
 
     if (!collada_ptr_) {
       // Setup cache
-      const osg::ref_ptr<osgDB::Options> options = new osgDB::Options();
+      options_ = new osgDB::Options();
 #if OSG_VERSION_GREATER_OR_EQUAL(3,3,3)
-      options->setObjectCache (object_cache);
+      options_->setObjectCache (object_cache);
 #endif
-      options->setObjectCacheHint(osgDB::Options::CACHE_ALL);
+      options_->setObjectCacheHint(osgDB::Options::CACHE_ALL);
 
       if (!fileExists(collada_file_path_.c_str()))
         throw std::invalid_argument(std::string("File ") + collada_file_path_ + std::string(" not found."));
@@ -101,17 +101,17 @@ namespace viewer {
       std::string osgname = getCachedFileName(collada_file_path_);
       if (!osgname.empty()) {
         log() << "Using " << osgname << std::endl;
-        collada_ptr_ = osgDB::readNodeFile(osgname, options);
+        collada_ptr_ = osgDB::readNodeFile(osgname, options_);
       } else {
         // get the extension of the meshs file
         std::string ext = osgDB::getLowerCaseFileExtension(collada_file_path_);
         if(ext == "obj"){
-          options->setOptionString("noRotation");
-          collada_ptr_ = osgDB::readNodeFile(collada_file_path_,options);
+          options_->setOptionString("noRotation");
+          collada_ptr_ = osgDB::readNodeFile(collada_file_path_,options_);
         }
         else if (ext == "dae") {
           float scale = 1.f;
-          options->setPluginData("DAE-AssetUnitMeter", &scale);
+          options_->setPluginData("DAE-AssetUnitMeter", &scale);
           if (*localeconv()->decimal_point != '.') {
             std::cerr << "Warning: your locale convention uses '"
               << localeconv()->decimal_point << "' as decimal separator while DAE "
@@ -120,7 +120,7 @@ namespace viewer {
               << std::endl;
           }
 
-          collada_ptr_ = osgDB::readNodeFile(collada_file_path_,options);
+          collada_ptr_ = osgDB::readNodeFile(collada_file_path_,options_);
 
           // FIXME: Fixes https://github.com/Gepetto/gepetto-viewer/issues/95
           // The bug: Assimp seems to ignore the DAE up_axis tag. Because this
@@ -159,7 +159,7 @@ namespace viewer {
             collada_ptr_ = xform;
           }
         } else
-          collada_ptr_ = osgDB::readNodeFile(collada_file_path_,options);
+          collada_ptr_ = osgDB::readNodeFile(collada_file_path_,options_);
       }
       if (!collada_ptr_)
         throw std::invalid_argument(std::string("File ") + collada_file_path_ + std::string(" found but could not be opened. Check that a plugin exist."));
@@ -174,6 +174,7 @@ namespace viewer {
       osgUtil::Optimizer optimizer;
       optimizer.optimize(collada_ptr_, osgUtil::Optimizer::DEFAULT_OPTIMIZATIONS);
     }
+
     collada_ptr_->setName ("meshfile");
     backfaceDrawing_.stateSet(collada_ptr_->getOrCreateStateSet());
     backfaceDrawing_.set(false);
@@ -199,13 +200,13 @@ namespace viewer {
   }
     
   LeafNodeCollada::LeafNodeCollada(const std::string& name, const std::string& collada_file_path) :
-    Node(name), collada_file_path_(collada_file_path)
+    Node(name), collada_file_path_(collada_file_path), collada_ptr_()
   {
     init();
   }
     
   LeafNodeCollada::LeafNodeCollada(const std::string& name, const std::string& collada_file_path, const osgVector4& color) :
-    Node(name), collada_file_path_(collada_file_path)
+    Node(name), collada_file_path_(collada_file_path), collada_ptr_()
   {
     init();
     setColor(color);
@@ -288,7 +289,7 @@ namespace viewer {
 
   ::osg::NodeRefPtr LeafNodeCollada::getColladaPtr()
   {
-    return collada_ptr_.get();
+    return collada_ptr_;
   }
 
   /* End of declaration of protected function members */
@@ -431,20 +432,19 @@ namespace viewer {
     group_ptr_->addChild(collada_ptr_);
   }
 
+  void LeafNodeCollada::removeFromCache()
+  {
+#if OSG_VERSION_LESS_THAN(3,3,3)
+    object_cache.erase(collada_file_path_);
+#else
+    object_cache->removeFromObjectCache(collada_file_path_, options_);
+#endif
+  }
+
   LeafNodeCollada::~LeafNodeCollada()
   {
     /* Proper deletion of all tree scene */
     group_ptr_->removeChild(collada_ptr_);
-
-    if (collada_ptr_->referenceCount() == 2) {
-      // If the object is only referenced by this node and the cache,
-      // remove it from the cache.
-#if OSG_VERSION_LESS_THAN(3,3,3)
-      object_cache.erase(collada_file_path_);
-#else
-      object_cache->removeFromObjectCache(collada_file_path_);
-#endif
-    }
 
     collada_ptr_ = NULL;
         

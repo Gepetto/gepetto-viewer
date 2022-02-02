@@ -35,7 +35,10 @@ namespace viewer {
         ::osg::NodeRefPtr collada_ptr_;
 
         BackfaceDrawingProperty backfaceDrawing_;
-        
+
+        /** Save options to properly destroy mesh when deleting the node */
+        osg::ref_ptr<osgDB::Options> options_;
+
         void init();
         
         /* Default constructor */
@@ -48,8 +51,6 @@ namespace viewer {
         /** Initialize weak_ptr */
         void initWeakPtr (LeafNodeColladaWeakPtr other_weak_ptr);
 
-        //static void setColor(osg::NodeRefPtr osgNode_ptr,const osgVector4& color);
-        
     protected:
     public:
         /** Static method which create a new LeafNodeCollada
@@ -99,7 +100,10 @@ namespace viewer {
 
         SCENE_VIEWER_ACCEPT_VISITOR;
 
-        /** Destructor */
+        /** Remove this object from cache */
+        void removeFromCache();
+
+      /** Destructor */
         virtual ~LeafNodeCollada();
         
     };

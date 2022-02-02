@@ -891,6 +891,13 @@ namespace viewer {
         }
     }
 
+    bool WindowsManager::removeObjectFromCache(const std::string& nodeName)
+    {
+        FIND_NODE_OF_TYPE_OR_THROW (LeafNodeCollada, lnc, nodeName);
+        lnc->removeFromCache();
+        return true;
+    }
+
     bool WindowsManager::applyConfiguration (const std::string& nodeName,
             const Configuration& configuration)
     {
