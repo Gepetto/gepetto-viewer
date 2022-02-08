@@ -131,6 +131,10 @@ namespace viewer {
       viewer_ptr_->getWindows(windows);
       manipulator_ptr = new ::osgGA::KeySwitchMatrixManipulator;
       manipulator_ptr->addMatrixManipulator('1',"trackball",new ::osgGA::TrackballManipulator);
+      if (windows.empty()){
+        throw std::runtime_error("Failed to create a window. This might be due to "
+          "incorrect GPU driver installation or hardware issue.");
+      }
       manipulator_ptr->addMatrixManipulator('2',"keyboard",new ::osgGA::KeyboardManipulator(windows.front()));
       manipulator_ptr->addMatrixManipulator('3',"tracker",new ::osgGA::NodeTrackerManipulator);
       viewer_ptr_->setCameraManipulator( manipulator_ptr);
