@@ -17,48 +17,51 @@
 #ifndef GEPETTO_GUI_FWD_HH
 #define GEPETTO_GUI_FWD_HH
 
-#include <vector>
-
 #include <QtGlobal>
+#include <vector>
 #if QT_VERSION >= 0x050000
-# include <QtGui/qopengl.h>
+#include <QtGui/qopengl.h>
 #ifdef __APPLE__
-  // Following issue presented in https://stackoverflow.com/questions/26419420/define-gldebugmessagecallbackarb-callback-method
-  typedef void (APIENTRY *GLDEBUGPROC)(GLenum source,GLenum type,GLuint id,GLenum severity,GLsizei length,const GLchar *message,const GLvoid *userParam);
+// Following issue presented in
+// https://stackoverflow.com/questions/26419420/define-gldebugmessagecallbackarb-callback-method
+typedef void(APIENTRY *GLDEBUGPROC)(GLenum source, GLenum type, GLuint id,
+                                    GLenum severity, GLsizei length,
+                                    const GLchar *message,
+                                    const GLvoid *userParam);
 #endif
 #endif
-#include <QtGui>
-
-#include <gepetto/viewer/macros.h>
 #include <gepetto/viewer/fwd.h>
+#include <gepetto/viewer/macros.h>
+
+#include <QtGui>
 #include <gepetto/gui/config-dep.hh>
 
 namespace gepetto {
-  namespace gui {
-    class MainWindow;
-    class OSGWidget;
-    class PickHandler;
-    class BodyTreeWidget;
-    class BodyTreeItem;
-    typedef std::vector<BodyTreeItem*> BodyTreeItems_t;
-    class ShortcutFactory;
-    class SelectionHandler;
-    class SelectionEvent;
-    class ActionSearchBar;
+namespace gui {
+class MainWindow;
+class OSGWidget;
+class PickHandler;
+class BodyTreeWidget;
+class BodyTreeItem;
+typedef std::vector<BodyTreeItem *> BodyTreeItems_t;
+class ShortcutFactory;
+class SelectionHandler;
+class SelectionEvent;
+class ActionSearchBar;
 
-    typedef viewer::NodePtr_t NodePtr_t;
-    typedef viewer::GroupNodePtr_t GroupNodePtr_t;
-    typedef viewer::Configuration Configuration;
+typedef viewer::NodePtr_t NodePtr_t;
+typedef viewer::GroupNodePtr_t GroupNodePtr_t;
+typedef viewer::Configuration Configuration;
 
-    class ViewerCorbaServer;
+class ViewerCorbaServer;
 
-    class WindowsManager;
-    typedef viewer::shared_ptr <WindowsManager> WindowsManagerPtr_t;
+class WindowsManager;
+typedef viewer::shared_ptr<WindowsManager> WindowsManagerPtr_t;
 
 #if GEPETTO_GUI_HAS_PYTHONQT
-    class PythonWidget;
+class PythonWidget;
 #endif
-  } // namespace gui
-} // namespace gepetto
+}  // namespace gui
+}  // namespace gepetto
 
-#endif // GEPETTO_GUI_FWD_HH
+#endif  // GEPETTO_GUI_FWD_HH

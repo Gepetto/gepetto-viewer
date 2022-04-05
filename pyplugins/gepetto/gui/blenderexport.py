@@ -1,5 +1,6 @@
-from PythonQt import QtGui, Qt
+from PythonQt import QtGui
 from gepetto.corbaserver import Client
+
 
 def separator():
     line = QtGui.QFrame()
@@ -7,18 +8,21 @@ def separator():
     line.frameShadow = QtGui.QFrame.Sunken
     return line
 
-### \cond
-class _Widget (QtGui.QWidget):
+
+# ## \cond
+class _Widget(QtGui.QWidget):
     def __init__(self, parent, plugin):
-        super(_Widget, self).__init__ (parent)
+        super(_Widget, self).__init__(parent)
         self.plugin = plugin
         self.bodies = []
-        self.makeWidget ()
+        self.makeWidget()
 
     def makeWidget(self):
         box = QtGui.QVBoxLayout(self)
 
-        box.addWidget(self.bindFunctionToButton("Get selected bodies", self.updateBodyList))
+        box.addWidget(
+            self.bindFunctionToButton("Get selected bodies", self.updateBodyList)
+        )
 
         box.addWidget(QtGui.QLabel("Current selected bodies:"))
         self.bodyList = QtGui.QListWidget()
@@ -31,11 +35,17 @@ class _Widget (QtGui.QWidget):
 
         box.addWidget(separator())
 
-        self.transformFrame = QtGui.QLabel ("output.yaml")
-        box.addWidget(self.addWidgetsInHBox( [
-            self.transformFrame, 
-            self.bindFunctionToButton("Select transform file", self.changeTransformFile)
-            ]))
+        self.transformFrame = QtGui.QLabel("output.yaml")
+        box.addWidget(
+            self.addWidgetsInHBox(
+                [
+                    self.transformFrame,
+                    self.bindFunctionToButton(
+                        "Select transform file", self.changeTransformFile
+                    ),
+                ]
+            )
+        )
 
         box.addWidget(separator())
 
@@ -43,12 +53,17 @@ class _Widget (QtGui.QWidget):
         onRefresh.checkable = True
         box.addWidget(onRefresh)
 
-        box.addWidget(self.bindFunctionToButton("Write current frame", self.writeCurrentFrame))
+        box.addWidget(
+            self.bindFunctionToButton("Write current frame", self.writeCurrentFrame)
+        )
 
     def updateBodyList(self):
-        self.bodies = [ str(b.text()) for b in self.plugin.main.bodyTree().selectedBodies() ]
+        self.bodies = [
+            str(b.text()) for b in self.plugin.main.bodyTree().selectedBodies()
+        ]
         self.bodyList.clear()
-        for b in self.bodies: self.bodyList.addItem(b)
+        for b in self.bodies:
+            self.bodyList.addItem(b)
 
     def exportModel(self):
         fn = QtGui.QFileDialog.getSaveFileName()
@@ -72,28 +87,30 @@ class _Widget (QtGui.QWidget):
             hboxName.addWidget(w)
         return nameParentW
 
-    def bindFunctionToButton (self, buttonLabel, func):
+    def bindFunctionToButton(self, buttonLabel, func):
         button = QtGui.QPushButton(self)
         button.text = buttonLabel
-        button.connect ('clicked(bool)', func)
+        button.connect("clicked(bool)", func)
         return button
-### \endcond
 
-### \ingroup pluginlist
-### Python plugin to export scene to Blender.
-### Add the following to your settings file to activate it.
-###
-###     [pyplugins]
-###     gepetto.gui.blenderexport=true
-###
+
+# ## \endcond
+
+# ## \ingroup pluginlist
+# ## Python plugin to export scene to Blender.
+# ## Add the following to your settings file to activate it.
+# ##
+# ##     [pyplugins]
+# ##     gepetto.gui.blenderexport=true
+# ##
 class Plugin(QtGui.QDockWidget):
-    def __init__ (self, mainWindow):
-        super(Plugin, self).__init__ ("Blender export plugin", mainWindow)
-        self.setObjectName ("gepetto.gui.blenderexport")
+    def __init__(self, mainWindow):
+        super(Plugin, self).__init__("Blender export plugin", mainWindow)
+        self.setObjectName("gepetto.gui.blenderexport")
         self.resetConnection()
         # Initialize the widget
         mainWidget = _Widget(self, self)
-        self.setWidget (mainWidget)
+        self.setWidget(mainWidget)
         self.main = mainWindow
 
         self.main.registerShortcut(self.windowTitle, self.toggleViewAction())

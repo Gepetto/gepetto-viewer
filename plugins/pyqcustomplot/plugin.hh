@@ -18,35 +18,34 @@
 
 #include <QObject>
 #include <QtGlobal>
-
 #include <gepetto/gui/plugin-interface.hh>
 
 namespace PyQCustomPlot {
-  /// \ingroup pluginlist
-  /// Provide bindings of QCustomPlot library in PythonQt terminal.
-  /// See QCustomPlotDecorator for the API available in Python.
-  ///
-  /// Add the following to your settings file to activate it.
-  ///
-  ///     [plugins]
-  ///     libpyqcustomplot.so=true
-  ///
-  /// \par Example: Simple usage of QCustomPlot Python bindings.
-  /// \include pyplugin/qcustomplot_example_1.py
-  /// \sa See examples \ref pyplugin/qcustomplot_example_2.py
-  class Plugin : public QObject, public gepetto::gui::PluginInterface {
-    Q_OBJECT
-    Q_INTERFACES (gepetto::gui::PluginInterface)
-#if (QT_VERSION >= QT_VERSION_CHECK(5,0,0))
-    Q_PLUGIN_METADATA (IID "gepetto-viewer.pyqcustomplot")
+/// \ingroup pluginlist
+/// Provide bindings of QCustomPlot library in PythonQt terminal.
+/// See QCustomPlotDecorator for the API available in Python.
+///
+/// Add the following to your settings file to activate it.
+///
+///     [plugins]
+///     libpyqcustomplot.so=true
+///
+/// \par Example: Simple usage of QCustomPlot Python bindings.
+/// \include pyplugin/qcustomplot_example_1.py
+/// \sa See examples \ref pyplugin/qcustomplot_example_2.py
+class Plugin : public QObject, public gepetto::gui::PluginInterface {
+  Q_OBJECT
+  Q_INTERFACES(gepetto::gui::PluginInterface)
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+  Q_PLUGIN_METADATA(IID "gepetto-viewer.pyqcustomplot")
 #endif
 
-    public:
-      QString name () const { return QString("PyQCustomPlot"); }
+ public:
+  QString name() const { return QString("PyQCustomPlot"); }
 
-      /// Calls \ref registerQCustomPlot
-      void init();
-  };
-  /// \example pyplugin/qcustomplot_example_2.py
-  /// Advanced example usage of QCustomPlot Python bindings.
-} // namespace PyQCustomPlot
+  /// Calls \ref registerQCustomPlot
+  void init();
+};
+/// \example pyplugin/qcustomplot_example_2.py
+/// Advanced example usage of QCustomPlot Python bindings.
+}  // namespace PyQCustomPlot

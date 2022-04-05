@@ -16,21 +16,20 @@
 // gepetto-viewer  If not, see
 // <http://www.gnu.org/licenses/>.
 
-#include <plugin.hh>
-
 #include <decorator.hh>
 #include <gepetto/gui/config-dep.hh>
+#include <plugin.hh>
 
 namespace PyQCustomPlot {
-  void Plugin::init() {
+void Plugin::init() {
 #if GEPETTO_GUI_HAS_PYTHONQT
-    registerQCustomPlot();
+  registerQCustomPlot();
 #else
-    qWarning() << "Cannot load pyqcustomplot plugin without PythonQt support.";
+  qWarning() << "Cannot load pyqcustomplot plugin without PythonQt support.";
 #endif
-  }
+}
 
-#if (QT_VERSION < QT_VERSION_CHECK(5,0,0))
-  Q_EXPORT_PLUGIN2 (pyqcustomplot, Plugin)
+#if (QT_VERSION < QT_VERSION_CHECK(5, 0, 0))
+Q_EXPORT_PLUGIN2(pyqcustomplot, Plugin)
 #endif
-} // namespace PyQCustomPlot
+}  // namespace PyQCustomPlot

@@ -7,18 +7,19 @@
 //
 //  Created by Pierre Fernbach in january 2016
 //
-#include <stdlib.h>
-#include <stdio.h>
-#include <iostream>
-#include <gepetto/viewer/config-osg.h>
 #include <gepetto/viewer/OSGManipulator/keyboard-manipulator.h>
+#include <gepetto/viewer/config-osg.h>
+#include <stdio.h>
+#include <stdlib.h>
 
-
+#include <iostream>
 
 /**
- * CameraManipulator which use keyboard for moving the camera, same deplacement as most of the FPS games :
+ * CameraManipulator which use keyboard for moving the camera, same deplacement
+ * as most of the FPS games :
  *
- * independant of keyboard layout (use the active keyboard layout when the osg::viewer constructor is called) , only use physical position of the key
+ * independant of keyboard layout (use the active keyboard layout when the
+ * osg::viewer constructor is called) , only use physical position of the key
  * keybinding for azerty (qwerty) users :
  * z/s (w/s) : move forward/backward
  * q/d (a/d) : move left/right
@@ -31,327 +32,315 @@ using namespace osg;
 using namespace osgGA;
 
 /// Constructor.
-KeyboardManipulator::KeyboardManipulator( int flags )
-   : inherited( flags )
-{
-  speed_=startSpeed_;
-  speedRoll_=0.;
-  speedX_=0.;
-  speedY_=0.;
-  speedZ_=0.;
+KeyboardManipulator::KeyboardManipulator(int flags) : inherited(flags) {
+  speed_ = startSpeed_;
+  speedRoll_ = 0.;
+  speedX_ = 0.;
+  speedY_ = 0.;
+  speedZ_ = 0.;
   ctrl_ = false;
   shift_ = false;
   rightClic_ = false;
-  keyLayout_=LAYOUT_unknown;
-  localUp_ = getUpVector( getCoordinateFrame( _eye ) );
-  noRoll_=true;
-  setAllowThrow(false);// stop all mouse motions when mouse is released
-  //display_=XOpenDisplay(0);
+  keyLayout_ = LAYOUT_unknown;
+  localUp_ = getUpVector(getCoordinateFrame(_eye));
+  noRoll_ = true;
+  setAllowThrow(false);  // stop all mouse motions when mouse is released
+  // display_=XOpenDisplay(0);
   initKeyboard();
 }
 
-/// Constructor with reference to the graphic window, needed for hidding mouse cursor
-KeyboardManipulator::KeyboardManipulator(osgViewer::GraphicsWindow *window, int flags)
-  : inherited( flags ),gWindow_(window)/*,camera_(viewer->getCamera())*/
+/// Constructor with reference to the graphic window, needed for hidding mouse
+/// cursor
+KeyboardManipulator::KeyboardManipulator(osgViewer::GraphicsWindow* window,
+                                         int flags)
+    : inherited(flags),
+      gWindow_(window) /*,camera_(viewer->getCamera())*/
 {
-  speed_=startSpeed_;
-  speedRoll_=0.;
-  speedX_=0.;
-  speedY_=0.;
-  speedZ_=0.;
+  speed_ = startSpeed_;
+  speedRoll_ = 0.;
+  speedX_ = 0.;
+  speedY_ = 0.;
+  speedZ_ = 0.;
   ctrl_ = false;
   shift_ = false;
   rightClic_ = false;
-  keyLayout_=LAYOUT_unknown;
-  localUp_ = getUpVector( getCoordinateFrame( _eye ) );
-  noRoll_=true;
-  setAllowThrow(false);// stop all mouse motions when mouse is released
- /* osgViewer::Viewer::Windows windows;
-  window->getWindows(windows);
-  gWindow_=windows.front();*/
+  keyLayout_ = LAYOUT_unknown;
+  localUp_ = getUpVector(getCoordinateFrame(_eye));
+  noRoll_ = true;
+  setAllowThrow(false);  // stop all mouse motions when mouse is released
+                         /* osgViewer::Viewer::Windows windows;
+                          window->getWindows(windows);
+                          gWindow_=windows.front();*/
 
   initKeyboard();
 }
-
 
 /// Copy Constructor.
-KeyboardManipulator::KeyboardManipulator( const KeyboardManipulator& fpm, const CopyOp& copyOp )
-   :inherited( fpm, copyOp )
-{
+KeyboardManipulator::KeyboardManipulator(const KeyboardManipulator& fpm,
+                                         const CopyOp& copyOp)
+    : inherited(fpm, copyOp) {
   initKeyboard();
 }
 
-
 // pressing a key
-bool KeyboardManipulator::handleKeyDown( const GUIEventAdapter& ea, GUIActionAdapter& us )
-{
-
-  //keycode_ = XKeysymToKeycode(display_,ea.getUnmodifiedKey());
+bool KeyboardManipulator::handleKeyDown(const GUIEventAdapter& ea,
+                                        GUIActionAdapter& us) {
+  // keycode_ = XKeysymToKeycode(display_,ea.getUnmodifiedKey());
 
   int keySym = ea.getUnmodifiedKey();
-  if(keySym == 0){ // issue with getUnmodifiedKey() and hpp-gui (always return 0 because not initialised in osgQT)
+  if (keySym == 0) {  // issue with getUnmodifiedKey() and hpp-gui (always
+                      // return 0 because not initialised in osgQT)
     keySym = ea.getKey();
-    if(keySym < 96 )  // ctrl mask
+    if (keySym < 96)  // ctrl mask
       keySym += 96;
   }
-  if(keyLayout_ == LAYOUT_azerty){ // adapt to azerty keyboard
-      switch(keySym){
-        case  osgGA::GUIEventAdapter::KEY_Z :
-          keySym = osgGA::key_forward;
+  if (keyLayout_ == LAYOUT_azerty) {  // adapt to azerty keyboard
+    switch (keySym) {
+      case osgGA::GUIEventAdapter::KEY_Z:
+        keySym = osgGA::key_forward;
         break;
-        case  osgGA::GUIEventAdapter::KEY_A :
-          keySym = osgGA::key_roll_left;
+      case osgGA::GUIEventAdapter::KEY_A:
+        keySym = osgGA::key_roll_left;
         break;
-        case  osgGA::GUIEventAdapter::KEY_Q :
-          keySym = osgGA::key_left;
+      case osgGA::GUIEventAdapter::KEY_Q:
+        keySym = osgGA::key_left;
         break;
-      }
+    }
   }
 
-  switch(keySym)
-  {
-    case osgGA::key_forward :
-    case osgGA::GUIEventAdapter::KEY_Up :
+  switch (keySym) {
+    case osgGA::key_forward:
+    case osgGA::GUIEventAdapter::KEY_Up:
       // move forward
-      if(speedX_ <= 0){
-        speedX_ =1.;
+      if (speedX_ <= 0) {
+        speedX_ = 1.;
         return true;
-        }
-      else
-         return false;
-    break;
-    case osgGA::key_backward :
-    case osgGA::GUIEventAdapter::KEY_Down :
-      // move backward
-      if(speedX_ >=0){
-        speedX_ =-1.;
-        return true;
-        }
-      else
+      } else
         return false;
-    break;
-    case osgGA::key_left :
-    case osgGA::GUIEventAdapter::KEY_Left :
+      break;
+    case osgGA::key_backward:
+    case osgGA::GUIEventAdapter::KEY_Down:
+      // move backward
+      if (speedX_ >= 0) {
+        speedX_ = -1.;
+        return true;
+      } else
+        return false;
+      break;
+    case osgGA::key_left:
+    case osgGA::GUIEventAdapter::KEY_Left:
       // move left
-      if(speedY_ >= 0){
+      if (speedY_ >= 0) {
         speedY_ = -1.;
         return true;
-        }
-      else
+      } else
         return false;
-    break;
-    case osgGA::key_right :
-    case osgGA::GUIEventAdapter::KEY_Right :
+      break;
+    case osgGA::key_right:
+    case osgGA::GUIEventAdapter::KEY_Right:
       // move right
-      if(speedY_ <= 0){
+      if (speedY_ <= 0) {
         speedY_ = 1.;
         return true;
-        }
-      else
+      } else
         return false;
-    break;
-    case osgGA::key_up : //spacebar
+      break;
+    case osgGA::key_up:  // spacebar
       // move up
-      if(speedZ_ <= 0){
+      if (speedZ_ <= 0) {
         speedZ_ = 1.;
         return true;
-        }
-      else
+      } else
         return false;
-    break;
-    case osgGA::key_down :
+      break;
+    case osgGA::key_down:
       // move down
-      if(speedZ_ >= 0 ){
+      if (speedZ_ >= 0) {
         speedZ_ = -1.;
         return true;
-        }
-      else
+      } else
         return false;
-    break;
-    case osgGA::key_roll_left :
+      break;
+    case osgGA::key_roll_left:
       // roll rotation left
-      noRoll_=false;
-      if (speedRoll_ >=0){
+      noRoll_ = false;
+      if (speedRoll_ >= 0) {
         speedRoll_ = -1.;
         return true;
-        }
-      else
+      } else
         return false;
-    break;
-    case osgGA::key_roll_right :
+      break;
+    case osgGA::key_roll_right:
       // roll rotation right
-      noRoll_=false;
-      if(speedRoll_ <=0){
+      noRoll_ = false;
+      if (speedRoll_ <= 0) {
         speedRoll_ = 1.;
         return true;
-        }
-      else
+      } else
         return false;
-    break;
+      break;
     case osgGA::GUIEventAdapter::KEY_R:
       flushMouseEventStack();
       _thrown = false;
-      localUp_ = getUpVector( getCoordinateFrame( _eye ) );
-      home(ea,us);
+      localUp_ = getUpVector(getCoordinateFrame(_eye));
+      home(ea, us);
       return true;
-    break;
-    case osgGA::GUIEventAdapter::KEY_Plus :
-    case 65451 :// '+'  numpad
-      speed_*=1.2;
+      break;
+    case osgGA::GUIEventAdapter::KEY_Plus:
+    case 65451:  // '+'  numpad
+      speed_ *= 1.2;
       return false;
-    break;
-    case osgGA::GUIEventAdapter::KEY_Minus :
-    case 65453 : // '-'  numpad
-      speed_*=0.8;
+      break;
+    case osgGA::GUIEventAdapter::KEY_Minus:
+    case 65453:  // '-'  numpad
+      speed_ *= 0.8;
       return false;
-    break;
-    case osgGA::GUIEventAdapter::KEY_Asterisk :
-    case 65450 : // '*'  numpad
-      speed_=startSpeed_; // reset speed
+      break;
+    case osgGA::GUIEventAdapter::KEY_Asterisk:
+    case 65450:              // '*'  numpad
+      speed_ = startSpeed_;  // reset speed
       return false;
-    break;
+      break;
     case osgGA::GUIEventAdapter::KEY_Control_L:
     case osgGA::GUIEventAdapter::KEY_Control_R:
-        ctrl_ = true;
-    break;
+      ctrl_ = true;
+      break;
     case osgGA::GUIEventAdapter::KEY_Shift_L:
     case osgGA::GUIEventAdapter::KEY_Shift_R:
-        shift_ = true;
-    break;
+      shift_ = true;
+      break;
   }
-
 
   return false;
 }
 
-
 /// Releasing the key
-bool KeyboardManipulator::handleKeyUp( const GUIEventAdapter& ea, GUIActionAdapter& /*us*/ )
-{
+bool KeyboardManipulator::handleKeyUp(const GUIEventAdapter& ea,
+                                      GUIActionAdapter& /*us*/) {
   int keySym = ea.getUnmodifiedKey();
-  if(keySym == 0){ // issue with getUnmodifiedKey() and hpp-gui (always return 0 because not initialised in osgQT)
+  if (keySym == 0) {  // issue with getUnmodifiedKey() and hpp-gui (always
+                      // return 0 because not initialised in osgQT)
     keySym = ea.getKey();
-    if(keySym < 96 )  // ctrl mask
+    if (keySym < 96)  // ctrl mask
       keySym += 96;
   }
 
-
-  if(keyLayout_ == LAYOUT_azerty) { // adapt to azerty keyboard
-      switch(keySym){
-        case  osgGA::GUIEventAdapter::KEY_Z :
-          keySym = osgGA::key_forward;
+  if (keyLayout_ == LAYOUT_azerty) {  // adapt to azerty keyboard
+    switch (keySym) {
+      case osgGA::GUIEventAdapter::KEY_Z:
+        keySym = osgGA::key_forward;
         break;
-        case  osgGA::GUIEventAdapter::KEY_A :
-          keySym = osgGA::key_roll_left;
+      case osgGA::GUIEventAdapter::KEY_A:
+        keySym = osgGA::key_roll_left;
         break;
-        case  osgGA::GUIEventAdapter::KEY_Q :
-          keySym = osgGA::key_left;
+      case osgGA::GUIEventAdapter::KEY_Q:
+        keySym = osgGA::key_left;
         break;
-      }
+    }
   }
 
-  switch(keySym){
-    case osgGA::key_forward :
-    case osgGA::key_backward :
-    case osgGA::GUIEventAdapter::KEY_Up :
-    case osgGA::GUIEventAdapter::KEY_Down :
-      speedX_ =0.;
+  switch (keySym) {
+    case osgGA::key_forward:
+    case osgGA::key_backward:
+    case osgGA::GUIEventAdapter::KEY_Up:
+    case osgGA::GUIEventAdapter::KEY_Down:
+      speedX_ = 0.;
       return false;
-    break;
-    case osgGA::key_right :
-    case osgGA::key_left :
-    case osgGA::GUIEventAdapter::KEY_Right :
-    case osgGA::GUIEventAdapter::KEY_Left :
+      break;
+    case osgGA::key_right:
+    case osgGA::key_left:
+    case osgGA::GUIEventAdapter::KEY_Right:
+    case osgGA::GUIEventAdapter::KEY_Left:
       speedY_ = 0.;
       return false;
-    break;
-    case osgGA::key_up : //spacebar
-    case osgGA::key_down :
-      speedZ_=0.;
+      break;
+    case osgGA::key_up:  // spacebar
+    case osgGA::key_down:
+      speedZ_ = 0.;
       return false;
-    break;
-    case osgGA::key_roll_left :
-    case osgGA::key_roll_right :
-      speedRoll_=0.;
+      break;
+    case osgGA::key_roll_left:
+    case osgGA::key_roll_right:
+      speedRoll_ = 0.;
       return false;
-    break;
-    }
-  switch(ea.getKey()){
-    case '2' :
-      //getUsage();
-    break;
+      break;
+  }
+  switch (ea.getKey()) {
+    case '2':
+      // getUsage();
+      break;
     case osgGA::GUIEventAdapter::KEY_Control_L:
     case osgGA::GUIEventAdapter::KEY_Control_R:
-        ctrl_ = false;
-    break;
+      ctrl_ = false;
+      break;
     case osgGA::GUIEventAdapter::KEY_Shift_L:
     case osgGA::GUIEventAdapter::KEY_Shift_R:
-        shift_ = false;
-    break;
-   }
+      shift_ = false;
+      break;
+  }
   return false;
 }
 
+void KeyboardManipulator::rotateRoll(
+    const double roll /*,const osg::Vec3d& localUp */) {
+  // bool verticalAxisFixed = (localUp != Vec3d( 0.,0.,0. ));
 
-void KeyboardManipulator::rotateRoll(const double roll/*,const osg::Vec3d& localUp */)
-{
-    //bool verticalAxisFixed = (localUp != Vec3d( 0.,0.,0. ));
+  // fix current rotation
 
-    // fix current rotation
-
-    // rotations
-    rotateRoll_.makeRotate( roll,_rotation * Vec3d( 0.,0.,-1. ) );
-    _rotation = _rotation * rotateRoll_;
+  // rotations
+  rotateRoll_.makeRotate(roll, _rotation * Vec3d(0., 0., -1.));
+  _rotation = _rotation * rotateRoll_;
 }
 
 // free rotation (remove localUp constraint from parent class)
-bool KeyboardManipulator::performMovementLeftMouseButton( const double /*eventTimeDelta*/, const double dx, const double dy )
-{
-  rotateYawPitch( _rotation, dx, dy, localUp_ );
+bool KeyboardManipulator::performMovementLeftMouseButton(
+    const double /*eventTimeDelta*/, const double dx, const double dy) {
+  rotateYawPitch(_rotation, dx, dy, localUp_);
 
   return true;
 }
 
-
 // called at each refresh, need to check the speed and move camera accordingly
-bool KeyboardManipulator::handleFrame( const GUIEventAdapter& ea, GUIActionAdapter& us )
-{
+bool KeyboardManipulator::handleFrame(const GUIEventAdapter& ea,
+                                      GUIActionAdapter& us) {
   double current_frame_time = ea.getTime();
 
   _delta_frame_time = current_frame_time - _last_frame_time;
   _last_frame_time = current_frame_time;
 
-  double dist = speed_ * _delta_frame_time;  // distance according to refresh rate
+  double dist =
+      speed_ * _delta_frame_time;  // distance according to refresh rate
 
-  if(ctrl_)
-    dist = dist / 10. ;
+  if (ctrl_) dist = dist / 10.;
 
-  rotateRoll_.makeRotate(dist*speedRoll_, _rotation * Vec3d( 0.,0.,-1. ) );  // apply rotation
+  rotateRoll_.makeRotate(dist * speedRoll_,
+                         _rotation * Vec3d(0., 0., -1.));  // apply rotation
   _rotation = _rotation * rotateRoll_;
 
-  _eye += _rotation * Vec3d (dist*speedY_, dist * speedZ_, - dist * speedX_);
+  _eye += _rotation * Vec3d(dist * speedY_, dist * speedZ_, -dist * speedX_);
 
-
-  return inherited::handleFrame(ea,us);
+  return inherited::handleFrame(ea, us);
 }
 
 // method overrided for hidding the mouse cursor when the view move :
-bool KeyboardManipulator::handleMousePush( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us ){
+bool KeyboardManipulator::handleMousePush(const osgGA::GUIEventAdapter& ea,
+                                          osgGA::GUIActionAdapter& us) {
   gWindow_->useCursor(false);
-  if( ! noRoll_)
-    localUp_ = _rotation * Vec3d( 0.,1.,0. );
+  if (!noRoll_) localUp_ = _rotation * Vec3d(0., 1., 0.);
 
-  return inherited::handleMousePush(ea,us);
+  return inherited::handleMousePush(ea, us);
 }
 
-bool KeyboardManipulator::handleMouseRelease( const osgGA::GUIEventAdapter& ea, osgGA::GUIActionAdapter& us ){
+bool KeyboardManipulator::handleMouseRelease(const osgGA::GUIEventAdapter& ea,
+                                             osgGA::GUIActionAdapter& us) {
   gWindow_->useCursor(true);
   noRoll_ = true;
-  return inherited::handleMouseRelease(ea,us);
+  return inherited::handleMouseRelease(ea, us);
 }
 
-/*bool KeyboardManipulator::handleMouseWheel( const GUIEventAdapter& ea, GUIActionAdapter& us ){
-  osgGA::GUIEventAdapter::ScrollingMotion sm = ea.getScrollingMotion();
+/*bool KeyboardManipulator::handleMouseWheel( const GUIEventAdapter& ea,
+GUIActionAdapter& us ){ osgGA::GUIEventAdapter::ScrollingMotion sm =
+ea.getScrollingMotion();
 
   // handle centering
   if( _flags & SET_CENTER_ON_WHEEL_FORWARD_MOVEMENT )
@@ -377,8 +366,8 @@ bool KeyboardManipulator::handleMouseRelease( const osgGA::GUIEventAdapter& ea, 
       // mouse scroll up event
       case GUIEventAdapter::SCROLL_UP: // increase clipping
       {
-        camera_->getProjectionMatrixAsPerspective(fovy_,ratio_,zNear_,zFar_);  // initialise value with current setting
-        if(ctrl_){// increase far distance view
+        camera_->getProjectionMatrixAsPerspective(fovy_,ratio_,zNear_,zFar_); //
+initialise value with current setting if(ctrl_){// increase far distance view
             zFar_ +=1;
           }
         else{ // reduce close distance view
@@ -393,8 +382,8 @@ bool KeyboardManipulator::handleMouseRelease( const osgGA::GUIEventAdapter& ea, 
       // mouse scroll down event
       case GUIEventAdapter::SCROLL_DOWN:  // reduce clipping
       {
-        camera_->getProjectionMatrixAsPerspective(fovy_,ratio_,zNear_,zFar_);  // initialise value with current setting
-        if(ctrl_){// reduce far distance view
+        camera_->getProjectionMatrixAsPerspective(fovy_,ratio_,zNear_,zFar_); //
+initialise value with current setting if(ctrl_){// reduce far distance view
             zFar_ -=1;
             if(zFar_ <= zNear_)
               zFar_ = zNear_ +0.1;
@@ -412,7 +401,6 @@ bool KeyboardManipulator::handleMouseRelease( const osgGA::GUIEventAdapter& ea, 
   }
 }*/
 
-
 // if rightClic is activated, do the same as performLeftMouvement
 /*bool KeyboardManipulator::performMovement(){
   if(rightClic_){
@@ -424,8 +412,8 @@ bool KeyboardManipulator::handleMouseRelease( const osgGA::GUIEventAdapter& ea, 
     double eventTimeDelta = _ga_t0->getTime() - _ga_t1->getTime();
     if( eventTimeDelta < 0. )
     {
-        OSG_WARN << "Manipulator warning: eventTimeDelta = " << eventTimeDelta << std::endl;
-        eventTimeDelta = 0.;
+        OSG_WARN << "Manipulator warning: eventTimeDelta = " << eventTimeDelta
+<< std::endl; eventTimeDelta = 0.;
     }
 
     // get deltaX and deltaY
@@ -443,69 +431,69 @@ bool KeyboardManipulator::handleMouseRelease( const osgGA::GUIEventAdapter& ea, 
 }*/
 
 // check if the current keyboard is azerty or qwerty and adapt the keybinding
-bool KeyboardManipulator::initKeyboard(){
-
+bool KeyboardManipulator::initKeyboard() {
   char buf[128];
-  FILE *fp;
+  FILE* fp;
   // send system command and get the output
   if ((fp = popen("LANG=C LC_ALL=C setxkbmap -print", "r")) == NULL) {
-     std::cout<<"Error sending terminal command !"<<std::endl;
-     return false;
+    std::cout << "Error sending terminal command !" << std::endl;
+    return false;
   }
 
   fgets(buf, 128, fp);
-  fgets(buf, 128, fp);  // the second line of the output contain either "azerty" or "qwerty"
+  fgets(
+      buf, 128,
+      fp);  // the second line of the output contain either "azerty" or "qwerty"
   std::string output(buf);
 
-  if(output.find("azerty") != std::string::npos){
-    keyLayout_=LAYOUT_azerty;
-    //std::cout<<"azerty keyboard detected"<<std::endl;
-  }
-  else if(output.find("qwerty") != std::string::npos){
-    keyLayout_=LAYOUT_qwerty;
-    //std::cout<<"qwerty keyboard detected"<<std::endl;
-  }
-  else
-    std::cout<<"Unknow keyboard layout"<<std::endl;
+  if (output.find("azerty") != std::string::npos) {
+    keyLayout_ = LAYOUT_azerty;
+    // std::cout<<"azerty keyboard detected"<<std::endl;
+  } else if (output.find("qwerty") != std::string::npos) {
+    keyLayout_ = LAYOUT_qwerty;
+    // std::cout<<"qwerty keyboard detected"<<std::endl;
+  } else
+    std::cout << "Unknow keyboard layout" << std::endl;
 
-
-  if(pclose(fp))  {
-     std::cout<<"Command not found or exited with error status"<<std::endl;
-     return false;
+  if (pclose(fp)) {
+    std::cout << "Command not found or exited with error status" << std::endl;
+    return false;
   }
 
   return true;
 }
 
-
-void KeyboardManipulator::getUsage(osg::ApplicationUsage &usage) const{
-  if(keyLayout_==LAYOUT_azerty){
-    usage.addKeyboardMouseBinding(" -1. Keyboard : ","Move with keyboard arrow or zqsd and the mouse for rotation");
-    usage.addKeyboardMouseBinding(" -2. Arrow keys  ","Planar translations");
-    usage.addKeyboardMouseBinding(" -3. z/s ", "Forward / backward translation");
+void KeyboardManipulator::getUsage(osg::ApplicationUsage& usage) const {
+  if (keyLayout_ == LAYOUT_azerty) {
+    usage.addKeyboardMouseBinding(
+        " -1. Keyboard : ",
+        "Move with keyboard arrow or zqsd and the mouse for rotation");
+    usage.addKeyboardMouseBinding(" -2. Arrow keys  ", "Planar translations");
+    usage.addKeyboardMouseBinding(" -3. z/s ",
+                                  "Forward / backward translation");
     usage.addKeyboardMouseBinding(" -4. q/d ", "Left / right translation");
     usage.addKeyboardMouseBinding(" -5. Space/v ", "Up / down translation");
     usage.addKeyboardMouseBinding(" -6. a/e ", "Roll rotation");
 
-    }
-  else {
-    usage.addKeyboardMouseBinding(" -1. Keyboard manipulator : ","move with keyboard arrow or wasd and the mouse for rotation");
-    usage.addKeyboardMouseBinding(" -2. arrow keys  ","Planar translations");
-    usage.addKeyboardMouseBinding(" -3. w/s ", "Forward / backward translation");
+  } else {
+    usage.addKeyboardMouseBinding(
+        " -1. Keyboard manipulator : ",
+        "move with keyboard arrow or wasd and the mouse for rotation");
+    usage.addKeyboardMouseBinding(" -2. arrow keys  ", "Planar translations");
+    usage.addKeyboardMouseBinding(" -3. w/s ",
+                                  "Forward / backward translation");
     usage.addKeyboardMouseBinding(" -4. a/d ", "Left / right translation");
     usage.addKeyboardMouseBinding(" -5. Space/v ", "Up / down translation");
     usage.addKeyboardMouseBinding(" -6. q/e ", "Roll rotation");
   }
-  usage.addKeyboardMouseBinding(" -7. Mouse ", "Left button : Yaw / pitch rotation");
-  usage.addKeyboardMouseBinding(" -8. ","-------- ");
-  usage.addKeyboardMouseBinding(" -9. r","Reset the viewing position to home");
-  usage.addKeyboardMouseBinding("-10. hold Ctrl","Slow movement mode");
-  usage.addKeyboardMouseBinding("-11. + / - ","Change movement speed");
-  usage.addKeyboardMouseBinding("-12. *","Reset movement speed");
-  usage.addKeyboardMouseBinding("-13. ---------","----------------");
-
-
-
+  usage.addKeyboardMouseBinding(" -7. Mouse ",
+                                "Left button : Yaw / pitch rotation");
+  usage.addKeyboardMouseBinding(" -8. ", "-------- ");
+  usage.addKeyboardMouseBinding(" -9. r", "Reset the viewing position to home");
+  usage.addKeyboardMouseBinding("-10. hold Ctrl", "Slow movement mode");
+  usage.addKeyboardMouseBinding("-11. + / - ", "Change movement speed");
+  usage.addKeyboardMouseBinding("-12. *", "Reset movement speed");
+  usage.addKeyboardMouseBinding("-13. ---------", "----------------");
 
   /*std::cout<<"###################################################"<<std::endl;
   std::cout<<"#              Usage of FPSManipulator :          #"<<std::endl;

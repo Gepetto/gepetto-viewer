@@ -18,8 +18,6 @@
 
 #include <plugin.hh>
 
-void PluginSkeleton::init() {
-  qDebug() << "PluginSkeleton::init";
-}
+void PluginSkeleton::init() { qDebug() << "PluginSkeleton::init"; }
 
-Q_EXPORT_PLUGIN2 (pluginskeleton, PluginSkeleton)
+Q_EXPORT_PLUGIN2(pluginskeleton, PluginSkeleton)

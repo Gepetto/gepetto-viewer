@@ -19,53 +19,51 @@
 
 #include <assert.h>
 
+#include <QApplication>
 #include <gepetto/gui/fwd.hh>
 
-#include <QApplication>
-
 namespace gepetto {
-  namespace gui {
-    class SlotExceptionCatch
-    {
-      public:
-        SlotExceptionCatch () : child_ (NULL) {}
+namespace gui {
+class SlotExceptionCatch {
+ public:
+  SlotExceptionCatch() : child_(NULL) {}
 
-        /// Inherited classes must call impl_notify method surronded by a try/catch
-        virtual bool safeNotify (QApplication* app, QObject* receiver, QEvent* e) = 0;
+  /// Inherited classes must call impl_notify method surronded by a try/catch
+  virtual bool safeNotify(QApplication* app, QObject* receiver, QEvent* e) = 0;
 
-        void addAsLeaf (SlotExceptionCatch* child)
-        {
-          if (child_ == NULL) child_ = child;
-          else child_->addAsLeaf (child);
-        }
+  void addAsLeaf(SlotExceptionCatch* child) {
+    if (child_ == NULL)
+      child_ = child;
+    else
+      child_->addAsLeaf(child);
+  }
 
-      protected:
-        bool impl_notify(QApplication* app, QObject* receiver, QEvent* e)
-        {
-          if (child_ == NULL)
-            return app->QApplication::notify(receiver, e);
-          else
-            return child_->safeNotify(app, receiver, e);
-        }
+ protected:
+  bool impl_notify(QApplication* app, QObject* receiver, QEvent* e) {
+    if (child_ == NULL)
+      return app->QApplication::notify(receiver, e);
+    else
+      return child_->safeNotify(app, receiver, e);
+  }
 
-        SlotExceptionCatch* child_;
-    };
+  SlotExceptionCatch* child_;
+};
 
-    class SafeApplication : public QApplication, public SlotExceptionCatch
-    {
-      public:
-        explicit SafeApplication (int& argc, char ** argv)
-          : QApplication(argc, argv) {}
+class SafeApplication : public QApplication, public SlotExceptionCatch {
+ public:
+  explicit SafeApplication(int& argc, char** argv) : QApplication(argc, argv) {}
 
-        bool notify(QObject* receiver, QEvent* e)
-        {
-          return impl_notify (this, receiver, e);
-        }
+  bool notify(QObject* receiver, QEvent* e) {
+    return impl_notify(this, receiver, e);
+  }
 
-      private:
-        bool safeNotify (QApplication*, QObject*, QEvent*) { assert(false); return false; };
-    };
-  } // namespace gui
-} // namespace gepetto
+ private:
+  bool safeNotify(QApplication*, QObject*, QEvent*) {
+    assert(false);
+    return false;
+  };
+};
+}  // namespace gui
+}  // namespace gepetto
 
-#endif // GEPETTO_GUI_SAFEAPPLICATION_HH
+#endif  // GEPETTO_GUI_SAFEAPPLICATION_HH

@@ -19,52 +19,44 @@
 
 namespace gepetto {
 namespace viewer {
-  class IsDirtyVisitor : public NodeVisitor
-  {
-    public:
-      IsDirtyVisitor () : NodeVisitor (true), isDirty_ (false) {}
+class IsDirtyVisitor : public NodeVisitor {
+ public:
+  IsDirtyVisitor() : NodeVisitor(true), isDirty_(false) {}
 
-      ~IsDirtyVisitor () {}
+  ~IsDirtyVisitor() {}
 
-      bool valid (Node& node)
-      {
-        if (isDirty_) return false;
-        return NodeVisitor::valid(node);
-      }
+  bool valid(Node& node) {
+    if (isDirty_) return false;
+    return NodeVisitor::valid(node);
+  }
 
-      void apply (Node& node)
-      {
-        isDirty_ = node.isDirty();
-        if (isDirty_) return;
-        // Invisible nodes must be considered, otherwise they do not
-        // disappear when they become invisible. Their children can be discarded.
-        if (node.getVisibilityMode() == VISIBILITY_OFF) return;
-        NodeVisitor::apply (node);
-      }
+  void apply(Node& node) {
+    isDirty_ = node.isDirty();
+    if (isDirty_) return;
+    // Invisible nodes must be considered, otherwise they do not
+    // disappear when they become invisible. Their children can be discarded.
+    if (node.getVisibilityMode() == VISIBILITY_OFF) return;
+    NodeVisitor::apply(node);
+  }
 
-      bool isDirty () const
-      {
-        return isDirty_;
-      }
+  bool isDirty() const { return isDirty_; }
 
-    protected:
-      bool isDirty_;
-  }; /* class Node */
-  template <bool SetDirty>
-  class SetDirtyVisitorTpl : public NodeVisitor
-  {
-    public:
-      SetDirtyVisitorTpl () : NodeVisitor (true) {}
+ protected:
+  bool isDirty_;
+}; /* class Node */
+template <bool SetDirty>
+class SetDirtyVisitorTpl : public NodeVisitor {
+ public:
+  SetDirtyVisitorTpl() : NodeVisitor(true) {}
 
-      ~SetDirtyVisitorTpl () {}
+  ~SetDirtyVisitorTpl() {}
 
-      void apply (Node& node)
-      {
-        node.setDirty(SetDirty);
-        NodeVisitor::apply (node);
-      }
-  }; /* class Node */
-  typedef SetDirtyVisitorTpl<true > SetDirtyVisitor;
-  typedef SetDirtyVisitorTpl<false> SetCleanVisitor;
+  void apply(Node& node) {
+    node.setDirty(SetDirty);
+    NodeVisitor::apply(node);
+  }
+}; /* class Node */
+typedef SetDirtyVisitorTpl<true> SetDirtyVisitor;
+typedef SetDirtyVisitorTpl<false> SetCleanVisitor;
 } /* namespace viewer */
-} // namespace gepetto
+}  // namespace gepetto

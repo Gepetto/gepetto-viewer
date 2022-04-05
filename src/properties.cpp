@@ -8,20 +8,24 @@
 
 namespace gepetto {
 namespace viewer {
-bool BackfaceDrawingProperty::impl_get(bool& value)
-{
-  if (!hasReadAccess ()) { invalidGet(); return false; }
-  value = static_cast<bool>(stateSet_->getMode(GL_CULL_FACE)
-      & osg::StateAttribute::ON);
+bool BackfaceDrawingProperty::impl_get(bool& value) {
+  if (!hasReadAccess()) {
+    invalidGet();
+    return false;
+  }
+  value = static_cast<bool>(stateSet_->getMode(GL_CULL_FACE) &
+                            osg::StateAttribute::ON);
   return true;
 }
 
-bool BackfaceDrawingProperty::impl_set (const bool& on)
-{
-  if (!hasWriteAccess()) { invalidSet(); return false; }
+bool BackfaceDrawingProperty::impl_set(const bool& on) {
+  if (!hasWriteAccess()) {
+    invalidSet();
+    return false;
+  }
 
   stateSet_->setMode(GL_CULL_FACE,
-      (on ?  osg::StateAttribute::ON : osg::StateAttribute::OFF));
+                     (on ? osg::StateAttribute::ON : osg::StateAttribute::OFF));
 
   if (on) {
     osg::LightModel* ltModel = new osg::LightModel;

@@ -7,203 +7,195 @@
 //
 
 #include <gepetto/viewer/leaf-node-arrow.h>
+
 #include <osg/Version>
 
 namespace gepetto {
 namespace viewer {
 
-    /* Declaration of private function members */
+/* Declaration of private function members */
 
-    void LeafNodeArrow::init ()
-    {
-        /* Create Geode for adding ShapeDrawable */
-        geode_ptr_ = new osg::Geode();
+void LeafNodeArrow::init() {
+  /* Create Geode for adding ShapeDrawable */
+  geode_ptr_ = new osg::Geode();
 
-        resetGeodeContent ();
+  resetGeodeContent();
 
-        /* Create PositionAttitudeTransform */
-        this->asQueue()->addChild(geode_ptr_);
+  /* Create PositionAttitudeTransform */
+  this->asQueue()->addChild(geode_ptr_);
 
-        /* Allow transparency */
-        geode_ptr_->getOrCreateStateSet()->setMode(GL_BLEND, ::osg::StateAttribute::ON);;
+  /* Allow transparency */
+  geode_ptr_->getOrCreateStateSet()->setMode(GL_BLEND,
+                                             ::osg::StateAttribute::ON);
+  ;
 
-        addProperty(FloatProperty::create("Radius",
-              FloatProperty::getterFromMemberFunction(this, &LeafNodeArrow::getRadius),
-              FloatProperty::setterFromMemberFunction(this, &LeafNodeArrow::setRadius)));
-        addProperty(FloatProperty::create("Size",
-              FloatProperty::getterFromMemberFunction(this, &LeafNodeArrow::getSize),
-              FloatProperty::setterFromMemberFunction(this, &LeafNodeArrow::setSize)));
-    }
+  addProperty(FloatProperty::create(
+      "Radius",
+      FloatProperty::getterFromMemberFunction(this, &LeafNodeArrow::getRadius),
+      FloatProperty::setterFromMemberFunction(this,
+                                              &LeafNodeArrow::setRadius)));
+  addProperty(FloatProperty::create(
+      "Size",
+      FloatProperty::getterFromMemberFunction(this, &LeafNodeArrow::getSize),
+      FloatProperty::setterFromMemberFunction(this, &LeafNodeArrow::setSize)));
+}
 
-    void LeafNodeArrow::resetGeodeContent ()
-    {
-        if (cylinder_drawable_) geode_ptr_->removeDrawable(cylinder_drawable_);
-        if (cone_drawable_    ) geode_ptr_->removeDrawable(cone_drawable_);
+void LeafNodeArrow::resetGeodeContent() {
+  if (cylinder_drawable_) geode_ptr_->removeDrawable(cylinder_drawable_);
+  if (cone_drawable_) geode_ptr_->removeDrawable(cone_drawable_);
 
-         /* create the axis : */
-        float R = getRadius();
-        float L = getSize();
-        float Lcone = std::min(L, 4.f*R);
+  /* create the axis : */
+  float R = getRadius();
+  float L = getSize();
+  float Lcone = std::min(L, 4.f * R);
 
-        /* Create cylinder */
-        ::osg::CylinderRefPtr cylinder_shape_x_ptr = new ::osg::Cylinder();
-        cylinder_shape_x_ptr->set(osgVector3((L-Lcone)/2.f,0.f,0.f), R, L-Lcone);
-        cylinder_shape_x_ptr->setRotation(osgQuat( 0.f, ::osg::X_AXIS, M_PI_2, ::osg::Y_AXIS, 0.f, ::osg::Z_AXIS ));
-        /* Create cone */
-        ::osg::ConeRefPtr cone_shape_x_ptr = new ::osg::Cone();
-        cone_shape_x_ptr->set(osgVector3(L-3*Lcone/4,0.f,0.f), 2.f * R, Lcone);
-        cone_shape_x_ptr->setRotation(osgQuat( 0.f, ::osg::X_AXIS, M_PI_2, ::osg::Y_AXIS, 0.f, ::osg::Z_AXIS));
+  /* Create cylinder */
+  ::osg::CylinderRefPtr cylinder_shape_x_ptr = new ::osg::Cylinder();
+  cylinder_shape_x_ptr->set(osgVector3((L - Lcone) / 2.f, 0.f, 0.f), R,
+                            L - Lcone);
+  cylinder_shape_x_ptr->setRotation(
+      osgQuat(0.f, ::osg::X_AXIS, M_PI_2, ::osg::Y_AXIS, 0.f, ::osg::Z_AXIS));
+  /* Create cone */
+  ::osg::ConeRefPtr cone_shape_x_ptr = new ::osg::Cone();
+  cone_shape_x_ptr->set(osgVector3(L - 3 * Lcone / 4, 0.f, 0.f), 2.f * R,
+                        Lcone);
+  cone_shape_x_ptr->setRotation(
+      osgQuat(0.f, ::osg::X_AXIS, M_PI_2, ::osg::Y_AXIS, 0.f, ::osg::Z_AXIS));
 
-        /* create drawable and add them to geode */
-        cylinder_drawable_ = new ::osg::ShapeDrawable( cylinder_shape_x_ptr );
-        cone_drawable_ = new ::osg::ShapeDrawable( cone_shape_x_ptr );
-        setColor (color_);
+  /* create drawable and add them to geode */
+  cylinder_drawable_ = new ::osg::ShapeDrawable(cylinder_shape_x_ptr);
+  cone_drawable_ = new ::osg::ShapeDrawable(cone_shape_x_ptr);
+  setColor(color_);
 
-        geode_ptr_->addDrawable(cylinder_drawable_);
-        geode_ptr_->addDrawable(cone_drawable_);
-    }
+  geode_ptr_->addDrawable(cylinder_drawable_);
+  geode_ptr_->addDrawable(cone_drawable_);
+}
 
-    LeafNodeArrow::LeafNodeArrow(const std::string& name, const osgVector4& color, float radius, float size):
-        NodeDrawable(name),
-        color_(color)
-    {
-        radius_ = radius;
-        size_ = size;
+LeafNodeArrow::LeafNodeArrow(const std::string& name, const osgVector4& color,
+                             float radius, float size)
+    : NodeDrawable(name), color_(color) {
+  radius_ = radius;
+  size_ = size;
 
-        init();
-    }
+  init();
+}
 
-    LeafNodeArrow::LeafNodeArrow(const LeafNodeArrow& other) :
-        NodeDrawable(other.getID())
-    {
-        init();
-      //TODO
-    }
+LeafNodeArrow::LeafNodeArrow(const LeafNodeArrow& other)
+    : NodeDrawable(other.getID()) {
+  init();
+  // TODO
+}
 
-    void LeafNodeArrow::initWeakPtr(LeafNodeArrowWeakPtr other_weak_ptr)
-    {
-        weak_ptr_ = other_weak_ptr;
-    }
+void LeafNodeArrow::initWeakPtr(LeafNodeArrowWeakPtr other_weak_ptr) {
+  weak_ptr_ = other_weak_ptr;
+}
 
-    /* End of declaration of private function members */
+/* End of declaration of private function members */
 
-    /* Declaration of protected function members */
+/* Declaration of protected function members */
 
-    LeafNodeArrowPtr_t LeafNodeArrow::create (const std::string& name , const osgVector4& color ,float radiusCenter, float size)
-    {
-        LeafNodeArrowPtr_t shared_ptr(new LeafNodeArrow(name, color, radiusCenter,size));
+LeafNodeArrowPtr_t LeafNodeArrow::create(const std::string& name,
+                                         const osgVector4& color,
+                                         float radiusCenter, float size) {
+  LeafNodeArrowPtr_t shared_ptr(
+      new LeafNodeArrow(name, color, radiusCenter, size));
 
-        // Add reference to itself
-        shared_ptr->initWeakPtr(shared_ptr);
+  // Add reference to itself
+  shared_ptr->initWeakPtr(shared_ptr);
 
-        return shared_ptr;
-    }
+  return shared_ptr;
+}
 
-    LeafNodeArrowPtr_t LeafNodeArrow::create (const std::string& name, const osgVector4& color, float radiusCenter)
-    {
-        LeafNodeArrowPtr_t shared_ptr(new LeafNodeArrow(name, color, radiusCenter,4*radiusCenter));
+LeafNodeArrowPtr_t LeafNodeArrow::create(const std::string& name,
+                                         const osgVector4& color,
+                                         float radiusCenter) {
+  LeafNodeArrowPtr_t shared_ptr(
+      new LeafNodeArrow(name, color, radiusCenter, 4 * radiusCenter));
 
-        // Add reference to itself
-        shared_ptr->initWeakPtr(shared_ptr);
+  // Add reference to itself
+  shared_ptr->initWeakPtr(shared_ptr);
 
-        return shared_ptr;
-    }
+  return shared_ptr;
+}
 
-    LeafNodeArrowPtr_t LeafNodeArrow::createCopy (LeafNodeArrowPtr_t other)
-    {
-        LeafNodeArrowPtr_t shared_ptr(new LeafNodeArrow(*other));
+LeafNodeArrowPtr_t LeafNodeArrow::createCopy(LeafNodeArrowPtr_t other) {
+  LeafNodeArrowPtr_t shared_ptr(new LeafNodeArrow(*other));
 
-        // Add reference to itself
-        shared_ptr->initWeakPtr(shared_ptr);
+  // Add reference to itself
+  shared_ptr->initWeakPtr(shared_ptr);
 
-        return shared_ptr;
-    }
+  return shared_ptr;
+}
 
-    /* End of declaration of protected function members */
+/* End of declaration of protected function members */
 
-    /* Declaration of public function members */
+/* Declaration of public function members */
 
-    LeafNodeArrowPtr_t LeafNodeArrow::clone (void) const
-    {
-        return LeafNodeArrow::createCopy(weak_ptr_.lock());
-    }
+LeafNodeArrowPtr_t LeafNodeArrow::clone(void) const {
+  return LeafNodeArrow::createCopy(weak_ptr_.lock());
+}
 
-    LeafNodeArrowPtr_t LeafNodeArrow::self (void) const
-    {
-        return weak_ptr_.lock();
-    }
+LeafNodeArrowPtr_t LeafNodeArrow::self(void) const { return weak_ptr_.lock(); }
 
-    void LeafNodeArrow::setRadius (const float& radius)
-    {
-      if(radius != getRadius()) { // avoid useless resize
-        radius_=radius;
-        resetGeodeContent();
-      }
-    }
+void LeafNodeArrow::setRadius(const float& radius) {
+  if (radius != getRadius()) {  // avoid useless resize
+    radius_ = radius;
+    resetGeodeContent();
+  }
+}
 
-    float LeafNodeArrow::getRadius() const
-    {
-        return radius_;
-    }
+float LeafNodeArrow::getRadius() const { return radius_; }
 
-    void LeafNodeArrow::setSize(const float& size)
-    {
-      if (size != getSize()) { // avoid useless resize
-        size_ = size;
-        resetGeodeContent();
-      }
-    }
+void LeafNodeArrow::setSize(const float& size) {
+  if (size != getSize()) {  // avoid useless resize
+    size_ = size;
+    resetGeodeContent();
+  }
+}
 
-    float LeafNodeArrow::getSize() const
-    {
-        return size_;
-    }
+float LeafNodeArrow::getSize() const { return size_; }
 
-    void LeafNodeArrow::setColor (const osgVector4& color)
-    {
-        cylinder_drawable_->setColor(color);
-        cone_drawable_->setColor(color);
+void LeafNodeArrow::setColor(const osgVector4& color) {
+  cylinder_drawable_->setColor(color);
+  cone_drawable_->setColor(color);
 #if OSG_VERSION_GREATER_OR_EQUAL(3, 5, 6)
-        cylinder_drawable_->build();
-        cone_drawable_->build();
+  cylinder_drawable_->build();
+  cone_drawable_->build();
 #else
-        cylinder_drawable_->dirtyDisplayList();
-        cone_drawable_->dirtyDisplayList();
-        cylinder_drawable_->dirtyBound();
-        cone_drawable_->dirtyBound();
+  cylinder_drawable_->dirtyDisplayList();
+  cone_drawable_->dirtyDisplayList();
+  cylinder_drawable_->dirtyBound();
+  cone_drawable_->dirtyBound();
 #endif
-        color_ = color;
-        setTransparentRenderingBin (color[3] < Node::TransparencyRenderingBinThreshold);
-        setDirty();
-    }
+  color_ = color;
+  setTransparentRenderingBin(color[3] <
+                             Node::TransparencyRenderingBinThreshold);
+  setDirty();
+}
 
-    void LeafNodeArrow::resize(float radius,float length)
-    {
-        if(length != getSize() || radius != getRadius())
-        { // avoid useless resize
-            size_ = length;
-            radius_ = radius;
+void LeafNodeArrow::resize(float radius, float length) {
+  if (length != getSize() || radius != getRadius()) {  // avoid useless resize
+    size_ = length;
+    radius_ = radius;
 
-            resetGeodeContent ();
-        }
-    }
+    resetGeodeContent();
+  }
+}
 
-    LeafNodeArrow::~LeafNodeArrow ()
-    {
-        /* Proper deletion of all tree scene */
+LeafNodeArrow::~LeafNodeArrow() {
+  /* Proper deletion of all tree scene */
 
-        geode_ptr_->removeDrawable(cylinder_drawable_);
-        geode_ptr_->removeDrawable(cone_drawable_);
+  geode_ptr_->removeDrawable(cylinder_drawable_);
+  geode_ptr_->removeDrawable(cone_drawable_);
 
-        geode_ptr_ = NULL;
-        cylinder_drawable_ = NULL;
-        cone_drawable_ = NULL;
+  geode_ptr_ = NULL;
+  cylinder_drawable_ = NULL;
+  cone_drawable_ = NULL;
 
-        weak_ptr_.reset();
-    }
+  weak_ptr_.reset();
+}
 
-    /* End of declaration of public function members */
+/* End of declaration of public function members */
 
 } /* namespace viewer */
 } /* namespace gepetto */
-

@@ -17,9 +17,9 @@
 #ifndef GEPETTO_GUI_CONFIGURATION_DIALOG_HH
 #define GEPETTO_GUI_CONFIGURATION_DIALOG_HH
 
-#include <QDialog>
-
 #include <gepetto/viewer/config-osg.h>
+
+#include <QDialog>
 
 class QDoubleSpinBox;
 class QLineEdit;
@@ -29,7 +29,8 @@ namespace gui {
 
 typedef viewer::Configuration Configuration;
 /*
- * README The MOC tool from Qt does not expand macros. Thus, the code in comment below
+ * README The MOC tool from Qt does not expand macros. Thus, the code in comment
+below
  * does not work because the classes are not mocced.
  * The remaining of the file, after this comment, correspond to the macro
  * expansion at the time of writing.
@@ -69,64 +70,68 @@ DECLARE_PROPERTY_EDITOR(ConfigurationDialog, Configuration);
 
 class Vector2Dialog : public QDialog {
   Q_OBJECT
-public:
+ public:
   Vector2Dialog(viewer::Property* prop, QWidget* parent = 0);
   void setValueFromProperty(viewer::Property* prop);
-signals:
+ signals:
   void valueChanged(const osgVector2& config);
-public slots:
+ public slots:
   void set(const osgVector2& v);
-private slots:
+ private slots:
   void updateValue();
-private:
+
+ private:
   void setPyValue();
   QVector<QDoubleSpinBox*> spinBoxes;
   QLineEdit* pyValue;
 };
 class Vector3Dialog : public QDialog {
   Q_OBJECT
-public:
+ public:
   Vector3Dialog(viewer::Property* prop, QWidget* parent = 0);
   void setValueFromProperty(viewer::Property* prop);
-signals:
+ signals:
   void valueChanged(const osgVector3& config);
-public slots:
+ public slots:
   void set(const osgVector3& v);
-private slots:
+ private slots:
   void updateValue();
-private:
+
+ private:
   void setPyValue();
   QVector<QDoubleSpinBox*> spinBoxes;
   QLineEdit* pyValue;
 };
 class Vector4Dialog : public QDialog {
   Q_OBJECT
-public:
+ public:
   Vector4Dialog(viewer::Property* prop, QWidget* parent = 0);
   void setValueFromProperty(viewer::Property* prop);
-signals:
+ signals:
   void valueChanged(const osgVector4& config);
-public slots:
+ public slots:
   void set(const osgVector4& v);
-private slots:
+ private slots:
   void updateValue();
-private:
+
+ private:
   void setPyValue();
   QVector<QDoubleSpinBox*> spinBoxes;
   QLineEdit* pyValue;
 };
 class ConfigurationDialog : public QDialog {
   Q_OBJECT
-public:
+ public:
   ConfigurationDialog(viewer::Property* prop, QWidget* parent = 0);
   void setValueFromProperty(viewer::Property* prop);
-signals:
+ signals:
   void valueChanged(const Configuration& config);
-public slots:
+ public slots:
   void set(const Configuration& v);
-private slots:
+ private slots:
   void updateValue();
-private:
+
+ private:
   void setPyValue();
   QVector<QDoubleSpinBox*> spinBoxes;
   QLineEdit* pyValue;

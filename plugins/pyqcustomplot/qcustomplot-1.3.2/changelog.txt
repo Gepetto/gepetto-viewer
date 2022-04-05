@@ -8,7 +8,7 @@
     - Fixed QCustomPlot::moveLayer performing incorrect move and possible crash in certain situations
     - Fixed possible crash on QCustomPlot destruction due to wrong QObject-hierarchy. Only occurs if a QCPAxisRect is removed from the normal QCustomPlot destruction hierarchy by taking it out of its layout
     - Fixed possible freeze when data values become infinity after coord-to-pixel transformation (e.g. maximally zoomed out log axis), and line style is not solid (e.g. dashed) or phFastPolylines is disabled
-    
+
   Other [Backported from 2.0.0 branch]:
     - A few documentation fixes/improvements
     - Qt5.5 compatibility (If you use PDF export, test your outputs, as output dimensions might change when switching Qt versions -- QCP does not try to emulate previous Qt version behaviour here)
@@ -28,7 +28,7 @@
     - Fixed bug of QCPColorMap::fill() not causing the buffered internal image map to be updated, and thus the change didn't become visible immediately
     - Axis labels with size set in pixels (setPixelSize) instead of points now correctly calculate the exponent's font size if beautifully typeset powers are enabled
     - Fixed QCPColorMap appearing at the wrong position for logarithmic axes and color map spanning larger ranges
-    
+
   Other:
     - Pdf export used to embed entire QCPColorMaps, potentially leading to large files. Now only the visible portion of the map is embedded in the pdf
     - Many documentation fixes and extensions, style modernization
@@ -51,7 +51,7 @@
     - Added compatibility with QT_NO_KEYWORDS after sending code files through a simple reg-ex script
     - Added possibility to inject own QCPAxis(-subclasses) via second, optional QCPAxisRect::addAxis parameter
     - Added parameter to QCPItemPixmap::setScaled to specify transformation mode
-  
+
   Bugfixes:
     - Fixed bug in QCPCurve rendering of very zoomed-in curves (via new optimization algorithm)
     - Fixed conflict with MSVC-specific keyword "interface" in text-document-integration example
@@ -61,7 +61,7 @@
     - Fixed bug of QCPColorMap/QCPColorGradient colors being off by one color sampling step (only noticeable in special cases)
     - Fixed bug of QCPGraph adaptive sampling on vertical key axis, causing staggered look
     - Fixed low (float) precision in QCPCurve optimization algorithm, by not using QVector2D anymore
-  
+
   Other:
     - Qt 5.3 and Qt 5.4 compatibility
 
@@ -83,7 +83,7 @@
     - added notification signals for selectability change (selectableChanged) on all objects that have a selected/selectable property
     - added notification signal for QCPAxis scaleType property
     - added notification signal QCPLayerable::layerChanged
-  
+
   Bugfixes:
     - Fixed assert halt, when QCPAxis auto tick labels not disabled but nevertheless a custom non-number tick label ending in "e" given
     - Fixed painting glitches when QCustomPlot resized inside a QMdiArea or under certain conditions inside a QLayout
@@ -94,7 +94,7 @@
     - On some systems, font size defaults to -1, which used to cause a debug output in QCPAxisPainterPrivate::TickLabelDataQCP. Now it's checked before setting values based on the default font size.
     - When using multiple axes on one side, setting one to invisible didn't properly compress the freed space.
     - Fixed bug that allowed selection of plottables when clicking in the bottom or top margin of a QCPAxisRect (outside the inner rect)
-    
+
   Other:
     - In method QCPAbstractPlottable::getKeyRange/getValueRange, renamed parameter "validRange" to "foundRange", to better reflect its meaning (and contrast it from QCPRange::validRange)
     - QCPAxis low-level axis painting methods exported to QCPAxisPainterPrivate
@@ -106,7 +106,7 @@
     - Added missing Q_PROPERTY for QCPAxis::setDateTimeSpec
     - Fixed behaviour of QCPAxisRect::setupFullAxesBox (now transfers more properties from bottom/left to top/right axes and sets visibility of bottom/left axes to true)
     - Made sure PDF export doesn't default to grayscale output on some systems
-  
+
   Other:
     - Plotting hint QCP::phForceRepaint is now enabled on all systems (and not only on windows) by default
     - Documentation improvements
@@ -118,12 +118,12 @@
     - Added QCPAxis::rescale to rescale axis to all associated plottables
     - Added QCPAxis::setDateTimeSpec/dateTimeSpec to allow axis labels either in UTC or local time
     - QCPAxis now additionally emits a rangeChanged signal overload that provides the old range as second parameter
-    
+
   Bugfixes:
     - Fixed QCustomPlot::rescaleAxes not rescaling properly if first plottable has an empty range
     - QCPGraph::rescaleAxes/rescaleKeyAxis/rescaleValueAxis are no longer virtual (never were in base class, was a mistake)
     - Fixed bugs in QCPAxis::items and QCPAxisRect::items not properly returning associated items and potentially stalling
-    
+
   Other:
     - Internal change from QWeakPointer to QPointer, thus got rid of deprecated Qt functionality
     - Qt5.1 and Qt5.2 (beta1) compatibility
@@ -135,7 +135,7 @@
     - using define flag QCUSTOMPLOT_CHECK_DATA caused debug output when data was correct, instead of invalid (fixed QCP::isInvalidData)
     - documentation images are now properly shown when viewed with Qt Assistant
     - fixed various documentation mistakes
-    
+
   Other:
     - Adapted documentation style sheet to better match Qt5 documentation
 
@@ -343,7 +343,7 @@
     The fix hence consists of creating a temporary font (only for bounding-box calculation) which is 0.05pt larger and thus avoiding the
     jittering rounding outcome.
   - tick label, axis label and plot title colors used to be undefined. This was fixed by providing explicit color properties.
-    
+
   Other:
   - fixed some glitches in the documentation
   - QCustomPlot::replot and QCustomPlot::rescaleAxes are now slots
@@ -399,7 +399,7 @@
 
   Changes that (might) break backward compatibility:
   - QCustomPlotGraph now inherits from QObject
-  
+
   Added features:
   - Added axis background pixmap (QCustomPlot::setAxisBackground, setAxisBackgroundScaled, setAxisBackgroundScaledMode)
   - Added width and height parameter on PDF export function QCustomPlot::savePdf(). This now allows PDF export to
@@ -411,12 +411,12 @@
   - added typedef QMapIterator<double,QCustomPlotData> QCustomPlotDataMapIterator
     and typedef QMutableMapIterator<double,QCustomPlotData> QCustomPlotDataMutableMapIterator
     for improved information hiding, when using iterators outside QCustomPlot code
-  
+
   Bugfixes:
   - Fixed savePngScaled. Axis/label drawing functions used to reset the painter transform
     and thereby break savePngScaled. Now they buffer the current transform and restore it afterwards.
   - Fixed some glitches in the doxygen comments (affects documentation only)
-  
+
   Other:
   - Changed the default tickLabelPadding of top axis from 3 to 6 pixels. Looks better.
   - Changed the default QCustomPlot::setAntialiasedElements setting: Graph fills are now antialiased
@@ -429,4 +429,3 @@
 
   Other:
   - QCustomPlotAxis: Added rotated tick labels, see setTickLabelRotation
-    

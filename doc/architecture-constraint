@@ -13,7 +13,7 @@
     addLockedDof (ld):                           addToSet (set):
       lockedDofs_.push_back (ld)                    for c in constraints_:
                                                       c.addToSet (set)
-    addToSet (set):       
+    addToSet (set):
       if set.configProjector_:                   addLockedDof (ld):
         throw                                      for c in constraints_:
       if set.lockedDof_:                             c.addLockedDof (ld)
