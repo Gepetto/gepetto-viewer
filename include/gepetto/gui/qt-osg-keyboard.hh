@@ -18,6 +18,7 @@
 #define GEPETTO_GUI_QT_OSG_KEYBOARD_HH__
 
 #include <QKeyEvent>
+#include <osgGA/GUIEventAdapter>
 
 namespace gepetto {
 namespace gui {
