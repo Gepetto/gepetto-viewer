@@ -17,147 +17,144 @@
 #ifndef GEPETTO_GUI_SETTINGS_HH
 #define GEPETTO_GUI_SETTINGS_HH
 
-#include <ostream>
-#include <string>
 #include <QString>
 #include <QStringList>
-
 #include <gepetto/gui/dialog/pluginmanagerdialog.hh>
+#include <ostream>
+#include <string>
 
 namespace gepetto {
-  namespace gui {
-    class MainWindow;
+namespace gui {
+class MainWindow;
 
-    /// Settings manager for the interface.
-    ///
-    /// This struct is responsible for parsing configuration files as follow:
-    /// - Robots file: Settings::readRobotFile()
-    /// - Environments file: Settings::readEnvFile()
-    /// - Configuration file: Settings::readSettingFile()
-    struct Settings {
-      std::string configurationFile;
-      std::string predifinedRobotConf;
-      std::string predifinedEnvConf;
-      std::string stateConf;
+/// Settings manager for the interface.
+///
+/// This struct is responsible for parsing configuration files as follow:
+/// - Robots file: Settings::readRobotFile()
+/// - Environments file: Settings::readEnvFile()
+/// - Configuration file: Settings::readSettingFile()
+struct Settings {
+  std::string configurationFile;
+  std::string predifinedRobotConf;
+  std::string predifinedEnvConf;
+  std::string stateConf;
 
-      std::string logFile;
+  std::string logFile;
 
-      bool verbose;
-      bool noPlugin;
-      bool autoWriteSettings;
-      bool useNameService;
+  bool verbose;
+  bool noPlugin;
+  bool autoWriteSettings;
+  bool useNameService;
 
-      int refreshRate;
+  int refreshRate;
 
-      /// Path to ffmpeg binary (maybe avconv on some distributions).
-      std::string captureDirectory, captureFilename, captureExtension;
+  /// Path to ffmpeg binary (maybe avconv on some distributions).
+  std::string captureDirectory, captureFilename, captureExtension;
 
-      /// \group record_parameter Video generation parameters
-      /// \{
-      QString ffmpeg;
-      QStringList ffmpegInputOptions;
-      QStringList ffmpegOutputOptions;
-      /// \}
+  /// \group record_parameter Video generation parameters
+  /// \{
+  QString ffmpeg;
+  QStringList ffmpegInputOptions;
+  QStringList ffmpegOutputOptions;
+  /// \}
 
-      QString installDirectory;
+  QString installDirectory;
 
-      QString appStyle;
+  QString appStyle;
 
-      /// Set up default values
-      Settings (const char* installDirectory);
+  /// Set up default values
+  Settings(const char* installDirectory);
 
-      /// Setup paths to find setting files and plugins.
-      /// \note The environment variable
-      /// GEPETTO_GUI_PLUGIN_DIRS, LD_LIBRARY_PATH
-      /// and GEPETTO_GUI_SETTINGS_DIR are read.
-      void setupPaths () const;
+  /// Setup paths to find setting files and plugins.
+  /// \note The environment variable
+  /// GEPETTO_GUI_PLUGIN_DIRS, LD_LIBRARY_PATH
+  /// and GEPETTO_GUI_SETTINGS_DIR are read.
+  void setupPaths() const;
 
-      /// Get the filename of a configuration file.
-      QString getQSettingsFileName (const std::string& settingsName) const;
+  /// Get the filename of a configuration file.
+  QString getQSettingsFileName(const std::string& settingsName) const;
 
-      /// Initialize the settings.
-      /// It uses the following elements, in this order:
-      /// \li read config file names from command line.
-      /// \li read config files.
-      /// \li read other command line arguments.
-      /// \return \li 0 if no error,
-      ///         \li 1 if no error and the user requested to generate config
-      ///             files or to print the help,
-      ///         \li 2 in case of error.
-      int initSettings (int argc, char * argv[]);
+  /// Initialize the settings.
+  /// It uses the following elements, in this order:
+  /// \li read config file names from command line.
+  /// \li read config files.
+  /// \li read other command line arguments.
+  /// \return \li 0 if no error,
+  ///         \li 1 if no error and the user requested to generate config
+  ///             files or to print the help,
+  ///         \li 2 in case of error.
+  int initSettings(int argc, char* argv[]);
 
-      /// Update settings from setting files
-      void fromFiles ();
+  /// Update settings from setting files
+  void fromFiles();
 
-      /// Write the settings to configuration files
-      void writeSettings ();
+  /// Write the settings to configuration files
+  void writeSettings();
 
-      /// Get a setting
-      QVariant getSetting (const QString & key,
-          const QVariant & defaultValue = QVariant());
+  /// Get a setting
+  QVariant getSetting(const QString& key,
+                      const QVariant& defaultValue = QVariant());
 
-      PluginManager pluginManager_;
-      QStringList pluginsToInit_;
-      QStringList pyplugins_;
-      QStringList pyscripts_;
+  PluginManager pluginManager_;
+  QStringList pluginsToInit_;
+  QStringList pyplugins_;
+  QStringList pyscripts_;
 
-      void setMainWindow (MainWindow* main);
+  void setMainWindow(MainWindow* main);
 
-      void initPlugins ();
+  void initPlugins();
 
-      std::ostream& print (std::ostream& os);
+  std::ostream& print(std::ostream& os);
 
-      /// \note Prefer using Settings::fromFiles()
-      void readRobotFile ();
-      /// \note Prefer using Settings::fromFiles()
-      void readEnvFile ();
-      /// Read the settings file.
-      ///
-      /// Here is the syntax:
-      /// \code
-      /// ; Comments starts with a ; You may uncomment to see the effect.
-      ///
-      /// [plugins]
-      /// ; Put a list of C++ plugins followed by '=true'. For instance, HPP users may have
-      /// ; hppwidgetsplugin.so=true
-      /// ; hppcorbaserverplugin.so=true
-      ///
-      /// [pyplugins]
-      /// ; Put a list of Python plugins followed by '=true'. For instance, the example plugin can be loaded with
-      /// ; gepetto.plugin=true
-      ///
-      /// ; WARNING: Any comment in this file may be removed by the GUI if you regenerate a configuration file.
-      /// \endcode
-      /// \note Details on plugin interface can be found in PluginInterface, resp. PythonWidget, class
-      /// for C++, resp. Python, plugins.
-      /// \note Prefer using Settings::fromFiles()
-      void readSettingFile ();
+  /// \note Prefer using Settings::fromFiles()
+  void readRobotFile();
+  /// \note Prefer using Settings::fromFiles()
+  void readEnvFile();
+  /// Read the settings file.
+  ///
+  /// Here is the syntax:
+  /// \code
+  /// ; Comments starts with a ; You may uncomment to see the effect.
+  ///
+  /// [plugins]
+  /// ; Put a list of C++ plugins followed by '=true'. For instance, HPP users
+  /// may have ; hppwidgetsplugin.so=true ; hppcorbaserverplugin.so=true
+  ///
+  /// [pyplugins]
+  /// ; Put a list of Python plugins followed by '=true'. For instance, the
+  /// example plugin can be loaded with ; gepetto.plugin=true
+  ///
+  /// ; WARNING: Any comment in this file may be removed by the GUI if you
+  /// regenerate a configuration file. \endcode \note Details on plugin
+  /// interface can be found in PluginInterface, resp. PythonWidget, class for
+  /// C++, resp. Python, plugins. \note Prefer using Settings::fromFiles()
+  void readSettingFile();
 
-      void saveState () const;
-      void restoreState () const;
-      void restoreDockWidgetsState () const;
+  void saveState() const;
+  void restoreState() const;
+  void restoreDockWidgetsState() const;
 
-      void writeRobotFile ();
-      void writeEnvFile ();
-      void writeSettingFile ();
+  void writeRobotFile();
+  void writeEnvFile();
+  void writeSettingFile();
 
-      const char** makeOmniORBargs (int &argc);
+  const char** makeOmniORBargs(int& argc);
 
-    private:
-      void addRobotFromString (const std::string& rbtStr);
-      void addEnvFromString (const std::string& envStr);
-      void addPlugin (const QString& plg, bool init);
-      void addPyPlugin (const QString& plg, bool init);
-      void addPyScript (const QString& fileName);
-      void addOmniORB (const QString& arg, const QString& value);
+ private:
+  void addRobotFromString(const std::string& rbtStr);
+  void addEnvFromString(const std::string& envStr);
+  void addPlugin(const QString& plg, bool init);
+  void addPyPlugin(const QString& plg, bool init);
+  void addPyScript(const QString& fileName);
+  void addOmniORB(const QString& arg, const QString& value);
 
-      inline void log (const QString& t);
-      inline void logError (const QString& t);
+  inline void log(const QString& t);
+  inline void logError(const QString& t);
 
-      MainWindow* mw;
-      QStringList omniORBargv_;
-    };
-  } // namespace gui
-} // namespace gepetto
+  MainWindow* mw;
+  QStringList omniORBargv_;
+};
+}  // namespace gui
+}  // namespace gepetto
 
-#endif // GEPETTO_GUI_SETTINGS_HH
+#endif  // GEPETTO_GUI_SETTINGS_HH

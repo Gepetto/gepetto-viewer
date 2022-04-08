@@ -29,7 +29,7 @@ void setupApplication ()
   QCoreApplication::setOrganizationDomain("@PROJECT_URL@");
   QCoreApplication::setApplicationName("gepetto-gui");
   QCoreApplication::setApplicationVersion("@PROJECT_VERSION@");
-  
+
   QStringList theme_paths = QIcon::themeSearchPaths();
   if (!theme_paths.contains("/usr/local/share/icons/")) {
     theme_paths.prepend("/usr/local/share/icons/");

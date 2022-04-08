@@ -18,47 +18,53 @@
 #define GEPETTO_GUI_PYTHON_DECORATOR_HH
 
 #include <PythonQt.h>
-#include <boost/python.hpp>
 
+#include <boost/python.hpp>
 #include <gepetto/gui/mainwindow.hh>
 #include <gepetto/gui/osgwidget.hh>
 #include <gepetto/gui/windows-manager.hh>
 
 namespace gepetto {
-  namespace gui {
-    class PythonDecorator : public QObject
-    {
-      Q_OBJECT
+namespace gui {
+class PythonDecorator : public QObject {
+  Q_OBJECT
 
-      public slots:
-      /// \name MainWindow
-      /// \{
+ public slots:
+  /// \name MainWindow
+  /// \{
 
-      MainWindow* static_MainWindow_instance () const { return MainWindow::instance (); }
+  MainWindow* static_MainWindow_instance() const {
+    return MainWindow::instance();
+  }
 
-      QList <OSGWidget*> osgWindows (MainWindow* w) const { return w->osgWindows(); }
+  QList<OSGWidget*> osgWindows(MainWindow* w) const { return w->osgWindows(); }
 
-      PyObject* osg (MainWindow* w) const
-      {
-        boost::python::object obj(boost::python::ptr(w->osg().get()));
-        boost::python::incref(obj.ptr());
-        return obj.ptr();
-      }
+  PyObject* osg(MainWindow* w) const {
+    boost::python::object obj(boost::python::ptr(w->osg().get()));
+    boost::python::incref(obj.ptr());
+    return obj.ptr();
+  }
 
-      QObject* getFromSlot (MainWindow* w, const char* slot) const { return w->getFromSlot(slot); }
+  QObject* getFromSlot(MainWindow* w, const char* slot) const {
+    return w->getFromSlot(slot);
+  }
 
-      OSGWidget* createView (MainWindow* w, const QString& name) const { return w->createView(name.toStdString()); }
+  OSGWidget* createView(MainWindow* w, const QString& name) const {
+    return w->createView(name.toStdString());
+  }
 
-      /// \}
+  /// \}
 
-      /// \name OSGWidget
-      /// \{
+  /// \name OSGWidget
+  /// \{
 
-      QString windowID (OSGWidget* o) const { return QString::fromStdString(o->windowID()); }
+  QString windowID(OSGWidget* o) const {
+    return QString::fromStdString(o->windowID());
+  }
 
-      /// \}
-    };
-  } // namespace gui
-} // namespace gepetto
+  /// \}
+};
+}  // namespace gui
+}  // namespace gepetto
 
-#endif // GEPETTO_GUI_PYTHON_DECORATOR_HH
+#endif  // GEPETTO_GUI_PYTHON_DECORATOR_HH

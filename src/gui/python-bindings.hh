@@ -16,8 +16,8 @@
 
 #include <boost/python.hpp>
 
-void exposeOSG ();
+void exposeOSG();
 
-void exposeGV ();
+void exposeGV();
 
-void exposeGG ();
+void exposeGG();

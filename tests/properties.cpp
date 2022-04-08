@@ -26,71 +26,69 @@
 #include <gepetto/viewer/node-property.h>
 
 #include <gepetto/gui/safeapplication.hh>
-#if (QT_VERSION >= QT_VERSION_CHECK(5,0,0))
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
 #include <QtConcurrent>
 #else
 #include <QtCore>
 #endif
 #include <QApplication>
-#include <QDoubleSpinBox>
 #include <QCoreApplication>
+#include <QDoubleSpinBox>
 
-class PropertyTest : public QObject
-{
+class PropertyTest : public QObject {
   Q_OBJECT
 
-  public:
-    float value;
-    bool called;
-    PropertyTest () : value(0.), called(false) {}
+ public:
+  float value;
+  bool called;
+  PropertyTest() : value(0.), called(false) {}
 
-  public slots:
-    void floatChanged(const float& v)
-    {
-      value = v;
-      called = true;
-    }
+ public slots:
+  void floatChanged(const float& v) {
+    value = v;
+    called = true;
+  }
 
-    void doubleChanged(const double& v)
-    {
-      value = (float)v;
-      called = true;
-    }
+  void doubleChanged(const double& v) {
+    value = (float)v;
+    called = true;
+  }
 
-  signals:
-    void changeFloat(const float& v);
-    void changeDouble(const double& v);
+ signals:
+  void changeFloat(const float& v);
+  void changeDouble(const double& v);
 
-  public:
-    void setFloat (const float & v) { emit changeFloat (v); }
-    void setDouble(const double& v) { emit changeDouble(v); }
+ public:
+  void setFloat(const float& v) { emit changeFloat(v); }
+  void setDouble(const double& v) { emit changeDouble(v); }
 };
 
 using namespace gepetto::viewer;
 
-BOOST_AUTO_TEST_SUITE( property )
+BOOST_AUTO_TEST_SUITE(property)
 
-BOOST_AUTO_TEST_CASE (pfloat1) {
-  StoredPropertyTpl<float> property ("float");
+BOOST_AUTO_TEST_CASE(pfloat1) {
+  StoredPropertyTpl<float> property("float");
   property.value = 0.;
 
   bool setWorked = false;
-  bool ok = QMetaObject::invokeMethod (&property, "set",
-      Qt::DirectConnection,
-      Q_RETURN_ARG(bool, setWorked),
-      Q_ARG(float, 1.));
+  bool ok = QMetaObject::invokeMethod(&property, "set", Qt::DirectConnection,
+                                      Q_RETURN_ARG(bool, setWorked),
+                                      Q_ARG(float, 1.));
 
   BOOST_CHECK(ok);
   BOOST_CHECK(setWorked);
   BOOST_CHECK_EQUAL(property.value, 1.);
 }
 
-BOOST_AUTO_TEST_CASE (pfloat2) {
-  StoredPropertyTpl<float>::Ptr_t property (new StoredPropertyTpl<float> ("float"));
+BOOST_AUTO_TEST_CASE(pfloat2) {
+  StoredPropertyTpl<float>::Ptr_t property(
+      new StoredPropertyTpl<float>("float"));
   PropertyTest* ptest = new PropertyTest;
   property->value = 0.;
 
-  ptest->connect(property.get(), SIGNAL(valueChanged(float)), SLOT(floatChanged(float)));
+  ptest->connect(property.get(), SIGNAL(valueChanged(float)),
+                 SLOT(floatChanged(float)));
 
   property->set(1.);
   BOOST_CHECK(ptest->called);
@@ -98,20 +96,21 @@ BOOST_AUTO_TEST_CASE (pfloat2) {
   delete ptest;
 }
 
-BOOST_AUTO_TEST_CASE (pfloat3) {
+BOOST_AUTO_TEST_CASE(pfloat3) {
   int argc = 0;
-  char **argv = NULL;
-  QCoreApplication application (argc, argv);
+  char** argv = NULL;
+  QCoreApplication application(argc, argv);
 
-  StoredPropertyTpl<float>::Ptr_t property (new StoredPropertyTpl<float> ("float"));
+  StoredPropertyTpl<float>::Ptr_t property(
+      new StoredPropertyTpl<float>("float"));
   PropertyTest* ptestf = new PropertyTest;
   PropertyTest* ptestd = new PropertyTest;
   property->value = 0.;
 
   ptestf->connect(property.get(), SIGNAL(valueChanged(float)),
-      SLOT(floatChanged(float)), Qt::QueuedConnection);
+                  SLOT(floatChanged(float)), Qt::QueuedConnection);
   ptestd->connect(property.get(), SIGNAL(valueChanged(double)),
-      SLOT(doubleChanged(double)), Qt::QueuedConnection);
+                  SLOT(doubleChanged(double)), Qt::QueuedConnection);
 
   property->set(1.);
   BOOST_CHECK(!ptestf->called);
@@ -121,19 +120,20 @@ BOOST_AUTO_TEST_CASE (pfloat3) {
   BOOST_CHECK(ptestd->called);
 }
 
-BOOST_AUTO_TEST_CASE (pfloat4) {
+BOOST_AUTO_TEST_CASE(pfloat4) {
   int argc = 0;
-  char **argv = NULL;
-  QCoreApplication application (argc, argv);
+  char** argv = NULL;
+  QCoreApplication application(argc, argv);
 
-  StoredPropertyTpl<float>::Ptr_t property (new StoredPropertyTpl<float> ("float"));
+  StoredPropertyTpl<float>::Ptr_t property(
+      new StoredPropertyTpl<float>("float"));
   property->value = 0.;
 
   PropertyTest* ptestf = new PropertyTest;
   ptestf->connect(property.get(), SIGNAL(valueChanged(float)),
-      SLOT(floatChanged(float)), Qt::QueuedConnection);
-  property->connect(ptestf, SIGNAL(changeFloat(float)),
-      SLOT(set(float)), Qt::QueuedConnection);
+                  SLOT(floatChanged(float)), Qt::QueuedConnection);
+  property->connect(ptestf, SIGNAL(changeFloat(float)), SLOT(set(float)),
+                    Qt::QueuedConnection);
 
   ptestf->setFloat(1.);
   BOOST_CHECK(!ptestf->called);
@@ -147,9 +147,9 @@ BOOST_AUTO_TEST_CASE (pfloat4) {
 
   PropertyTest* ptestd = new PropertyTest;
   ptestd->connect(property.get(), SIGNAL(valueChanged(double)),
-      SLOT(doubleChanged(double)), Qt::QueuedConnection);
-  property->connect(ptestd, SIGNAL(changeDouble(double)),
-      SLOT(set(double)), Qt::QueuedConnection);
+                  SLOT(doubleChanged(double)), Qt::QueuedConnection);
+  property->connect(ptestd, SIGNAL(changeDouble(double)), SLOT(set(double)),
+                    Qt::QueuedConnection);
 
   ptestd->setDouble(2.);
   BOOST_CHECK(!ptestd->called);
@@ -162,12 +162,13 @@ BOOST_AUTO_TEST_CASE (pfloat4) {
   BOOST_CHECK(ptestd->called);
 }
 
-BOOST_AUTO_TEST_CASE (pfloat5) {
+BOOST_AUTO_TEST_CASE(pfloat5) {
   int argc = 0;
-  char **argv = NULL;
-  gepetto::gui::SafeApplication application (argc, argv);
+  char** argv = NULL;
+  gepetto::gui::SafeApplication application(argc, argv);
 
-  StoredPropertyTpl<float>::Ptr_t property (new StoredPropertyTpl<float> ("float"));
+  StoredPropertyTpl<float>::Ptr_t property(
+      new StoredPropertyTpl<float>("float"));
   property->value = 0.;
   QDoubleSpinBox* dsb = qobject_cast<QDoubleSpinBox*>(property->guiEditor());
 
@@ -186,38 +187,38 @@ BOOST_AUTO_TEST_CASE (pfloat5) {
   BOOST_CHECK_EQUAL(property->value, 2.);
 }
 
-QDoubleSpinBox* pfloat6_multithreaded (QDoubleSpinBox* dsb)
-{
+QDoubleSpinBox* pfloat6_multithreaded(QDoubleSpinBox* dsb) {
   dsb->setValue(2.);
-#if (QT_VERSION >= QT_VERSION_CHECK(5,0,0))
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
   QThread::sleep(1);
 #endif
   return dsb;
 }
 
-QDoubleSpinBox* pfloat6_multithreaded1 (StoredPropertyTpl<float>::Ptr_t property)
-{
+QDoubleSpinBox* pfloat6_multithreaded1(
+    StoredPropertyTpl<float>::Ptr_t property) {
   QDoubleSpinBox* dsb = qobject_cast<QDoubleSpinBox*>(property->guiEditor());
   dsb->setValue(2.);
-#if (QT_VERSION >= QT_VERSION_CHECK(5,0,0))
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
   QThread::sleep(1);
 #endif
   QCoreApplication::quit();
   return dsb;
 }
 
-BOOST_AUTO_TEST_CASE (pfloat6) {
+BOOST_AUTO_TEST_CASE(pfloat6) {
   int argc = 0;
-  char **argv = NULL;
-  gepetto::gui::SafeApplication application (argc, argv);
+  char** argv = NULL;
+  gepetto::gui::SafeApplication application(argc, argv);
 
-  StoredPropertyTpl<float>::Ptr_t property (new StoredPropertyTpl<float> ("float"));
+  StoredPropertyTpl<float>::Ptr_t property(
+      new StoredPropertyTpl<float>("float"));
   property->value = 0.;
-  //QDoubleSpinBox* dsb = qobject_cast<QDoubleSpinBox*>(property->guiEditor());
+  // QDoubleSpinBox* dsb = qobject_cast<QDoubleSpinBox*>(property->guiEditor());
 
   QFuture<QDoubleSpinBox*> future =
-    //QtConcurrent::run(boost::bind(pfloat6_multithreaded, dsb));
-    QtConcurrent::run(boost::bind(pfloat6_multithreaded1, property));
+      // QtConcurrent::run(boost::bind(pfloat6_multithreaded, dsb));
+      QtConcurrent::run(boost::bind(pfloat6_multithreaded1, property));
   application.exec();
 
   QDoubleSpinBox* sb = future.result();

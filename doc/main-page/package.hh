@@ -22,7 +22,8 @@ https://github.com/humanoid-path-planner/hpp-tools.
 \par Configuration files
 
 The interface can be customized using a few setting files.
-See gepetto::gui::Settings::readSettingFile for more details on configuration files.
+See gepetto::gui::Settings::readSettingFile for more details on configuration
+files.
 
 To generate a new configuration use:
 \code{bash} gepetto-gui -c newConfigName -g \endcode
@@ -37,7 +38,8 @@ plugins are easier to write than C++ plugins, but they do not offer
 full control of the interface (yet).
 
 See the \ref pluginlist for some examples.
-Building and installing plugins is made easy with \ref gepetto_viewer_cmake_macros.
+Building and installing plugins is made easy with \ref
+gepetto_viewer_cmake_macros.
 
 - *Python plugins*
   See the documentation of gepetto::gui::PythonWidget for instructions
@@ -46,10 +48,12 @@ Building and installing plugins is made easy with \ref gepetto_viewer_cmake_macr
   The Python console is a good tool for debugging. The following variables
   are accessible:
   + \c mainWindow: gepetto::gui::MainWindow
-  + \c osg: the widget responsible for the first created window (class gepetto::gui::OSGWidget)
+  + \c osg: the widget responsible for the first created window (class
+gepetto::gui::OSGWidget)
 
 - *C++ Plugin*
-  See documentation of gepetto::gui::PluginInterface,  for details on how to write a plugin.
+  See documentation of gepetto::gui::PluginInterface,  for details on how to
+write a plugin.
 
 \par C++ Interface
 
@@ -68,12 +72,14 @@ in its parent frame.
 
 The main entry points are:
 \li class gepetto::viewer::Node:           \copybrief gepetto::viewer::Node
-\li class gepetto::viewer::WindowManager:  \copybrief gepetto::viewer::WindowManager
-\li class gepetto::viewer::WindowsManager: \copybrief gepetto::viewer::WindowsManager
+\li class gepetto::viewer::WindowManager:  \copybrief
+gepetto::viewer::WindowManager \li class gepetto::viewer::WindowsManager:
+\copybrief gepetto::viewer::WindowsManager
 
 \defgroup pluginlist List of available plugins
 
-This is the list of available plugins. See each plugin to know how to activate it.
+This is the list of available plugins. See each plugin to know how to activate
+it.
 
 \defgroup plugin Plugin interfaces
 \{

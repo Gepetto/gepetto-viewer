@@ -2,111 +2,115 @@
 //  leaf-node-collada.h
 //  gepetto-viewer
 //
-//  Created by Justin Carpentier, Anthony Couret, Mathieu Geisert in November 2014.
-//  Copyright (c) 2014 LAAS-CNRS. All rights reserved.
+//  Created by Justin Carpentier, Anthony Couret, Mathieu Geisert in November
+//  2014. Copyright (c) 2014 LAAS-CNRS. All rights reserved.
 //
 
 #ifndef GEPETTO_VIEWER_LEAFNODECOLLADA_HH
 #define GEPETTO_VIEWER_LEAFNODECOLLADA_HH
 
-#include <osgDB/ReadFile>
-
 #include <gepetto/viewer/node.h>
 #include <gepetto/viewer/properties.h>
 
+#include <osgDB/ReadFile>
 
 namespace gepetto {
 namespace viewer {
-    DEF_CLASS_SMART_PTR(LeafNodeCollada)
-    
-    /** Implementation of the Collada GraphicalObject in OSG render */
-    class LeafNodeCollada : public Node
-    {
-    private:
+DEF_CLASS_SMART_PTR(LeafNodeCollada)
 
-        std::string collada_file_path_;
-        std::string texture_file_path_;
+/** Implementation of the Collada GraphicalObject in OSG render */
+class LeafNodeCollada : public Node {
+ private:
+  std::string collada_file_path_;
+  std::string texture_file_path_;
 
-        /** Associated weak pointer */
-        LeafNodeColladaWeakPtr weak_ptr_;
-        
-        /** Associated Node Shape */
-        ::osg::GroupRefPtr group_ptr_;
-        ::osg::NodeRefPtr collada_ptr_;
+  /** Associated weak pointer */
+  LeafNodeColladaWeakPtr weak_ptr_;
 
-        BackfaceDrawingProperty backfaceDrawing_;
+  /** Associated Node Shape */
+  ::osg::GroupRefPtr group_ptr_;
+  ::osg::NodeRefPtr collada_ptr_;
 
-        /** Save options to properly destroy mesh when deleting the node */
-        osg::ref_ptr<osgDB::Options> options_;
+  BackfaceDrawingProperty backfaceDrawing_;
 
-        void init();
-        
-        /* Default constructor */
-        LeafNodeCollada(const std::string& name, const std::string& collada_file_path);
-        LeafNodeCollada(const std::string& name, const std::string& collada_file_path, const osgVector4& color);
-        LeafNodeCollada(const std::string& name, const ::osg::NodeRefPtr& node, const std::string& collada_file_path);
-        /* Copy constructor */
-        LeafNodeCollada(const LeafNodeCollada& other);
-        
-        /** Initialize weak_ptr */
-        void initWeakPtr (LeafNodeColladaWeakPtr other_weak_ptr);
+  /** Save options to properly destroy mesh when deleting the node */
+  osg::ref_ptr<osgDB::Options> options_;
 
-    protected:
-    public:
-        /** Static method which create a new LeafNodeCollada
-         */
-        static LeafNodeColladaPtr_t create(const std::string& name, ::osg::NodeRefPtr mesh, const std::string& collada_file_path);
-        static LeafNodeColladaPtr_t create(const std::string& name, const std::string& collada_file_path);
-        static LeafNodeColladaPtr_t create(const std::string& name, const std::string& collada_file_path, const osgVector4& color);
-        
-        /** Static method for creating a clone of LeafNodeCollada other
-         */
-        static LeafNodeColladaPtr_t createCopy(LeafNodeColladaPtr_t other);
-        
-        /** Proceed to a clonage of the current object defined by the copy constructor
-         */
-        virtual LeafNodeColladaPtr_t clone(void) const;
-        
-        /** Returns a pointer to the NodeRefPtr  */
-        ::osg::NodeRefPtr getColladaPtr(void);
+  void init();
 
-        /** Copy
-         \brief Proceed to a copy of the currend object as clone
-         */
-        virtual LeafNodeColladaPtr_t copy() const { return clone(); }
-        
-        /** Return a shared pointer of the current object
-         */
-        LeafNodeColladaPtr_t self(void) const;
-        
-        void setColor(const osgVector4& color);   
+  /* Default constructor */
+  LeafNodeCollada(const std::string& name,
+                  const std::string& collada_file_path);
+  LeafNodeCollada(const std::string& name, const std::string& collada_file_path,
+                  const osgVector4& color);
+  LeafNodeCollada(const std::string& name, const ::osg::NodeRefPtr& node,
+                  const std::string& collada_file_path);
+  /* Copy constructor */
+  LeafNodeCollada(const LeafNodeCollada& other);
 
-        osgVector4 getColor () const;
+  /** Initialize weak_ptr */
+  void initWeakPtr(LeafNodeColladaWeakPtr other_weak_ptr);
 
-        void setTexture(const std::string& image_path);     
+ protected:
+ public:
+  /** Static method which create a new LeafNodeCollada
+   */
+  static LeafNodeColladaPtr_t create(const std::string& name,
+                                     ::osg::NodeRefPtr mesh,
+                                     const std::string& collada_file_path);
+  static LeafNodeColladaPtr_t create(const std::string& name,
+                                     const std::string& collada_file_path);
+  static LeafNodeColladaPtr_t create(const std::string& name,
+                                     const std::string& collada_file_path,
+                                     const osgVector4& color);
 
-        const std::string& meshFilePath () const;
+  /** Static method for creating a clone of LeafNodeCollada other
+   */
+  static LeafNodeColladaPtr_t createCopy(LeafNodeColladaPtr_t other);
 
-        const std::string& textureFilePath () const;
+  /** Proceed to a clonage of the current object defined by the copy constructor
+   */
+  virtual LeafNodeColladaPtr_t clone(void) const;
 
-	virtual void setAlpha(const float& alpha);
-	virtual osg::ref_ptr<osg::Node> getOsgNode() const;
+  /** Returns a pointer to the NodeRefPtr  */
+  ::osg::NodeRefPtr getColladaPtr(void);
 
-        /// Remove any osg::LightSource of this mesh.
-        void removeLightSources ();
+  /** Copy
+   \brief Proceed to a copy of the currend object as clone
+   */
+  virtual LeafNodeColladaPtr_t copy() const { return clone(); }
 
-        /// Apply the current scale permanently to the node.
-        void applyScale ();
+  /** Return a shared pointer of the current object
+   */
+  LeafNodeColladaPtr_t self(void) const;
 
-        SCENE_VIEWER_ACCEPT_VISITOR;
+  void setColor(const osgVector4& color);
 
-        /** Remove this object from cache */
-        void removeFromCache();
+  osgVector4 getColor() const;
 
-      /** Destructor */
-        virtual ~LeafNodeCollada();
-        
-    };
+  void setTexture(const std::string& image_path);
+
+  const std::string& meshFilePath() const;
+
+  const std::string& textureFilePath() const;
+
+  virtual void setAlpha(const float& alpha);
+  virtual osg::ref_ptr<osg::Node> getOsgNode() const;
+
+  /// Remove any osg::LightSource of this mesh.
+  void removeLightSources();
+
+  /// Apply the current scale permanently to the node.
+  void applyScale();
+
+  SCENE_VIEWER_ACCEPT_VISITOR;
+
+  /** Remove this object from cache */
+  void removeFromCache();
+
+  /** Destructor */
+  virtual ~LeafNodeCollada();
+};
 } /* namespace viewer */
 } /* namespace gepetto */
 

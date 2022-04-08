@@ -14,39 +14,32 @@
 // received a copy of the GNU Lesser General Public License along with
 // gepetto-viewer. If not, see <http://www.gnu.org/licenses/>.
 
-#include <iostream>
-#include <fstream>
-
 #include "log.hh"
+
+#include <fstream>
+#include <iostream>
 
 namespace gepetto {
 
-QStringInsertFunction& insertFunction()
-{
+QStringInsertFunction& insertFunction() {
   // Default function to use to insert a QString.
-  static QStringInsertFunction insertFunction (use_toLocal8Bit);
+  static QStringInsertFunction insertFunction(use_toLocal8Bit);
   return insertFunction;
 }
 
 std::ofstream& logfile() GEPETTO_VIEWER_LOCAL;
 
-std::ofstream& logfile()
-{
+std::ofstream& logfile() {
   static std::ofstream ofs;
   return ofs;
 }
 
-void setLogFile(const char* filename)
-{
-  logfile().open(filename);
-}
+void setLogFile(const char* filename) { logfile().open(filename); }
 
-std::ostream& log()
-{
+std::ostream& log() {
   if (logfile().good())
     return logfile();
   else
     return std::cout;
 }
-} // namespace gepetto
-
+}  // namespace gepetto

@@ -17,19 +17,17 @@
 #ifndef GEPETTO_GUI_OSGWIDGET_HH
 #define GEPETTO_GUI_OSGWIDGET_HH
 
-#include <gepetto/gui/fwd.hh>
 #include <gepetto/viewer/config-osg.h>
 
+#include <QLabel>
 #include <QString>
 #include <QThread>
-#include <QLabel>
 #include <QTimer>
-
+#include <gepetto/gui/fwd.hh>
 #include <osg/ref_ptr>
+#include <osgQt/GraphicsWindowQt>
 #include <osgViewer/ViewerBase>
 #include <osgViewer/ViewerEventHandlers>
-
-#include <osgQt/GraphicsWindowQt>
 
 class QToolBar;
 class QProcess;
@@ -37,83 +35,82 @@ class QTextBrowser;
 class QTemporaryDir;
 
 namespace gepetto {
-  namespace gui {
-    typedef viewer::WindowManagerPtr_t WindowManagerPtr_t;
-    typedef viewer::WindowID WindowID;
+namespace gui {
+typedef viewer::WindowManagerPtr_t WindowManagerPtr_t;
+typedef viewer::WindowID WindowID;
 
-    /// Widget that displays scenes.
-    class OSGWidget : public QWidget
-    {
-      Q_OBJECT
-      public:
-        OSGWidget( WindowsManagerPtr_t wm,
-                  const std::string & name,
-                  MainWindow* parent,
-                  Qt::WindowFlags f = 0,
-                  osgViewer::ViewerBase::ThreadingModel threadingModel=osgViewer::Viewer::ThreadPerContext );
+/// Widget that displays scenes.
+class OSGWidget : public QWidget {
+  Q_OBJECT
+ public:
+  OSGWidget(WindowsManagerPtr_t wm, const std::string& name, MainWindow* parent,
+            Qt::WindowFlags f = 0,
+            osgViewer::ViewerBase::ThreadingModel threadingModel =
+                osgViewer::Viewer::ThreadPerContext);
 
-        virtual ~OSGWidget();
+  virtual ~OSGWidget();
 
-        WindowID windowID () const;
+  WindowID windowID() const;
 
-        WindowManagerPtr_t window () const;
+  WindowManagerPtr_t window() const;
 
-        WindowsManagerPtr_t osg () const;
+  WindowsManagerPtr_t osg() const;
 
-        public slots:
-        /// Replace the camera at her home position.
-        void onHome();
+ public slots:
+  /// Replace the camera at her home position.
+  void onHome();
 
-        void addFloor();
+  void addFloor();
 
-        void toggleCapture (bool active);
+  void toggleCapture(bool active);
 
-        void captureFrame ();
-        void captureFrame (const std::string& filename);
-        bool startCapture (const std::string& filename, const std::string& extension);
-        bool stopCapture ();
+  void captureFrame();
+  void captureFrame(const std::string& filename);
+  bool startCapture(const std::string& filename, const std::string& extension);
+  bool stopCapture();
 
-      protected:
-        virtual void paintEvent(QPaintEvent* event);
+ protected:
+  virtual void paintEvent(QPaintEvent* event);
 
-        bool isFixedSize () const;
+  bool isFixedSize() const;
 
-        void setFixedSize (bool fixedSize);
+  void setFixedSize(bool fixedSize);
 
-        void setWindowDimension (const osgVector2& size);
+  void setWindowDimension(const osgVector2& size);
 
-      private slots:
-        void readyReadProcessOutput ();
-        void toggleFullscreenMode (bool fullscreenOn);
+ private slots:
+  void readyReadProcessOutput();
+  void toggleFullscreenMode(bool fullscreenOn);
 
-      private:
-        void initToolBar ();
-        void initGraphicsWindowsAndViewer (MainWindow* parent, const std::string& name);
+ private:
+  void initToolBar();
+  void initGraphicsWindowsAndViewer(MainWindow* parent,
+                                    const std::string& name);
 
-        osg::ref_ptr<osgQt::GraphicsWindowQt> graphicsWindow_;
-        WindowsManagerPtr_t wsm_;
-        osg::ref_ptr<PickHandler> pickHandler_;
-        WindowID wid_;
-        WindowManagerPtr_t wm_;
-        QTimer timer_;
-        int nSuccessiveStaticFrames_;
-        osgViewer::ViewerRefPtr viewer_;
-        osg::ref_ptr <osgViewer::ScreenCaptureHandler> screenCapture_;
-        QTemporaryDir* tmpDirectory_;
+  osg::ref_ptr<osgQt::GraphicsWindowQt> graphicsWindow_;
+  WindowsManagerPtr_t wsm_;
+  osg::ref_ptr<PickHandler> pickHandler_;
+  WindowID wid_;
+  WindowManagerPtr_t wm_;
+  QTimer timer_;
+  int nSuccessiveStaticFrames_;
+  osgViewer::ViewerRefPtr viewer_;
+  osg::ref_ptr<osgViewer::ScreenCaptureHandler> screenCapture_;
+  QTemporaryDir* tmpDirectory_;
 
-        QToolBar* toolBar_;
-        QAction* recordMovie_;
+  QToolBar* toolBar_;
+  QAction* recordMovie_;
 
-        // To record movies.
-        QProcess* process_;
-        QDialog* showPOutput_;
-        QTextBrowser* pOutput_;
+  // To record movies.
+  QProcess* process_;
+  QDialog* showPOutput_;
+  QTextBrowser* pOutput_;
 
-        QWidget* fullscreen_, *normal_;
+  QWidget *fullscreen_, *normal_;
 
-        friend class PickHandler;
-    };
-  } // namespace gui
-} // namespace gepetto
+  friend class PickHandler;
+};
+}  // namespace gui
+}  // namespace gepetto
 
-#endif // GEPETTO_GUI_OSGWIDGET_HH
+#endif  // GEPETTO_GUI_OSGWIDGET_HH

@@ -17,80 +17,77 @@
 #ifndef GEPETTO_GUI_SELECTION_EVENT_HH
 #define GEPETTO_GUI_SELECTION_EVENT_HH
 
+#include <gepetto/viewer/node.h>
+
+#include <QAtomicInt>
+#include <QObject>
 #include <QString>
 #include <QVector3D>
-#include <QObject>
-#include <QAtomicInt>
-
-#include <gepetto/viewer/node.h>
 #include <gepetto/gui/fwd.hh>
 
 namespace gepetto {
-  namespace gui {
-    class SelectionEvent : public QObject {
-      Q_OBJECT
+namespace gui {
+class SelectionEvent : public QObject {
+  Q_OBJECT
 
-      public:
-        enum Type {
-          FromOsgWindow,
-          FromBodyTree
-        };
+ public:
+  enum Type { FromOsgWindow, FromBodyTree };
 
-        SelectionEvent (const Type& t, NodePtr_t node = NodePtr_t(), Qt::KeyboardModifiers modKey = Qt::NoModifier)
-          : type_ (t)
-          , node_ (node)
-          , modKey_ (modKey)
-          , hasIntersection_ (false)
-          , c_ (-1)
-        {
-          if (node)
-            nodeName_ = QString::fromStdString(node->getID());
-        }
+  SelectionEvent(const Type& t, NodePtr_t node = NodePtr_t(),
+                 Qt::KeyboardModifiers modKey = Qt::NoModifier)
+      : type_(t),
+        node_(node),
+        modKey_(modKey),
+        hasIntersection_(false),
+        c_(-1) {
+    if (node) nodeName_ = QString::fromStdString(node->getID());
+  }
 
-        SelectionEvent (const Type& t, Qt::KeyboardModifiers modKey)
-          : type_ (t)
-          , modKey_ (modKey)
-          , hasIntersection_ (false)
-          , c_ (-1)
-        {}
+  SelectionEvent(const Type& t, Qt::KeyboardModifiers modKey)
+      : type_(t), modKey_(modKey), hasIntersection_(false), c_(-1) {}
 
-        void setupIntersection(const osgUtil::LineSegmentIntersector::Intersection& it);
+  void setupIntersection(
+      const osgUtil::LineSegmentIntersector::Intersection& it);
 
-        const NodePtr_t& node () const { return node_; }
+  const NodePtr_t& node() const { return node_; }
 
-        void modKey (const Qt::KeyboardModifiers& m) { modKey_ = m; }
+  void modKey(const Qt::KeyboardModifiers& m) { modKey_ = m; }
 
-        /// Set this to the number of slots that will receive the event.
-        /// \warning Not thread-safe
-        void setCounter(int c) { c_ = c; }
+  /// Set this to the number of slots that will receive the event.
+  /// \warning Not thread-safe
+  void setCounter(int c) { c_ = c; }
 
-      public slots:
-        Type                  type    () const { return type_; }
-        QString               nodeName() const { return nodeName_; }
-        Qt::KeyboardModifiers modKey  () const { return modKey_; }
+ public slots:
+  Type type() const { return type_; }
+  QString nodeName() const { return nodeName_; }
+  Qt::KeyboardModifiers modKey() const { return modKey_; }
 
-        bool hasIntersection () { return hasIntersection_; }
-        const unsigned int& primitiveIndex () const { return primitiveIndex_; }
-        QVector3D normal(bool local) const { return (local ? localNormal_ : worldNormal_); }
-        QVector3D point (bool local) const { return (local ? localPoint_  : worldPoint_ ); }
-        /// User must call this in slots using SelectionEvent.
-        /// This decreases the internal counter and destroys the object when it
-        /// reaches zero.
-        /// This is thread-safe.
-        void done ();
+  bool hasIntersection() { return hasIntersection_; }
+  const unsigned int& primitiveIndex() const { return primitiveIndex_; }
+  QVector3D normal(bool local) const {
+    return (local ? localNormal_ : worldNormal_);
+  }
+  QVector3D point(bool local) const {
+    return (local ? localPoint_ : worldPoint_);
+  }
+  /// User must call this in slots using SelectionEvent.
+  /// This decreases the internal counter and destroys the object when it
+  /// reaches zero.
+  /// This is thread-safe.
+  void done();
 
-    private:
-        Type type_;
-        QString nodeName_;
-        NodePtr_t node_;
-        Qt::KeyboardModifiers modKey_;
+ private:
+  Type type_;
+  QString nodeName_;
+  NodePtr_t node_;
+  Qt::KeyboardModifiers modKey_;
 
-        bool hasIntersection_;
-        unsigned int primitiveIndex_;
-        QVector3D localPoint_, localNormal_, worldPoint_, worldNormal_;
-        QAtomicInt c_;
-    };
-  } // namespace gui
-} // namespace gepetto
+  bool hasIntersection_;
+  unsigned int primitiveIndex_;
+  QVector3D localPoint_, localNormal_, worldPoint_, worldNormal_;
+  QAtomicInt c_;
+};
+}  // namespace gui
+}  // namespace gepetto
 
-#endif // GEPETTO_GUI_SELECTION_EVENT_HH
+#endif  // GEPETTO_GUI_SELECTION_EVENT_HH

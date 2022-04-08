@@ -17,64 +17,60 @@
 #ifndef GEPETTO_GUI_PICK_HANDLER_HH
 #define GEPETTO_GUI_PICK_HANDLER_HH
 
+#include <QModelIndex>
+#include <QObject>
 #include <gepetto/gui/fwd.hh>
-
+#include <gepetto/gui/qt-osg-keyboard.hh>
 #include <osg/ref_ptr>
 #include <osgGA/GUIEventHandler>
 
-#include <QObject>
-#include <QModelIndex>
-
-#include <gepetto/gui/qt-osg-keyboard.hh>
-
 namespace osgUtil {
-  class LineSegmentIntersector;
+class LineSegmentIntersector;
 }
 
 namespace gepetto {
-  namespace gui {
-    class PointIntersector;
+namespace gui {
+class PointIntersector;
 
-    class PickHandler : public osgGA::GUIEventHandler
-    {
-    public:
-      PickHandler (OSGWidget* parent, WindowsManagerPtr_t wsm);
+class PickHandler : public osgGA::GUIEventHandler {
+ public:
+  PickHandler(OSGWidget* parent, WindowsManagerPtr_t wsm);
 
-      virtual ~PickHandler();
+  virtual ~PickHandler();
 
-      virtual bool handle( const osgGA::GUIEventAdapter&  ea,
-                                 osgGA::GUIActionAdapter& aa );
+  virtual bool handle(const osgGA::GUIEventAdapter& ea,
+                      osgGA::GUIActionAdapter& aa);
 
-      void getUsage (osg::ApplicationUsage &usage) const;
+  void getUsage(osg::ApplicationUsage& usage) const;
 
-    private:
-      typedef osg::ref_ptr<osgUtil::LineSegmentIntersector> LineSegmentIntersector;
+ private:
+  typedef osg::ref_ptr<osgUtil::LineSegmentIntersector> LineSegmentIntersector;
 
-      void computeLineIntersection (osgGA::GUIActionAdapter& aa,
-          const float& x, const float& y);
+  void computeLineIntersection(osgGA::GUIActionAdapter& aa, const float& x,
+                               const float& y);
 
-      /// \return the intersector that has an intersection (if one has).
-      LineSegmentIntersector computeLineOrPointIntersection (
-          osgGA::GUIActionAdapter& aa, const float& x, const float& y);
+  /// \return the intersector that has an intersection (if one has).
+  LineSegmentIntersector computeLineOrPointIntersection(
+      osgGA::GUIActionAdapter& aa, const float& x, const float& y);
 
-      void selectionNodeUnderCursor (osgGA::GUIActionAdapter& aa,
-          const float& x, const float& y, int modMask);
+  void selectionNodeUnderCursor(osgGA::GUIActionAdapter& aa, const float& x,
+                                const float& y, int modMask);
 
-      void centerViewToMouse (osgGA::GUIActionAdapter& aa,
-          const float& x, const float& y);
+  void centerViewToMouse(osgGA::GUIActionAdapter& aa, const float& x,
+                         const float& y);
 
-      void setCameraToSelected (osgGA::GUIActionAdapter& aa, bool zoom);
+  void setCameraToSelected(osgGA::GUIActionAdapter& aa, bool zoom);
 
-      QtOsgKeyboard mapper_;
-      WindowsManagerPtr_t wsm_;
-      OSGWidget* parent_;
-      bool pushed_;
-      float lastX_, lastY_;
+  QtOsgKeyboard mapper_;
+  WindowsManagerPtr_t wsm_;
+  OSGWidget* parent_;
+  bool pushed_;
+  float lastX_, lastY_;
 
-      LineSegmentIntersector lineIntersector_;
-      osg::ref_ptr<PointIntersector> pointIntersector_;
-    };
-  }
-}
+  LineSegmentIntersector lineIntersector_;
+  osg::ref_ptr<PointIntersector> pointIntersector_;
+};
+}  // namespace gui
+}  // namespace gepetto
 
-#endif // GEPETTO_GUI_PICK_HANDLER_HH
+#endif  // GEPETTO_GUI_PICK_HANDLER_HH

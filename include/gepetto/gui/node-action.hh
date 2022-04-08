@@ -17,63 +17,64 @@
 #ifndef GEPETTO_GUI_NODE_ACTION_HH
 #define GEPETTO_GUI_NODE_ACTION_HH
 
+#include <QAction>
 #include <gepetto/gui/fwd.hh>
 
-#include <QAction>
-
 namespace gepetto {
-  namespace gui {
-    class NodeActionBase : public QAction {
-      Q_OBJECT
+namespace gui {
+class NodeActionBase : public QAction {
+  Q_OBJECT
 
-    public:
-        NodeActionBase(const QString& text, NodePtr_t node, QWidget* parent);
+ public:
+  NodeActionBase(const QString& text, NodePtr_t node, QWidget* parent);
 
-        virtual ~NodeActionBase () {}
+  virtual ~NodeActionBase() {}
 
-        NodePtr_t node () const;
+  NodePtr_t node() const;
 
-    protected:
-      virtual void act(bool checked) = 0;
+ protected:
+  virtual void act(bool checked) = 0;
 
-    private slots:
-      void _act(bool checked);
+ private slots:
+  void _act(bool checked);
 
-    private:
-      NodePtr_t node_;
-    };
+ private:
+  NodePtr_t node_;
+};
 
-    class NodeAction : public NodeActionBase {
-      public:
-        enum Type {
-          VISIBILITY_ON,
-          VISIBILITY_OFF,
-          ALWAYS_ON_TOP,
-          ATTACH_TO_WINDOW,
-          ATTACH_CAMERA_TO_NODE,
-          REMOVE_NODE
-        };
+class NodeAction : public NodeActionBase {
+ public:
+  enum Type {
+    VISIBILITY_ON,
+    VISIBILITY_OFF,
+    ALWAYS_ON_TOP,
+    ATTACH_TO_WINDOW,
+    ATTACH_CAMERA_TO_NODE,
+    REMOVE_NODE
+  };
 
-        NodeAction(const Type& t, const QString& text, NodePtr_t node, QWidget* parent);
+  NodeAction(const Type& t, const QString& text, NodePtr_t node,
+             QWidget* parent);
 
-        NodeAction(const Type& t, const QString& text, QWidget* parent);
+  NodeAction(const Type& t, const QString& text, QWidget* parent);
 
-        /// Attach to window
-        NodeAction(const QString& text, NodePtr_t node, OSGWidget* window, QWidget* parent);
+  /// Attach to window
+  NodeAction(const QString& text, NodePtr_t node, OSGWidget* window,
+             QWidget* parent);
 
-        /// Attach camera to node
-        NodeAction(const QString& text, OSGWidget* window, QWidget* parent);
+  /// Attach camera to node
+  NodeAction(const QString& text, OSGWidget* window, QWidget* parent);
 
-        virtual ~NodeAction () {}
+  virtual ~NodeAction() {}
 
-      protected:
-        void act(bool checked);
+ protected:
+  void act(bool checked);
 
-      private:
-        const Type type_;
-        OSGWidget* window_;
-    };
-  }
-}
+ private:
+  const Type type_;
+  OSGWidget* window_;
+};
+}  // namespace gui
+}  // namespace gepetto
 
-#endif // GEPETTO_GUI_NODE_ACTION_HH
+#endif  // GEPETTO_GUI_NODE_ACTION_HH

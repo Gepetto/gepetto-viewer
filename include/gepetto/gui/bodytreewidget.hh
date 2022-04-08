@@ -17,86 +17,78 @@
 #ifndef GEPETTO_GUI_BODYTREEWIDGET_HH
 #define GEPETTO_GUI_BODYTREEWIDGET_HH
 
+#include <QStandardItemModel>
+#include <QToolBox>
+#include <QTreeView>
+#include <QVector3D>
+#include <QWidget>
 #include <gepetto/gui/fwd.hh>
 
-#include <QWidget>
-#include <QTreeView>
-#include <QToolBox>
-#include <QStandardItemModel>
-#include <QVector3D>
-
 namespace gepetto {
-  namespace gui {
-    /// Contains the list of all the bodies in the scene.
-    class BodyTreeWidget : public QWidget
-    {
-      Q_OBJECT
+namespace gui {
+/// Contains the list of all the bodies in the scene.
+class BodyTreeWidget : public QWidget {
+  Q_OBJECT
 
-    public:
-      explicit BodyTreeWidget (QWidget* parent = NULL)
-        : QWidget (parent)
-      {}
+ public:
+  explicit BodyTreeWidget(QWidget* parent = NULL) : QWidget(parent) {}
 
-      /// Init the widget.
-      /// \param view tree view to display.
-      /// \param propertyArea menu in the window
-      void init(QTreeView *view, QWidget *propertyArea);
+  /// Init the widget.
+  /// \param view tree view to display.
+  /// \param propertyArea menu in the window
+  void init(QTreeView* view, QWidget* propertyArea);
 
-      virtual ~BodyTreeWidget () {}
+  virtual ~BodyTreeWidget() {}
 
-      /// Get the body tree view.
-      QTreeView* view ();
+  /// Get the body tree view.
+  QTreeView* view();
 
-      QStandardItemModel* model()
-      {
-        return model_;
-      }
+  QStandardItemModel* model() { return model_; }
 
-      void emitBodySelected (SelectionEvent* event);
+  void emitBodySelected(SelectionEvent* event);
 
-    signals:
-      void bodySelected (SelectionEvent* event);
+ signals:
+  void bodySelected(SelectionEvent* event);
 
-    public slots:
-      /// \ingroup plugin_python
-      /// \{
+ public slots:
+  /// \ingroup plugin_python
+  /// \{
 
-      /// Triggered when an item is selected in the body tree view.
-      /// \param bodyName name of the body
-      void selectBodyByName (const QString bodyName);
+  /// Triggered when an item is selected in the body tree view.
+  /// \param bodyName name of the body
+  void selectBodyByName(const QString bodyName);
 
-      /// Triggered when an item is selected in the body tree view.
-      /// \param bodyName name of the body
-      void selectBodyByName (const std::string& bodyName);
+  /// Triggered when an item is selected in the body tree view.
+  /// \param bodyName name of the body
+  void selectBodyByName(const std::string& bodyName);
 
-      /// Get selected bodies
-      QList<BodyTreeItem*> selectedBodies() const;
+  /// Get selected bodies
+  QList<BodyTreeItem*> selectedBodies() const;
 
-      /// \}
+  /// \}
 
-    protected slots:
-      /// Display the context menu for one item.
-      /// \param pos position of the item
-      void customContextMenu (const QPoint& pos);
+ protected slots:
+  /// Display the context menu for one item.
+  /// \param pos position of the item
+  void customContextMenu(const QPoint& pos);
 
-      void currentChanged (const QModelIndex &current,
-                           const QModelIndex &previous);
+  void currentChanged(const QModelIndex& current, const QModelIndex& previous);
 
-    private:
-      /// Handle a selection event
-      ///
-      /// Does not re-emit a selection event when the body tree selection
-      /// is updated.
-      void handleSelectionEvent (const SelectionEvent* event);
+ private:
+  /// Handle a selection event
+  ///
+  /// Does not re-emit a selection event when the body tree selection
+  /// is updated.
+  void handleSelectionEvent(const SelectionEvent* event);
 
-      void updatePropertyArea (BodyTreeItem* item);
+  void updatePropertyArea(BodyTreeItem* item);
 
-      QTreeView* view_;
-      QStandardItemModel* model_;
-      WindowsManagerPtr_t osg_;
-      QWidget* propertyArea_;
-    };
-  }
-}
+  QTreeView* view_;
+  QStandardItemModel* model_;
+  WindowsManagerPtr_t osg_;
+  QWidget* propertyArea_;
+};
+}  // namespace gui
+}  // namespace gepetto
 
-#endif // GEPETTO_GUI_BODYTREEWIDGET_HH
+#endif  // GEPETTO_GUI_BODYTREEWIDGET_HH

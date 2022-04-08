@@ -13,17 +13,17 @@
 
 namespace gepetto {
 namespace viewer {
-    
-    struct Configuration;
-    DEF_CLASS_SMART_PTR(Node)
-    DEF_CLASS_SMART_PTR(GroupNode)
 
-    DEF_CLASS_SMART_PTR(Property)
+struct Configuration;
+DEF_CLASS_SMART_PTR(Node)
+DEF_CLASS_SMART_PTR(GroupNode)
 
-    DEF_CLASS_SMART_PTR(WindowManager)
-    DEF_CLASS_SMART_PTR(RoadmapViewer)
-    
-    typedef std::string WindowID;
+DEF_CLASS_SMART_PTR(Property)
+
+DEF_CLASS_SMART_PTR(WindowManager)
+DEF_CLASS_SMART_PTR(RoadmapViewer)
+
+typedef std::string WindowID;
 } /* namespace viewer */
 } /* namespace gepetto */
 

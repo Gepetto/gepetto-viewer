@@ -20,41 +20,40 @@
 #include <osgDB/WriteFile>
 #include <osgUtil/Simplifier>
 
-int main (int argc, char** argv)
-{
+int main(int argc, char** argv) {
   osg::ArgumentParser arguments(&argc, argv);
-  osg::ApplicationUsage* au (arguments.getApplicationUsage());
-  au->setCommandLineUsage(arguments.getApplicationName()+" [options]");
+  osg::ApplicationUsage* au(arguments.getApplicationUsage());
+  au->setCommandLineUsage(arguments.getApplicationName() + " [options]");
 
   au->addCommandLineOption("-i <file> or --input <file>", "Read file");
-  au->addCommandLineOption("-s or --simplify", "Add to LOD node a simplified version of the input. Value must be ratio,mindist,maxdist");
-  au->addCommandLineOption("-o <file> or --output <file>", "Write current LOD node to file.");
+  au->addCommandLineOption("-s or --simplify",
+                           "Add to LOD node a simplified version of the input. "
+                           "Value must be ratio,mindist,maxdist");
+  au->addCommandLineOption("-o <file> or --output <file>",
+                           "Write current LOD node to file.");
 
-  osg::ApplicationUsage::Type help (arguments.readHelpType());
+  osg::ApplicationUsage::Type help(arguments.readHelpType());
 
   std::string inputFilename, outputFilename;
   std::vector<float> ratios, minDists, maxDists;
 
   bool usage = (help != osg::ApplicationUsage::NO_HELP);
-  if (!arguments.read("-i", inputFilename)
-      && !arguments.read("--input", inputFilename)) {
+  if (!arguments.read("-i", inputFilename) &&
+      !arguments.read("--input", inputFilename)) {
     usage = true;
   }
-  if (!arguments.read("-o", outputFilename)
-      && !arguments.read("--output", outputFilename)) {
+  if (!arguments.read("-o", outputFilename) &&
+      !arguments.read("--output", outputFilename)) {
     usage = true;
   }
   std::string str;
   float ratio, minDist, maxDist;
-  while (arguments.read("-s", str)
-      || arguments.read("--simplify", str)) {
-    if( sscanf( str.c_str(), "%f,%f,%f",
-          &ratio, &minDist, &maxDist ) != 3 )
-    {
+  while (arguments.read("-s", str) || arguments.read("--simplify", str)) {
+    if (sscanf(str.c_str(), "%f,%f,%f", &ratio, &minDist, &maxDist) != 3) {
       std::cerr << "Simplifier argument format incorrect." << std::endl;
       return 1;
     }
-    ratios  .push_back(ratio  );
+    ratios.push_back(ratio);
     minDists.push_back(minDist);
     maxDists.push_back(maxDist);
   }
@@ -67,7 +66,7 @@ int main (int argc, char** argv)
     arguments.writeErrorMessages(std::cout);
   }
 
-  if (usage)  {
+  if (usage) {
     au->write(std::cout, help, 80, true);
     return 1;
   }
@@ -77,9 +76,8 @@ int main (int argc, char** argv)
   osgUtil::Simplifier simplifier;
 
   for (std::size_t i = 0; i < ratios.size(); ++i) {
-    std::cout << "Simplifying with " << ratios[i]
-      << ", " << minDists[i]
-      << ", " << maxDists[i] << std::endl;
+    std::cout << "Simplifying with " << ratios[i] << ", " << minDists[i] << ", "
+              << maxDists[i] << std::endl;
 
     ratio = ratios[i];
     osg::ref_ptr<osg::Node> simplified;
@@ -87,12 +85,13 @@ int main (int argc, char** argv)
       simplified = input;
     } else {
       simplifier.setSampleRatio(ratio);
-      simplified = dynamic_cast<osg::Node*>(input->clone(osg::CopyOp::DEEP_COPY_ALL));
-      simplified->accept (simplifier);
+      simplified =
+          dynamic_cast<osg::Node*>(input->clone(osg::CopyOp::DEEP_COPY_ALL));
+      simplified->accept(simplifier);
     }
-    lod->addChild (simplified, minDists[i], maxDists[i]);
+    lod->addChild(simplified, minDists[i], maxDists[i]);
   }
 
-  osgDB::writeNodeFile (*lod, outputFilename);
+  osgDB::writeNodeFile(*lod, outputFilename);
   return 0;
 }

@@ -17,72 +17,65 @@
 #ifndef GEPETTO_GUI_TREEITEM_HH
 #define GEPETTO_GUI_TREEITEM_HH
 
-#include <gepetto/gui/fwd.hh>
-
-#include <QStandardItem>
-#include <QItemDelegate>
 #include <QDoubleSpinBox>
-#include <QSlider>
+#include <QItemDelegate>
 #include <QMenu>
 #include <QPushButton>
 #include <QSignalMapper>
+#include <QSlider>
+#include <QStandardItem>
+#include <gepetto/gui/fwd.hh>
 
 namespace gepetto {
-  namespace gui {
-    class BodyTreeItem : public QObject, public QStandardItem
-    {
-      Q_OBJECT
+namespace gui {
+class BodyTreeItem : public QObject, public QStandardItem {
+  Q_OBJECT
 
-      public:
-        BodyTreeItem (QObject* parent, NodePtr_t node);
-        void initialize();
+ public:
+  BodyTreeItem(QObject* parent, NodePtr_t node);
+  void initialize();
 
-        virtual QStandardItem* clone () const;
+  virtual QStandardItem* clone() const;
 
-        virtual int type() const {
-          return QStandardItem::UserType+1;
-        }
+  virtual int type() const { return QStandardItem::UserType + 1; }
 
-        NodePtr_t node () const;
+  NodePtr_t node() const;
 
-        void populateContextMenu (QMenu* menu);
+  void populateContextMenu(QMenu* menu);
 
-        void setParentGroup (const std::string& parent);
+  void setParentGroup(const std::string& parent);
 
-        QWidget* propertyEditors () const
-        {
-          return propertyEditors_;
-        }
+  QWidget* propertyEditors() const { return propertyEditors_; }
 
-        virtual ~BodyTreeItem();
+  virtual ~BodyTreeItem();
 
-      public:
-        void attachToWindow (unsigned int windowID);
+ public:
+  void attachToWindow(unsigned int windowID);
 
-        public slots:
-          void setViewingMode (QString mode);
-        void setVisibilityMode (QString mode);
-        void removeFromGroup ();
-        void remove ();
-        void removeAll ();
-        void addLandmark ();
-        void deleteLandmark ();
-        QString text () const { return QStandardItem::text(); }
+ public slots:
+  void setViewingMode(QString mode);
+  void setVisibilityMode(QString mode);
+  void removeFromGroup();
+  void remove();
+  void removeAll();
+  void addLandmark();
+  void deleteLandmark();
+  QString text() const { return QStandardItem::text(); }
 
-    signals:
-        void requestInitialize();
-    private slots:
-        void doInitialize();
+ signals:
+  void requestInitialize();
+ private slots:
+  void doInitialize();
 
-      private:
-        NodePtr_t node_;
-        std::string parentGroup_;
+ private:
+  NodePtr_t node_;
+  std::string parentGroup_;
 
-        QWidget* propertyEditors_;
+  QWidget* propertyEditors_;
 
-        friend class VisibilityItem;
-    };
-  } // namespace gui
-} // namespace gepetto
+  friend class VisibilityItem;
+};
+}  // namespace gui
+}  // namespace gepetto
 
-#endif // GEPETTO_GUI_TREEITEM_HH
+#endif  // GEPETTO_GUI_TREEITEM_HH

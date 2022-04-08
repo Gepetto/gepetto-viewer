@@ -13,47 +13,42 @@
 
 namespace gepetto {
 namespace viewer {
-    DEF_CLASS_SMART_PTR(NodeDrawable)
-    
-    /** Implementation of the drawable object in OSG render engine */
-    class NodeDrawable : public Node
-    {
-    private:
-        void init ();
+DEF_CLASS_SMART_PTR(NodeDrawable)
 
-    protected:
-        ::osg::ShapeDrawableRefPtr shape_drawable_ptr_;
+/** Implementation of the drawable object in OSG render engine */
+class NodeDrawable : public Node {
+ private:
+  void init();
 
-        void redrawShape ();
+ protected:
+  ::osg::ShapeDrawableRefPtr shape_drawable_ptr_;
 
-        /** Constructor */
-        NodeDrawable (const std::string& name) : Node (name) { init (); }
-        
-        /** Copy constructor */
-        NodeDrawable (const Node& other) : Node (other) { init (); }
-        
-    public:
-        virtual void setAlpha (const float& alpha)
-        {
-          osgVector4 color = this->getColor();
-          color[3] = alpha;
-          this->setColor (color);
-        }
+  void redrawShape();
 
-	float getAlpha() const
-        {
-          return getColor () [3];
-        }
+  /** Constructor */
+  NodeDrawable(const std::string& name) : Node(name) { init(); }
 
-        virtual void setColor(const osgVector4 &color);
+  /** Copy constructor */
+  NodeDrawable(const Node& other) : Node(other) { init(); }
 
-        virtual osgVector4 getColor() const;
+ public:
+  virtual void setAlpha(const float& alpha) {
+    osgVector4 color = this->getColor();
+    color[3] = alpha;
+    this->setColor(color);
+  }
 
-        virtual void setTexture(const std::string& image_path);
+  float getAlpha() const { return getColor()[3]; }
 
-        /** Destructor */
-        virtual ~NodeDrawable() {}
-    };
+  virtual void setColor(const osgVector4& color);
+
+  virtual osgVector4 getColor() const;
+
+  virtual void setTexture(const std::string& image_path);
+
+  /** Destructor */
+  virtual ~NodeDrawable() {}
+};
 } /* namespace viewer */
 } /* namespace gepetto */
 

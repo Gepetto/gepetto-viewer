@@ -9,185 +9,188 @@
 #ifndef GEPETTO_VIEWER_WINDOWMANAGER_HH
 #define GEPETTO_VIEWER_WINDOWMANAGER_HH
 
+#include <gepetto/viewer/group-node.h>
+
 #include <osgGA/KeySwitchMatrixManipulator>
 #include <osgViewer/Viewer>
 #include <osgViewer/ViewerEventHandlers>
-#include <gepetto/viewer/group-node.h>
 
 namespace gepetto {
 namespace viewer {
 
-    DEF_CLASS_SMART_PTR(WindowManager)
+DEF_CLASS_SMART_PTR(WindowManager)
 
-    /// Manage a window that renders a scene.
-    /// The root of the rendered scene is a \ref GroupNode.
-    class WindowManager : public GroupNode
-    {
-    private:
-        const int nodeTrackerManipulatorIndex;
+/// Manage a window that renders a scene.
+/// The root of the rendered scene is a \ref GroupNode.
+class WindowManager : public GroupNode {
+ private:
+  const int nodeTrackerManipulatorIndex;
 
-        /** Scene Graphical Group */
-        GroupNodePtr_t scene_ptr_;
+  /** Scene Graphical Group */
+  GroupNodePtr_t scene_ptr_;
 
-        /** OSG viewer */
-        ::osgViewer::ViewerRefPtr viewer_ptr_;
+  /** OSG viewer */
+  ::osgViewer::ViewerRefPtr viewer_ptr_;
 
-        /** OSG cameras */
-        ::osg::CameraRefPtr main_camera_;
-        ::osg::GraphicsContextRefPtr gc_;
-      
-      /** Backgound camera */
-      ::osg::CameraRefPtr bg_camera_;
-      ::osg::Vec4 bg_color1_;
-      ::osg::Vec4 bg_color2_;
-      ::osg::GeometryRefPtr bg_geom_;
+  /** OSG cameras */
+  ::osg::CameraRefPtr main_camera_;
+  ::osg::GraphicsContextRefPtr gc_;
 
-        /* OSG Screen capture handler */
-        osg::ref_ptr < ::osgViewer::ScreenCaptureHandler> screen_capture_ptr_;
+  /** Backgound camera */
+  ::osg::CameraRefPtr bg_camera_;
+  ::osg::Vec4 bg_color1_;
+  ::osg::Vec4 bg_color2_;
+  ::osg::GeometryRefPtr bg_geom_;
 
-        /** Heads-Up Display (HUD) camera */
-        ::osg::CameraRefPtr hud_camera_;
-        osg::ref_ptr<osgText::Text> texts_[3][3];
-        osg::ref_ptr<osg::Geode> textGeode_;
-        bool textActive_[3][3];
+  /* OSG Screen capture handler */
+  osg::ref_ptr< ::osgViewer::ScreenCaptureHandler> screen_capture_ptr_;
 
-        bool lastSceneWasDisrty_;
+  /** Heads-Up Display (HUD) camera */
+  ::osg::CameraRefPtr hud_camera_;
+  osg::ref_ptr<osgText::Text> texts_[3][3];
+  osg::ref_ptr<osg::Geode> textGeode_;
+  bool textActive_[3][3];
 
-	osg::ref_ptr<osgGA::KeySwitchMatrixManipulator> manipulator_ptr;
-        /** Associated weak pointer */
-        WindowManagerWeakPtr weak_ptr_;
+  bool lastSceneWasDisrty_;
 
-      void createManipulator();
-      
-      void createBackground();
-      void applyBackgroundColor();
+  osg::ref_ptr<osgGA::KeySwitchMatrixManipulator> manipulator_ptr;
+  /** Associated weak pointer */
+  WindowManagerWeakPtr weak_ptr_;
 
-        void createHUDcamera();
+  void createManipulator();
 
-        void init(osg::GraphicsContext* gc);
+  void createBackground();
+  void applyBackgroundColor();
 
-        void init(osgViewer::Viewer* v, osg::GraphicsContext* gc);
+  void createHUDcamera();
 
-        void init(const unsigned int& x, const unsigned int& y, const unsigned int& width, const unsigned int& height);
+  void init(osg::GraphicsContext* gc);
 
-        WindowManager();
+  void init(osgViewer::Viewer* v, osg::GraphicsContext* gc);
 
-        WindowManager (osgViewer::Viewer* v, osg::GraphicsContext* gc);
+  void init(const unsigned int& x, const unsigned int& y,
+            const unsigned int& width, const unsigned int& height);
 
-        WindowManager (osg::GraphicsContext* gc);
+  WindowManager();
 
-        WindowManager(const unsigned int& x, const unsigned int& y, const unsigned int& width, const unsigned int& height);
+  WindowManager(osgViewer::Viewer* v, osg::GraphicsContext* gc);
 
-        WindowManager(const WindowManager& other);
+  WindowManager(osg::GraphicsContext* gc);
 
-        /** Initialize weak_ptr */
-        void initWeakPtr (WindowManagerWeakPtr other_weak_ptr);
-    protected:
+  WindowManager(const unsigned int& x, const unsigned int& y,
+                const unsigned int& width, const unsigned int& height);
 
-    public:
-        enum TextAlignment {
-          TOP    = 0,
-          CENTER = 1,
-          BOTTOM = 2,
-          RIGHT  = 0,
-          LEFT   = 2
-        };
+  WindowManager(const WindowManager& other);
 
-        /** Create and initialize a graphical engine of type OSG
-         */
-        static WindowManagerPtr_t create();
+  /** Initialize weak_ptr */
+  void initWeakPtr(WindowManagerWeakPtr other_weak_ptr);
 
-        /** Create and initialize a graphical engine with a GraphicsContext
-         */
-        static WindowManagerPtr_t create(osg::GraphicsContext* gc);
+ protected:
+ public:
+  enum TextAlignment { TOP = 0, CENTER = 1, BOTTOM = 2, RIGHT = 0, LEFT = 2 };
 
-        static WindowManagerPtr_t create(osgViewer::Viewer* v, osg::GraphicsContext* gc);
+  /** Create and initialize a graphical engine of type OSG
+   */
+  static WindowManagerPtr_t create();
 
-        /** Create and initialize a graphical engine of type OSG with some parameters : position + dimension
-         */
-        static WindowManagerPtr_t create(const unsigned int& x, const unsigned int& y, const unsigned int& width, const unsigned int& height);
+  /** Create and initialize a graphical engine with a GraphicsContext
+   */
+  static WindowManagerPtr_t create(osg::GraphicsContext* gc);
 
-        /** Static method for creating a clone of box other with the copy constructor
-         */
-        static WindowManagerPtr_t createCopy(WindowManagerPtr_t other);
+  static WindowManagerPtr_t create(osgViewer::Viewer* v,
+                                   osg::GraphicsContext* gc);
 
-        /** Proceed to a clonage of the current object defined by the copy constructor
-         */
-        virtual WindowManagerPtr_t clone(void) const;
+  /** Create and initialize a graphical engine of type OSG with some parameters
+   * : position + dimension
+   */
+  static WindowManagerPtr_t create(const unsigned int& x, const unsigned int& y,
+                                   const unsigned int& width,
+                                   const unsigned int& height);
 
-        /** Return a shared pointer of the current object
-         */
-        WindowManagerPtr_t self(void) const;
+  /** Static method for creating a clone of box other with the copy constructor
+   */
+  static WindowManagerPtr_t createCopy(WindowManagerPtr_t other);
 
-        /** Add a graphical object to the scene
-         */
-        virtual bool addNode(NodePtr_t graphical_object_ptr);
+  /** Proceed to a clonage of the current object defined by the copy constructor
+   */
+  virtual WindowManagerPtr_t clone(void) const;
 
-        /** Return the scene group
-         */
-        virtual GroupNodePtr_t getScene() const { return self(); }
+  /** Return a shared pointer of the current object
+   */
+  WindowManagerPtr_t self(void) const;
 
-        /** Return the current doing of procedure
-         */
-        virtual bool done ();
+  /** Add a graphical object to the scene
+   */
+  virtual bool addNode(NodePtr_t graphical_object_ptr);
 
-        /** Generate a new frame rendering
-         */
-        virtual bool frame ();
+  /** Return the scene group
+   */
+  virtual GroupNodePtr_t getScene() const { return self(); }
 
-        /** Run the scene process
-         */
-        virtual bool run ();
+  /** Return the current doing of procedure
+   */
+  virtual bool done();
 
-        /** Define dimension of the window
-         *  \param size (width, height)
-         **/
-        virtual void setWindowDimension (const osgVector2& size);
+  /** Generate a new frame rendering
+   */
+  virtual bool frame();
 
-        /** Define the window position
-         *  \param position (x_pos, y_pos)
-         **/
-        virtual void setWindowPosition (const osgVector2& position);
+  /** Run the scene process
+   */
+  virtual bool run();
 
-        /** Return the window x and y position as a 2D vector */
-        osgVector2 getWindowPosition () const;
+  /** Define dimension of the window
+   *  \param size (width, height)
+   **/
+  virtual void setWindowDimension(const osgVector2& size);
 
-        /** Return the window width and height as a 2D vector */
-        osgVector2 getWindowDimension () const;
+  /** Define the window position
+   *  \param position (x_pos, y_pos)
+   **/
+  virtual void setWindowPosition(const osgVector2& position);
 
-        std::string getText (TextAlignment verticalPos, TextAlignment horizontalPos) const;
+  /** Return the window x and y position as a 2D vector */
+  osgVector2 getWindowPosition() const;
 
-        /** Set the HUD text */
-        void setText (TextAlignment verticalPos, TextAlignment horizontalPos,
-            const std::string& text, float size = 20);
+  /** Return the window width and height as a 2D vector */
+  osgVector2 getWindowDimension() const;
 
-        /** Return a ref to the viewer */
-        ::osgViewer::ViewerRefPtr getViewerClone();
+  std::string getText(TextAlignment verticalPos,
+                      TextAlignment horizontalPos) const;
 
-        virtual ~WindowManager();
+  /** Set the HUD text */
+  void setText(TextAlignment verticalPos, TextAlignment horizontalPos,
+               const std::string& text, float size = 20);
 
-        void captureFrame (const std::string& filename);
+  /** Return a ref to the viewer */
+  ::osgViewer::ViewerRefPtr getViewerClone();
 
-        void startCapture (const std::string& filename,
-            const std::string& extension);
+  virtual ~WindowManager();
 
-        void stopCapture ();
+  void captureFrame(const std::string& filename);
 
-        bool writeNodeFile (const std::string& filename);
-        
-      void setBackgroundColor1(const osg::Vec4 & color)
-      { bg_color1_ = color; applyBackgroundColor(); }
-        
-      void setBackgroundColor2(const osg::Vec4 & color)
-      { bg_color2_ = color; applyBackgroundColor(); }
+  void startCapture(const std::string& filename, const std::string& extension);
 
-      void getCameraTransform(osg::Vec3d &pos, osg::Quat &rot);
-      void setCameraTransform(const osg::Vec3d &pos, const osg::Quat &rot);
+  void stopCapture();
 
-	void attachCameraToNode(NodePtr_t node);
-	void detachCamera();
+  bool writeNodeFile(const std::string& filename);
 
-    };
+  void setBackgroundColor1(const osg::Vec4& color) {
+    bg_color1_ = color;
+    applyBackgroundColor();
+  }
+
+  void setBackgroundColor2(const osg::Vec4& color) {
+    bg_color2_ = color;
+    applyBackgroundColor();
+  }
+
+  void getCameraTransform(osg::Vec3d& pos, osg::Quat& rot);
+  void setCameraTransform(const osg::Vec3d& pos, const osg::Quat& rot);
+
+  void attachCameraToNode(NodePtr_t node);
+  void detachCamera();
+};
 } /* namespace viewer */
 } /* namespace gepetto */
 

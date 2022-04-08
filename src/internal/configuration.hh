@@ -22,7 +22,7 @@
 #include <osgText/Font>
 
 namespace gepetto {
-  osg::ref_ptr<osgText::Font> defaultFont();
+osg::ref_ptr<osgText::Font> defaultFont();
 } /* namespace gepetto */
 
-#endif // SCENEVIEWER_INTERNAL_CONFIGURATION_HH
+#endif  // SCENEVIEWER_INTERNAL_CONFIGURATION_HH

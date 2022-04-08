@@ -16,288 +16,262 @@
 
 #include "gepetto/gui/pythonwidget.hh"
 
+#include <PythonQt.h>
+#include <PythonQtClassInfo.h>
+#include <PythonQt_QtAll.h>
+#include <gui/PythonQtScriptingConsole.h>
+
 #include <QAction>
 #include <QFileDialog>
 #include <QSettings>
-#include <PythonQt.h>
-#include <gui/PythonQtScriptingConsole.h>
-#include <PythonQtClassInfo.h>
-#include <PythonQt_QtAll.h>
-
 #include <boost/python.hpp>
 
-#include "gepetto/gui/osgwidget.hh"
-#include "gepetto/gui/mainwindow.hh"
-#include "gepetto/gui/plugin-interface.hh"
-
-#include "python-decorator.hh"
-#include "python-bindings.hh"
 #include "../log.hh"
+#include "gepetto/gui/mainwindow.hh"
+#include "gepetto/gui/osgwidget.hh"
+#include "gepetto/gui/plugin-interface.hh"
+#include "python-bindings.hh"
+#include "python-decorator.hh"
 
 namespace bp = boost::python;
 
-BOOST_PYTHON_MODULE(gepettogui_internals)
-{
+BOOST_PYTHON_MODULE(gepettogui_internals) {
   exposeOSG();
   exposeGV();
   exposeGG();
 }
 
 namespace gepetto {
-    typedef gui::MainWindow GMainWindow;
+typedef gui::MainWindow GMainWindow;
 
-    namespace gui {
-      namespace {
-        void addSignalHandler (PythonQtObjectPtr obj, const QString& callable,
-            QObject* sender, const char* signal) {
-          PythonQt* pqt = PythonQt::self();
-          PythonQtObjectPtr call = pqt->lookupCallable(obj, callable);
-          if (call.isNull()) {
-            log() << "Callable" << callable << "not found." << std::endl;
-            return;
-          }
-          if (!pqt->addSignalHandler(sender, signal, call)) {
-            log() << "Signal" << signal << "not found in object"
-              << sender->objectName() << std::endl;
-          } else {
-            log() << "Connected"
-              << signal << "of" << sender->objectName()
-              << "to" << callable << std::endl;
-          }
-        }
-
-        const QString var = "pluginInstance";
-      }
-
-      PythonWidget::PythonWidget(QWidget *parent) :
-        QDockWidget("&PythonQt console", parent)
-      {
-        PyImport_AppendInittab("gepettogui_internals",
-#if PY_MAJOR_VERSION==3
-            &PyInit_gepettogui_internals
-#elif PY_MAJOR_VERSION==2
-            &initgepettogui_internals
-#endif
-            );
-
-        setObjectName ("gepetto-gui.pythonqtconsole");
-        PythonQt::init(PythonQt::RedirectStdOut);
-        PythonQt_QtAll::init();
-        PythonQtObjectPtr mainContext = PythonQt::self()->getMainModule();
-        PythonQtObjectPtr sys = PythonQt::self()->importModule ("sys");
-        sys.evalScript ("argv = ['gepetto-gui']");
-        mainContext.evalScript ("import PythonQt");
-        console_ = new PythonQtScriptingConsole(NULL, mainContext);
-
-        PythonQt::self()->addDecorators (new PythonDecorator());
-
-        PythonQt::self()->registerQObjectClassNames(QStringList()
-            << "BodyTreeWidget"
-            << "BodyTreeItem"
-            << "SelectionEvent"
-            << "MainWindow");
-
-        PythonQt::self()->registerCPPClass ("MainWindow", "QMainWindow", "gepetto");
-        PythonQt::self()->registerCPPClass ("OSGWidget" , "QWidget"    , "gepetto");
-
-        console_->QTextEdit::clear();
-        console_->consoleMessage(
-            "PythonQt command prompt\n"
-            "Use Shift+Enter for multiline code.\n"
-            );
-        console_->appendCommandPrompt();
-
-        QWidget* widget = new QWidget;
-        QVBoxLayout* layout = new QVBoxLayout;
-        button_ = new QPushButton;
-
-        button_->setText("Choose file");
-        layout->addWidget(console_);
-        layout->addWidget(button_);
-        widget->setLayout(layout);
-        this->setWidget(widget);
-
-        toggleViewAction()->setShortcut(gepetto::gui::DockKeyShortcutBase + Qt::Key_A);
-        connect(button_, SIGNAL(clicked()), SLOT(browseFile()));
-
-        bp::import ("gepettogui_internals");
-      }
-
-      PythonWidget::~PythonWidget()
-      {
-        foreach (const PythonQtObjectPtr& m, modules_)
-          unloadModulePlugin(m);
-	PythonQt::cleanup();
-      }
-
-      void PythonWidget::browseFile()
-      {
-        QFileDialog* fd = new QFileDialog;
-
-        fd->setFileMode(QFileDialog::ExistingFile);
-        fd->setNameFilter("All python file (*.py)");
-        if (fd->exec() == QDialog::Accepted) {
-          QStringList file = fd->selectedFiles();
-
-          PythonQtObjectPtr mainContext = PythonQt::self()->getMainModule();
-          mainContext.evalFile(file.at(0));
-        }
-        fd->close();
-        fd->deleteLater();
-      }
-
-      void PythonWidget::saveHistory (QSettings& settings)
-      {
-        settings.beginGroup("pythonqt");
-        QStringList history = console_->history ();
-        int limit = 200;
-        int start = std::max(history.length() - limit, 0);
-        QList<QVariant> h;
-        foreach (QString s, history.mid(start)) {
-          h << s;
-        }
-        settings.setValue("history", h);
-        settings.endGroup();
-      }
-
-      void PythonWidget::restoreHistory (QSettings& settings)
-      {
-        settings.beginGroup("pythonqt");
-        QList<QVariant> h = settings.value("history").toList();
-        QStringList history;
-        foreach(QVariant v, h) {
-          history << v.toString();
-        }
-        console_->setHistory (history);
-        settings.endGroup();
-      }
-
-      bool PythonWidget::hasPlugin (const QString& name)
-      {
-        return modules_.contains (name);
-      }
-
-      void PythonWidget::loadScriptPlugin(QString moduleName, QString fileName)
-      {
-        PythonQt* pqt = PythonQt::self();
-        PythonQtObjectPtr module = pqt->createModuleFromFile (moduleName, fileName);
-        if (pqt->handleError()) {
-          pqt->clearError();
-          return;
-        }
-        if (module.isNull()) {
-          qDebug() << "Enable to load module" << moduleName << "from script"
-            << fileName;
-          return;
-        }
-        loadPlugin (moduleName, module);
-      }
-
-      void PythonWidget::runScript(QString fileName)
-      {
-        PythonQt* pqt = PythonQt::self();
-        PythonQtObjectPtr mainContext = pqt->getMainModule();
-        mainContext.evalFile(fileName);
-
-        if (pqt->handleError()) {
-          pqt->clearError();
-          qDebug() << "Failed to run script" << fileName;
-        }
-      }
-
-      void PythonWidget::loadModulePlugin(QString moduleName)
-      {
-        PythonQt* pqt = PythonQt::self();
-        PythonQtObjectPtr module = pqt->importModule (moduleName);
-        if (pqt->handleError()) {
-          pqt->clearError();
-          return;
-        }
-        if (module.isNull()) {
-          qDebug() << "Unable to load module" << moduleName;
-          return;
-        }
-        loadPlugin (moduleName, module);
-      }
-
-      void PythonWidget::loadPlugin(QString moduleName, PythonQtObjectPtr module)
-      {
-        PythonQt* pqt = PythonQt::self();
-        MainWindow* main = MainWindow::instance();
-        module.addObject("windowsManager", main->osg().get());
-
-        QVariantList args; args << QVariant::fromValue((QObject*)main);
-        QVariant instance = module.call("Plugin", args);
-        module.addVariable(var, instance);
-
-        QDockWidget* dw = qobject_cast<QDockWidget*>(instance.value<QObject*>());
-        if (dw) main->insertDockWidget(dw, Qt::RightDockWidgetArea);
-        // PythonQtObjectPtr dockPyObj (instance);
-        PythonQtObjectPtr dockPyObj = pqt->lookupObject(module,var);
-        addSignalHandlersToPlugin(dockPyObj);
-        modules_[moduleName] = module;
-      }
-
-      void PythonWidget::unloadModulePlugin(QString moduleName)
-      {
-        if (modules_.contains(moduleName)) {
-          PythonQtObjectPtr module = modules_.value(moduleName);
-          unloadModulePlugin(module);
-          modules_.remove(moduleName);
-        }
-      }
-
-      void PythonWidget::unloadModulePlugin(PythonQtObjectPtr module )
-      {
-        PythonQt* pqt = PythonQt::self();
-        QVariant instance = pqt->getVariable(module, var);
-        QDockWidget* dw = qobject_cast<QDockWidget*>(instance.value<QObject*>());
-        if (dw) MainWindow::instance()->removeDockWidget(dw);
-        module.removeVariable (var);
-      }
-
-      void PythonWidget::addToContext(QString const& name, QObject* obj)
-      {
-        PythonQtObjectPtr mainContext = PythonQt::self()->getMainModule();
-        mainContext.addObject(name, obj);
-      }
-
-      void PythonWidget::addSignalHandlersToPlugin(PythonQtObjectPtr plugin)
-      {
-        MainWindow* main = MainWindow::instance();
-        addSignalHandler(plugin, "osgWidget",
-            main, SIGNAL(viewCreated(OSGWidget*)));
-        QAction* reconnect = main->findChild<QAction*>("actionReconnect");
-        if (reconnect)
-          addSignalHandler(plugin, "resetConnection",
-              reconnect, SIGNAL(triggered()));
-        else
-          log() << "Could not find actionReconnect button. The plugin will"
-            << "not be able to reset CORBA connections" << std::endl;
-        QAction* refresh = main->findChild<QAction*>("actionRefresh");
-        if (refresh)
-          addSignalHandler(plugin, "refreshInterface",
-              refresh, SIGNAL(triggered()));
-        else
-          log() << "Could not find actionRefresh button. The plugin will"
-            << "not be able to refresh interface." << std::endl;
-      }
-
-      QVariantList PythonWidget::callPluginMethod (const QString& method,
-          const QVariantList& args,
-          const QVariantMap& kwargs) const
-      {
-        PythonQt* pqt = PythonQt::self();
-        QVariantList ret;
-        foreach (const PythonQtObjectPtr& m, modules_)
-        {
-          PythonQtObjectPtr dockPyObj = pqt->lookupObject(m,var);
-          PythonQtObjectPtr call = pqt->lookupCallable(dockPyObj, method);
-          if (!call.isNull()) {
-            ret << call.call(args, kwargs);
-          }
-        }
-        return ret;
-      }
-    }
+namespace gui {
+namespace {
+void addSignalHandler(PythonQtObjectPtr obj, const QString& callable,
+                      QObject* sender, const char* signal) {
+  PythonQt* pqt = PythonQt::self();
+  PythonQtObjectPtr call = pqt->lookupCallable(obj, callable);
+  if (call.isNull()) {
+    log() << "Callable" << callable << "not found." << std::endl;
+    return;
+  }
+  if (!pqt->addSignalHandler(sender, signal, call)) {
+    log() << "Signal" << signal << "not found in object" << sender->objectName()
+          << std::endl;
+  } else {
+    log() << "Connected" << signal << "of" << sender->objectName() << "to"
+          << callable << std::endl;
+  }
 }
+
+const QString var = "pluginInstance";
+}  // namespace
+
+PythonWidget::PythonWidget(QWidget* parent)
+    : QDockWidget("&PythonQt console", parent) {
+  PyImport_AppendInittab("gepettogui_internals",
+#if PY_MAJOR_VERSION == 3
+                         &PyInit_gepettogui_internals
+#elif PY_MAJOR_VERSION == 2
+                         &initgepettogui_internals
+#endif
+  );
+
+  setObjectName("gepetto-gui.pythonqtconsole");
+  PythonQt::init(PythonQt::RedirectStdOut);
+  PythonQt_QtAll::init();
+  PythonQtObjectPtr mainContext = PythonQt::self()->getMainModule();
+  PythonQtObjectPtr sys = PythonQt::self()->importModule("sys");
+  sys.evalScript("argv = ['gepetto-gui']");
+  mainContext.evalScript("import PythonQt");
+  console_ = new PythonQtScriptingConsole(NULL, mainContext);
+
+  PythonQt::self()->addDecorators(new PythonDecorator());
+
+  PythonQt::self()->registerQObjectClassNames(QStringList() << "BodyTreeWidget"
+                                                            << "BodyTreeItem"
+                                                            << "SelectionEvent"
+                                                            << "MainWindow");
+
+  PythonQt::self()->registerCPPClass("MainWindow", "QMainWindow", "gepetto");
+  PythonQt::self()->registerCPPClass("OSGWidget", "QWidget", "gepetto");
+
+  console_->QTextEdit::clear();
+  console_->consoleMessage(
+      "PythonQt command prompt\n"
+      "Use Shift+Enter for multiline code.\n");
+  console_->appendCommandPrompt();
+
+  QWidget* widget = new QWidget;
+  QVBoxLayout* layout = new QVBoxLayout;
+  button_ = new QPushButton;
+
+  button_->setText("Choose file");
+  layout->addWidget(console_);
+  layout->addWidget(button_);
+  widget->setLayout(layout);
+  this->setWidget(widget);
+
+  toggleViewAction()->setShortcut(gepetto::gui::DockKeyShortcutBase +
+                                  Qt::Key_A);
+  connect(button_, SIGNAL(clicked()), SLOT(browseFile()));
+
+  bp::import("gepettogui_internals");
+}
+
+PythonWidget::~PythonWidget() {
+  foreach (const PythonQtObjectPtr& m, modules_)
+    unloadModulePlugin(m);
+  PythonQt::cleanup();
+}
+
+void PythonWidget::browseFile() {
+  QFileDialog* fd = new QFileDialog;
+
+  fd->setFileMode(QFileDialog::ExistingFile);
+  fd->setNameFilter("All python file (*.py)");
+  if (fd->exec() == QDialog::Accepted) {
+    QStringList file = fd->selectedFiles();
+
+    PythonQtObjectPtr mainContext = PythonQt::self()->getMainModule();
+    mainContext.evalFile(file.at(0));
+  }
+  fd->close();
+  fd->deleteLater();
+}
+
+void PythonWidget::saveHistory(QSettings& settings) {
+  settings.beginGroup("pythonqt");
+  QStringList history = console_->history();
+  int limit = 200;
+  int start = std::max(history.length() - limit, 0);
+  QList<QVariant> h;
+  foreach (QString s, history.mid(start)) { h << s; }
+  settings.setValue("history", h);
+  settings.endGroup();
+}
+
+void PythonWidget::restoreHistory(QSettings& settings) {
+  settings.beginGroup("pythonqt");
+  QList<QVariant> h = settings.value("history").toList();
+  QStringList history;
+  foreach (QVariant v, h) { history << v.toString(); }
+  console_->setHistory(history);
+  settings.endGroup();
+}
+
+bool PythonWidget::hasPlugin(const QString& name) {
+  return modules_.contains(name);
+}
+
+void PythonWidget::loadScriptPlugin(QString moduleName, QString fileName) {
+  PythonQt* pqt = PythonQt::self();
+  PythonQtObjectPtr module = pqt->createModuleFromFile(moduleName, fileName);
+  if (pqt->handleError()) {
+    pqt->clearError();
+    return;
+  }
+  if (module.isNull()) {
+    qDebug() << "Enable to load module" << moduleName << "from script"
+             << fileName;
+    return;
+  }
+  loadPlugin(moduleName, module);
+}
+
+void PythonWidget::runScript(QString fileName) {
+  PythonQt* pqt = PythonQt::self();
+  PythonQtObjectPtr mainContext = pqt->getMainModule();
+  mainContext.evalFile(fileName);
+
+  if (pqt->handleError()) {
+    pqt->clearError();
+    qDebug() << "Failed to run script" << fileName;
+  }
+}
+
+void PythonWidget::loadModulePlugin(QString moduleName) {
+  PythonQt* pqt = PythonQt::self();
+  PythonQtObjectPtr module = pqt->importModule(moduleName);
+  if (pqt->handleError()) {
+    pqt->clearError();
+    return;
+  }
+  if (module.isNull()) {
+    qDebug() << "Unable to load module" << moduleName;
+    return;
+  }
+  loadPlugin(moduleName, module);
+}
+
+void PythonWidget::loadPlugin(QString moduleName, PythonQtObjectPtr module) {
+  PythonQt* pqt = PythonQt::self();
+  MainWindow* main = MainWindow::instance();
+  module.addObject("windowsManager", main->osg().get());
+
+  QVariantList args;
+  args << QVariant::fromValue((QObject*)main);
+  QVariant instance = module.call("Plugin", args);
+  module.addVariable(var, instance);
+
+  QDockWidget* dw = qobject_cast<QDockWidget*>(instance.value<QObject*>());
+  if (dw) main->insertDockWidget(dw, Qt::RightDockWidgetArea);
+  // PythonQtObjectPtr dockPyObj (instance);
+  PythonQtObjectPtr dockPyObj = pqt->lookupObject(module, var);
+  addSignalHandlersToPlugin(dockPyObj);
+  modules_[moduleName] = module;
+}
+
+void PythonWidget::unloadModulePlugin(QString moduleName) {
+  if (modules_.contains(moduleName)) {
+    PythonQtObjectPtr module = modules_.value(moduleName);
+    unloadModulePlugin(module);
+    modules_.remove(moduleName);
+  }
+}
+
+void PythonWidget::unloadModulePlugin(PythonQtObjectPtr module) {
+  PythonQt* pqt = PythonQt::self();
+  QVariant instance = pqt->getVariable(module, var);
+  QDockWidget* dw = qobject_cast<QDockWidget*>(instance.value<QObject*>());
+  if (dw) MainWindow::instance()->removeDockWidget(dw);
+  module.removeVariable(var);
+}
+
+void PythonWidget::addToContext(QString const& name, QObject* obj) {
+  PythonQtObjectPtr mainContext = PythonQt::self()->getMainModule();
+  mainContext.addObject(name, obj);
+}
+
+void PythonWidget::addSignalHandlersToPlugin(PythonQtObjectPtr plugin) {
+  MainWindow* main = MainWindow::instance();
+  addSignalHandler(plugin, "osgWidget", main, SIGNAL(viewCreated(OSGWidget*)));
+  QAction* reconnect = main->findChild<QAction*>("actionReconnect");
+  if (reconnect)
+    addSignalHandler(plugin, "resetConnection", reconnect, SIGNAL(triggered()));
+  else
+    log() << "Could not find actionReconnect button. The plugin will"
+          << "not be able to reset CORBA connections" << std::endl;
+  QAction* refresh = main->findChild<QAction*>("actionRefresh");
+  if (refresh)
+    addSignalHandler(plugin, "refreshInterface", refresh, SIGNAL(triggered()));
+  else
+    log() << "Could not find actionRefresh button. The plugin will"
+          << "not be able to refresh interface." << std::endl;
+}
+
+QVariantList PythonWidget::callPluginMethod(const QString& method,
+                                            const QVariantList& args,
+                                            const QVariantMap& kwargs) const {
+  PythonQt* pqt = PythonQt::self();
+  QVariantList ret;
+  foreach (const PythonQtObjectPtr& m, modules_) {
+    PythonQtObjectPtr dockPyObj = pqt->lookupObject(m, var);
+    PythonQtObjectPtr call = pqt->lookupCallable(dockPyObj, method);
+    if (!call.isNull()) {
+      ret << call.call(args, kwargs);
+    }
+  }
+  return ret;
+}
+}  // namespace gui
+}  // namespace gepetto

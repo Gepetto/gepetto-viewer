@@ -26,35 +26,33 @@
 
 using namespace gepetto::gui;
 
-class ObjectTest : public QObject
-{
+class ObjectTest : public QObject {
   Q_OBJECT
 
-  public:
-    bool stdex;
+ public:
+  bool stdex;
 
-    bool event(QEvent *e)
-    {
-      (void)e;
-      if (stdex) {
-        throw std::logic_error ("std logic_error from ObjectTest");
-      } else {
-        throw 0;
-      }
-      return true;
-    };
+  bool event(QEvent *e) {
+    (void)e;
+    if (stdex) {
+      throw std::logic_error("std logic_error from ObjectTest");
+    } else {
+      throw 0;
+    }
+    return true;
+  };
 };
 
 #include "safe-application.moc"
 
-BOOST_AUTO_TEST_CASE (safeApplication) {
+BOOST_AUTO_TEST_CASE(safeApplication) {
   ObjectTest test;
-  QEvent event (QEvent::None);
+  QEvent event(QEvent::None);
   int argc = 0;
-  SafeApplication app (argc, NULL);
+  SafeApplication app(argc, NULL);
 
   test.stdex = true;
-  app.notify (&test, &event);
+  app.notify(&test, &event);
   test.stdex = false;
-  app.notify (&test, &event);
+  app.notify(&test, &event);
 }

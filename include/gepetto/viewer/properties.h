@@ -13,33 +13,28 @@
 
 namespace gepetto {
 namespace viewer {
-class BackfaceDrawingProperty : public Property
-{
-  public:
-    typedef osg::StateSetRefPtr StateSetRefPtr;
+class BackfaceDrawingProperty : public Property {
+ public:
+  typedef osg::StateSetRefPtr StateSetRefPtr;
 
-    bool hasReadAccess () const { return static_cast<bool>(stateSet_); }
-    bool hasWriteAccess() const { return static_cast<bool>(stateSet_); }
+  bool hasReadAccess() const { return static_cast<bool>(stateSet_); }
+  bool hasWriteAccess() const { return static_cast<bool>(stateSet_); }
 
-    std::string type() { return details::property_type<bool>::to_string(); }
+  std::string type() { return details::property_type<bool>::to_string(); }
 
-    BackfaceDrawingProperty () : Property("BackfaceDrawing") {}
+  BackfaceDrawingProperty() : Property("BackfaceDrawing") {}
 
-    void stateSet (const StateSetRefPtr& stateSet) { stateSet_ = stateSet; }
-    StateSetRefPtr stateSet () const { return stateSet_; }
+  void stateSet(const StateSetRefPtr& stateSet) { stateSet_ = stateSet; }
+  StateSetRefPtr stateSet() const { return stateSet_; }
 
-    virtual QWidget* guiEditor ()
-    {
-      return details::buildEditor<bool>(this);
-    }
+  virtual QWidget* guiEditor() { return details::buildEditor<bool>(this); }
 
-  protected:
-    bool impl_set(const bool& value);
-    bool impl_get(      bool& value);
+ protected:
+  bool impl_set(const bool& value);
+  bool impl_get(bool& value);
 
-  private:
-    osg::StateSetRefPtr stateSet_;
-
+ private:
+  osg::StateSetRefPtr stateSet_;
 };
 } /* namespace viewer */
 } /* namespace gepetto */
