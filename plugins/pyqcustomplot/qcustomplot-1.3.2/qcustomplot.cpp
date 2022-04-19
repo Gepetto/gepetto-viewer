@@ -10412,8 +10412,7 @@ QCPLayoutElement *QCustomPlot::layoutElementAt(const QPointF &pos) const {
 */
 QList<QCPAxis *> QCustomPlot::selectedAxes() const {
   QList<QCPAxis *> result, allAxes;
-  foreach (QCPAxisRect *rect, axisRects())
-    allAxes << rect->axes();
+  foreach (QCPAxisRect *rect, axisRects()) allAxes << rect->axes();
 
   foreach (QCPAxis *axis, allAxes) {
     if (axis->selectedParts() != QCPAxis::spNone) result.append(axis);
@@ -10532,11 +10531,9 @@ void QCustomPlot::replot(QCustomPlot::RefreshPriority refreshPriority) {
 */
 void QCustomPlot::rescaleAxes(bool onlyVisiblePlottables) {
   QList<QCPAxis *> allAxes;
-  foreach (QCPAxisRect *rect, axisRects())
-    allAxes << rect->axes();
+  foreach (QCPAxisRect *rect, axisRects()) allAxes << rect->axes();
 
-  foreach (QCPAxis *axis, allAxes)
-    axis->rescale(onlyVisiblePlottables);
+  foreach (QCPAxis *axis, allAxes) axis->rescale(onlyVisiblePlottables);
 }
 
 /*!

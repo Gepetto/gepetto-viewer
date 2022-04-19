@@ -114,7 +114,9 @@ bool PluginManager::loadPlugin(const QString& name) {
     qDebug() << name << ": " << plugins_[name]->errorString();
     if (!hasShownErrorMessage) {
       qDebug() << "The list of paths where plugins are searched for is:";
-      foreach (const QDir& dir, pluginDirs_) { qDebug() << dir.absolutePath(); }
+      foreach (const QDir& dir, pluginDirs_) {
+        qDebug() << dir.absolutePath();
+      }
       qDebug()
           << "Use GEPETTO_GUI_PLUGIN_DIRS environment variable to add a path.";
       hasShownErrorMessage = true;
@@ -148,7 +150,9 @@ bool PluginManager::unloadPlugin(const QString& name) {
 }
 
 void PluginManager::clearPlugins() {
-  foreach (QPluginLoader* p, plugins_) { p->unload(); }
+  foreach (QPluginLoader* p, plugins_) {
+    p->unload();
+  }
 }
 
 void PluginManager::declareAllPyPlugins() {
@@ -257,7 +261,9 @@ bool PluginManager::isPyPluginLoaded(const QString& name) {
 }
 
 void PluginManager::clearPyPlugins() {
-  foreach (QString p, pyplugins_.keys()) { unloadPyPlugin(p); }
+  foreach (QString p, pyplugins_.keys()) {
+    unloadPyPlugin(p);
+  }
 }
 
 PluginManagerDialog::PluginManagerDialog(PluginManager* pm, QWidget* parent)

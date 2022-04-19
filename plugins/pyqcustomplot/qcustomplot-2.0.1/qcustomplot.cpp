@@ -14591,8 +14591,7 @@ QCPAxisRect *QCustomPlot::axisRectAt(const QPointF &pos) const {
 */
 QList<QCPAxis *> QCustomPlot::selectedAxes() const {
   QList<QCPAxis *> result, allAxes;
-  foreach (QCPAxisRect *rect, axisRects())
-    allAxes << rect->axes();
+  foreach (QCPAxisRect *rect, axisRects()) allAxes << rect->axes();
 
   foreach (QCPAxis *axis, allAxes) {
     if (axis->selectedParts() != QCPAxis::spNone) result.append(axis);
@@ -14695,8 +14694,7 @@ void QCustomPlot::replot(QCustomPlot::RefreshPriority refreshPriority) {
   // draw all layered objects (grid, axes, plottables, items, legend,...) into
   // their buffers:
   setupPaintBuffers();
-  foreach (QCPLayer *layer, mLayers)
-    layer->drawToPaintBuffer();
+  foreach (QCPLayer *layer, mLayers) layer->drawToPaintBuffer();
   for (int i = 0; i < mPaintBuffers.size(); ++i)
     mPaintBuffers.at(i)->setInvalidated(false);
 
@@ -14723,11 +14721,9 @@ void QCustomPlot::replot(QCustomPlot::RefreshPriority refreshPriority) {
 */
 void QCustomPlot::rescaleAxes(bool onlyVisiblePlottables) {
   QList<QCPAxis *> allAxes;
-  foreach (QCPAxisRect *rect, axisRects())
-    allAxes << rect->axes();
+  foreach (QCPAxisRect *rect, axisRects()) allAxes << rect->axes();
 
-  foreach (QCPAxis *axis, allAxes)
-    axis->rescale(onlyVisiblePlottables);
+  foreach (QCPAxis *axis, allAxes) axis->rescale(onlyVisiblePlottables);
 }
 
 /*!
@@ -15317,8 +15313,7 @@ void QCustomPlot::draw(QCPPainter *painter) {
   drawBackground(painter);
 
   // draw all layered objects (grid, axes, plottables, items, legend,...):
-  foreach (QCPLayer *layer, mLayers)
-    layer->draw(painter);
+  foreach (QCPLayer *layer, mLayers) layer->draw(painter);
 
   /* Debug code to draw all layout element rects
   foreach (QCPLayoutElement* el, findChildren<QCPLayoutElement*>())

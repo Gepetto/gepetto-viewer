@@ -169,29 +169,27 @@ QString valuesToString<Configuration>(
          QString::number(quat.z()) + sep + QString::number(quat.w()) + " ]";
 }
 
-#define DEFINE_PROPERTY_EDITOR(Name, Type)                  \
-  void Name::updateValue() {                                \
-    Type cfg;                                               \
-    getValues(cfg, spinBoxes);                              \
-    setPyValue();                                           \
-    emit valueChanged(cfg);                                 \
-  }                                                         \
-                                                            \
-  void Name::setValueFromProperty(viewer::Property* prop) { \
-    Type cfg;                                               \
-    prop->get(cfg);                                         \
-    setValues(cfg, spinBoxes);                              \
-    setPyValue();                                           \
-  }                                                         \
-                                                            \
-  void Name::set(const Type& v) {                           \
-    foreach (QDoubleSpinBox* sb, spinBoxes)                 \
-      sb->blockSignals(true);                               \
-    setValues(v, spinBoxes);                                \
-    foreach (QDoubleSpinBox* sb, spinBoxes)                 \
-      sb->blockSignals(false);                              \
-  }                                                         \
-                                                            \
+#define DEFINE_PROPERTY_EDITOR(Name, Type)                           \
+  void Name::updateValue() {                                         \
+    Type cfg;                                                        \
+    getValues(cfg, spinBoxes);                                       \
+    setPyValue();                                                    \
+    emit valueChanged(cfg);                                          \
+  }                                                                  \
+                                                                     \
+  void Name::setValueFromProperty(viewer::Property* prop) {          \
+    Type cfg;                                                        \
+    prop->get(cfg);                                                  \
+    setValues(cfg, spinBoxes);                                       \
+    setPyValue();                                                    \
+  }                                                                  \
+                                                                     \
+  void Name::set(const Type& v) {                                    \
+    foreach (QDoubleSpinBox* sb, spinBoxes) sb->blockSignals(true);  \
+    setValues(v, spinBoxes);                                         \
+    foreach (QDoubleSpinBox* sb, spinBoxes) sb->blockSignals(false); \
+  }                                                                  \
+                                                                     \
   void Name::setPyValue() { pyValue->setText(valuesToString<Type>(spinBoxes)); }
 
 DEFINE_PROPERTY_EDITOR(Vector2Dialog, osgVector2)
