@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018, LAAS-CNRS
+// Copyright (c) 2015-2022, LAAS-CNRS, Heriot-Watt University
 // Authors: Joseph Mirabel (joseph.mirabel@laas.fr)
 //
 // This file is part of gepetto-viewer.
@@ -18,7 +18,6 @@
 #define GEPETTO_GUI_PLUGININTERFACE_HH
 
 #include <QWidget>
-#include <QtGui>
 #include <gepetto/gui/dialog/dialogloadenvironment.hh>
 #include <gepetto/gui/dialog/dialogloadrobot.hh>
 #include <iostream>
