@@ -251,11 +251,15 @@ void Settings::initPlugins() {
     pluginManager_.loadPlugin(name);
     pluginManager_.initPlugin(name);
   }
-  foreach (QString name, pyplugins_) { pluginManager_.loadPyPlugin(name); }
+  foreach (QString name, pyplugins_) {
+    pluginManager_.loadPyPlugin(name);
+  }
 #if GEPETTO_GUI_HAS_PYTHONQT
   PythonWidget* pw = mw->pythonWidget();
   // TODO Wouldn't it be better to do this later ?
-  foreach (QString fileName, pyscripts_) { pw->runScript(fileName); }
+  foreach (QString fileName, pyscripts_) {
+    pw->runScript(fileName);
+  }
 #else
   foreach (QString fileName, pyscripts_) {
     logError(

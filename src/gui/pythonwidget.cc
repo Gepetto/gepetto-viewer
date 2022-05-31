@@ -119,8 +119,7 @@ PythonWidget::PythonWidget(QWidget* parent)
 }
 
 PythonWidget::~PythonWidget() {
-  foreach (const PythonQtObjectPtr& m, modules_)
-    unloadModulePlugin(m);
+  foreach (const PythonQtObjectPtr& m, modules_) unloadModulePlugin(m);
   PythonQt::cleanup();
 }
 
@@ -145,7 +144,9 @@ void PythonWidget::saveHistory(QSettings& settings) {
   int limit = 200;
   int start = std::max(history.length() - limit, 0);
   QList<QVariant> h;
-  foreach (QString s, history.mid(start)) { h << s; }
+  foreach (QString s, history.mid(start)) {
+    h << s;
+  }
   settings.setValue("history", h);
   settings.endGroup();
 }
@@ -154,7 +155,9 @@ void PythonWidget::restoreHistory(QSettings& settings) {
   settings.beginGroup("pythonqt");
   QList<QVariant> h = settings.value("history").toList();
   QStringList history;
-  foreach (QVariant v, h) { history << v.toString(); }
+  foreach (QVariant v, h) {
+    history << v.toString();
+  }
   console_->setHistory(history);
   settings.endGroup();
 }
