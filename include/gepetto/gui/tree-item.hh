@@ -17,8 +17,6 @@
 #ifndef GEPETTO_GUI_TREEITEM_HH
 #define GEPETTO_GUI_TREEITEM_HH
 
-#include <gepetto/gui/fwd.hh>
-
 #include <QDoubleSpinBox>
 #include <QItemDelegate>
 #include <QMenu>
@@ -26,6 +24,7 @@
 #include <QSignalMapper>
 #include <QSlider>
 #include <QStandardItem>
+#include <gepetto/gui/fwd.hh>
 
 namespace gepetto {
 namespace gui {

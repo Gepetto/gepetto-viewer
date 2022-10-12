@@ -17,9 +17,8 @@
 #ifndef GEPETTO_GUI_NODE_ACTION_HH
 #define GEPETTO_GUI_NODE_ACTION_HH
 
-#include <gepetto/gui/fwd.hh>
-
 #include <QAction>
+#include <gepetto/gui/fwd.hh>
 
 namespace gepetto {
 namespace gui {

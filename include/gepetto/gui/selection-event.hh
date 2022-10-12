@@ -17,13 +17,13 @@
 #ifndef GEPETTO_GUI_SELECTION_EVENT_HH
 #define GEPETTO_GUI_SELECTION_EVENT_HH
 
-#include <gepetto/gui/fwd.hh>
 #include <gepetto/viewer/node.h>
 
 #include <QAtomicInt>
 #include <QObject>
 #include <QString>
 #include <QVector3D>
+#include <gepetto/gui/fwd.hh>
 
 namespace gepetto {
 namespace gui {

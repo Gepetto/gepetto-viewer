@@ -19,9 +19,8 @@
 
 #include <assert.h>
 
-#include <gepetto/gui/fwd.hh>
-
 #include <QApplication>
+#include <gepetto/gui/fwd.hh>
 
 namespace gepetto {
 namespace gui {

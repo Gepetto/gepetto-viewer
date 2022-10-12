@@ -17,9 +17,8 @@
 #ifndef GEPETTO_GUI_FWD_HH
 #define GEPETTO_GUI_FWD_HH
 
-#include <vector>
-
 #include <QtGlobal>
+#include <vector>
 #if QT_VERSION >= 0x050000
 #include <QtGui/qopengl.h>
 #ifdef __APPLE__
@@ -31,10 +30,10 @@ typedef void(APIENTRY *GLDEBUGPROC)(GLenum source, GLenum type, GLuint id,
                                     const GLvoid *userParam);
 #endif
 #endif
-#include <QtGui>
-
 #include <gepetto/viewer/fwd.h>
 #include <gepetto/viewer/macros.h>
+
+#include <QtGui>
 #include <gepetto/gui/config-dep.hh>
 
 namespace gepetto {
