@@ -17,6 +17,9 @@
 #ifndef GEPETTO_GUI_PLUGININTERFACE_HH
 #define GEPETTO_GUI_PLUGININTERFACE_HH
 
+#include <gepetto/gui/fwd.hh>
+
+#include <QOpenGLContext>
 #include <QWidget>
 #include <QtGui>
 #include <gepetto/gui/dialog/dialogloadenvironment.hh>

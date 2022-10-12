@@ -17,8 +17,8 @@
 #ifndef GEPETTO_GUI_PYTHONWIDGET_HH
 #define GEPETTO_GUI_PYTHONWIDGET_HH
 
-#include <gepetto/gui/config-dep.hh>
 #include <gepetto/gui/fwd.hh>
+#include <gepetto/gui/config-dep.hh>
 
 #if !GEPETTO_GUI_HAS_PYTHONQT
 #error "gepetto-viewer was not compile with PythonQt dependency."

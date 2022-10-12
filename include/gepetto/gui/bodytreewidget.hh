@@ -17,12 +17,13 @@
 #ifndef GEPETTO_GUI_BODYTREEWIDGET_HH
 #define GEPETTO_GUI_BODYTREEWIDGET_HH
 
+#include <gepetto/gui/fwd.hh>
+
 #include <QStandardItemModel>
 #include <QToolBox>
 #include <QTreeView>
 #include <QVector3D>
 #include <QWidget>
-#include <gepetto/gui/fwd.hh>
 
 namespace gepetto {
 namespace gui {

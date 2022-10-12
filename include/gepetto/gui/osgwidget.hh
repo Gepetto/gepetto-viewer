@@ -17,13 +17,13 @@
 #ifndef GEPETTO_GUI_OSGWIDGET_HH
 #define GEPETTO_GUI_OSGWIDGET_HH
 
+#include <gepetto/gui/fwd.hh>
 #include <gepetto/viewer/config-osg.h>
 
 #include <QLabel>
 #include <QString>
 #include <QThread>
 #include <QTimer>
-#include <gepetto/gui/fwd.hh>
 #include <osg/ref_ptr>
 #include <osgQt/GraphicsWindowQt>
 #include <osgViewer/ViewerBase>
