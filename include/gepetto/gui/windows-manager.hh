@@ -17,12 +17,13 @@
 #ifndef GEPETTO_GUI_WINDOWSMANAGER_HH
 #define GEPETTO_GUI_WINDOWSMANAGER_HH
 
+#include <gepetto/gui/fwd.hh>
+// This include must be include before any other Qt include for GLDEBUGPROC
 #include <gepetto/viewer/windows-manager.h>
 
 #include <QColor>
 #include <QObject>
 #include <QVector3D>
-#include <gepetto/gui/fwd.hh>
 
 namespace gepetto {
 namespace gui {

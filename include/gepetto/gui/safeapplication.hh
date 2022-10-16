@@ -17,10 +17,11 @@
 #ifndef GEPETTO_GUI_SAFEAPPLICATION_HH
 #define GEPETTO_GUI_SAFEAPPLICATION_HH
 
+#include <gepetto/gui/fwd.hh>
+// This include must be include before any other Qt include for GLDEBUGPROC
 #include <assert.h>
 
 #include <QApplication>
-#include <gepetto/gui/fwd.hh>
 
 namespace gepetto {
 namespace gui {
