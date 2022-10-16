@@ -17,11 +17,12 @@
 #ifndef GEPETTO_GUI_SELECTION_HANDLER_H__
 #define GEPETTO_GUI_SELECTION_HANDLER_H__
 
+#include <gepetto/gui/fwd.hh>
+// This include must be include before any other Qt include for GLDEBUGPROC
 #include <QComboBox>
 #include <QKeyEvent>
 #include <QVector3D>
 #include <QWidget>
-#include <gepetto/gui/fwd.hh>
 
 namespace gepetto {
 namespace gui {

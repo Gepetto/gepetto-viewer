@@ -17,12 +17,13 @@
 #ifndef GEPETTO_GUI_PLUGININTERFACE_HH
 #define GEPETTO_GUI_PLUGININTERFACE_HH
 
+#include <gepetto/gui/fwd.hh>
+// This include must be include before any other Qt include for GLDEBUGPROC
 #include <QOpenGLContext>
 #include <QWidget>
 #include <QtGui>
 #include <gepetto/gui/dialog/dialogloadenvironment.hh>
 #include <gepetto/gui/dialog/dialogloadrobot.hh>
-#include <gepetto/gui/fwd.hh>
 #include <iostream>
 
 namespace gepetto {

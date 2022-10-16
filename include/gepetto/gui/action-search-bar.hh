@@ -17,11 +17,12 @@
 #ifndef GEPETTO_GUI_ACTION_SEARCH_BAR_HH
 #define GEPETTO_GUI_ACTION_SEARCH_BAR_HH
 
+#include <gepetto/gui/fwd.hh>
+// This include must be include before any other Qt include for GLDEBUGPROC
 #include <QLineEdit>
 #include <QMap>
 #include <QString>
 #include <QStringListModel>
-#include <gepetto/gui/fwd.hh>
 
 namespace gepetto {
 namespace gui {

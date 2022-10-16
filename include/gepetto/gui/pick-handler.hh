@@ -17,9 +17,10 @@
 #ifndef GEPETTO_GUI_PICK_HANDLER_HH
 #define GEPETTO_GUI_PICK_HANDLER_HH
 
+#include <gepetto/gui/fwd.hh>
+// This include must be include before any other Qt include for GLDEBUGPROC
 #include <QModelIndex>
 #include <QObject>
-#include <gepetto/gui/fwd.hh>
 #include <gepetto/gui/qt-osg-keyboard.hh>
 #include <osg/ref_ptr>
 #include <osgGA/GUIEventHandler>

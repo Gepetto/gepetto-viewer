@@ -17,13 +17,14 @@
 #ifndef GEPETTO_GUI_SELECTION_EVENT_HH
 #define GEPETTO_GUI_SELECTION_EVENT_HH
 
+#include <gepetto/gui/fwd.hh>
+// This include must be include before any other Qt include for GLDEBUGPROC
 #include <gepetto/viewer/node.h>
 
 #include <QAtomicInt>
 #include <QObject>
 #include <QString>
 #include <QVector3D>
-#include <gepetto/gui/fwd.hh>
 
 namespace gepetto {
 namespace gui {

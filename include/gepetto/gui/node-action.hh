@@ -17,8 +17,9 @@
 #ifndef GEPETTO_GUI_NODE_ACTION_HH
 #define GEPETTO_GUI_NODE_ACTION_HH
 
-#include <QAction>
 #include <gepetto/gui/fwd.hh>
+// This include must be include before any other Qt include for GLDEBUGPROC
+#include <QAction>
 
 namespace gepetto {
 namespace gui {
