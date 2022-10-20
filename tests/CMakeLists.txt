@@ -1,47 +1,45 @@
 #
-# Copyright (c) 2019 CNRS
-# Authors: Joseph Mirabel
+# Copyright (c) 2019 CNRS Authors: Joseph Mirabel
 #
+# This file is part of gepetto-viewer gepetto-viewer is free software: you can
+# redistribute it and/or modify it under the terms of the GNU Lesser General
+# Public License as published by the Free Software Foundation, either version 3
+# of the License, or (at your option) any later version.
 #
-# This file is part of gepetto-viewer
-# gepetto-viewer is free software: you can redistribute it
-# and/or modify it under the terms of the GNU Lesser General Public
-# License as published by the Free Software Foundation, either version
-# 3 of the License, or (at your option) any later version.
-#
-# gepetto-viewer is distributed in the hope that it will be
-# useful, but WITHOUT ANY WARRANTY; without even the implied warranty
-# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# General Lesser Public License for more details.  You should have
-# received a copy of the GNU Lesser General Public License along with
-# gepetto-viewer  If not, see
-# <http://www.gnu.org/licenses/>.
+# gepetto-viewer is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE.  See the GNU General Lesser Public License for more
+# details.  You should have received a copy of the GNU Lesser General Public
+# License along with gepetto-viewer  If not, see <http://www.gnu.org/licenses/>.
 
-MACRO(ADD_TEST_CFLAGS target flag)
-  SET_PROPERTY(TARGET ${target} APPEND_STRING PROPERTY COMPILE_FLAGS " ${flag}")
-ENDMACRO(ADD_TEST_CFLAGS)
+macro(ADD_TEST_CFLAGS target flag)
+  set_property(
+    TARGET ${target}
+    APPEND_STRING
+    PROPERTY COMPILE_FLAGS " ${flag}")
+endmacro(ADD_TEST_CFLAGS)
 
-ADD_EXECUTABLE(testing test.cpp)
-TARGET_LINK_LIBRARIES(testing PRIVATE ${PROJECT_NAME})
-PKG_CONFIG_USE_DEPENDENCY(testing openscenegraph)
+add_executable(testing test.cpp)
+target_link_libraries(testing PRIVATE ${PROJECT_NAME})
+pkg_config_use_dependency(testing openscenegraph)
 
-ADD_UNIT_TEST(nodes nodes.cpp)
-ADD_TEST_CFLAGS(nodes "-DBOOST_TEST_DYN_LINK")
-TARGET_LINK_LIBRARIES(nodes PRIVATE ${PROJECT_NAME})
-PKG_CONFIG_USE_DEPENDENCY(nodes openscenegraph)
-TARGET_LINK_LIBRARIES(nodes PRIVATE Boost::unit_test_framework)
-ADD_EXECUTABLE(test-gl gl.cpp)
-TARGET_LINK_LIBRARIES(test-gl PRIVATE ${PROJECT_NAME})
-PKG_CONFIG_USE_DEPENDENCY(test-gl openscenegraph)
+add_unit_test(nodes nodes.cpp)
+add_test_cflags(nodes "-DBOOST_TEST_DYN_LINK")
+target_link_libraries(nodes PRIVATE ${PROJECT_NAME})
+pkg_config_use_dependency(nodes openscenegraph)
+target_link_libraries(nodes PRIVATE Boost::unit_test_framework)
+add_executable(test-gl gl.cpp)
+target_link_libraries(test-gl PRIVATE ${PROJECT_NAME})
+pkg_config_use_dependency(test-gl openscenegraph)
 
+if($ENV{DISPLAY})
+  add_unit_test(properties properties.cpp)
+  add_test_cflags(properties "-DBOOST_TEST_DYN_LINK")
+  target_link_libraries(properties PRIVATE ${PROJECT_NAME}
+                                           Boost::unit_test_framework)
 
-IF($ENV{DISPLAY})
-  ADD_UNIT_TEST(properties properties.cpp)
-  ADD_TEST_CFLAGS(properties "-DBOOST_TEST_DYN_LINK")
-  TARGET_LINK_LIBRARIES(properties PRIVATE ${PROJECT_NAME} Boost::unit_test_framework)
-
-  ADD_UNIT_TEST(safe-application safe-application.cpp)
-  ADD_TEST_CFLAGS(safe-application "-DBOOST_TEST_DYN_LINK")
-  TARGET_LINK_LIBRARIES(safe-application PRIVATE ${PROJECT_NAME})
-  TARGET_LINK_LIBRARIES(safe-application PRIVATE Boost::unit_test_framework)
-ENDIF($ENV{DISPLAY})
+  add_unit_test(safe-application safe-application.cpp)
+  add_test_cflags(safe-application "-DBOOST_TEST_DYN_LINK")
+  target_link_libraries(safe-application PRIVATE ${PROJECT_NAME})
+  target_link_libraries(safe-application PRIVATE Boost::unit_test_framework)
+endif($ENV{DISPLAY})
