@@ -33,7 +33,7 @@
 
 #include <algorithm>
 #include <osgDB/WriteFile>
-//#include <gepetto/viewer/node-rod.h>
+// #include <gepetto/viewer/node-rod.h>
 
 #include "log.hh"
 
