@@ -96,6 +96,7 @@ class _Widget(QtGui.QWidget):
 
 # ## \endcond
 
+
 # ## \ingroup pluginlist
 # ## Python plugin to export scene to Blender.
 # ## Add the following to your settings file to activate it.
