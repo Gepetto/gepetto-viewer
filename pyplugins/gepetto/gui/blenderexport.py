@@ -1,5 +1,5 @@
-from PythonQt import QtGui
 from gepetto.corbaserver import Client
+from PythonQt import QtGui
 
 
 def separator():
