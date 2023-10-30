@@ -1,2 +1,4 @@
 [tool.black]
 exclude = "cmake"
+[tool.isort]
+profile = "black"
