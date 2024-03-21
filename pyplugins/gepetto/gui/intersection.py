@@ -1,7 +1,6 @@
-from __future__ import print_function
+from PythonQt import Qt, QtGui
 
 from gepetto.corbaserver import Client
-from PythonQt import Qt, QtGui
 
 
 class Plugin(QtGui.QDockWidget):
@@ -10,7 +9,7 @@ class Plugin(QtGui.QDockWidget):
     """
 
     def __init__(self, mainWindow):
-        super(Plugin, self).__init__("Coordinates viewer plugin", mainWindow)
+        super().__init__("Coordinates viewer plugin", mainWindow)
         self.setObjectName("Coordinates viewer plugin")
         self.client = Client()
 
@@ -52,8 +51,8 @@ class Plugin(QtGui.QDockWidget):
             self.le_name.setText(event.nodeName())
             pt = event.point(local)
             nl = event.normal(local)
-            self.point.setText("({},{},{})".format(pt.x(), pt.y(), pt.z()))
-            self.normal.setText("({},{},{})".format(nl.x(), nl.y(), nl.z()))
+            self.point.setText(f"({pt.x()},{pt.y()},{pt.z()})")
+            self.normal.setText(f"({nl.x()},{nl.y()},{nl.z()})")
             tf = self.client.gui.getNodeGlobalTransform(str(event.nodeName()))
             self.transform.setText("(" + ",".join([str(v) for v in tf]) + ")")
         else:

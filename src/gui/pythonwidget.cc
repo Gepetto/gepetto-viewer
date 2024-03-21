@@ -87,10 +87,9 @@ PythonWidget::PythonWidget(QWidget* parent)
 
   PythonQt::self()->addDecorators(new PythonDecorator());
 
-  PythonQt::self()->registerQObjectClassNames(QStringList() << "BodyTreeWidget"
-                                                            << "BodyTreeItem"
-                                                            << "SelectionEvent"
-                                                            << "MainWindow");
+  PythonQt::self()->registerQObjectClassNames(
+      QStringList() << "BodyTreeWidget" << "BodyTreeItem" << "SelectionEvent"
+                    << "MainWindow");
 
   PythonQt::self()->registerCPPClass("MainWindow", "QMainWindow", "gepetto");
   PythonQt::self()->registerCPPClass("OSGWidget", "QWidget", "gepetto");

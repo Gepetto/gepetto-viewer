@@ -6,4 +6,3 @@ extend-select = ["I", "NPY", "RUF", "UP", "W"]
 
 [tool.tomlsort]
 all = true
-
