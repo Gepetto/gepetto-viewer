@@ -25071,8 +25071,7 @@ void QCPBars::draw(QCPPainter *painter) {
 #ifdef QCUSTOMPLOT_CHECK_DATA
       if (QCP::isInvalidData(it->key, it->value))
         qDebug() << Q_FUNC_INFO << "Data point at" << it->key
-                 << "of drawn range invalid."
-                 << "Plottable name:" << name();
+                 << "of drawn range invalid." << "Plottable name:" << name();
 #endif
       // draw bar:
       if (isSelectedSegment && mSelectionDecorator) {
@@ -25903,8 +25902,7 @@ void QCPStatisticalBox::draw(QCPPainter *painter) {
       for (int i = 0; i < it->outliers.size(); ++i)
         if (QCP::isInvalidData(it->outliers.at(i)))
           qDebug() << Q_FUNC_INFO << "Data point outlier at" << it->key
-                   << "of drawn range invalid."
-                   << "Plottable name:" << name();
+                   << "of drawn range invalid." << "Plottable name:" << name();
 #endif
 
       if (isSelectedSegment && mSelectionDecorator) {
