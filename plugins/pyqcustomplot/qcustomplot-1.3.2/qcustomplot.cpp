@@ -19408,8 +19408,7 @@ void QCPBars::draw(QCPPainter *painter) {
 #ifdef QCUSTOMPLOT_CHECK_DATA
     if (QCP::isInvalidData(it.value().key, it.value().value))
       qDebug() << Q_FUNC_INFO << "Data point at" << it.key()
-               << "of drawn range invalid."
-               << "Plottable name:" << name();
+               << "of drawn range invalid." << "Plottable name:" << name();
 #endif
     QPolygonF barPolygon = getBarPolygon(it.key(), it.value().value);
     // draw bar fill:
@@ -20034,8 +20033,7 @@ void QCPStatisticalBox::draw(QCPPainter *painter) {
   for (int i = 0; i < mOutliers.size(); ++i)
     if (QCP::isInvalidData(mOutliers.at(i)))
       qDebug() << Q_FUNC_INFO << "Data point outlier at" << mKey
-               << "of drawn range invalid."
-               << "Plottable name:" << name();
+               << "of drawn range invalid." << "Plottable name:" << name();
 #endif
 
   QRectF quartileBox;
