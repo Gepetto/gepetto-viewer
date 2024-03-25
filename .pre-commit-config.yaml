@@ -2,11 +2,11 @@ ci:
   autoupdate_branch: devel
 repos:
 - repo: https://github.com/PyCQA/isort
-  rev: 5.12.0
+  rev: 5.13.2
   hooks:
   - id: isort
-- repo: https://github.com/charliermarsh/ruff-pre-commit
-  rev: v0.1.4
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  rev: v0.3.4
   hooks:
   - id: ruff
     args:
@@ -22,7 +22,7 @@ repos:
   - id: toml-sort-fix
     exclude: poetry.lock
 - repo: https://github.com/pre-commit/mirrors-clang-format
-  rev: v17.0.4
+  rev: v18.1.2
   hooks:
   - id: clang-format
     args:
@@ -46,6 +46,6 @@ repos:
   - id: mixed-line-ending
   - id: trailing-whitespace
 - repo: https://github.com/psf/black
-  rev: 23.10.1
+  rev: 24.3.0
   hooks:
   - id: black
