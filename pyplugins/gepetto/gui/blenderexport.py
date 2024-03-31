@@ -1,5 +1,6 @@
-from gepetto.corbaserver import Client
 from PythonQt import QtGui
+
+from gepetto.corbaserver import Client
 
 
 def separator():
@@ -12,7 +13,7 @@ def separator():
 # ## \cond
 class _Widget(QtGui.QWidget):
     def __init__(self, parent, plugin):
-        super(_Widget, self).__init__(parent)
+        super().__init__(parent)
         self.plugin = plugin
         self.bodies = []
         self.makeWidget()
@@ -106,7 +107,7 @@ class _Widget(QtGui.QWidget):
 # ##
 class Plugin(QtGui.QDockWidget):
     def __init__(self, mainWindow):
-        super(Plugin, self).__init__("Blender export plugin", mainWindow)
+        super().__init__("Blender export plugin", mainWindow)
         self.setObjectName("gepetto.gui.blenderexport")
         self.resetConnection()
         # Initialize the widget

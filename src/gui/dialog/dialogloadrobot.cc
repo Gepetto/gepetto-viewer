@@ -24,9 +24,8 @@
 
 namespace gepetto {
 namespace gui {
-QStringList DialogLoadRobot::rootJointTypes = QStringList() << "freeflyer"
-                                                            << "planar"
-                                                            << "anchor";
+QStringList DialogLoadRobot::rootJointTypes =
+    QStringList() << "freeflyer" << "planar" << "anchor";
 
 QList<DialogLoadRobot::RobotDefinition> DialogLoadRobot::definitions =
     QList<DialogLoadRobot::RobotDefinition>()
