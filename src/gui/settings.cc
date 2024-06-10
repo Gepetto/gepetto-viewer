@@ -63,9 +63,14 @@ Settings::Settings(const char* installDir)
   user.cd(path);
   captureDirectory = user.absolutePath().toStdString();
 
-  ffmpegInputOptions << "-r" << "25";
-  ffmpegOutputOptions << "-vf" << "scale=trunc(iw/2)*2:trunc(ih/2)*2" << "-r"
-                      << "25" << "-vcodec" << "libx264";
+  ffmpegInputOptions << "-r"
+                     << "25";
+  ffmpegOutputOptions << "-vf"
+                      << "scale=trunc(iw/2)*2:trunc(ih/2)*2"
+                      << "-r"
+                      << "25"
+                      << "-vcodec"
+                      << "libx264";
 }
 
 void Settings::setupPaths() const {

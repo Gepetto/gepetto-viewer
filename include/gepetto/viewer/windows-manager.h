@@ -105,7 +105,7 @@ class WindowsManager {
  public:
   static WindowsManagerPtr_t create();
 
-  virtual ~WindowsManager(){};
+  virtual ~WindowsManager() {};
 
   virtual std::vector<std::string> getNodeList();
   virtual std::vector<std::string> getGroupNodeList(const std::string& group);
