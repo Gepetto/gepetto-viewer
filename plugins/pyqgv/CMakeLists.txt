@@ -31,5 +31,4 @@ gepetto_gui_plugin(
   LINK_DEPENDENCIES
   ${PYTHONQT_LIBRARIES}
   ${PROJECT_NAME}
-  PKG_CONFIG_DEPENDENCIES
-  "qgv")
+  qgv::qgvcore)

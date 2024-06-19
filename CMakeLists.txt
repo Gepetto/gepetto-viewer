@@ -147,6 +147,7 @@ add_osgqt_dependency()
 # Must be after ADD_OSGQT_DEPENDENCY
 add_qt_dependency()
 add_optional_dependency("qgv")
+find_package(qgv QUIET)
 
 # {{{ PythonQt settings
 findpython()
