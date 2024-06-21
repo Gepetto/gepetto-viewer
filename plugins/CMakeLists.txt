@@ -17,7 +17,7 @@ include(${CMAKE_SOURCE_DIR}/cmake-module/gepetto-viewer-plugin.cmake)
 # ADD_SUBDIRECTORY(plugin-skeleton)
 
 if(PythonQt_FOUND)
-  option(BUILD_PY_QGV "Build PyQGV plugin" ${QGVCORE_FOUND})
+  option(BUILD_PY_QGV "Build PyQGV plugin" ${QGV_FOUND})
   option(BUILD_PY_QCUSTOM_PLOT "Build PyQCustomPlot plugin" OFF)
 endif(PythonQt_FOUND)
 
