@@ -1,1 +1,1 @@
-include: http://rainboard.laas.fr/project/gepetto-viewer/.gitlab-ci.yml
+include: https://rainboard.laas.fr/project/gepetto-viewer/.gitlab-ci.yml
