@@ -247,9 +247,10 @@ void LeafNodeCollada::initWeakPtr(LeafNodeColladaWeakPtr other_weak_ptr) {
 LeafNodeColladaPtr_t LeafNodeCollada::create(
     const std::string& name, const std::string& collada_file_path) {
   std::ifstream infile(collada_file_path.c_str());
+  std::cout << "dbg 0" << collada_file_path << std::endl;
   if (!infile.good()) {
     throw std::ios_base::failure(collada_file_path +
-                                 std::string(" does not exist."));
+                                 std::string(" 0 does not exist."));
   }
   LeafNodeColladaPtr_t shared_ptr(new LeafNodeCollada(name, collada_file_path));
 
@@ -275,9 +276,10 @@ LeafNodeColladaPtr_t LeafNodeCollada::create(
     const std::string& name, const std::string& collada_file_path,
     const osgVector4& color) {
   std::ifstream infile(collada_file_path.c_str());
+  std::cout << "dbg 1" << collada_file_path << std::endl;
   if (!infile.good()) {
     throw std::ios_base::failure(collada_file_path +
-                                 std::string(" does not exist."));
+                                 std::string(" 1 does not exist."));
   }
   LeafNodeColladaPtr_t shared_ptr(
       new LeafNodeCollada(name, collada_file_path, color));
