@@ -708,14 +708,14 @@ bool WindowsManager::createGroup(const std::string& groupName) {
 
 bool WindowsManager::addURDF(const std::string& urdfName,
                              const std::string& urdfPath) {
-    std::cout << "dbg 2 " << urdfName, << " + " << urdfPath << std::endl;
+    std::cout << "dbg 2 " << urdfName << " + " << urdfPath << std::endl;
   return loadUDRF(urdfName, urdfPath, true, true);
 }
 
 bool WindowsManager::addURDF(const std::string& urdfName,
                              const std::string& urdfPath,
                              const std::string& urdfPackagePath) {
-    std::cout << "dbg 3 " << urdfName, << " + " << urdfPath << " + " << urdfPackagePath << std::endl;
+    std::cout << "dbg 3 " << urdfName << " + " << urdfPath << " + " << urdfPackagePath << std::endl;
   return addURDF(urdfName, urdfPath);
 }
 
