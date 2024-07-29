@@ -268,6 +268,7 @@ void WindowsManager::addNode(const std::string& nodeName, NodePtr_t node,
 
 void WindowsManager::addNode(const std::string& nodeName, NodePtr_t node,
                              GroupNodePtr_t parent) {
+    std::cout << "dbg 5 " << nodeName << std::endl;
   initParent(node, parent);
   nodes_[nodeName] = node;
 }
@@ -707,12 +708,14 @@ bool WindowsManager::createGroup(const std::string& groupName) {
 
 bool WindowsManager::addURDF(const std::string& urdfName,
                              const std::string& urdfPath) {
+    std::cout << "dbg 2 " << urdfName, << " + " << urdfPath << std::endl;
   return loadUDRF(urdfName, urdfPath, true, true);
 }
 
 bool WindowsManager::addURDF(const std::string& urdfName,
                              const std::string& urdfPath,
-                             const std::string& /*urdfPackagePath*/) {
+                             const std::string& urdfPackagePath) {
+    std::cout << "dbg 3 " << urdfName, << " + " << urdfPath << " + " << urdfPackagePath << std::endl;
   return addURDF(urdfName, urdfPath);
 }
 
@@ -742,6 +745,7 @@ void WindowsManager::addUrdfObjects(const std::string& urdfName,
 bool WindowsManager::loadUDRF(const std::string& urdfName,
                               const std::string& urdfPath, bool visual,
                               bool linkFrame) {
+    std::cout << "dbg 4 " << urdfName << " + " << urdfPath << std::endl;
   RETURN_FALSE_IF_NODE_EXISTS(urdfName);
 
   GroupNodePtr_t urdf =
@@ -753,12 +757,14 @@ bool WindowsManager::loadUDRF(const std::string& urdfName,
     link = urdf->getChild(i);
     GroupNodePtr_t groupNode(dynamic_pointer_cast<GroupNode>(link));
     if (groupNode) {
+        std::cout << "dbg 6 " << i << std::endl;
       addGroup(link->getID(), groupNode, urdf);
       for (std::size_t j = 0; j < groupNode->getNumOfChildren(); ++j) {
         NodePtr_t object(groupNode->getChild(j));
         addNode(object->getID(), object, groupNode);
       }
     } else {
+        std::cout << "dbg 7 " << i << std::endl;
       addNode(link->getID(), link, urdf);
     }
   }
