@@ -406,12 +406,17 @@ bool WindowsManager::resizeArrow(const std::string& arrowName, float newRadius,
 
 bool WindowsManager::addMesh(const std::string& meshName,
                              const std::string& meshPath) {
+    std::cout << "dbg 8 " << meshName << " + " << meshPath << std::endl;
   RETURN_FALSE_IF_NODE_EXISTS(meshName);
   LeafNodeColladaPtr_t mesh;
   try {
+    std::cout << "dbg 9 " std::endl;
     mesh = LeafNodeCollada::create(meshName, urdfParser::getFilename(meshPath));
+    std::cout << "dbg 10 " std::endl;
   } catch (const std::exception& exc) {
+    std::cout << "dbg 11 " std::endl;
     log() << exc.what() << std::endl;
+    std::cout << "dbg 12 " std::endl;
     return false;
   }
   ScopedLock lock(osgFrameMutex());

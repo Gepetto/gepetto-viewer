@@ -190,16 +190,24 @@ void parseOrigin(const QDomElement element, osgVector3& T, osgQuat& R) {
 
 NodePtr_t createMesh(const QString& name, const QDomElement mesh,
                      Cache_t& cache) {
+    std::cout << "dbg 13 " << name << std::endl;
   std::string mesh_path = getFilename(mesh.attribute("filename"));
+    std::cout << "dbg 14 " << mesh_path << std::endl;
 
   Cache_t::const_iterator _cache = cache.find(mesh_path);
   LeafNodeColladaPtr_t meshNode;
   if (_cache == cache.end()) {
+    std::cout << "dbg 15 " << std::endl;
     meshNode = LeafNodeCollada::create(name.toStdString(), mesh_path);
+    std::cout << "dbg 16 " << std::endl;
     cache.insert(std::make_pair(mesh_path, meshNode->getColladaPtr()));
-  } else
+    std::cout << "dbg 17 " << std::endl;
+  } else {
+    std::cout << "dbg 18 " << std::endl;
     meshNode =
         LeafNodeCollada::create(name.toStdString(), _cache->second, mesh_path);
+  }
+std::cout << "dbg 19 " << std::endl;
 
   if (mesh.hasAttribute("scale")) {
     osgVector3 scale(1, 1, 1);
