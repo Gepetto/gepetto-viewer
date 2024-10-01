@@ -154,14 +154,14 @@ target_link_libraries(gepetto-gui PUBLIC ${LIBRARY_NAME})
 install(
   TARGETS gepetto-gui
   EXPORT ${TARGETS_EXPORT_NAME}
-  DESTINATION bin)
+  DESTINATION ${CMAKE_INSTALL_BINDIR})
 # }}}
 
 # {{{ gvtools
 add_executable(gvtools gvtools.cpp)
 pkg_config_use_dependency(gvtools openscenegraph)
 
-install(TARGETS gvtools DESTINATION bin)
+install(TARGETS gvtools DESTINATION ${CMAKE_INSTALL_BINDIR})
 # }}}
 
 if(${CMAKE_VERSION} VERSION_LESS 3.0)
