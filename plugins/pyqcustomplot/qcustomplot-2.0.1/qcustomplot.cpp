@@ -13700,8 +13700,8 @@ void QCustomPlot::setBufferDevicePixelRatio(double ratio) {
     mBufferDevicePixelRatio = ratio;
     for (int i = 0; i < mPaintBuffers.size(); ++i)
       mPaintBuffers.at(i)->setDevicePixelRatio(mBufferDevicePixelRatio);
-      // Note: axis label cache has devicePixelRatio as part of cache hash, so
-      // no need to manually clear cache here
+    // Note: axis label cache has devicePixelRatio as part of cache hash, so
+    // no need to manually clear cache here
 #else
     qDebug() << Q_FUNC_INFO
              << "Device pixel ratios not supported for Qt versions before 5.4";
