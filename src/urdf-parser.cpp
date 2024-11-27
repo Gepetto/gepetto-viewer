@@ -116,12 +116,31 @@ void setShowVisuals(GroupNode* gn, bool visual) {
 
 QStringList rosPackagePath() {
   const QString rosPathVar(qgetenv("ROS_PACKAGE_PATH"));
-  return rosPathVar.split(':');
+  if (rosPathVar.toStdString() != "") return rosPathVar.split(':');
+  const QString amentPrefixPath(qgetenv("AMENT_PREFIX_PATH"));
+  if (amentPrefixPath.toStdString() != "") {
+    QStringList paths(amentPrefixPath.split(':'));
+    QStringList res;
+    for (const auto& path : paths) {
+      res.append(path + QString("/share"));
+    }
+    return res;
+  }
+  throw std::invalid_argument(
+      "neither ROS_PACKAGE_PATH nor AMENT_PREFIX_PATH environment variables is "
+      "defined.");
 }
 
 std::string getFilename(const QString& input) {
   if (input.startsWith("package://")) {
-    QStringList rosPaths = rosPackagePath();
+    QStringList rosPaths;
+    try {
+      rosPaths = rosPackagePath();
+    } catch (const std::invalid_argument& exc) {
+      throw std::invalid_argument(
+          std::string("Input path: \"") + input.toStdString() +
+          std::string("\" starts with \"package://\", but ") + exc.what());
+    }
     for (int i = 0; i < rosPaths.size(); ++i) {
       QFileInfo fileInfo(rosPaths[i] + '/' + input.right(input.size() - 10));
       if (fileInfo.exists() && fileInfo.isFile())
@@ -137,7 +156,7 @@ std::string getFilename(const QString& input) {
 
 template <typename ReturnType>
 void toDoubles(const QString& s, ReturnType& vect) {
-  QStringList nums = s.split(' ', QString::SkipEmptyParts);
+  QStringList nums = s.split(' ', Qt::SkipEmptyParts);
   if (ReturnType::num_components != nums.size())
     throw std::logic_error("Could not parse " + s.toStdString());
   bool ok;
@@ -150,7 +169,7 @@ void toDoubles(const QString& s, ReturnType& vect) {
 
 template <typename ReturnType>
 void toFloats(const QString& s, ReturnType& vect) {
-  QStringList nums = s.split(' ', QString::SkipEmptyParts);
+  QStringList nums = s.split(' ', Qt::SkipEmptyParts);
   if (ReturnType::num_components != nums.size())
     throw std::logic_error("Could not parse " + s.toStdString());
   bool ok;
