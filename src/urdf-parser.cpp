@@ -137,7 +137,7 @@ std::string getFilename(const QString& input) {
 
 template <typename ReturnType>
 void toDoubles(const QString& s, ReturnType& vect) {
-  QStringList nums = s.split(' ', QString::SkipEmptyParts);
+  QStringList nums = s.split(' ', Qt::SkipEmptyParts);
   if (ReturnType::num_components != nums.size())
     throw std::logic_error("Could not parse " + s.toStdString());
   bool ok;
@@ -150,7 +150,7 @@ void toDoubles(const QString& s, ReturnType& vect) {
 
 template <typename ReturnType>
 void toFloats(const QString& s, ReturnType& vect) {
-  QStringList nums = s.split(' ', QString::SkipEmptyParts);
+  QStringList nums = s.split(' ', Qt::SkipEmptyParts);
   if (ReturnType::num_components != nums.size())
     throw std::logic_error("Could not parse " + s.toStdString());
   bool ok;
