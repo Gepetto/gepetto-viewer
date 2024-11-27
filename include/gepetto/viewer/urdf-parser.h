@@ -18,7 +18,9 @@ namespace urdfParser {
 
 /// If input starts with "package://", read ROS_PACKAGE_PATH environment
 /// variable and return a suitable file, if possible.
-/// Returns input on failure (no "package://" or no file found in the packages).
+/// If ROS_PACKAGE_PATH is not defined or empty, read AMENT_PREFIX_PATH
+/// and add "/share" to each path.
+/// Throws on failure (no "package://" or no file found in the packages).
 std::string getFilename(const std::string& input);
 
 /// Create a node from an urdf file
