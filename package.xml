@@ -1,7 +1,7 @@
 <?xml version='1.0'?>
  <package format='2'>
  <name>gepetto-viewer</name>
- <version>5.2.0</version>
+ <version>6.0.0</version>
  <description>An user-friendly Graphical Interface </description>
 
  <maintainer email='hpp@laas.fr'>Joseph Mirabel</maintainer>
