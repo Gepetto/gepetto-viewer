@@ -17,8 +17,6 @@
           packages = {
             default = self'.packages.gepetto-viewer;
             gepetto-viewer = pkgs.python3Packages.gepetto-viewer.overrideAttrs (_: {
-              # TODO: remove this after next release
-              patches = [];
               src = pkgs.lib.fileset.toSource {
                 root = ./.;
                 fileset = pkgs.lib.fileset.unions [
