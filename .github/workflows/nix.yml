@@ -11,7 +11,8 @@ on:
       - master
 
 jobs:
-  nix:
+  tests:
+    name: "Nix build on ${{ matrix.os }}"
     runs-on: "${{ matrix.os }}-latest"
     strategy:
       matrix:
