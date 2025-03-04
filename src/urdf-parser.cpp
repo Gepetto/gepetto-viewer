@@ -150,6 +150,8 @@ std::string getFilename(const QString& input) {
         ("File not found: " + input +
          ". Check ROS_PACKAGE_PATH environment variable.")
             .toStdString());
+  } else if (input.startsWith("file://")) {
+    return input.right(input.size() - 7).toStdString();
   }
   return input.toStdString();
 }
