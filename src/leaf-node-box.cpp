@@ -39,22 +39,22 @@ void LeafNodeBox::init() {
                                              ::osg::StateAttribute::ON);
 }
 
-LeafNodeBox::LeafNodeBox(const std::string &name, const osgVector3 &half_axis)
+LeafNodeBox::LeafNodeBox(const std::string& name, const osgVector3& half_axis)
     : NodeDrawable(name) {
   init();
   setHalfAxis(half_axis);
   setColor(osgVector4(1., 1., 1., 1.));
 }
 
-LeafNodeBox::LeafNodeBox(const std::string &name, const osgVector3 &half_axis,
-                         const osgVector4 &color)
+LeafNodeBox::LeafNodeBox(const std::string& name, const osgVector3& half_axis,
+                         const osgVector4& color)
     : NodeDrawable(name) {
   init();
   setHalfAxis(half_axis);
   setColor(color);
 }
 
-LeafNodeBox::LeafNodeBox(const LeafNodeBox &other) : NodeDrawable(other) {
+LeafNodeBox::LeafNodeBox(const LeafNodeBox& other) : NodeDrawable(other) {
   init();
   setHalfAxis(other.getHalfAxis());
   setColor(other.getColor());
@@ -68,8 +68,8 @@ void LeafNodeBox::initWeakPtr(LeafNodeBoxWeakPtr other_weak_ptr) {
 
 /* Declaration of protected function members */
 
-LeafNodeBoxPtr_t LeafNodeBox::create(const std::string &name,
-                                     const osgVector3 &half_axis) {
+LeafNodeBoxPtr_t LeafNodeBox::create(const std::string& name,
+                                     const osgVector3& half_axis) {
   LeafNodeBoxPtr_t shared_ptr(new LeafNodeBox(name, half_axis));
 
   // Add reference to itself
@@ -78,9 +78,9 @@ LeafNodeBoxPtr_t LeafNodeBox::create(const std::string &name,
   return shared_ptr;
 }
 
-LeafNodeBoxPtr_t LeafNodeBox::create(const std::string &name,
-                                     const osgVector3 &half_axis,
-                                     const osgVector4 &color) {
+LeafNodeBoxPtr_t LeafNodeBox::create(const std::string& name,
+                                     const osgVector3& half_axis,
+                                     const osgVector4& color) {
   LeafNodeBoxPtr_t shared_ptr(new LeafNodeBox(name, half_axis, color));
 
   // Add reference to itself
@@ -108,7 +108,7 @@ LeafNodeBoxPtr_t LeafNodeBox::clone(void) const {
 
 LeafNodeBoxPtr_t LeafNodeBox::self(void) const { return weak_ptr_.lock(); }
 
-void LeafNodeBox::setHalfAxis(const osgVector3 &half_axis) {
+void LeafNodeBox::setHalfAxis(const osgVector3& half_axis) {
   box_ptr_->setHalfLengths(half_axis);
   redrawShape();
 }

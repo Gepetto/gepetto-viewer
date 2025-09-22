@@ -23,18 +23,18 @@
 
 namespace gepetto {
 namespace gui {
-LedIndicator::LedIndicator(QWidget *parent)
+LedIndicator::LedIndicator(QWidget* parent)
     : QWidget(parent), width(28), height(12) {
   setFixedSize(width, height);
   lit = false;
 }
 
-void LedIndicator::paintEvent(QPaintEvent *) {
+void LedIndicator::paintEvent(QPaintEvent*) {
   QPainter p(this);
   p.fillRect(0, 0, width, height, lit ? Qt::green : Qt::red);
 }
 
-void LedIndicator::mouseReleaseEvent(QMouseEvent *event) {
+void LedIndicator::mouseReleaseEvent(QMouseEvent* event) {
   if (event->button() == Qt::LeftButton) {
     emit mouseClickEvent();
   }

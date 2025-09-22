@@ -27,12 +27,12 @@ class LeafNodeBox : public NodeDrawable {
   void init();
 
   /* Default constructor */
-  LeafNodeBox(const std::string &name, const osgVector3 &half_axis);
-  LeafNodeBox(const std::string &name, const osgVector3 &half_axis,
-              const osgVector4 &color);
+  LeafNodeBox(const std::string& name, const osgVector3& half_axis);
+  LeafNodeBox(const std::string& name, const osgVector3& half_axis,
+              const osgVector4& color);
 
   /* Copy constructor */
-  LeafNodeBox(const LeafNodeBox &other);
+  LeafNodeBox(const LeafNodeBox& other);
 
   /** Initialize weak_ptr */
   void initWeakPtr(LeafNodeBoxWeakPtr other_weak_ptr);
@@ -41,11 +41,11 @@ class LeafNodeBox : public NodeDrawable {
  public:
   /** Static method which create a new box defined by the half_axis vector
    */
-  static LeafNodeBoxPtr_t create(const std::string &name,
-                                 const osgVector3 &half_axis);
-  static LeafNodeBoxPtr_t create(const std::string &name,
-                                 const osgVector3 &half_axis,
-                                 const osgVector4 &color);
+  static LeafNodeBoxPtr_t create(const std::string& name,
+                                 const osgVector3& half_axis);
+  static LeafNodeBoxPtr_t create(const std::string& name,
+                                 const osgVector3& half_axis,
+                                 const osgVector4& color);
 
   /** Static method for creating a clone of box other with the copy constructor
    */
@@ -67,7 +67,7 @@ class LeafNodeBox : public NodeDrawable {
   /** Fix the new half axis of the box
    * Note : half axis must be positive vector
    */
-  void setHalfAxis(const osgVector3 &half_axis);
+  void setHalfAxis(const osgVector3& half_axis);
 
   osgVector3 getHalfAxis() const { return box_ptr_->getHalfLengths(); }
 

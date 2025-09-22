@@ -25,7 +25,7 @@ class LedIndicator : public QWidget {
   Q_OBJECT
 
  public:
-  LedIndicator(QWidget *parent = 0);
+  LedIndicator(QWidget* parent = 0);
 
  signals:
   void switched(bool on);
@@ -36,8 +36,8 @@ class LedIndicator : public QWidget {
   void switchLed(bool on);
 
  protected:
-  void paintEvent(QPaintEvent *);
-  void mouseReleaseEvent(QMouseEvent *event);
+  void paintEvent(QPaintEvent*);
+  void mouseReleaseEvent(QMouseEvent* event);
 
  private:
   bool lit;

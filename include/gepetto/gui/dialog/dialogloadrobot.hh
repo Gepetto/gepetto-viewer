@@ -46,7 +46,7 @@ class DialogLoadRobot : public QDialog {
           rootJointType_(rootJointType) {}
   };
 
-  explicit DialogLoadRobot(QWidget *parent = 0);
+  explicit DialogLoadRobot(QWidget* parent = 0);
   ~DialogLoadRobot();
 
   static void addRobotDefinition(QString name, QString robotName,
@@ -62,8 +62,8 @@ class DialogLoadRobot : public QDialog {
   void robotSelect(int index);
 
  private:
-  ::Ui::DialogLoadRobot *ui_;
-  QComboBox *defs_;
+  ::Ui::DialogLoadRobot* ui_;
+  QComboBox* defs_;
   RobotDefinition selected_;
 
   static QList<RobotDefinition> definitions;
