@@ -8,17 +8,17 @@ class QCP_LIB_DECL QCPItemRichText : public QCPItemText {
   Q_OBJECT
   Q_PROPERTY(QString text READ text WRITE setText)
  public:
-  QCPItemRichText(QCustomPlot *parentPlot) : QCPItemText(parentPlot) {}
+  QCPItemRichText(QCustomPlot* parentPlot) : QCPItemText(parentPlot) {}
   virtual ~QCPItemRichText() {}
 
-  void setText(const QString &text) {
+  void setText(const QString& text) {
     QCPItemText::setText(text);
     doc.setHtml(text);
   }
 
  protected:
   // reimplemented virtual methods:
-  virtual void draw(QCPPainter *painter) {
+  virtual void draw(QCPPainter* painter) {
     QPointF pos(position->pixelPoint());
     QTransform transform = painter->transform();
     transform.translate(pos.x(), pos.y());

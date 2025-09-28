@@ -24,10 +24,10 @@
 #ifdef __APPLE__
 // Following issue presented in
 // https://stackoverflow.com/questions/26419420/define-gldebugmessagecallbackarb-callback-method
-typedef void(APIENTRY *GLDEBUGPROC)(GLenum source, GLenum type, GLuint id,
+typedef void(APIENTRY* GLDEBUGPROC)(GLenum source, GLenum type, GLuint id,
                                     GLenum severity, GLsizei length,
-                                    const GLchar *message,
-                                    const GLvoid *userParam);
+                                    const GLchar* message,
+                                    const GLvoid* userParam);
 #endif
 #endif
 #include <gepetto/viewer/fwd.h>
@@ -43,7 +43,7 @@ class OSGWidget;
 class PickHandler;
 class BodyTreeWidget;
 class BodyTreeItem;
-typedef std::vector<BodyTreeItem *> BodyTreeItems_t;
+typedef std::vector<BodyTreeItem*> BodyTreeItems_t;
 class ShortcutFactory;
 class SelectionHandler;
 class SelectionEvent;

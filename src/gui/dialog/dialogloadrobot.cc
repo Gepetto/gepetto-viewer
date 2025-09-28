@@ -32,7 +32,7 @@ QList<DialogLoadRobot::RobotDefinition> DialogLoadRobot::definitions =
     QList<DialogLoadRobot::RobotDefinition>()
     << DialogLoadRobot::RobotDefinition();
 
-DialogLoadRobot::DialogLoadRobot(QWidget *parent)
+DialogLoadRobot::DialogLoadRobot(QWidget* parent)
     : QDialog(parent), ui_(new ::Ui::DialogLoadRobot) {
   ui_->setupUi(this);
   ui_->groupBox_details->setVisible(false);

@@ -30,7 +30,7 @@ class DialogLoadEnvironment : public QDialog {
   Q_OBJECT
 
  public:
-  explicit DialogLoadEnvironment(QWidget *parent = 0);
+  explicit DialogLoadEnvironment(QWidget* parent = 0);
   ~DialogLoadEnvironment();
 
   struct EnvironmentDefinition {
@@ -59,8 +59,8 @@ class DialogLoadEnvironment : public QDialog {
   void envSelect(int index);
 
  private:
-  ::Ui::DialogLoadEnvironment *ui_;
-  QComboBox *defs_;
+  ::Ui::DialogLoadEnvironment* ui_;
+  QComboBox* defs_;
   EnvironmentDefinition selected_;
 
   static QList<EnvironmentDefinition> definitions;

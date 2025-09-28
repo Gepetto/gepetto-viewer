@@ -43,8 +43,8 @@ void LeafNodeCylinder::init() {
                                              ::osg::StateAttribute::ON);
 }
 
-LeafNodeCylinder::LeafNodeCylinder(const std::string &name, const float &radius,
-                                   const float &height)
+LeafNodeCylinder::LeafNodeCylinder(const std::string& name, const float& radius,
+                                   const float& height)
     : NodeDrawable(name) {
   init();
   setRadius(radius);
@@ -52,8 +52,8 @@ LeafNodeCylinder::LeafNodeCylinder(const std::string &name, const float &radius,
   setColor(osgVector4(1., 1., 1., 1.));
 }
 
-LeafNodeCylinder::LeafNodeCylinder(const std::string &name, const float &radius,
-                                   const float &height, const osgVector4 &color)
+LeafNodeCylinder::LeafNodeCylinder(const std::string& name, const float& radius,
+                                   const float& height, const osgVector4& color)
     : NodeDrawable(name) {
   init();
   setRadius(radius);
@@ -61,7 +61,7 @@ LeafNodeCylinder::LeafNodeCylinder(const std::string &name, const float &radius,
   setColor(color);
 }
 
-LeafNodeCylinder::LeafNodeCylinder(const LeafNodeCylinder &other)
+LeafNodeCylinder::LeafNodeCylinder(const LeafNodeCylinder& other)
     : NodeDrawable(other) {
   init();
   setRadius(other.getRadius());
@@ -77,9 +77,9 @@ void LeafNodeCylinder::initWeakPtr(LeafNodeCylinderWeakPtr other_weak_ptr) {
 
 /* Declaration of protected function members */
 
-LeafNodeCylinderPtr_t LeafNodeCylinder::create(const std::string &name,
-                                               const float &radius,
-                                               const float &height) {
+LeafNodeCylinderPtr_t LeafNodeCylinder::create(const std::string& name,
+                                               const float& radius,
+                                               const float& height) {
   LeafNodeCylinderPtr_t shared_ptr(new LeafNodeCylinder(name, radius, height));
 
   // Add reference to itself
@@ -88,10 +88,10 @@ LeafNodeCylinderPtr_t LeafNodeCylinder::create(const std::string &name,
   return shared_ptr;
 }
 
-LeafNodeCylinderPtr_t LeafNodeCylinder::create(const std::string &name,
-                                               const float &radius,
-                                               const float &height,
-                                               const osgVector4 &color) {
+LeafNodeCylinderPtr_t LeafNodeCylinder::create(const std::string& name,
+                                               const float& radius,
+                                               const float& height,
+                                               const osgVector4& color) {
   LeafNodeCylinderPtr_t shared_ptr(
       new LeafNodeCylinder(name, radius, height, color));
 
@@ -123,12 +123,12 @@ LeafNodeCylinderPtr_t LeafNodeCylinder::self(void) const {
   return weak_ptr_.lock();
 }
 
-void LeafNodeCylinder::setRadius(const float &radius) {
+void LeafNodeCylinder::setRadius(const float& radius) {
   cylinder_ptr_->setRadius(radius);
   redrawShape();
 }
 
-void LeafNodeCylinder::setHeight(const float &height) {
+void LeafNodeCylinder::setHeight(const float& height) {
   cylinder_ptr_->setHeight(height);
   redrawShape();
 }

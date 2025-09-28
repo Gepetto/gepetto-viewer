@@ -29,7 +29,7 @@ QList<DialogLoadEnvironment::EnvironmentDefinition>
         QList<DialogLoadEnvironment::EnvironmentDefinition>()
         << DialogLoadEnvironment::EnvironmentDefinition();
 
-DialogLoadEnvironment::DialogLoadEnvironment(QWidget *parent)
+DialogLoadEnvironment::DialogLoadEnvironment(QWidget* parent)
     : QDialog(parent), ui_(new ::Ui::DialogLoadEnvironment) {
   ui_->setupUi(this);
   ui_->groupBox_details->setVisible(false);
