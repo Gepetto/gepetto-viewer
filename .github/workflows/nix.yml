@@ -1,18 +1,17 @@
 name: "CI - Nix"
-
 on:
   push:
     branches:
       - devel
       - master
+      - main
   pull_request:
     branches:
       - devel
       - master
-
+      - main
 jobs:
   nix:
-    name: "Nix build on ${{ matrix.os }}"
     runs-on: "${{ matrix.os }}-latest"
     strategy:
       matrix:
@@ -24,7 +23,7 @@ jobs:
         with:
           name: gepetto
           authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-      - run: nix build -L
+      - run: nix flake check -L
   check:
     if: always()
     name: check-macos-linux-nix
