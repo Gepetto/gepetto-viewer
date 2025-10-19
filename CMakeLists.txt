@@ -234,5 +234,4 @@ install(
 pkg_config_append_libs(${PROJECT_NAME})
 # }}}
 
-install(FILES package.xml DESTINATION share/${PROJECT_NAME})
 # vim: foldmethod=marker foldlevel=0
