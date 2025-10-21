@@ -23,27 +23,32 @@
           ...
         }:
         {
-          packages = {
-            default = self'.packages.gepetto-viewer;
-            gepetto-viewer = pkgs.python3Packages.gepetto-viewer.overrideAttrs {
-              src = lib.fileset.toSource {
-                root = ./.;
-                fileset = lib.fileset.unions [
-                  ./cmake-module
-                  ./CMakeLists.txt
-                  ./doc
-                  ./fonts
-                  ./include
-                  ./package.xml
-                  ./plugins
-                  ./pyplugins
-                  ./res
-                  ./src
-                  ./tests
-                ];
+          packages =
+            let
+              override = {
+                src = lib.fileset.toSource {
+                  root = ./.;
+                  fileset = lib.fileset.unions [
+                    ./cmake-module
+                    ./CMakeLists.txt
+                    ./doc
+                    ./fonts
+                    ./include
+                    ./package.xml
+                    ./plugins
+                    ./pyplugins
+                    ./res
+                    ./src
+                    ./tests
+                  ];
+                };
               };
+            in
+            {
+              default = self'.packages.py-gepetto-viewer;
+              gepetto-viewer = pkgs.gepetto-viewer.overrideAttrs override;
+              py-gepetto-viewer = pkgs.python3Packages.gepetto-viewer.overrideAttrs override;
             };
-          };
         };
     };
 }
