@@ -2,38 +2,53 @@
   description = "An user-friendly Graphical Interface";
 
   inputs = {
-    flake-parts.url = "github:hercules-ci/flake-parts";
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    gepetto.url = "github:gepetto/nix";
+    flake-parts.follows = "gepetto/flake-parts";
+    nixpkgs.follows = "gepetto/nixpkgs";
+    nix-ros-overlay.follows = "gepetto/nix-ros-overlay";
+    systems.follows = "gepetto/systems";
+    treefmt-nix.follows = "gepetto/treefmt-nix";
   };
 
   outputs =
     inputs:
     inputs.flake-parts.lib.mkFlake { inherit inputs; } {
-      systems = inputs.nixpkgs.lib.systems.flakeExposed;
+      systems = import inputs.systems;
+      imports = [ inputs.gepetto.flakeModule ];
       perSystem =
-        { pkgs, self', ... }:
         {
-          packages = {
-            default = self'.packages.gepetto-viewer;
-            gepetto-viewer = pkgs.python3Packages.gepetto-viewer.overrideAttrs (_: {
-              src = pkgs.lib.fileset.toSource {
-                root = ./.;
-                fileset = pkgs.lib.fileset.unions [
-                  ./cmake-module
-                  ./CMakeLists.txt
-                  ./doc
-                  ./fonts
-                  ./include
-                  ./package.xml
-                  ./plugins
-                  ./pyplugins
-                  ./res
-                  ./src
-                  ./tests
-                ];
+          lib,
+          pkgs,
+          self',
+          ...
+        }:
+        {
+          packages =
+            let
+              override = {
+                src = lib.fileset.toSource {
+                  root = ./.;
+                  fileset = lib.fileset.unions [
+                    ./cmake-module
+                    ./CMakeLists.txt
+                    ./doc
+                    ./fonts
+                    ./include
+                    ./package.xml
+                    ./plugins
+                    ./pyplugins
+                    ./res
+                    ./src
+                    ./tests
+                  ];
+                };
               };
-            });
-          };
+            in
+            {
+              default = self'.packages.py-gepetto-viewer;
+              gepetto-viewer = pkgs.gepetto-viewer.overrideAttrs override;
+              py-gepetto-viewer = pkgs.python3Packages.gepetto-viewer.overrideAttrs override;
+            };
         };
     };
 }
