@@ -32,7 +32,6 @@
                 ./include
                 ./package.xml
                 ./plugins
-                ./pyplugins
                 ./res
                 ./src
                 ./tests
@@ -44,9 +43,8 @@
           { pkgs, self', ... }:
           {
             packages = {
-              default = self'.packages.py-gepetto-viewer;
+              default = self'.packages.gepetto-viewer;
               gepetto-viewer = pkgs.gepetto-viewer;
-              py-gepetto-viewer = pkgs.python3Packages.gepetto-viewer;
             };
           };
       }

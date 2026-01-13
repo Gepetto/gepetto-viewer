@@ -44,16 +44,6 @@ have to be available on your machine.
    - pkg-config
    - usual compilation tools (GCC/G++, make, etc.)
 
-## Optional dependencies
-
-- [PythonQt]: add a Python scripting interface to gepetto-viewer.
-  The dependency can be made mandatory with CMake variable `GEPETTO_GUI_HAS_PYTHONQT`.
-  When [PythonQt] is available:
-  - [QGV]: for the bindings of QGV in the Python interface.
-    The dependency can be made mandatory with CMake variable `BUILD_PY_QGV`.
-  - [QCustomPlot]: for the bindings of QCustomPlot in the Python interface.
-    The dependency can be made mandatory with CMake variable `BUILD_PY_QCUSTOM_PLOT`.
-
 ## Environment variables and plugins
 
 When launching gepetto-gui the program tries to load the plugin omniorbserver.so. In order to specify the default path of the plugins,
@@ -63,6 +53,5 @@ the variable `GEPETTO_GUI_PLUGIN_DIRS` can be set using the following command:
 export GEPETTO_GUI_PLUGIN_DIRS=${CMAKE_INSTALL_PREFIX}/lib
 ```
 
-[PythonQt]: https://github.com/gepetto/pythonqt
 [QGV]: https://github.com/gepetto/qgv
 [QCustomPlot]: https://www.qcustomplot.com/

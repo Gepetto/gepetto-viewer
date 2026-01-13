@@ -25,13 +25,8 @@
 
   <depend>libopenscenegraph</depend>
   <depend>ffmpeg</depend>
-  <depend>pyqt5-dev-tools</depend>
   <!-- Required by CMake, but not available in rosdep -->
   <!-- <depend>qt5-osgqt</depend> -->
-
-  <!-- The following tags are recommended by REP-136 -->
-  <depend condition="$ROS_PYTHON_VERSION == 2">python</depend>
-  <depend condition="$ROS_PYTHON_VERSION == 3">python3</depend>
 
   <export>
     <build_type>cmake</build_type>

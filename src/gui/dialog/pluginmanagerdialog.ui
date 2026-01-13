@@ -57,43 +57,6 @@
     </widget>
    </item>
    <item>
-    <widget class="QLabel" name="pyPluginHeader">
-     <property name="text">
-      <string>Python plugins</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QTableWidget" name="pypluginList">
-     <property name="contextMenuPolicy">
-      <enum>Qt::CustomContextMenu</enum>
-     </property>
-     <property name="editTriggers">
-      <set>QAbstractItemView::NoEditTriggers</set>
-     </property>
-     <column>
-      <property name="text">
-       <string>Name</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>File</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Version</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>FullPath</string>
-      </property>
-     </column>
-    </widget>
-   </item>
-   <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
       <widget class="QPushButton" name="declareAllPluginsButton">

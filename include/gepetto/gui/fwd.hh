@@ -58,9 +58,6 @@ class ViewerCorbaServer;
 class WindowsManager;
 typedef viewer::shared_ptr<WindowsManager> WindowsManagerPtr_t;
 
-#if GEPETTO_GUI_HAS_PYTHONQT
-class PythonWidget;
-#endif
 }  // namespace gui
 }  // namespace gepetto
 

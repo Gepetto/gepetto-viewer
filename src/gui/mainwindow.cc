@@ -29,6 +29,7 @@
 #include <gepetto/gui/config-dep.hh>
 #include <osg/Version>
 
+#include "../log.hh"
 #include "gepetto/gui/action-search-bar.hh"
 #include "gepetto/gui/dialog/dialogloadenvironment.hh"
 #include "gepetto/gui/dialog/dialogloadrobot.hh"
@@ -39,12 +40,6 @@
 #include "gepetto/gui/shortcut-factory.hh"
 #include "gepetto/gui/tree-item.hh"
 #include "gepetto/gui/windows-manager.hh"
-
-#if GEPETTO_GUI_HAS_PYTHONQT
-#include <gepetto/gui/pythonwidget.hh>
-#endif
-
-#include "../log.hh"
 
 namespace gepetto {
 namespace gui {
@@ -75,9 +70,6 @@ MainWindow::MainWindow(Settings* settings, QWidget* parent)
 
   collisionLabel_ = new QLabel("No collisions.");
   shortcutFactory_ = new ShortcutFactory;
-#if GEPETTO_GUI_HAS_PYTHONQT
-  pythonWidget_ = new PythonWidget(this);
-#endif
   setupInterface();
   connect(ui_->actionChange_shortcut, SIGNAL(triggered()), shortcutFactory_,
           SLOT(open()));
@@ -91,10 +83,6 @@ MainWindow::MainWindow(Settings* settings, QWidget* parent)
 
 MainWindow::~MainWindow() {
   delete shortcutFactory_;
-#if GEPETTO_GUI_HAS_PYTHONQT
-  removeDockWidget(pythonWidget_);
-  delete pythonWidget_;
-#endif
   pluginManager()->clearPlugins();
   osgViewerManagers_.reset();
   worker_.quit();
@@ -334,11 +322,7 @@ void MainWindow::about() {
           "<li>Compiled with Qt %3, run with Qt %4</li>"
           "<li>Compiled with OpenSceneGraph version " _osg_version_str
           ", run with version %5</li>"
-#if GEPETTO_GUI_HAS_PYTHONQT
-          "<li>Compiled with PythonQt.</li>"
-#else
           "<li>Compiled without PythonQt</li>"
-#endif
           "<li></li>"
           "<li></li>"
           "</ul></p>"
@@ -458,11 +442,6 @@ void MainWindow::setupInterface() {
   ui_->dockWidget_log->toggleViewAction()->setShortcut(Qt::CTRL + Qt::ALT +
                                                        Qt::Key_L);
   ui_->menuWindow->addAction(ui_->dockWidget_log->toggleViewAction());
-#if GEPETTO_GUI_HAS_PYTHONQT
-  insertDockWidget(pythonWidget_, Qt::BottomDockWidgetArea, Qt::Horizontal);
-  registerShortcut("Python console", "Toggle view",
-                   pythonWidget_->toggleViewAction());
-#endif
 
   // Add QActions to split dock widgets
   QAction* vsplit = new QAction("Split focused dock widget vertically", this);

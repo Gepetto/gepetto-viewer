@@ -23,7 +23,6 @@ set(PROJECT_USE_CMAKE_EXPORT TRUE)
 set(PROJECT_USE_KEYWORD_LINK_LIBRARIES TRUE)
 set(CXX_DISABLE_WERROR TRUE)
 set(DOXYGEN_USE_TEMPLATE_CSS TRUE)
-set(PYTHON_EXPORT_DEPENDENCY TRUE)
 
 # Check if the submodule cmake have been initialized
 set(JRL_CMAKE_MODULES "${CMAKE_CURRENT_LIST_DIR}/cmake")
@@ -60,7 +59,6 @@ include("${JRL_CMAKE_MODULES}/base.cmake")
 include("${JRL_CMAKE_MODULES}/boost.cmake")
 include("${JRL_CMAKE_MODULES}/ide.cmake")
 include("${JRL_CMAKE_MODULES}/apple.cmake")
-include("${JRL_CMAKE_MODULES}/python.cmake")
 include("${JRL_CMAKE_MODULES}/cxx-standard.cmake")
 include(cmake-module/qt.cmake)
 include(cmake-module/osgqt.cmake)
@@ -149,43 +147,10 @@ add_qt_dependency()
 add_optional_dependency("qgv")
 find_package(qgv QUIET)
 
-# {{{ PythonQt settings
-findpython()
-
-set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake-module/ ${CMAKE_MODULE_PATH})
-# If GEPETTO_GUI_HAS_PYTHONQT is set to TRUE, then PythonQt is required.
-if(DEFINED GEPETTO_GUI_HAS_PYTHONQT AND GEPETTO_GUI_HAS_PYTHONQT)
-  find_package(
-    PythonQt REQUIRED
-    COMPONENTS QtAll
-    REQUIRED)
-else()
-  find_package(PythonQt COMPONENTS QtAll)
-endif()
-# Declare option GEPETTO_GUI_HAS_PYTHONQT If GEPETTO_GUI_HAS_PYTHONQT was
-# defined, this does not change its value.
-if(PythonQt_FOUND AND PythonQt_QtAll_FOUND)
-  set(GEPETTO_GUI_HAS_PYTHONQT
-      TRUE
-      CACHE BOOL "Use PythonQt dependency")
-else()
-  set(GEPETTO_GUI_HAS_PYTHONQT
-      FALSE
-      CACHE BOOL "Use PythonQt dependency")
-endif()
-
-if(GEPETTO_GUI_HAS_PYTHONQT)
-  set(${PROJECT_NAME}_HEADERS_MOC
-      ${${PROJECT_NAME}_HEADERS_MOC}
-      ${CMAKE_SOURCE_DIR}/include/gepetto/gui/pythonwidget.hh)
-endif(GEPETTO_GUI_HAS_PYTHONQT)
-# }}}
-
 find_package(
   Boost REQUIRED
   COMPONENTS
   COMPONENTS unit_test_framework)
-search_for_boost_python(REQUIRED)
 
 # Check if we are on a platform with ffmpeg or avconv
 find_program(FFMPEG ffmpeg)
@@ -209,7 +174,6 @@ set(${PROJECT_NAME}_HEADERS ${${PROJECT_NAME}_HEADERS_MOC}
 
 add_subdirectory(src)
 add_subdirectory(plugins)
-add_subdirectory(pyplugins)
 add_subdirectory(tests)
 
 # {{{ Packaging

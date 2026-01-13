@@ -18,15 +18,11 @@
 
 #include <QDebug>
 #include <QMenu>
+#include <iostream>
 
 #include "gepetto/gui/mainwindow.hh"
 #include "gepetto/gui/plugin-interface.hh"
 #include "ui_pluginmanagerdialog.h"
-#if GEPETTO_GUI_HAS_PYTHONQT
-#include "gepetto/gui/pythonwidget.hh"
-#endif
-
-#include <iostream>
 
 namespace gepetto {
 namespace gui {
@@ -40,12 +36,6 @@ QIcon PluginManager::icon(const QPluginLoader* pl) {
     }
     return QApplication::style()->standardIcon(QStyle::SP_MessageBoxWarning);
   }
-  return QApplication::style()->standardIcon(QStyle::SP_MessageBoxCritical);
-}
-
-QIcon pyicon(bool loaded) {
-  if (loaded)
-    return QApplication::style()->standardIcon(QStyle::SP_DialogOkButton);
   return QApplication::style()->standardIcon(QStyle::SP_MessageBoxCritical);
 }
 
@@ -155,117 +145,6 @@ void PluginManager::clearPlugins() {
   }
 }
 
-void PluginManager::declareAllPyPlugins() {
-  QSettings settings(QSettings::SystemScope,
-                     QCoreApplication::organizationName(), "pyplugin");
-  QDir pypluginConf(settings.fileName() + ".d");
-
-  qDebug() << "Looking for declared pyplugins into"
-           << pypluginConf.absolutePath();
-  QStringList confFiles = pypluginConf.entryList(QDir::Files);
-  foreach (const QString& conf, confFiles) {
-    QFile file(pypluginConf.filePath(conf));
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-      qDebug() << "Could not open" << file.fileName();
-      continue;
-    }
-
-    if (file.atEnd()) {
-      qDebug() << "Error: Empty file: " << file.fileName();
-      continue;
-    }
-    qDebug() << "Found" << file.readLine();
-    if (file.atEnd()) {
-      qDebug() << "Error: Does not contain a module: " << file.fileName();
-      continue;
-    }
-    QString name(file.readLine());
-    if (!file.atEnd()) {
-      qDebug() << "Error: Should contain only two lines: " << file.fileName();
-      continue;
-    }
-    if (!pyplugins_.contains(name)) {
-      declarePyPlugin(name);
-    }
-  }
-}
-
-bool PluginManager::declarePyPlugin(const QString& name) {
-  if (!pyplugins_.contains(name)) {
-    if (name.endsWith(".py")) {
-      QFileInfo fi(name);
-      QString moduleName = fi.baseName();
-      QString script;
-      if (fi.isAbsolute())
-        script = name;
-      else
-        script = QDir::currentPath() + QDir::separator() + name;
-      pyplugins_[name] = script;
-    } else
-      pyplugins_[name] = name;
-    return true;
-  }
-  qDebug() << "Python plugin" << name << "already declared.";
-  return false;
-}
-
-bool PluginManager::loadPyPlugin(const QString& name) {
-  if (!pyplugins_.contains(name)) {
-    qDebug() << "Python plugin" << name << "not declared.";
-    return false;
-  }
-  MainWindow* main = MainWindow::instance();
-  const QString& pyfile = pyplugins_[name];
-
-#if GEPETTO_GUI_HAS_PYTHONQT
-  PythonWidget* pw = main->pythonWidget();
-  if (pyfile.endsWith(".py")) {
-    qDebug() << "Loading" << pyfile << "into module" << name;
-    pw->loadScriptPlugin(name, pyfile);
-  } else
-    pw->loadModulePlugin(name);
-  return true;
-#else
-  main->logError(
-      "gepetto-viewer was compiled without GEPETTO_GUI_HAS_"
-      "PYTHONQT flag. Cannot not load Python plugin " +
-      name);
-  return false;
-#endif
-}
-
-bool PluginManager::unloadPyPlugin(const QString& name) {
-  MainWindow* main = MainWindow::instance();
-#if GEPETTO_GUI_HAS_PYTHONQT
-  PythonWidget* pw = main->pythonWidget();
-  pw->unloadModulePlugin(name);
-  return true;
-#else
-  main->logError(
-      "gepetto-viewer was compiled without GEPETTO_GUI_HAS_"
-      "PYTHONQT flag. Cannot not unload Python plugin " +
-      name);
-  return false;
-#endif
-}
-
-bool PluginManager::isPyPluginLoaded(const QString& name) {
-#if GEPETTO_GUI_HAS_PYTHONQT
-  MainWindow* main = MainWindow::instance();
-  if (!main) return false;
-  PythonWidget* pw = main->pythonWidget();
-  return pw->hasPlugin(name);
-#else
-  return false;
-#endif
-}
-
-void PluginManager::clearPyPlugins() {
-  foreach (QString p, pyplugins_.keys()) {
-    unloadPyPlugin(p);
-  }
-}
-
 PluginManagerDialog::PluginManagerDialog(PluginManager* pm, QWidget* parent)
     : QDialog(parent), ui_(new ::Ui::PluginManagerDialog), pm_(pm) {
   ui_->setupUi(this);
@@ -280,13 +159,6 @@ PluginManagerDialog::PluginManagerDialog(PluginManager* pm, QWidget* parent)
           SLOT(onItemChanged(QTableWidgetItem*, QTableWidgetItem*)));
   connect(ui_->pluginList, SIGNAL(customContextMenuRequested(QPoint)),
           SLOT(contextMenu(QPoint)));
-
-  // Python plugin list
-  // ui_->pypluginList->setColumnHidden(P_FILE, true);
-  ui_->pypluginList->setColumnHidden(P_FULLPATH, true);
-
-  connect(ui_->pypluginList, SIGNAL(customContextMenuRequested(QPoint)),
-          SLOT(pyContextMenu(QPoint)));
 
   // Buttons
   connect(ui_->declareAllPluginsButton, SIGNAL(clicked()), SLOT(declareAll()));
@@ -332,37 +204,8 @@ void PluginManagerDialog::unload(const QString& name) {
   updateList();
 }
 
-void PluginManagerDialog::pyContextMenu(const QPoint& pos) {
-  int row = ui_->pypluginList->rowAt(pos.y());
-  if (row == -1) return;
-  QString key = ui_->pypluginList->item(row, P_NAME)->text();
-  QMenu contextMenu(tr("PythonPlugin"), ui_->pypluginList);
-  QSignalMapper sm;
-  if (pm_->isPyPluginLoaded(key)) {
-    QAction* unload = contextMenu.addAction("&Unload", &sm, SLOT(map()));
-    sm.setMapping(unload, key);
-    connect(&sm, SIGNAL(mapped(QString)), this, SLOT(pyUnload(QString)));
-  } else {
-    QAction* load = contextMenu.addAction("&Load", &sm, SLOT(map()));
-    sm.setMapping(load, key);
-    connect(&sm, SIGNAL(mapped(QString)), this, SLOT(pyLoad(QString)));
-  }
-  contextMenu.exec(ui_->pypluginList->mapToGlobal(pos));
-}
-
-void PluginManagerDialog::pyLoad(const QString& name) {
-  pm_->loadPyPlugin(name);
-  updateList();
-}
-
-void PluginManagerDialog::pyUnload(const QString& name) {
-  pm_->unloadPyPlugin(name);
-  updateList();
-}
-
 void PluginManagerDialog::declareAll() {
   pm_->declareAllPlugins();
-  pm_->declareAllPyPlugins();
   updateList();
 }
 
@@ -377,7 +220,6 @@ const int PluginManagerDialog::P_FULLPATH = 3;
 
 void PluginManagerDialog::updateList() {
   while (ui_->pluginList->rowCount() > 0) ui_->pluginList->removeRow(0);
-  while (ui_->pypluginList->rowCount() > 0) ui_->pypluginList->removeRow(0);
   for (PluginManager::Map::const_iterator p = pm_->plugins().constBegin();
        p != pm_->plugins().constEnd(); p++) {
     QString name = p.key(), filename = p.key(),
@@ -401,23 +243,6 @@ void PluginManagerDialog::updateList() {
                              new QTableWidgetItem(version));
     ui_->pluginList->setItem(ui_->pluginList->rowCount() - 1, P_FULLPATH,
                              new QTableWidgetItem(fullpath));
-  }
-  ui_->pluginList->resizeColumnsToContents();
-
-  for (PluginManager::PyMap::const_iterator p = pm_->pyplugins().constBegin();
-       p != pm_->pyplugins().constEnd(); p++) {
-    QString name = p.key(), filename = p.value(), version = "";
-    QIcon icon = pyicon(pm_->isPyPluginLoaded(p.key()));
-
-    ui_->pypluginList->insertRow(ui_->pypluginList->rowCount());
-    ui_->pypluginList->setItem(ui_->pypluginList->rowCount() - 1, P_NAME,
-                               new QTableWidgetItem(icon, name));
-    ui_->pypluginList->setItem(ui_->pypluginList->rowCount() - 1, P_FILE,
-                               new QTableWidgetItem(filename));
-    // ui_->pypluginList->setItem(ui_->pypluginList->rowCount() - 1, P_VERSION,
-    // new QTableWidgetItem (version));
-    // ui_->pypluginList->setItem(ui_->pypluginList->rowCount() - 1, P_FULLPATH,
-    // new QTableWidgetItem (fullpath));
   }
   ui_->pluginList->resizeColumnsToContents();
 }

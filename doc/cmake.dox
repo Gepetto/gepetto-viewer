@@ -53,14 +53,6 @@ GEPETTO_GUI_PLUGIN(pluginskeleton
   )
 \endcode
 
-\par Declare a Python plugin:
-
-\code{.py}
-# pythonfile refers to the path to .py file from a
-# path of PYTHONPATH
-GEPETTO_GUI_PYPLUGIN (pythonfile)
-\endcode
-
 \}
 
 */

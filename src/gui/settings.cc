@@ -25,10 +25,6 @@
 #include <osg/ArgumentParser>
 #include <osg/DisplaySettings>
 
-#if GEPETTO_GUI_HAS_PYTHONQT
-#include <gepetto/gui/pythonwidget.hh>
-#endif
-
 #include "../log.hh"
 
 namespace gepetto {
@@ -128,12 +124,6 @@ int Settings::initSettings(int argc, char* argv[]) {
   au->addCommandLineOption(
       "--add-env", "Add an environment (a list of comma sperated string)");
   au->addCommandLineOption("-p or --load-plugin", "load the plugin");
-#if GEPETTO_GUI_HAS_PYTHONQT
-  au->addCommandLineOption("-q or --load-pyplugin",
-                           "load the PythonQt module as a plugin");
-  au->addCommandLineOption("-x or --run-pyscript",
-                           "run a script into the PythonQt console");
-#endif
   au->addCommandLineOption("-P or --no-plugin", "do not load any plugin");
   au->addCommandLineOption("-w or --auto-write-settings",
                            "write the settings in the configuration file");
@@ -254,20 +244,12 @@ void Settings::initPlugins() {
   foreach (QString name, pyplugins_) {
     pluginManager_.loadPyPlugin(name);
   }
-#if GEPETTO_GUI_HAS_PYTHONQT
-  PythonWidget* pw = mw->pythonWidget();
-  // TODO Wouldn't it be better to do this later ?
-  foreach (QString fileName, pyscripts_) {
-    pw->runScript(fileName);
-  }
-#else
   foreach (QString fileName, pyscripts_) {
     logError(
         "gepetto-viewer was compiled without GEPETTO_GUI_HAS_"
         "PYTHONQT flag. Cannot not load Python script " +
         fileName);
   }
-#endif
 }
 
 void Settings::restoreState() const {
@@ -284,9 +266,6 @@ void Settings::restoreState() const {
     mw->centralWidget()->setVisible(
         settings.value("centralWidgetVisibility", true).toBool());
     settings.endGroup();
-#if GEPETTO_GUI_HAS_PYTHONQT
-    mw->pythonWidget()->restoreHistory(settings);
-#endif
   }
 }
 
@@ -317,9 +296,6 @@ void Settings::saveState() const {
     settings.setValue("centralWidgetVisibility",
                       mw->centralWidget()->isVisible());
     settings.endGroup();
-#if GEPETTO_GUI_HAS_PYTHONQT
-    mw->pythonWidget()->saveHistory(settings);
-#endif
   }
 }
 

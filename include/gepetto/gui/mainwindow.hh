@@ -82,11 +82,6 @@ class MainWindow : public QMainWindow {
 
   QMenu* pluginMenu() const;
 
-#if GEPETTO_GUI_HAS_PYTHONQT
-  /// Get the python widget.
-  PythonWidget* pythonWidget() { return pythonWidget_; }
-#endif
-
  signals:
   /// Triggered when an OSGWidget is created.
   void viewCreated(OSGWidget* widget);
@@ -224,9 +219,6 @@ class MainWindow : public QMainWindow {
   ::Ui::MainWindow* ui_;
   OSGWidget* centralWidget_;
   QList<OSGWidget*> osgWindows_;
-#if GEPETTO_GUI_HAS_PYTHONQT
-  PythonWidget* pythonWidget_;
-#endif
   ShortcutFactory* shortcutFactory_;
   SelectionHandler* selectionHandler_;
 

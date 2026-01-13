@@ -78,19 +78,6 @@ add_header_group(HEADERS)
 add_source_group(${LIBRARY_NAME}_SOURCES)
 # }}}
 
-# {{{ Configure PythonQt
-if(GEPETTO_GUI_HAS_PYTHONQT)
-  include_directories(SYSTEM "${PYTHON_INCLUDE_DIR}" "${PYTHONQT_INCLUDE_DIR}")
-  set(${PROJECT_NAME}_SOURCES ${${PROJECT_NAME}_SOURCES} gui/pythonwidget.cc
-                              gui/python-bindings.cc gui/python-decorator.hh)
-  set(${PROJECT_NAME}_MOC ${${PROJECT_NAME}_HEADERS_MOC}
-                          gui/python-decorator.hh)
-else(GEPETTO_GUI_HAS_PYTHONQT)
-  message(STATUS "Skipping PythonQt settings")
-  set(${PROJECT_NAME}_MOC ${${PROJECT_NAME}_HEADERS_MOC})
-endif(GEPETTO_GUI_HAS_PYTHONQT)
-# }}}
-
 # {{{ Configure Qt
 if(PROJECT_USE_QT4)
   qt4_wrap_cpp(${PROJECT_NAME}_HEADERS_MOCED ${${PROJECT_NAME}_MOC})
@@ -114,9 +101,6 @@ if(NOT ${ENABLE_QT_DEBUG})
     ${LIBRARY_NAME} PRIVATE -DQT_NO_DEBUG_OUTPUT -DQT_NO_INFO_OUTPUT
                             -DQT_NO_WARNING_OUTPUT)
 endif(NOT ${ENABLE_QT_DEBUG})
-if(GEPETTO_GUI_HAS_PYTHONQT)
-  target_link_libraries(${LIBRARY_NAME} PUBLIC ${PYTHON_LIBRARY})
-endif(GEPETTO_GUI_HAS_PYTHONQT)
 
 pkg_config_use_dependency(${LIBRARY_NAME} openscenegraph)
 pkg_config_use_dependency(${LIBRARY_NAME} ${OSGQT_DEPENDENCY})
@@ -126,16 +110,12 @@ target_compile_definitions(
   ${LIBRARY_NAME}
   PRIVATE -DFFMPEG="${FFMPEG}"
   PUBLIC ${QT_DEFINITIONS})
-target_link_libraries(${LIBRARY_NAME} PUBLIC ${PROJECT_QT_LIBS}
-                                             ${PYTHONQT_LIBRARIES})
+target_link_libraries(${LIBRARY_NAME} PUBLIC ${PROJECT_QT_LIBS})
 target_include_directories(
   ${LIBRARY_NAME}
   PUBLIC $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include> ${Boost_INCLUDE_DIR}
          ${OPENSCENEGRAPH_INCLUDE_DIRS}
          $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-if(GEPETTO_GUI_HAS_PYTHONQT)
-  target_link_boost_python(${LIBRARY_NAME})
-endif(GEPETTO_GUI_HAS_PYTHONQT)
 
 install(
   TARGETS ${LIBRARY_NAME}
