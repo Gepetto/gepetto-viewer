@@ -3,10 +3,10 @@
 
   inputs = {
     gepetto.url = "github:gepetto/nix";
+    flakoboros.follows = "gepetto/flakoboros";
     gazebros2nix.follows = "gepetto/gazebros2nix";
     flake-parts.follows = "gepetto/flake-parts";
     nixpkgs.follows = "gepetto/nixpkgs";
-    nix-ros-overlay.follows = "gepetto/nix-ros-overlay";
     systems.follows = "gepetto/systems";
     treefmt-nix.follows = "gepetto/treefmt-nix";
   };
@@ -14,42 +14,35 @@
   outputs =
     inputs:
     inputs.flake-parts.lib.mkFlake { inherit inputs; } (
-      { lib, self, ... }:
+      { lib, ... }:
       {
         systems = import inputs.systems;
         imports = [
           inputs.gepetto.flakeModule
-          { gepetto-pkgs.overlays = [ self.overlays.default ]; }
-        ];
-        flake.overlays.default = _final: prev: {
-          gepetto-viewer = prev.gepetto-viewer.overrideAttrs {
-            src = lib.fileset.toSource {
-              root = ./.;
-              fileset = lib.fileset.unions [
-                ./cmake-module
-                ./CMakeLists.txt
-                ./doc
-                ./fonts
-                ./include
-                ./package.xml
-                ./plugins
-                ./pyplugins
-                ./res
-                ./src
-                ./tests
-              ];
-            };
-          };
-        };
-        perSystem =
-          { pkgs, self', ... }:
           {
-            packages = {
-              default = self'.packages.py-gepetto-viewer;
-              gepetto-viewer = pkgs.gepetto-viewer;
-              py-gepetto-viewer = pkgs.python3Packages.gepetto-viewer;
+            flakoboros = {
+              pyOverrideAttrs.gepetto-viewer = _: _: { };
+              overrideAttrs.gepetto-viewer = _: {
+                src = lib.fileset.toSource {
+                  root = ./.;
+                  fileset = lib.fileset.unions [
+                    ./cmake-module
+                    ./CMakeLists.txt
+                    ./doc
+                    ./fonts
+                    ./include
+                    ./package.xml
+                    ./plugins
+                    ./pyplugins
+                    ./res
+                    ./src
+                    ./tests
+                  ];
+                };
+              };
             };
-          };
+          }
+        ];
       }
     );
 }
