@@ -28,32 +28,40 @@ set(PYTHON_EXPORT_DEPENDENCY TRUE)
 # Check if the submodule cmake have been initialized
 set(JRL_CMAKE_MODULES "${CMAKE_CURRENT_LIST_DIR}/cmake")
 if(EXISTS "${JRL_CMAKE_MODULES}/base.cmake")
-  message(STATUS "JRL cmakemodules found in 'cmake/' git submodule")
+    message(STATUS "JRL cmakemodules found in 'cmake/' git submodule")
 else()
-  find_package(jrl-cmakemodules QUIET CONFIG)
-  if(jrl-cmakemodules_FOUND)
-    get_property(
-      JRL_CMAKE_MODULES
-      TARGET jrl-cmakemodules::jrl-cmakemodules
-      PROPERTY INTERFACE_INCLUDE_DIRECTORIES)
-    message(STATUS "JRL cmakemodules found on system at ${JRL_CMAKE_MODULES}")
-  elseif(${CMAKE_VERSION} VERSION_LESS "3.14.0")
-    message(
-      FATAL_ERROR
-        "\nCan't find jrl-cmakemodules. Please either:\n"
-        "  - use git submodule: 'git submodule update --init'\n"
-        "  - or install https://github.com/jrl-umi3218/jrl-cmakemodules\n"
-        "  - or upgrade your CMake version to >= 3.14 to allow automatic fetching\n"
-    )
-  else()
-    message(STATUS "JRL cmakemodules not found. Let's fetch it.")
-    include(FetchContent)
-    FetchContent_Declare(
-      "jrl-cmakemodules"
-      GIT_REPOSITORY "https://github.com/jrl-umi3218/jrl-cmakemodules.git")
-    FetchContent_MakeAvailable("jrl-cmakemodules")
-    FetchContent_GetProperties("jrl-cmakemodules" SOURCE_DIR JRL_CMAKE_MODULES)
-  endif()
+    find_package(jrl-cmakemodules QUIET CONFIG)
+    if(jrl-cmakemodules_FOUND)
+        get_property(
+            JRL_CMAKE_MODULES
+            TARGET jrl-cmakemodules::jrl-cmakemodules
+            PROPERTY INTERFACE_INCLUDE_DIRECTORIES
+        )
+        message(
+            STATUS
+            "JRL cmakemodules found on system at ${JRL_CMAKE_MODULES}"
+        )
+    elseif(${CMAKE_VERSION} VERSION_LESS "3.14.0")
+        message(
+            FATAL_ERROR
+            "\nCan't find jrl-cmakemodules. Please either:\n"
+            "  - use git submodule: 'git submodule update --init'\n"
+            "  - or install https://github.com/jrl-umi3218/jrl-cmakemodules\n"
+            "  - or upgrade your CMake version to >= 3.14 to allow automatic fetching\n"
+        )
+    else()
+        message(STATUS "JRL cmakemodules not found. Let's fetch it.")
+        include(FetchContent)
+        FetchContent_Declare(
+            "jrl-cmakemodules"
+            GIT_REPOSITORY "https://github.com/jrl-umi3218/jrl-cmakemodules.git"
+        )
+        FetchContent_MakeAvailable("jrl-cmakemodules")
+        FetchContent_GetProperties(
+            "jrl-cmakemodules"
+            SOURCE_DIR JRL_CMAKE_MODULES
+        )
+    endif()
 endif()
 
 include("${JRL_CMAKE_MODULES}/base.cmake")
@@ -73,7 +81,7 @@ check_minimal_cxx_standard(11 ENFORCE)
 option(ENABLE_QT_DEBUG "Enable Qt debug output." FALSE)
 
 if(APPLE)
-  apply_default_apple_configuration()
+    apply_default_apple_configuration()
 endif(APPLE)
 
 # Declare Headers
@@ -92,7 +100,8 @@ set(${PROJECT_NAME}_HEADERS_MOC
     ${CMAKE_SOURCE_DIR}/include/gepetto/gui/selection-handler.hh
     ${CMAKE_SOURCE_DIR}/include/gepetto/gui/shortcut-factory.hh
     ${CMAKE_SOURCE_DIR}/include/gepetto/gui/tree-item.hh
-    ${CMAKE_SOURCE_DIR}/include/gepetto/gui/windows-manager.hh)
+    ${CMAKE_SOURCE_DIR}/include/gepetto/gui/windows-manager.hh
+)
 
 set(${PROJECT_NAME}_HEADERS_NO_MOC
     ${CMAKE_BINARY_DIR}/include/gepetto/gui/config-dep.hh
@@ -132,14 +141,16 @@ set(${PROJECT_NAME}_HEADERS_NO_MOC
     ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/transform-writer.h
     ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/blender-geom-writer.h
     ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/OSGManipulator/keyboard-manipulator.h
-    ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/properties.h)
+    ${CMAKE_SOURCE_DIR}/include/gepetto/viewer/properties.h
+)
 
 set(${PROJECT_NAME}_RESOURCES ${CMAKE_SOURCE_DIR}/res/images.qrc)
 
 install(
-  FILES fonts/arial.ttf
-  DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/fonts
-  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE)
+    FILES fonts/arial.ttf
+    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/fonts
+    PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
+)
 
 add_required_dependency("openscenegraph >= 3.2")
 add_required_dependency("openthreads >= 2.6")
@@ -155,57 +166,53 @@ findpython()
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake-module/ ${CMAKE_MODULE_PATH})
 # If GEPETTO_GUI_HAS_PYTHONQT is set to TRUE, then PythonQt is required.
 if(DEFINED GEPETTO_GUI_HAS_PYTHONQT AND GEPETTO_GUI_HAS_PYTHONQT)
-  find_package(
-    PythonQt REQUIRED
-    COMPONENTS QtAll
-    REQUIRED)
+    find_package(PythonQt REQUIRED COMPONENTS QtAll REQUIRED)
 else()
-  find_package(PythonQt COMPONENTS QtAll)
+    find_package(PythonQt COMPONENTS QtAll)
 endif()
 # Declare option GEPETTO_GUI_HAS_PYTHONQT If GEPETTO_GUI_HAS_PYTHONQT was
 # defined, this does not change its value.
 if(PythonQt_FOUND AND PythonQt_QtAll_FOUND)
-  set(GEPETTO_GUI_HAS_PYTHONQT
-      TRUE
-      CACHE BOOL "Use PythonQt dependency")
+    set(GEPETTO_GUI_HAS_PYTHONQT TRUE CACHE BOOL "Use PythonQt dependency")
 else()
-  set(GEPETTO_GUI_HAS_PYTHONQT
-      FALSE
-      CACHE BOOL "Use PythonQt dependency")
+    set(GEPETTO_GUI_HAS_PYTHONQT FALSE CACHE BOOL "Use PythonQt dependency")
 endif()
 
 if(GEPETTO_GUI_HAS_PYTHONQT)
-  set(${PROJECT_NAME}_HEADERS_MOC
-      ${${PROJECT_NAME}_HEADERS_MOC}
-      ${CMAKE_SOURCE_DIR}/include/gepetto/gui/pythonwidget.hh)
+    set(${PROJECT_NAME}_HEADERS_MOC
+        ${${PROJECT_NAME}_HEADERS_MOC}
+        ${CMAKE_SOURCE_DIR}/include/gepetto/gui/pythonwidget.hh
+    )
 endif(GEPETTO_GUI_HAS_PYTHONQT)
 # }}}
 
-find_package(
-  Boost REQUIRED
-  COMPONENTS
-  COMPONENTS unit_test_framework)
+find_package(Boost REQUIRED COMPONENTS COMPONENTS unit_test_framework)
 search_for_boost_python(REQUIRED)
 
 # Check if we are on a platform with ffmpeg or avconv
 find_program(FFMPEG ffmpeg)
 if(NOT FFMPEG)
-  find_program(AVCONV avconv)
-  if(AVCONV)
-    set(FFMPEG "${AVCONV}")
-  else(AVCONV)
-    message(WARNING "neither ffmpeg nor avconv have been found.")
-    # Fallback to old behavior: ffmpeg / avconv non-availability at configure
-    # time doesn't mean anything at run time.
-    set(FFMPEG "ffmpeg")
-  endif(FFMPEG)
+    find_program(AVCONV avconv)
+    if(AVCONV)
+        set(FFMPEG "${AVCONV}")
+    else(AVCONV)
+        message(WARNING "neither ffmpeg nor avconv have been found.")
+        # Fallback to old behavior: ffmpeg / avconv non-availability at configure
+        # time doesn't mean anything at run time.
+        set(FFMPEG "ffmpeg")
+    endif(FFMPEG)
 endif(NOT FFMPEG)
 
-configure_file(${CMAKE_SOURCE_DIR}/include/gepetto/gui/config-dep.hh.in
-               ${CMAKE_BINARY_DIR}/include/gepetto/gui/config-dep.hh @ONLY)
+configure_file(
+    ${CMAKE_SOURCE_DIR}/include/gepetto/gui/config-dep.hh.in
+    ${CMAKE_BINARY_DIR}/include/gepetto/gui/config-dep.hh
+    @ONLY
+)
 
-set(${PROJECT_NAME}_HEADERS ${${PROJECT_NAME}_HEADERS_MOC}
-                            ${${PROJECT_NAME}_HEADERS_NO_MOC})
+set(${PROJECT_NAME}_HEADERS
+    ${${PROJECT_NAME}_HEADERS_MOC}
+    ${${PROJECT_NAME}_HEADERS_NO_MOC}
+)
 
 add_subdirectory(src)
 add_subdirectory(plugins)
@@ -217,19 +224,22 @@ set(GEPETTO_VIEWER_CMAKE_PLUGIN
     "${CMAKE_INSTALL_PREFIX}/lib/cmake/${PROJECT_NAME}/${PROJECT_NAME}-plugin.cmake"
 )
 set(PKG_CONFIG_EXTRA
-    "${PKG_CONFIG_EXTRA}\ncmake_plugin=${GEPETTO_VIEWER_CMAKE_PLUGIN}")
+    "${PKG_CONFIG_EXTRA}\ncmake_plugin=${GEPETTO_VIEWER_CMAKE_PLUGIN}"
+)
 set(PACKAGE_EXTRA_MACROS
     "${PACKAGE_EXTRA_MACROS}\nset(GEPETTO_VIEWER_CMAKE_PLUGIN ${GEPETTO_VIEWER_CMAKE_PLUGIN})"
 )
 set(PACKAGE_EXTRA_MACROS
-    "${PACKAGE_EXTRA_MACROS}\nINCLUDE(${GEPETTO_VIEWER_CMAKE_PLUGIN})")
+    "${PACKAGE_EXTRA_MACROS}\nINCLUDE(${GEPETTO_VIEWER_CMAKE_PLUGIN})"
+)
 set(PACKAGE_EXTRA_MACROS
     "${PACKAGE_EXTRA_MACROS}\nset(GEPETTO_VIEWER_INCLUDEDIR ${CMAKE_INSTALL_FULL_INCLUDEDIR})"
 )
 install(
-  FILES cmake-module/${PROJECT_NAME}-plugin.cmake
-  DESTINATION lib/cmake/${PROJECT_NAME}
-  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE)
+    FILES cmake-module/${PROJECT_NAME}-plugin.cmake
+    DESTINATION lib/cmake/${PROJECT_NAME}
+    PERMISSIONS OWNER_READ GROUP_READ WORLD_READ OWNER_WRITE
+)
 
 pkg_config_append_libs(${PROJECT_NAME})
 # }}}

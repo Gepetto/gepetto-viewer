@@ -12,9 +12,9 @@
 # License along with gepetto-viewer  If not, see <http://www.gnu.org/licenses/>.
 
 if(PROJECT_USE_QT4)
-  set(QT4 "QT4")
+    set(QT4 "QT4")
 else()
-  set(QT4 "")
+    set(QT4 "")
 endif()
 
 include_directories(SYSTEM "${PYTHON_INCLUDE_DIR}" "${PYTHONQT_INCLUDE_DIR}")
@@ -36,7 +36,10 @@ gepetto_gui_plugin(
   decorator.cc
   LINK_DEPENDENCIES
   ${PYTHONQT_LIBRARIES}
-  ${PROJECT_NAME})
+  ${PROJECT_NAME}
+)
 
-set_source_files_properties(qcustomplot.cpp PROPERTIES COMPILE_FLAGS
-                                                       "-Wno-conversion")
+set_source_files_properties(
+    qcustomplot.cpp
+    PROPERTIES COMPILE_FLAGS "-Wno-conversion"
+)
