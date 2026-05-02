@@ -13,10 +13,11 @@
 # License along with gepetto-viewer  If not, see <http://www.gnu.org/licenses/>.
 
 macro(ADD_TEST_CFLAGS target flag)
-  set_property(
-    TARGET ${target}
-    APPEND_STRING
-    PROPERTY COMPILE_FLAGS " ${flag}")
+    set_property(
+        TARGET ${target}
+        APPEND_STRING
+        PROPERTY COMPILE_FLAGS " ${flag}"
+    )
 endmacro(ADD_TEST_CFLAGS)
 
 add_executable(testing test.cpp)
@@ -33,13 +34,15 @@ target_link_libraries(test-gl PRIVATE ${PROJECT_NAME})
 pkg_config_use_dependency(test-gl openscenegraph)
 
 if($ENV{DISPLAY})
-  add_unit_test(properties properties.cpp)
-  add_test_cflags(properties "-DBOOST_TEST_DYN_LINK")
-  target_link_libraries(properties PRIVATE ${PROJECT_NAME}
-                                           Boost::unit_test_framework)
+    add_unit_test(properties properties.cpp)
+    add_test_cflags(properties "-DBOOST_TEST_DYN_LINK")
+    target_link_libraries(
+        properties
+        PRIVATE ${PROJECT_NAME} Boost::unit_test_framework
+    )
 
-  add_unit_test(safe-application safe-application.cpp)
-  add_test_cflags(safe-application "-DBOOST_TEST_DYN_LINK")
-  target_link_libraries(safe-application PRIVATE ${PROJECT_NAME})
-  target_link_libraries(safe-application PRIVATE Boost::unit_test_framework)
+    add_unit_test(safe-application safe-application.cpp)
+    add_test_cflags(safe-application "-DBOOST_TEST_DYN_LINK")
+    target_link_libraries(safe-application PRIVATE ${PROJECT_NAME})
+    target_link_libraries(safe-application PRIVATE Boost::unit_test_framework)
 endif($ENV{DISPLAY})

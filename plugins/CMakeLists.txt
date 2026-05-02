@@ -17,14 +17,14 @@ include(${CMAKE_SOURCE_DIR}/cmake-module/gepetto-viewer-plugin.cmake)
 # ADD_SUBDIRECTORY(plugin-skeleton)
 
 if(PythonQt_FOUND)
-  option(BUILD_PY_QGV "Build PyQGV plugin" ${QGV_FOUND})
-  option(BUILD_PY_QCUSTOM_PLOT "Build PyQCustomPlot plugin" OFF)
+    option(BUILD_PY_QGV "Build PyQGV plugin" ${QGV_FOUND})
+    option(BUILD_PY_QCUSTOM_PLOT "Build PyQCustomPlot plugin" OFF)
 endif(PythonQt_FOUND)
 
 if(PythonQt_FOUND AND BUILD_PY_QGV)
-  add_subdirectory(pyqgv)
+    add_subdirectory(pyqgv)
 endif(PythonQt_FOUND AND BUILD_PY_QGV)
 
 if(PythonQt_FOUND AND BUILD_PY_QCUSTOM_PLOT)
-  add_subdirectory(pyqcustomplot)
+    add_subdirectory(pyqcustomplot)
 endif(PythonQt_FOUND AND BUILD_PY_QCUSTOM_PLOT)

@@ -13,11 +13,13 @@
 # <http://www.gnu.org/licenses/>.
 
 if(GEPETTO_GUI_HAS_PYTHONQT)
-  install(
-    FILES ${CMAKE_CURRENT_SOURCE_DIR}/gepetto/gui/blenderexport.py
-          ${CMAKE_CURRENT_SOURCE_DIR}/gepetto/gui/intersection.py
-          ${CMAKE_CURRENT_SOURCE_DIR}/gepetto/gui/__init__.py
-    DESTINATION ${PYTHON_SITELIB}/gepetto/gui)
-  gepetto_gui_pyplugin(gepetto/gui/intersection.py)
-  gepetto_gui_pyplugin(gepetto/gui/blenderexport.py)
+    install(
+        FILES
+            ${CMAKE_CURRENT_SOURCE_DIR}/gepetto/gui/blenderexport.py
+            ${CMAKE_CURRENT_SOURCE_DIR}/gepetto/gui/intersection.py
+            ${CMAKE_CURRENT_SOURCE_DIR}/gepetto/gui/__init__.py
+        DESTINATION ${PYTHON_SITELIB}/gepetto/gui
+    )
+    gepetto_gui_pyplugin(gepetto/gui/intersection.py)
+    gepetto_gui_pyplugin(gepetto/gui/blenderexport.py)
 endif(GEPETTO_GUI_HAS_PYTHONQT)
